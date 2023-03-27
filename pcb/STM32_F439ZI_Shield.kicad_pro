@@ -475,6 +475,14 @@
     [
       "9c6dbdee-9d8a-4cc8-8ceb-3d83c2e63e3b",
       "STM32F439ZI"
+    ],
+    [
+      "d69a8748-4c21-4b63-b4ce-9072d526117b",
+      "Endschalter"
+    ],
+    [
+      "627cdbea-55a6-4b71-bf1e-ff5bf9a61719",
+      "Analoge_Eingänge"
     ]
   ],
   "text_variables": {}
