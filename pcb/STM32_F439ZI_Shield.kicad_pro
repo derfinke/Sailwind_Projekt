@@ -482,7 +482,11 @@
     ],
     [
       "627cdbea-55a6-4b71-bf1e-ff5bf9a61719",
-      "Analoge_Eingänge"
+      "Sensoren_Eingänge"
+    ],
+    [
+      "3e3b4274-21ab-4d07-973d-ec15fa140762",
+      "Motor"
     ]
   ],
   "text_variables": {}
