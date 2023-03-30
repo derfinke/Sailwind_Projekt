@@ -487,6 +487,10 @@
     [
       "3e3b4274-21ab-4d07-973d-ec15fa140762",
       "Motor"
+    ],
+    [
+      "236913e4-0d8f-43d9-a11d-ddc7e7015f98",
+      "Optokoppler"
     ]
   ],
   "text_variables": {}
