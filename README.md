@@ -7,9 +7,9 @@ Firmware/Schaltplan für die Steuerung des Sailwind 4.0 Projekts.\
 [Bauteile Tabelle](https://drive.google.com/drive/folders/1qaNF0T8h1C8PEslQvWO4vngNG08Ppogr?usp=share_link)
 
 ## Roadmap
-- [ ] Erstellung des Schaltplans
+- [x] Erstellung des Schaltplans
 - [ ] Erstellung des PCB Designs
-	- [ ] Auswahl der Bauteile
+	- [x] Auswahl der Bauteile
 - [ ] Erstellung der Firmware
 	- [ ] Definieren der genutzen Ports
 	- [ ] Definition des Ethernet Protokoll
