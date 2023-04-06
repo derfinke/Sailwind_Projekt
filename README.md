@@ -1,4 +1,4 @@
-# Sailwind_Projekt
+# Projektarbeit: Sailwind Steuerung
 ![Product Name Screen Shot](/Docs/Images/Sailwind_Prototype.jpg) \
 Firmware/Schaltplan für die Steuerung des Sailwind 4.0 Projekts.\
 [ Für weitere Informationen](https://www.sailwind-power.eu/)
