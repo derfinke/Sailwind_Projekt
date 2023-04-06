@@ -1,0 +1,14 @@
+*.o
+*.d
+*.su
+*.elf
+*.bin
+*.map
+*.exe
+*.mxproject
+*.bin
+*.launch
+.settings/
+Binary/
+Release*/
+Debug*/
