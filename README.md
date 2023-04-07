@@ -11,6 +11,6 @@ Firmware/Schaltplan für die Steuerung des Sailwind 4.0 Projekts.\
 - [ ] Erstellung des PCB Designs
 	- [x] Auswahl der Bauteile
 - [ ] Erstellung der Firmware
-	- [ ] Definieren der genutzen Ports
+	- [x] Definieren der genutzen Ports
 	- [ ] Definition des Ethernet Protokoll
 	- [ ] Siehe [open issues](https://github.com/derfinke/Sailwind_Projekt/issues)
