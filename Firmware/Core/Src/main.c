@@ -147,7 +147,7 @@ int main(void)
 
 	readAnalogValue(&abstandSensor_PB_1);
 
-	printAnalogValue(abstandSensor);
+	printAnalogValue(abstandSensor_PB_1);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -163,7 +163,7 @@ int main(void)
 
 void printAnalogValue(analogSensor as)
 {
-	printf("%s: %d %s\r\n", as.name, &as.currentValue, as.unit);
+	printf("%s: %hn %s\r\n", as.name, &as.currentValue, as.unit);
 }
 
 void readAnalogValue(analogSensor *sensor)
