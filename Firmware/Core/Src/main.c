@@ -23,18 +23,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "IO_API.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
-typedef struct {
-	char* name;
-	char* unit;
-	ADC_HandleTypeDef *hadc;
-	uint32_t channel;
-	uint16_t signalConversion;
-	uint16_t currentValue;
-} analogSensor;
+
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -91,8 +85,6 @@ PUTCHAR_PROTOTYPE
 	return ch;
 }
 
-void readAnalogValue(analogSensor *sensor);
-void printAnalogValue(analogSensor sensor);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -112,8 +104,55 @@ int main(void)
 			.unit="mm",
 			.signalConversion=1,
 			.currentValue=0,
+			.adc_value=0,
 			.hadc = &hadc1,
 			.channel = ADC_CHANNEL_9
+	};
+
+	motor motor = {
+			.IN0 = {
+					.GPIOx = GPIOD,
+					.GPIO_Pin = IN0_PD7_OUT_Pin,
+					.state = 0
+			},
+			.IN1 = {
+					.GPIOx = GPIOD,
+					.GPIO_Pin = IN1_PD6_OUT_Pin,
+					.state = 0
+			},
+			.IN2 = {
+					.GPIOx = GPIOD,
+					.GPIO_Pin = IN2_PD4_OUT_Pin,
+					.state = 0
+			},
+			.IN2 = {
+					.GPIOx = GPIOD,
+					.GPIO_Pin = IN3_PD3_OUT_Pin,
+					.state = 0
+			},
+			.AIN_Drehzahl_Sollwert = {
+					.unit = "rpm",
+					.hdac = &hdac,
+					.channel = DAC_CHANNEL_1,
+					.signalConversion = 1,
+					.currentValue = 0,
+					.adc_value = 0
+			},
+			.OUT1_Drehzahl_Puls = {
+					.GPIOx = GPIOF,
+					.GPIO_Pin = OUT1_PF11_IN_Pin,
+					.state = 0
+			},
+			.OUT2_Fehler = {
+					.GPIOx = GPIOF,
+					.GPIO_Pin = OUT2_PF12_IN_Pin,
+					.state = 0
+			},
+			.OUT3_Drehrichtung = {
+					.GPIOx = GPIOF,
+					.GPIO_Pin = OUT3_PF13_IN_Pin,
+					.state = 0
+			}
 	};
 	/* USER CODE END 1 */
 
@@ -148,6 +187,8 @@ int main(void)
 	readAnalogValue(&abstandSensor_PB_1);
 
 	printAnalogValue(abstandSensor_PB_1);
+
+	writeAnalogValue(&motor.AIN_Drehzahl_Sollwert, 300);
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
@@ -161,30 +202,6 @@ int main(void)
 	/* USER CODE END 3 */
 }
 
-void printAnalogValue(analogSensor as)
-{
-	printf("%s: %hn %s\r\n", as.name, &as.currentValue, as.unit);
-}
-
-void readAnalogValue(analogSensor *sensor)
-{
-	//(source: https://controllerstech.com/stm32-adc-multi-channel-without-dma/)
-	ADC_ChannelConfTypeDef sConfig = {0};
-	/** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-	 */
-	sConfig.Channel = sensor->channel;
-	sConfig.Rank = 1;
-	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-	if (HAL_ADC_ConfigChannel(sensor->hadc, &sConfig) != HAL_OK)
-	{
-		Error_Handler();
-	}
-
-	HAL_ADC_Start(sensor->hadc);
-	HAL_ADC_PollForConversion(sensor->hadc, 1000);
-	sensor->currentValue = HAL_ADC_GetValue(sensor->hadc); //convert signal to specific sensor value with sensor->signalConversion
-	HAL_ADC_Stop(sensor->hadc);
-}
 /**
  * @brief System Clock Configuration
  * @retval None
@@ -574,7 +591,7 @@ static void MX_GPIO_Init(void)
 	HAL_GPIO_WritePin(GPIOF, GPIO_PIN_3, GPIO_PIN_RESET);
 
 	/*Configure GPIO pin Output Level */
-	HAL_GPIO_WritePin(GPIOD, UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+	HAL_GPIO_WritePin(GPIOD, UART_EN_PD2_Pin|IN3_PD3_OUT_Pin|IN2_PD4_OUT_Pin|IN1_PD6_OUT_Pin
 			|IN0_PD7_OUT_Pin, GPIO_PIN_RESET);
 
 	/*Configure GPIO pins : LED_1_Red_PE2_Pin LED_2_Yellow_PE3_Pin LED_3_Green_PE4_Pin LED_4_Green_PE5_Pin */
@@ -603,9 +620,9 @@ static void MX_GPIO_Init(void)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-	/*Configure GPIO pins : UART_EN_PD2_Pin IN4_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
+	/*Configure GPIO pins : UART_EN_PD2_Pin IN3_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
                            IN0_PD7_OUT_Pin */
-	GPIO_InitStruct.Pin = UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+	GPIO_InitStruct.Pin = UART_EN_PD2_Pin|IN3_PD3_OUT_Pin|IN2_PD4_OUT_Pin|IN1_PD6_OUT_Pin
 			|IN0_PD7_OUT_Pin;
 	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
