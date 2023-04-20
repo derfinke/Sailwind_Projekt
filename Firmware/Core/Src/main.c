@@ -23,7 +23,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "IO_API.h"
+#include "IO_API/IO_API.h"
+#include "IO_API/motor_API.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -109,51 +110,7 @@ int main(void)
 			.channel = ADC_CHANNEL_9
 	};
 
-	motor motor = {
-			.IN0 = {
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN0_PD7_OUT_Pin,
-					.state = 0
-			},
-			.IN1 = {
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN1_PD6_OUT_Pin,
-					.state = 0
-			},
-			.IN2 = {
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN2_PD4_OUT_Pin,
-					.state = 0
-			},
-			.IN2 = {
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN3_PD3_OUT_Pin,
-					.state = 0
-			},
-			.AIN_Drehzahl_Sollwert = {
-					.unit = "rpm",
-					.hdac = &hdac,
-					.channel = DAC_CHANNEL_1,
-					.signalConversion = 1,
-					.currentValue = 0,
-					.adc_value = 0
-			},
-			.OUT1_Drehzahl_Puls = {
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT1_PF11_IN_Pin,
-					.state = 0
-			},
-			.OUT2_Fehler = {
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT2_PF12_IN_Pin,
-					.state = 0
-			},
-			.OUT3_Drehrichtung = {
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT3_PF13_IN_Pin,
-					.state = 0
-			}
-	};
+	motor motor = motor_init(&hdac);
 	/* USER CODE END 1 */
 
 	/* MCU Configuration--------------------------------------------------------*/
@@ -187,6 +144,9 @@ int main(void)
 	readAnalogValue(&abstandSensor_PB_1);
 
 	printAnalogValue(abstandSensor_PB_1);
+
+	motor_set_function(&motor, linkslauf);
+	motor_set_function(&motor, drehzahlvorgabe);
 
 	writeAnalogValue(&motor.AIN_Drehzahl_Sollwert, 300);
 	/* USER CODE END 2 */

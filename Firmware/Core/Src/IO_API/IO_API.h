@@ -13,6 +13,7 @@
 #include "main.h"
 
 /* typedefs -----------------------------------------------------------*/
+
 typedef struct {
 	char* name;
 	char* unit;
@@ -38,26 +39,21 @@ typedef struct {
 	GPIO_PinState state;
 } digitalPin;
 
-typedef struct {
-	digitalPin IN0;
-	digitalPin IN1;
-	digitalPin IN2;
-	digitalPin IN3;
 
-	analogActuator AIN_Drehzahl_Sollwert;
-
-	digitalPin OUT1_Drehzahl_Puls;
-	digitalPin OUT2_Fehler;
-	digitalPin OUT3_Drehrichtung;
-} motor;
 
 /* defines ------------------------------------------------------------*/
 #define ANALOG_MAX 4096
 
-/* function prototypes -----------------------------------------------*/
+
+/* API function prototypes -----------------------------------------------*/
+void writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state);
+void readDigitalIN(digitalPin *digital_IN);
 void readAnalogValue(analogSensor *sensor);
 void printAnalogValue(analogSensor sensor);
 void writeAnalogValue(analogActuator *actuator, uint16_t value);
+
+
+/* private function prototypes -----------------------------------------------*/
 void convertFromADC(analogSensor *sensor);
 void convertToDAC(analogActuator *actuator);
 

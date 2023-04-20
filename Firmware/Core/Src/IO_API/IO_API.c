@@ -7,7 +7,18 @@
 #include "IO_API.h"
 
 
-/* function definitions -----------------------------------------------*/
+/* API function definitions -----------------------------------------------*/
+void writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state)
+{
+	digital_OUT->state = state;
+	HAL_GPIO_WritePin(digital_OUT->GPIOx, digital_OUT->GPIO_Pin, digital_OUT->state);
+}
+
+void readDigitalIN(digitalPin *digital_IN)
+{
+	digital_IN->state = HAL_GPIO_ReadPin(digital_IN->GPIOx, digital_IN->GPIO_Pin);
+}
+
 void printAnalogValue(analogSensor as)
 {
 	printf("%s: %hn %s\r\n", as.name, &as.currentValue, as.unit);
@@ -40,6 +51,9 @@ void writeAnalogValue(analogActuator *actuator, uint16_t value)
 	convertToDAC(actuator);
 	HAL_DAC_SetValue(actuator->hdac, actuator->channel, DAC_ALIGN_12B_R, actuator->adc_value);
 }
+
+
+/* private function definitions -----------------------------------------------*/
 
 void convertFromADC(analogSensor *sensor)
 {
