@@ -541,8 +541,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OUT1_PF11_IN_Pin OUT2_PF12_IN_Pin OUT3_PF13_IN_Pin */
-  GPIO_InitStruct.Pin = OUT1_PF11_IN_Pin|OUT2_PF12_IN_Pin|OUT3_PF13_IN_Pin;
+  /*Configure GPIO pins : OUT2_PF12_IN_Pin OUT3_PF13_IN_Pin */
+  GPIO_InitStruct.Pin = OUT2_PF12_IN_Pin|OUT3_PF13_IN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
@@ -552,6 +552,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : OUT1_PD15_IN_Pin */
+  GPIO_InitStruct.Pin = OUT1_PD15_IN_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(OUT1_PD15_IN_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : UART_EN_PD2_Pin IN4_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
                            IN0_PD7_OUT_Pin */

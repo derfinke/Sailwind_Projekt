@@ -1,4 +1,4 @@
-21576117438670602
+21582842544534450
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -60745,10 +60745,31 @@ SO08
 0
 8
 8
+Leiterplattenklemme_2_pol
+MB31225402NIP
+MB312-25402NIP_1
+Connector
+0
+2
+2
+Leiterplattenklemme_3_pol
+NE555DR
+D (R-PDSO-G8)
+Integrated Circuit
+0
+8
+8
 MAX3485CSA_T
 SOIC127P600X175-8N
 
 
+0
+8
+8
+MC_05
+1881503
+1881503
+Connector
 0
 8
 8
@@ -82949,6 +82970,13 @@ rotary encoder
 0
 7
 6
+SamacSys_Parts
+NE555DR
+D (R-PDSO-G8)
+Integrated Circuit
+0
+8
+8
 Sensor
 Aosong_DHT11_5.5x12.0_P2.54mm
 Temperature and humidity module, http://akizukidenshi.com/download/ds/aosong/DHT11.pdf

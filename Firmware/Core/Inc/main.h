@@ -93,8 +93,6 @@ void Error_Handler(void);
 #define RMII_RXD1_GPIO_Port GPIOC
 #define Abstandsmessung_ADC1_IN_Pin GPIO_PIN_1
 #define Abstandsmessung_ADC1_IN_GPIO_Port GPIOB
-#define OUT1_PF11_IN_Pin GPIO_PIN_11
-#define OUT1_PF11_IN_GPIO_Port GPIOF
 #define OUT2_PF12_IN_Pin GPIO_PIN_12
 #define OUT2_PF12_IN_GPIO_Port GPIOF
 #define OUT3_PF13_IN_Pin GPIO_PIN_13
@@ -113,6 +111,8 @@ void Error_Handler(void);
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
 #define STLK_TX_GPIO_Port GPIOD
+#define OUT1_PD15_IN_Pin GPIO_PIN_15
+#define OUT1_PD15_IN_GPIO_Port GPIOD
 #define UART_EN_PD2_Pin GPIO_PIN_2
 #define UART_EN_PD2_GPIO_Port GPIOD
 #define IN4_PD3_OUT_Pin GPIO_PIN_3
