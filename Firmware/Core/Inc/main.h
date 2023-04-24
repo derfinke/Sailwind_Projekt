@@ -115,10 +115,10 @@ void Error_Handler(void);
 #define STLK_TX_GPIO_Port GPIOD
 #define UART_EN_PD2_Pin GPIO_PIN_2
 #define UART_EN_PD2_GPIO_Port GPIOD
-#define IN3_PD3_OUT_Pin GPIO_PIN_3
-#define IN3_PD3_OUT_GPIO_Port GPIOD
-#define IN2_PD4_OUT_Pin GPIO_PIN_4
-#define IN2_PD4_OUT_GPIO_Port GPIOD
+#define IN4_PD3_OUT_Pin GPIO_PIN_3
+#define IN4_PD3_OUT_GPIO_Port GPIOD
+#define IN3_PD4_OUT_Pin GPIO_PIN_4
+#define IN3_PD4_OUT_GPIO_Port GPIOD
 #define Windsensor_USART2_Tx_Pin GPIO_PIN_5
 #define Windsensor_USART2_Tx_GPIO_Port GPIOD
 #define IN1_PD6_OUT_Pin GPIO_PIN_6

@@ -46,11 +46,11 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
-void writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state);
-void readDigitalIN(digitalPin *digital_IN);
-void readAnalogValue(analogSensor *sensor);
-void printAnalogValue(analogSensor sensor);
-void writeAnalogValue(analogActuator *actuator, uint16_t value);
+void IO_writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state);
+GPIO_PinState IO_readDigitalIN(digitalPin *digital_IN);
+void IO_readAnalogValue(analogSensor *sensor);
+void IO_printAnalogValue(analogSensor sensor);
+void IO_writeAnalogValue(analogActuator *actuator, uint16_t value);
 
 
 /* private function prototypes -----------------------------------------------*/

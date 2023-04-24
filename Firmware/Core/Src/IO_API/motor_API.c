@@ -8,9 +8,9 @@
 #include "motor_API.h"
 
 /* API function prototypes -----------------------------------------------*/
-motor motor_init(DAC_HandleTypeDef *hdac)
+Motor motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 {
-	motor motor = {
+	Motor motor = {
 			.IN0 = {
 					.GPIOx = GPIOD,
 					.GPIO_Pin = IN0_PD7_OUT_Pin,
@@ -23,16 +23,16 @@ motor motor_init(DAC_HandleTypeDef *hdac)
 			},
 			.IN2 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN2_PD4_OUT_Pin,
+					.GPIO_Pin = IN3_PD4_OUT_Pin,
 					.state = GPIO_PIN_RESET
 			},
-			.IN2 = {
+			.IN3 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN3_PD3_OUT_Pin,
+					.GPIO_Pin = IN4_PD3_OUT_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.current_function = motor_aus,
-			.AIN_Drehzahl_Sollwert = {
+			.AIN_Drehzahl_Soll = {
 					.unit = "rpm",
 					.hdac = hdac,
 					.channel = DAC_CHANNEL_1,
@@ -40,10 +40,15 @@ motor motor_init(DAC_HandleTypeDef *hdac)
 					.currentValue = 0,
 					.adc_value = 0
 			},
-			.OUT1_Drehzahl_Puls = {
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT1_PF11_IN_Pin,
-					.state = GPIO_PIN_RESET
+			.OUT1_Drehzahl_Messung = {
+					.timer_cycle_count = 0,
+					.puls = {
+							.GPIOx = GPIOF,
+							.GPIO_Pin = OUT1_PF11_IN_Pin,
+							.state = GPIO_PIN_RESET
+					},
+					.currentValue = 0,
+					.htim = htim,
 			},
 			.OUT2_Fehler = {
 					.GPIOx = GPIOF,
@@ -60,7 +65,7 @@ motor motor_init(DAC_HandleTypeDef *hdac)
 	return motor;
 }
 
-void motor_set_function(motor *motor, motor_function function)
+void motor_set_function(Motor *motor, motor_function function)
 {
 	motor->current_function = function;
 	digitalPin *motor_INs[] = {&motor->IN0, &motor->IN1, &motor->IN2, &motor->IN3};
@@ -69,9 +74,50 @@ void motor_set_function(motor *motor, motor_function function)
 	unsigned int mask = 1U << 1;
 	for (int i = 0; i < 2; i++) {
 								//function 0-3: set IN0 + IN1; function 4-7: set IN2 + IN3
-		writeDigitalOUT(motor_INs[i + (function >= 4)*2], (GPIO_PinState) (function_bits & mask) ? 1 : 0);
+		IO_writeDigitalOUT(motor_INs[i + (function >= 4)*2], (GPIO_PinState) (function_bits & mask) ? 1 : 0);
 		function_bits <<= 1;
 	}
+}
+
+void motor_callback_get_rpm(Motor *motor, TIM_HandleTypeDef *htim)
+{
+	RPM_Measurement *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
+	if (htim==drehzahl_messung->htim)
+	{
+		drehzahl_messung->timer_cycle_count++;
+		GPIO_PinState previous_state = drehzahl_messung->puls.state;
+		GPIO_PinState current_state = IO_readDigitalIN(&drehzahl_messung->puls);
+		if (previous_state == GPIO_PIN_RESET && current_state == GPIO_PIN_RESET)
+		{
+			convert_timeStep_to_rpm(drehzahl_messung);
+		}
+	}
+}
+
+void motor_set_rpm(Motor *motor, uint16_t rpm_value)
+{
+	IO_writeAnalogValue(&motor->AIN_Drehzahl_Soll, rpm_value);
+}
+
+void motor_start_rpm_measurement(Motor *motor)
+{
+	RPM_Measurement *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
+	HAL_TIM_Base_Start_IT(drehzahl_messung->htim);
+}
+
+void motor_stop_rpm_measurement(Motor *motor)
+{
+	HAL_TIM_Base_Stop_IT(motor->OUT1_Drehzahl_Messung.htim);
+}
+
+/* private function prototypes -----------------------------------------------*/
+void convert_timeStep_to_rpm(RPM_Measurement *drehzahl_messung)
+{
+	uint32_t f_timer = (uint32_t) HAL_RCC_GetPCLK2Freq() / drehzahl_messung->htim->Init.Prescaler / drehzahl_messung->htim->Init.Period;
+	uint32_t pulse_per_rotation = 12;
+	uint32_t f_pulse = f_timer / drehzahl_messung->timer_cycle_count;
+	drehzahl_messung->currentValue = f_pulse / pulse_per_rotation * 60;
+	drehzahl_messung->timer_cycle_count = 0;
 }
 
 

@@ -8,23 +8,24 @@
 
 
 /* API function definitions -----------------------------------------------*/
-void writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state)
+void IO_writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state)
 {
 	digital_OUT->state = state;
 	HAL_GPIO_WritePin(digital_OUT->GPIOx, digital_OUT->GPIO_Pin, digital_OUT->state);
 }
 
-void readDigitalIN(digitalPin *digital_IN)
+GPIO_PinState IO_readDigitalIN(digitalPin *digital_IN)
 {
 	digital_IN->state = HAL_GPIO_ReadPin(digital_IN->GPIOx, digital_IN->GPIO_Pin);
+	return digital_IN->state;
 }
 
-void printAnalogValue(analogSensor as)
+void IO_printAnalogValue(analogSensor as)
 {
 	printf("%s: %hn %s\r\n", as.name, &as.currentValue, as.unit);
 }
 
-void readAnalogValue(analogSensor *sensor)
+void IO_readAnalogValue(analogSensor *sensor)
 {
 	//(source: https://controllerstech.com/stm32-adc-multi-channel-without-dma/)
 	ADC_ChannelConfTypeDef sConfig = {0};
@@ -45,7 +46,7 @@ void readAnalogValue(analogSensor *sensor)
 	HAL_ADC_Stop(sensor->hadc);
 }
 
-void writeAnalogValue(analogActuator *actuator, uint16_t value)
+void IO_writeAnalogValue(analogActuator *actuator, uint16_t value)
 {
 	actuator->currentValue = value;
 	convertToDAC(actuator);
