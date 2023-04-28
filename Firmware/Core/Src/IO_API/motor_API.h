@@ -34,13 +34,18 @@ typedef struct {
 	digitalPin OUT3_Drehrichtung;
 } Motor;
 
+/* defines ------------------------------------------------------------*/
+#define RPM_MAX 642
+#define press_enter_to_continue() getchar()
+
 /* API function prototypes -----------------------------------------------*/
 Motor motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim);
 void motor_set_function(Motor *motor, motor_function function);
 void motor_start_rpm_measurement(Motor *motor);
 void motor_stop_rpm_measurement(Motor *motor);
-void motor_callback_get_rpm(Motor *motor, TIM_HandleTypeDef *htim); //only for use in timer callback!
 void motor_set_rpm(Motor *motor, uint16_t rpm_value);
+void motor_callback_get_rpm(Motor *motor, TIM_HandleTypeDef *htim); //only for use in timer callback function
+void motor_teach_speed(Motor *motor, motor_function speed, uint32_t rpm_value, uint32_t tolerance);
 
 /* private function prototypes -----------------------------------------------*/
 void convert_timeStep_to_rpm(RPM_Measurement *drehzahl_messung);

@@ -8,10 +8,17 @@
 
 
 /* API function definitions -----------------------------------------------*/
+
 void IO_writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state)
 {
 	digital_OUT->state = state;
 	HAL_GPIO_WritePin(digital_OUT->GPIOx, digital_OUT->GPIO_Pin, digital_OUT->state);
+}
+
+void IO_toggleDigitalOUT(digitalPin *digital_OUT)
+{
+	digital_OUT->state ^= GPIO_PIN_SET;
+	HAL_GPIO_TogglePin(digital_OUT->GPIOx, digital_OUT->GPIO_Pin);
 }
 
 GPIO_PinState IO_readDigitalIN(digitalPin *digital_IN)
@@ -58,10 +65,10 @@ void IO_writeAnalogValue(analogActuator *actuator, uint16_t value)
 
 void convertFromADC(analogSensor *sensor)
 {
-	sensor->currentValue = sensor->adc_value * sensor->signalConversion / ANALOG_MAX;
+	sensor->currentValue = sensor->adc_value / ANALOG_MAX * sensor->maxValue;
 }
 
 void convertToDAC(analogActuator *actuator)
 {
-	actuator->adc_value = (uint32_t) actuator->currentValue * ANALOG_MAX / actuator->signalConversion;
+	actuator->adc_value = (uint32_t) actuator->currentValue / actuator->maxValue * ANALOG_MAX ;
 }

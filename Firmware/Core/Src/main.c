@@ -157,6 +157,7 @@ int main(void)
   /* USER CODE END 3 */
 }
 
+/* Timer Callback implementation for rpm measurement --------------------------*/
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	motor_callback_get_rpm(&motor, htim);
@@ -470,7 +471,7 @@ static void MX_TIM10_Init(void)
   htim10.Instance = TIM10;
   htim10.Init.Prescaler = 168-1;
   htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 100;
+  htim10.Init.Period = 400;
   htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
@@ -577,7 +578,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOF, GPIO_PIN_3, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+  HAL_GPIO_WritePin(GPIOD, UART_EN_PD2_Pin|IN3_PD3_OUT_Pin|IN2_PD4_OUT_Pin|IN1_PD6_OUT_Pin
                           |IN0_PD7_OUT_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : LED_1_Red_PE2_Pin LED_2_Yellow_PE3_Pin LED_3_Green_PE4_Pin LED_4_Green_PE5_Pin */
@@ -606,9 +607,9 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : UART_EN_PD2_Pin IN4_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
+  /*Configure GPIO pins : UART_EN_PD2_Pin IN3_PD3_OUT_Pin IN2_PD4_OUT_Pin IN1_PD6_OUT_Pin
                            IN0_PD7_OUT_Pin */
-  GPIO_InitStruct.Pin = UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+  GPIO_InitStruct.Pin = UART_EN_PD2_Pin|IN3_PD3_OUT_Pin|IN2_PD4_OUT_Pin|IN1_PD6_OUT_Pin
                           |IN0_PD7_OUT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
