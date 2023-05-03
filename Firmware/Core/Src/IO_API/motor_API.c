@@ -7,10 +7,16 @@
 
 #include "motor_API.h"
 
+/* private function prototypes -----------------------------------------------*/
+static void _motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung);
+
+
 /* API function definitions -----------------------------------------------*/
-Motor motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
+Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 {
-	Motor motor = {
+	Motor_t motor = {
+			.operating_mode = motor_operating_mode_manual,
+			.isCalibrated = False,
 			.IN0 = {
 					.GPIOx = GPIOD,
 					.GPIO_Pin = IN0_PD7_OUT_Pin,
@@ -31,7 +37,7 @@ Motor motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 					.GPIO_Pin = IN3_PD3_OUT_Pin,
 					.state = GPIO_PIN_RESET
 			},
-			.current_function = motor_aus,
+			.current_function = motor_function_aus,
 			.AIN_Drehzahl_Soll = {
 					.unit = "rpm",
 					.hdac = hdac,
@@ -61,14 +67,26 @@ Motor motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 					.state = GPIO_PIN_RESET
 			}
 	};
-	motor_set_function(&motor, motor_aus);
+	motor_set_function(&motor, motor_function_aus);
 	return motor;
 }
 
-void motor_set_function(Motor *motor, motor_function function)
+void motor_start_moving(Motor_t *motor, motor_function_t motor_function_direction)
+{
+	//ToDo
+	// motor_set_function(motor, motor_function_direction);
+}
+
+void motor_stop_moving(Motor_t *motor)
+{
+	//ToDo
+	// motor_set_function(motor, motor_function_aus);
+}
+
+void motor_set_function(Motor_t *motor, motor_function_t function)
 {
 	motor->current_function = function;
-	digitalPin *motor_INs[] = {&motor->IN0, &motor->IN1, &motor->IN2, &motor->IN3};
+	digitalPin_t *motor_INs[] = {&motor->IN0, &motor->IN1, &motor->IN2, &motor->IN3};
 	function -= (function >= 4) * 4;
 	int function_bits = (int) function;
 	unsigned int mask = 1U << 1;
@@ -79,29 +97,29 @@ void motor_set_function(Motor *motor, motor_function function)
 	}
 }
 
-void motor_set_rpm(Motor *motor, uint16_t rpm_value)
+void motor_set_rpm(Motor_t *motor, uint16_t rpm_value)
 {
-	motor_set_function(motor, drehzahlvorgabe);
+	motor_set_function(motor, motor_function_drehzahlvorgabe);
 	IO_writeAnalogValue(&motor->AIN_Drehzahl_Soll, rpm_value);
 }
 
-void motor_start_rpm_measurement(Motor *motor)
+void motor_start_rpm_measurement(Motor_t *motor)
 {
-	RPM_Measurement *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
+	RPM_Measurement_t *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
 	HAL_TIM_Base_Start_IT(drehzahl_messung->htim);
 }
 
-void motor_stop_rpm_measurement(Motor *motor)
+void motor_stop_rpm_measurement(Motor_t *motor)
 {
 	HAL_TIM_Base_Stop_IT(motor->OUT1_Drehzahl_Messung.htim);
 }
 
-void motor_teach_speed(Motor *motor, motor_function speed, uint32_t rpm_value, uint32_t tolerance)
+void motor_teach_speed(Motor_t *motor, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
 {
 	printf("\nstoppt Motor...\n");
-	motor_set_function(motor, stopp_mit_haltemoment);
+	motor_set_function(motor, motor_function_stopp_mit_haltemoment);
 	printf("Enter drücken um Lernmodus einzuleiten, sobald Motor angehalten...\n");
-	press_enter_to_continue();
+	_motor_press_enter_to_continue();
 	printf("leite Lernmodus ein...\n");
 	for (int i=0; i<5; i++)
 	{
@@ -109,7 +127,7 @@ void motor_teach_speed(Motor *motor, motor_function speed, uint32_t rpm_value, u
 		HAL_Delay(500);
 	}
 	printf("Lernmodus aktiviert, wenn rote LED schnell blinkt -> Enter um fortzufahren...\n");
-	press_enter_to_continue();
+	_motor_press_enter_to_continue();
 	printf("Motor auf Zieldrehzahl bringen...\n");
 	motor_set_rpm(motor, rpm_value);
 	printf("wartet bis Zieldrehzahl erreicht wurde...\n");
@@ -117,9 +135,9 @@ void motor_teach_speed(Motor *motor, motor_function speed, uint32_t rpm_value, u
 	printf("Zieldrehzahl erreicht -> Setze motor speed %d auf %ld rpm\n", speed-5, rpm_value);
 	motor_set_function(motor, speed);
 	printf("\nstoppt Motor...\n");
-	motor_set_function(motor, stopp_mit_haltemoment);
+	motor_set_function(motor, motor_function_stopp_mit_haltemoment);
 	printf("Enter drücken um Lernmodus zu verlassen, sobald Motor angehalten...\n");
-	press_enter_to_continue();
+	_motor_press_enter_to_continue();
 	printf("verlasse Lernmodus...\n");
 	for (int i=0; i<5; i++)
 	{
@@ -127,11 +145,22 @@ void motor_teach_speed(Motor *motor, motor_function speed, uint32_t rpm_value, u
 		HAL_Delay(500);
 	}
 	printf("Lernmodus deaktiviert, wenn rote LED langsam blinkt -> Enter um fortzufahren...\n");
-	press_enter_to_continue();
+	_motor_press_enter_to_continue();
 }
 
+void motor_set_operating_mode(Motor_t *motor, motor_operating_mode_t operating_mode)
+{
+	motor->operating_mode = operating_mode;
+	//ToDo
+}
+
+void motor_calibrate(Motor_t *motor)
+{
+	motor->isCalibrated = TRUE;
+	//ToDo
+}
 /* private function definitions -----------------------------------------------*/
-void convert_timeStep_to_rpm(RPM_Measurement *drehzahl_messung)
+void _motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung)
 {
 	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
 	uint32_t f_timer = (uint32_t) HAL_RCC_GetPCLK2Freq() / drehzahl_messung->htim->Init.Prescaler / drehzahl_messung->htim->Init.Period;
@@ -141,9 +170,9 @@ void convert_timeStep_to_rpm(RPM_Measurement *drehzahl_messung)
 	drehzahl_messung->timer_cycle_count = 0;
 }
 
-void motor_callback_get_rpm(Motor *motor, TIM_HandleTypeDef *htim)
+void motor_callback_get_rpm(Motor_t *motor, TIM_HandleTypeDef *htim)
 {
-	RPM_Measurement *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
+	RPM_Measurement_t *drehzahl_messung = &motor->OUT1_Drehzahl_Messung;
 	if (htim==drehzahl_messung->htim)
 	{
 		drehzahl_messung->timer_cycle_count++;
@@ -151,7 +180,7 @@ void motor_callback_get_rpm(Motor *motor, TIM_HandleTypeDef *htim)
 		GPIO_PinState current_state = IO_readDigitalIN(&drehzahl_messung->puls);
 		if (previous_state == GPIO_PIN_RESET && current_state == GPIO_PIN_RESET)
 		{
-			convert_timeStep_to_rpm(drehzahl_messung);
+			_motor_convert_timeStep_to_rpm(drehzahl_messung);
 		}
 	}
 }

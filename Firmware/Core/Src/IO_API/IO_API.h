@@ -13,6 +13,7 @@
 #include "main.h"
 
 /* typedefs -----------------------------------------------------------*/
+typedef enum {False, True} boolean_t;
 
 typedef struct {
 	char* name;
@@ -22,7 +23,7 @@ typedef struct {
 	uint16_t maxValue;
 	uint16_t currentValue;
 	uint16_t adc_value;
-} analogSensor;
+} analogSensor_t;
 
 typedef struct {
 	char* unit;
@@ -31,31 +32,29 @@ typedef struct {
 	uint16_t maxValue;
 	uint16_t currentValue;
 	uint32_t adc_value;
-} analogActuator;
+} analogActuator_t;
 
 typedef struct {
 	GPIO_TypeDef* GPIOx;
 	uint16_t GPIO_Pin;
 	GPIO_PinState state;
-} digitalPin;
+} digitalPin_t;
 
 
 
 /* defines ------------------------------------------------------------*/
 #define ANALOG_MAX 4096
+#define TRUE 1
+#define FALSE 0
 
 
 /* API function prototypes -----------------------------------------------*/
-void IO_writeDigitalOUT(digitalPin *digital_OUT, GPIO_PinState state);
-void IO_toggleDigitalOUT(digitalPin *digital_OUT);
-GPIO_PinState IO_readDigitalIN(digitalPin *digital_IN);
-void IO_readAnalogValue(analogSensor *sensor);
-void IO_printAnalogValue(analogSensor sensor);
-void IO_writeAnalogValue(analogActuator *actuator, uint16_t value);
+void IO_writeDigitalOUT(digitalPin_t *digital_OUT, GPIO_PinState state);
+void IO_toggleDigitalOUT(digitalPin_t *digital_OUT);
+GPIO_PinState IO_readDigitalIN(digitalPin_t *digital_IN);
+void IO_readAnalogValue(analogSensor_t *sensor);
+void IO_printAnalogValue(analogSensor_t sensor);
+void IO_writeAnalogValue(analogActuator_t *actuator, uint16_t value);
 
-
-/* private function prototypes -----------------------------------------------*/
-void convertFromADC(analogSensor *sensor);
-void convertToDAC(analogActuator *actuator);
 
 #endif /* SRC_IO_API_H_ */

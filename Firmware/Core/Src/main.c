@@ -23,7 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "IO_API/IO_API.h"
+#include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 /* USER CODE END Includes */
 
@@ -62,7 +62,8 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-Motor motor;
+Motor_t motor;
+Button_t *buttons;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -104,6 +105,7 @@ int main(void)
 {
   /* USER CODE BEGIN 1 */
 	motor = motor_init(&hdac, &htim10);
+	buttons = button_init_array();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -151,7 +153,7 @@ int main(void)
 	while (1)
 	{
     /* USER CODE END WHILE */
-
+		button_eventHandler(buttons, &motor);
     /* USER CODE BEGIN 3 */
 	}
   /* USER CODE END 3 */
