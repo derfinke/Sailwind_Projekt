@@ -441,7 +441,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "",
+      "step": "STM32_F439ZI_Shield.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""

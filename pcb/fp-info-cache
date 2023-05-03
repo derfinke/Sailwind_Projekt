@@ -1,4 +1,4 @@
-21582842544534450
+21584525689839879
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -60745,6 +60745,13 @@ SO08
 0
 8
 8
+LM3940IMP-3.3_NOPB
+VREG_LM3940IMP-3.3_NOPB
+
+
+0
+4
+4
 Leiterplattenklemme_2_pol
 MB31225402NIP
 MB312-25402NIP_1
