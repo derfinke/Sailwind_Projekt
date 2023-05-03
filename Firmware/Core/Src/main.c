@@ -25,6 +25,7 @@
 #include <stdio.h>
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
+#include "IO_API/LED_API.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -64,6 +65,7 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 Motor_t motor;
 Button_t *buttons;
+LED_bar_t led_bar;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -106,6 +108,7 @@ int main(void)
   /* USER CODE BEGIN 1 */
 	motor = motor_init(&hdac, &htim10);
 	buttons = button_init_array();
+	led_bar = LED_init_bar();
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -153,7 +156,7 @@ int main(void)
 	while (1)
 	{
     /* USER CODE END WHILE */
-		button_eventHandler(buttons, &motor);
+		button_eventHandler(buttons, &motor, &led_bar.operating_mode);
     /* USER CODE BEGIN 3 */
 	}
   /* USER CODE END 3 */
