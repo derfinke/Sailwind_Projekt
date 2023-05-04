@@ -127,6 +127,15 @@ int main(void)
   MX_USART2_UART_Init();
   /* USER CODE BEGIN 2 */
   printf("Sailwind Firmware Ver. 1.0\r\n");
+  HAL_GPIO_WritePin(IN_1_GPIO_Port, IN_1_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(IN_0_GPIO_Port, IN_0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(IN_2_GPIO_Port, IN_2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(IN_3_GPIO_Port, IN_3_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(LED_PWR_GPIO_Port, LED_PWR_Pin, GPIO_PIN_RESET);
+
+  HAL_GPIO_WritePin(LED_PWR_GPIO_Port, LED_PWR_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(IN_0_GPIO_Port, IN_0_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(IN_2_GPIO_Port, IN_2_Pin, GPIO_PIN_SET);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -521,11 +530,17 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, LED_1_Red_PE2_Pin|LED_2_Yellow_PE3_Pin|LED_3_Green_PE4_Pin|LED_4_Green_PE5_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOF, GPIO_PIN_3, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, IN_1_Pin|LED_PWR_Pin|IN_0_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+  HAL_GPIO_WritePin(IN_2_GPIO_Port, IN_2_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOD, IN_3_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
                           |IN0_PD7_OUT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(PWR_LED_GPIO_Port, PWR_LED_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : LED_1_Red_PE2_Pin LED_2_Yellow_PE3_Pin LED_3_Green_PE4_Pin LED_4_Green_PE5_Pin */
   GPIO_InitStruct.Pin = LED_1_Red_PE2_Pin|LED_2_Yellow_PE3_Pin|LED_3_Green_PE4_Pin|LED_4_Green_PE5_Pin;
@@ -533,13 +548,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : PF3 */
-  GPIO_InitStruct.Pin = GPIO_PIN_3;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
   /*Configure GPIO pins : OUT2_PF12_IN_Pin OUT3_PF13_IN_Pin */
   GPIO_InitStruct.Pin = OUT2_PF12_IN_Pin|OUT3_PF13_IN_Pin;
@@ -553,20 +561,41 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : IN_1_Pin LED_PWR_Pin IN_0_Pin */
+  GPIO_InitStruct.Pin = IN_1_Pin|LED_PWR_Pin|IN_0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /*Configure GPIO pin : OUT1_PD15_IN_Pin */
   GPIO_InitStruct.Pin = OUT1_PD15_IN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(OUT1_PD15_IN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : UART_EN_PD2_Pin IN4_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
+  /*Configure GPIO pin : IN_2_Pin */
+  GPIO_InitStruct.Pin = IN_2_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(IN_2_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : IN_3_Pin IN4_PD3_OUT_Pin IN3_PD4_OUT_Pin IN1_PD6_OUT_Pin
                            IN0_PD7_OUT_Pin */
-  GPIO_InitStruct.Pin = UART_EN_PD2_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
+  GPIO_InitStruct.Pin = IN_3_Pin|IN4_PD3_OUT_Pin|IN3_PD4_OUT_Pin|IN1_PD6_OUT_Pin
                           |IN0_PD7_OUT_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PWR_LED_Pin */
+  GPIO_InitStruct.Pin = PWR_LED_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(PWR_LED_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Endschalter_Vorne_PB3_Pin Endschalter_Hinten_PB4_Pin */
   GPIO_InitStruct.Pin = Endschalter_Vorne_PB3_Pin|Endschalter_Hinten_PB4_Pin;
