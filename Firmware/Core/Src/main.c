@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include "std_types.h"
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 #include "IO_API/LED_API.h"
@@ -140,14 +141,6 @@ int main(void)
   /* USER CODE BEGIN 2 */
 	printf("Sailwind Firmware Ver. 1.0\r\n");
 
-	/* motor example begin */
-	/*
-	motor_set_function(&motor, linkslauf);
-	motor_set_function(&motor, drehzahlvorgabe);
-
-	motor_set_rpm(&motor, 300);
-	*/
-	/* motor example end */
 
   /* USER CODE END 2 */
 
@@ -156,7 +149,7 @@ int main(void)
 	while (1)
 	{
     /* USER CODE END WHILE */
-		button_eventHandler(buttons, &motor, &led_bar.operating_mode);
+		button_eventHandler(buttons, &motor, &led_bar);
     /* USER CODE BEGIN 3 */
 	}
   /* USER CODE END 3 */

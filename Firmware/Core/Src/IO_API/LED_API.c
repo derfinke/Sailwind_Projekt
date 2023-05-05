@@ -27,6 +27,17 @@ LED_bar_t LED_init_bar()
 							.GPIO_Pin = LED_3_Green_PE4_Pin,
 							.state = LED_OFF
 					}
+			},
+			.sail_adjustment_mode = {
+					.rollung = {
+							//ToDo
+					},
+					.trimmung = {
+							//ToDo
+					}
+			},
+			.center_pos_set = {
+					//ToDo
 			}
 	};
 	return LED_bar;
@@ -42,10 +53,16 @@ void LED_toggle(LED_t *led_ptr)
 	IO_toggleDigitalOUT(led_ptr);
 }
 
-void LED_toggle_operating_mode(LED_status_operating_mode_t *led_operating_mode_ptr)
+void LED_toggle_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr)
 {
 	LED_toggle(&led_operating_mode_ptr->automatic);
 	LED_toggle(&led_operating_mode_ptr->manual);
+}
+
+void LED_toggle_sail_adjustment_mode(LED_dual_sail_adjustment_mode_t *led_sail_adjustment_mode_ptr)
+{
+	LED_toggle(&led_sail_adjustment_mode_ptr->rollung);
+	LED_toggle(&led_sail_adjustment_mode_ptr->trimmung);
 }
 
 

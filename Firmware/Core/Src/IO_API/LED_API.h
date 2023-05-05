@@ -16,11 +16,18 @@ typedef IO_digitalPin_t LED_t;
 typedef struct {
 	LED_t manual;
 	LED_t automatic;
-} LED_status_operating_mode_t;
+} LED_dual_operating_mode_t;
+
+typedef struct {
+	LED_t rollung;
+	LED_t trimmung;
+} LED_dual_sail_adjustment_mode_t;
 
 typedef struct {
 	LED_t motor_error;
-	LED_status_operating_mode_t operating_mode;
+	LED_dual_operating_mode_t operating_mode;
+	LED_dual_sail_adjustment_mode_t sail_adjustment_mode;
+	LED_t center_pos_set;
 } LED_bar_t;
 
 /* defines -------------------------------------------------------------------*/
@@ -31,6 +38,7 @@ typedef struct {
 LED_bar_t LED_init_bar();
 void LED_switch(LED_t *led_ptr, GPIO_PinState led_state);
 void LED_toggle(LED_t *led_ptr);
-void LED_toggle_operating_mode(LED_status_operating_mode_t *led_operating_mode_ptr);
+void LED_toggle_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr);
+void LED_toggle_sail_adjustment_mode(LED_dual_sail_adjustment_mode_t *led_sail_adjustment_mode_ptr);
 
 #endif /* SRC_IO_API_LED_API_H_ */

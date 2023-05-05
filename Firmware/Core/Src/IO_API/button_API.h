@@ -17,7 +17,7 @@ typedef enum {btn_switch_mode, btn_move_left, btn_move_right, btn_calibrate} but
 typedef struct Button_t Button_t;
 struct Button_t {
 	IO_digitalPin_t pin;
-	void (*eventHandler)(Button_t button, Motor_t *motor_ptr, LED_status_operating_mode_t *led_operating_mode_ptr);
+	void (*eventHandler)(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
 };
 
 
@@ -30,7 +30,7 @@ struct Button_t {
 
 /* API function prototypes ---------------------------------------------------*/
 Button_t* button_init_array();
-void button_eventHandler(Button_t buttons[4], Motor_t *motor_ptr, LED_status_operating_mode_t *led_operating_mode_ptr);
+void button_eventHandler(Button_t buttons[4], Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
 
 
 #endif /* SRC_IO_API_BUTTON_API_H_ */
