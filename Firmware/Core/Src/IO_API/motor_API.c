@@ -30,22 +30,22 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 			},
 			.IN0 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN0_PD7_OUT_Pin,
+					.GPIO_Pin = IN_0_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.IN1 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN1_PD6_OUT_Pin,
+					.GPIO_Pin = IN_1_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.IN2 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN2_PD4_OUT_Pin,
+					.GPIO_Pin = IN_2_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.IN3 = {
 					.GPIOx = GPIOD,
-					.GPIO_Pin = IN3_PD3_OUT_Pin,
+					.GPIO_Pin = IN_3_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.current_function = motor_function_aus,
@@ -61,7 +61,7 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 					.timer_cycle_count = 0,
 					.puls = {
 							.GPIOx = GPIOF,
-							.GPIO_Pin = OUT1_PF11_IN_Pin,
+							.GPIO_Pin = Drehzahl_DAC_OUT_Pin,
 							.state = GPIO_PIN_RESET
 					},
 					.currentValue = 0,
@@ -69,12 +69,12 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 			},
 			.OUT2_Fehler = {
 					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT2_PF12_IN_Pin,
+					.GPIO_Pin = OUT_1_Pin,
 					.state = GPIO_PIN_RESET
 			},
 			.OUT3_Drehrichtung = {
 					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT3_PF13_IN_Pin,
+					.GPIO_Pin = OUT_3_Pin,
 					.state = GPIO_PIN_RESET
 			}
 	};

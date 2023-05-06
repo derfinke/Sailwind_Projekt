@@ -24,7 +24,7 @@ Button_t* button_init_array()
 	Button_t button_switch_mode = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_4_Reserviert_PE15_Pin,
+					.GPIO_Pin = BUTTON_SWITCH_AUTOMATIC,
 					.state = BUTTON_SWITCH_MANUAL
 			},
 			.eventHandler = _button_event_switch_operating_mode
@@ -34,7 +34,7 @@ Button_t* button_init_array()
 	Button_t button_move_left = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_1_Links_PE10_Pin,
+					.GPIO_Pin = Button_Zurueck_Pin,
 					.state = BUTTON_RELEASED
 			},
 			.eventHandler = _button_event_move_left_toggle
@@ -44,7 +44,7 @@ Button_t* button_init_array()
 	Button_t button_move_right = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_3_Kalibrierung_PE14_Pin,
+					.GPIO_Pin = Button_Kalibrierung_Pin,
 					.state = BUTTON_RELEASED
 			},
 			.eventHandler = _button_event_move_right_toggle
@@ -54,7 +54,7 @@ Button_t* button_init_array()
 	Button_t button_calibrate = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_2_Rechts_PE12_Pin,
+					.GPIO_Pin = Button_Vor_Pin,
 					.state = BUTTON_RELEASED
 			},
 			.eventHandler = _button_event_calibrate

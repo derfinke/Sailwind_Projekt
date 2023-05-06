@@ -13,18 +13,18 @@ LED_bar_t LED_init_bar()
 	LED_bar_t LED_bar = {
 			.motor_error = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = LED_1_Red_PE2_Pin,
+					.GPIO_Pin = LED_Stoerung_Pin,
 					.state = LED_OFF
 			},
 			.operating_mode = {
 					.manual = {
 							.GPIOx = GPIOE,
-							.GPIO_Pin = LED_2_Yellow_PE3_Pin,
+							.GPIO_Pin = LED_Manuell_Pin,
 							.state = LED_OFF
 					},
 					.automatic = {
 							.GPIOx = GPIOE,
-							.GPIO_Pin = LED_3_Green_PE4_Pin,
+							.GPIO_Pin = LED_Automatik_Pin,
 							.state = LED_OFF
 					}
 			},
