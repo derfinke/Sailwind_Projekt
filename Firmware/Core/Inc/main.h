@@ -107,18 +107,14 @@ void Error_Handler(void);
 #define Button_4_Reserviert_PE15_GPIO_Port GPIOE
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
-#define IN_1_Pin GPIO_PIN_15
-#define IN_1_GPIO_Port GPIOB
 #define STLK_RX_Pin GPIO_PIN_8
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
 #define STLK_TX_GPIO_Port GPIOD
 #define OUT1_PD15_IN_Pin GPIO_PIN_15
 #define OUT1_PD15_IN_GPIO_Port GPIOD
-#define IN_2_Pin GPIO_PIN_12
-#define IN_2_GPIO_Port GPIOC
-#define IN_3_Pin GPIO_PIN_2
-#define IN_3_GPIO_Port GPIOD
+#define UART_EN_PD2_Pin GPIO_PIN_2
+#define UART_EN_PD2_GPIO_Port GPIOD
 #define IN4_PD3_OUT_Pin GPIO_PIN_3
 #define IN4_PD3_OUT_GPIO_Port GPIOD
 #define IN3_PD4_OUT_Pin GPIO_PIN_4
@@ -133,16 +129,10 @@ void Error_Handler(void);
 #define RMII_TX_EN_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
-#define PWR_LED_Pin GPIO_PIN_14
-#define PWR_LED_GPIO_Port GPIOG
 #define Endschalter_Vorne_PB3_Pin GPIO_PIN_3
 #define Endschalter_Vorne_PB3_GPIO_Port GPIOB
 #define Endschalter_Hinten_PB4_Pin GPIO_PIN_4
 #define Endschalter_Hinten_PB4_GPIO_Port GPIOB
-#define LED_PWR_Pin GPIO_PIN_6
-#define LED_PWR_GPIO_Port GPIOB
-#define IN_0_Pin GPIO_PIN_9
-#define IN_0_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
