@@ -1033,7 +1033,7 @@
     (property "Value" "Conn_01x02_Pin" (at 26.67 35.56 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "TerminalBlock_TE-Connectivity:TerminalBlock_TE_282834-2_1x02_P2.54mm_Horizontal" (at 24.13 30.48 0)
+    (property "Footprint" "TerminalBlock_Phoenix:TerminalBlock_Phoenix_PT-1,5-2-3.5-H_1x02_P3.50mm_Horizontal" (at 24.13 30.48 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (at 24.13 30.48 0)

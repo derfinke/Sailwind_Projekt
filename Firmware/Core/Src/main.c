@@ -518,23 +518,20 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOG_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOE, SPI4_CS_Pin|Ext_Relais_1_Pin|LED_Rollen_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|LED_PWR_Pin|IN_0_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Trimmen_Pin|IN_0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Rollen_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOD, LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
+                          |HOLD_Pin|Windsensor_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, Ext_Relais_2_Pin|LED_Speichern_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, IN_1_Pin|IN_3_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED_Trimmung_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
-                          |USART2_EN_Pin, GPIO_PIN_SET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, IN_1_Pin|IN_3_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(LED_PWR_GPIO_Port, LED_PWR_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pins : PE2 PE5 PE6 */
   GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_5|GPIO_PIN_6;
@@ -551,37 +548,37 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Button_Kalibrierung_Pin */
-  GPIO_InitStruct.Pin = Button_Kalibrierung_Pin;
+  /*Configure GPIO pins : Switch_Betriebsmodus_Pin Betriebsmodus_2_Nur_Prototyp_Pin Betriebsmodus_Prototyp_Pin */
+  GPIO_InitStruct.Pin = Switch_Betriebsmodus_Pin|Betriebsmodus_2_Nur_Prototyp_Pin|Betriebsmodus_Prototyp_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
-  HAL_GPIO_Init(Button_Kalibrierung_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Vor_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Button_Vor_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Zurueck_Pin Endschalter_Hinten_Pin Betriebsmodus_Pin Endschalter_Vorne_Pin */
-  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Endschalter_Hinten_Pin|Betriebsmodus_Pin|Endschalter_Vorne_Pin;
+  /*Configure GPIO pins : Button_Zurueck_Pin Endschalter_Hinten_Pin Button_Vorfahren_Pin Endschalter_Vorne_Pin */
+  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Endschalter_Hinten_Pin|Button_Vorfahren_Pin|Endschalter_Vorne_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Speichern_Pin LED_PWR_Pin
+  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Trimmen_Pin LED_PWR_Pin
                            IN_0_Pin */
-  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Speichern_Pin|LED_PWR_Pin
+  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Trimmen_Pin|LED_PWR_Pin
                           |IN_0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Trimmung_Pin LED_Stoerung_Pin LED_Manuell_Pin IN_2_Pin
-                           USART2_EN_Pin */
-  GPIO_InitStruct.Pin = LED_Trimmung_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
-                          |USART2_EN_Pin;
+  /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin IN_2_Pin
+                           HOLD_Pin Windsensor_EN_Pin */
+  GPIO_InitStruct.Pin = LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
+                          |HOLD_Pin|Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
