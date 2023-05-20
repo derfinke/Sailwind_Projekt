@@ -649,6 +649,11 @@
           (reference "#PWR045") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR045") (unit 1)
+        )
+      )
     )
   )
 
@@ -671,6 +676,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR041") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR041") (unit 1)
         )
       )
@@ -699,6 +709,11 @@
           (reference "#PWR048") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR048") (unit 1)
+        )
+      )
     )
   )
 
@@ -721,6 +736,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR067") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR067") (unit 1)
         )
       )
@@ -753,6 +773,11 @@
           (reference "R15") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -775,6 +800,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR038") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR038") (unit 1)
         )
       )
@@ -803,6 +833,11 @@
           (reference "#PWR070") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR070") (unit 1)
+        )
+      )
     )
   )
 
@@ -828,6 +863,11 @@
           (reference "#PWR054") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR054") (unit 1)
+        )
+      )
     )
   )
 
@@ -840,7 +880,7 @@
     (property "Value" "LTV-817S" (at 40.64 17.78 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 30.48 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 30.48 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 15.24 0)
@@ -853,6 +893,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U3") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U3") (unit 1)
         )
       )
@@ -878,6 +923,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR073") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR073") (unit 1)
         )
       )
@@ -910,6 +960,11 @@
           (reference "R11") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -932,6 +987,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR039") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR039") (unit 1)
         )
       )
@@ -967,6 +1027,11 @@
           (reference "R16") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -989,6 +1054,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR046") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR046") (unit 1)
         )
       )
@@ -1017,6 +1087,11 @@
           (reference "#PWR047") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR047") (unit 1)
+        )
+      )
     )
   )
 
@@ -1039,6 +1114,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR040") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR040") (unit 1)
         )
       )
@@ -1071,6 +1151,11 @@
           (reference "R23") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1083,7 +1168,7 @@
     (property "Value" "LTV-817S" (at 40.64 97.79 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 110.49 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 95.25 0)
@@ -1096,6 +1181,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U6") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U6") (unit 1)
         )
       )
@@ -1121,6 +1211,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR036") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR036") (unit 1)
         )
       )
@@ -1156,6 +1251,11 @@
           (reference "R34") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1178,6 +1278,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR052") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR052") (unit 1)
         )
       )
@@ -1206,6 +1311,11 @@
           (reference "#PWR069") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR069") (unit 1)
+        )
+      )
     )
   )
 
@@ -1231,6 +1341,11 @@
           (reference "#PWR043") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR043") (unit 1)
+        )
+      )
     )
   )
 
@@ -1243,7 +1358,7 @@
     (property "Value" "LTV-817S" (at 40.64 44.45 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 57.15 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 57.15 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 41.91 0)
@@ -1259,6 +1374,11 @@
           (reference "U4") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "U4") (unit 1)
+        )
+      )
     )
   )
 
@@ -1271,7 +1391,7 @@
     (property "Value" "LTV-817S" (at 40.64 124.46 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 137.16 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 137.16 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 121.92 0)
@@ -1284,6 +1404,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U7") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U7") (unit 1)
         )
       )
@@ -1312,6 +1437,11 @@
           (reference "#PWR050") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR050") (unit 1)
+        )
+      )
     )
   )
 
@@ -1324,7 +1454,7 @@
     (property "Value" "LTV-817S" (at 106.68 19.05 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 106.68 31.75 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 106.68 31.75 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 97.79 16.51 0)
@@ -1337,6 +1467,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U10") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U10") (unit 1)
         )
       )
@@ -1362,6 +1497,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR049") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR049") (unit 1)
         )
       )
@@ -1397,6 +1537,11 @@
           (reference "R18") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1429,6 +1574,11 @@
           (reference "R24") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1451,6 +1601,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR063") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR063") (unit 1)
         )
       )
@@ -1486,6 +1641,11 @@
           (reference "R20") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1498,7 +1658,7 @@
     (property "Value" "LTV-817S" (at 40.64 71.12 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 83.82 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 83.82 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 68.58 0)
@@ -1511,6 +1671,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U5") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U5") (unit 1)
         )
       )
@@ -1546,6 +1711,11 @@
           (reference "R14") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1571,6 +1741,11 @@
           (reference "#PWR053") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR053") (unit 1)
+        )
+      )
     )
   )
 
@@ -1593,6 +1768,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR051") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR051") (unit 1)
         )
       )
@@ -1625,6 +1805,11 @@
           (reference "R17") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1654,6 +1839,11 @@
           (reference "R33") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1676,6 +1866,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR037") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR037") (unit 1)
         )
       )
@@ -1708,6 +1903,11 @@
           (reference "R35") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1720,7 +1920,7 @@
     (property "Value" "LTV-817S" (at 40.64 177.8 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 190.5 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 190.5 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 175.26 0)
@@ -1733,6 +1933,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U9") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U9") (unit 1)
         )
       )
@@ -1765,6 +1970,11 @@
           (reference "R21") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1790,6 +2000,11 @@
           (reference "#PWR035") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR035") (unit 1)
+        )
+      )
     )
   )
 
@@ -1802,7 +2017,7 @@
     (property "Value" "LTV-817S" (at 107.95 48.26 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 107.95 60.96 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 107.95 60.96 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 99.06 45.72 0)
@@ -1815,6 +2030,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U11") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U11") (unit 1)
         )
       )
@@ -1840,6 +2060,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR044") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR044") (unit 1)
         )
       )
@@ -1875,6 +2100,11 @@
           (reference "R12") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1907,6 +2137,11 @@
           (reference "R36") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -1936,6 +2171,11 @@
           (reference "R19") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
+        )
+      )
     )
   )
 
@@ -1961,6 +2201,11 @@
           (reference "#PWR042") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR042") (unit 1)
+        )
+      )
     )
   )
 
@@ -1973,7 +2218,7 @@
     (property "Value" "LTV-817S" (at 40.64 151.13 0)
       (effects (font (size 1.27 1.27)))
     )
-    (property "Footprint" "Package_DIP:SMDIP-4_W9.53mm" (at 40.64 163.83 0)
+    (property "Footprint" "Package_DIP:SMDIP-4_W7.62mm" (at 40.64 163.83 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "http://www.us.liteon.com/downloads/LTV-817-827-847.PDF" (at 31.75 148.59 0)
@@ -1986,6 +2231,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "U8") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "U8") (unit 1)
         )
       )
@@ -2016,6 +2266,11 @@
         )
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
           (reference "R13") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R10") (unit 1)
         )
       )
     )
@@ -2050,6 +2305,11 @@
           (reference "R22") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "R8") (unit 1)
+        )
+      )
     )
   )
 
@@ -2072,6 +2332,11 @@
     (instances
       (project "STM32_F439ZI_Shield"
         (path "/19bff231-ff37-4a40-bd06-2039e9f55c77/236913e4-0d8f-43d9-a11d-ddc7e7015f98"
+          (reference "#PWR055") (unit 1)
+        )
+      )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
           (reference "#PWR055") (unit 1)
         )
       )
@@ -2100,6 +2365,15 @@
           (reference "#PWR068") (unit 1)
         )
       )
+      (project "untitled"
+        (path "/9d974527-7ddb-4549-bd7e-2d5cd4d83a37"
+          (reference "#PWR068") (unit 1)
+        )
+      )
     )
+  )
+
+  (sheet_instances
+    (path "/" (page "1"))
   )
 )
