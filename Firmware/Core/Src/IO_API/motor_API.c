@@ -84,26 +84,25 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 
 void motor_start_moving(Motor_t *motor_ptr, motor_function_t motor_function_direction)
 {
-	//ToDo
-	// motor_set_function(motor, motor_function_direction);
+	motor_set_function(motor_ptr, motor_function_direction);
+	motor_set_function(motor_ptr, motor_function_speed1);
 }
 
 void motor_stop_moving(Motor_t *motor_ptr)
 {
-	//ToDo
-	// motor_set_function(motor, motor_function_aus);
+	motor_set_function(motor_ptr, motor_function_aus);
 }
 
 void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
 {
 	motor_ptr->current_function = function;
 	IO_digitalPin_t *motor_INs_ptr[] = {&motor_ptr->IN0, &motor_ptr->IN1, &motor_ptr->IN2, &motor_ptr->IN3};
-	function -= (function >= 4) * 4;
-	int function_bits = (int) function;
-	unsigned int mask = 1U << 1;
-	for (int i = 0; i < 2; i++) {
-								//function 0-3: set IN0 + IN1; function 4-7: set IN2 + IN3
-		IO_writeDigitalOUT(motor_INs_ptr[i + (function >= 4)*2], (GPIO_PinState) (function_bits & mask) ? 1 : 0);
+	boolean_t pin_offset = function >= 4;
+	int8_t function_bits = function - pin_offset * 4; //subtract 4 to function id if its >= 4 -> convert number {0..3} to binary in following for loop
+	for (int i = 0; i < 2; i++) { // write IN0 and IN1 (function in {0..3}) or IN2 and IN3 (function in {4..7}
+		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET;
+		uint8_t INx = i + pin_offset*2;
+		IO_writeDigitalOUT(motor_INs_ptr[INx], state);
 		function_bits <<= 1;
 	}
 }

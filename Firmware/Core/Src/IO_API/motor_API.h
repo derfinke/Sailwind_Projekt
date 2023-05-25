@@ -14,8 +14,8 @@
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
 	motor_function_aus,
-	motor_function_linkslauf,
 	motor_function_rechtslauf,
+	motor_function_linkslauf,
 	motor_function_stopp_mit_haltemoment,
 	motor_function_drehzahlvorgabe,
 	motor_function_Stromvorgabe,
