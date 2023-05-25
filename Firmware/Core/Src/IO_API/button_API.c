@@ -106,7 +106,7 @@ static void _button_event_move_right_toggle(Button_t button, Motor_t *motor_ptr,
 
 static void _button_event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	motor_operating_mode_t operating_mode;
+	//motor_operating_mode_t operating_mode;
 	switch (button.pin.state)
 	{
 		case BUTTON_SWITCH_AUTOMATIC:

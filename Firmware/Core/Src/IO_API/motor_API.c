@@ -50,7 +50,6 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 			},
 			.current_function = motor_function_aus,
 			.AIN_Drehzahl_Soll = {
-					.unit = "rpm",
 					.hdac = hdac,
 					.channel = DAC_CHANNEL_1,
 					.maxValue = MOTOR_RPM_MAX,

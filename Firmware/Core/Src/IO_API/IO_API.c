@@ -32,7 +32,7 @@ GPIO_PinState IO_readDigitalIN(IO_digitalPin_t *digital_IN_ptr)
 
 void IO_printAnalogValue(IO_analogSensor_t as)
 {
-	printf("%s: %hn %s\r\n", as.name, &as.currentValue, as.unit);
+	printf("%s: %.2f %s\r\n", as.name, as.currentValue, as.unit);
 }
 
 void IO_readAnalogValue(IO_analogSensor_t *sensor_ptr)
@@ -56,7 +56,7 @@ void IO_readAnalogValue(IO_analogSensor_t *sensor_ptr)
 	HAL_ADC_Stop(sensor_ptr->hadc);
 }
 
-void IO_writeAnalogValue(IO_analogActuator_t *actuator_ptr, uint16_t value)
+void IO_writeAnalogValue(IO_analogActuator_t *actuator_ptr, float value)
 {
 	actuator_ptr->currentValue = value;
 	_IO_convertToDAC(actuator_ptr);
@@ -68,10 +68,10 @@ void IO_writeAnalogValue(IO_analogActuator_t *actuator_ptr, uint16_t value)
 
 static void _IO_convertFromADC(IO_analogSensor_t *sensor_ptr)
 {
-	sensor_ptr->currentValue = sensor_ptr->adc_value / ANALOG_MAX * sensor_ptr->maxValue;
+	sensor_ptr->currentValue = (float)(sensor_ptr->adc_value) / (float)(ANALOG_MAX) * sensor_ptr->maxValue;
 }
 
 static void _IO_convertToDAC(IO_analogActuator_t *actuator_ptr)
 {
-	actuator_ptr->adc_value = (uint32_t) actuator_ptr->currentValue / actuator_ptr->maxValue * ANALOG_MAX ;
+	actuator_ptr->adc_value = (uint16_t) (actuator_ptr->currentValue / actuator_ptr->maxValue * ANALOG_MAX) ;
 }
