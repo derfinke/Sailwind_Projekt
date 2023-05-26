@@ -45,12 +45,12 @@ LED_bar_t LED_init_bar()
 
 void LED_switch(LED_t *led_ptr, GPIO_PinState led_state)
 {
-	IO_writeDigitalOUT(led_ptr, led_state);
+	IO_digitalWrite(led_ptr, led_state);
 }
 
 void LED_toggle(LED_t *led_ptr)
 {
-	IO_toggleDigitalOUT(led_ptr);
+	IO_digitalToggle(led_ptr);
 }
 
 void LED_toggle_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr)

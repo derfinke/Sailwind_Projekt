@@ -101,7 +101,7 @@ void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
 	for (int i = 0; i < 2; i++) { // write IN0 and IN1 (function in {0..3}) or IN2 and IN3 (function in {4..7}
 		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET;
 		uint8_t INx = i + pin_offset*2;
-		IO_writeDigitalOUT(motor_INs_ptr[INx], state);
+		IO_digitalWrite(motor_INs_ptr[INx], state);
 		function_bits <<= 1;
 	}
 }
@@ -109,7 +109,7 @@ void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
 void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 {
 	motor_set_function(motor_ptr, motor_function_drehzahlvorgabe);
-	IO_writeAnalogValue(&motor_ptr->AIN_Drehzahl_Soll, rpm_value);
+	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, rpm_value);
 }
 
 void motor_start_rpm_measurement(Motor_t *motor_ptr)
@@ -131,7 +131,7 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	printf("leite Lernmodus ein...\n");
 	for (int i=0; i<5; i++)
 	{
-		IO_toggleDigitalOUT(&motor_ptr->IN2);
+		IO_digitalToggle(&motor_ptr->IN2);
 		HAL_Delay(500);
 	}
 	printf("Lernmodus aktiviert, wenn rote LED schnell blinkt -> Enter um fortzufahren...\n");
@@ -149,7 +149,7 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	printf("verlasse Lernmodus...\n");
 	for (int i=0; i<5; i++)
 	{
-		IO_toggleDigitalOUT(&motor_ptr->IN2);
+		IO_digitalToggle(&motor_ptr->IN2);
 		HAL_Delay(500);
 	}
 	printf("Lernmodus deaktiviert, wenn rote LED langsam blinkt -> Enter um fortzufahren...\n");
@@ -162,9 +162,7 @@ void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim)
 	if (htim==drehzahl_messung_ptr->htim)
 	{
 		drehzahl_messung_ptr->timer_cycle_count++;
-		GPIO_PinState previous_state = drehzahl_messung_ptr->puls.state;
-		GPIO_PinState current_state = IO_readDigitalIN(&drehzahl_messung_ptr->puls);
-		if (previous_state == GPIO_PIN_RESET && current_state == GPIO_PIN_SET) //rising edge of pulse
+		if (IO_digitalRead_rising_edge(&drehzahl_messung_ptr->puls))
 		{
 			_motor_convert_timeStep_to_rpm(drehzahl_messung_ptr);
 			if (motor_ptr->calibration.start_pulse_count)
@@ -270,7 +268,7 @@ static void _motor_calibrate_set_center(Motor_t *motor_ptr)
 
 static boolean_t _motor_endschalter_detected(IO_digitalPin_t *motor_endschalter)
 {
-	return (boolean_t) IO_readDigitalIN(motor_endschalter);
+	return (boolean_t) IO_digitalRead(motor_endschalter);
 }
 
 static int32_t _motor_convert_pulse_count_to_distance(int32_t pulse_count)

@@ -29,7 +29,7 @@ Button_t* button_init_array()
 			},
 			.eventHandler = _button_event_switch_operating_mode
 	};
-	buttons[btn_switch_mode] = button_switch_mode;
+	buttons[button_ID_switch_mode] = button_switch_mode;
 
 	Button_t button_move_left = {
 			.pin = {
@@ -39,27 +39,27 @@ Button_t* button_init_array()
 			},
 			.eventHandler = _button_event_move_left_toggle
 	};
-	buttons[btn_move_left] = button_move_left;
+	buttons[button_ID_move_left] = button_move_left;
 
 	Button_t button_move_right = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_Kalibrierung_Pin,
+					.GPIO_Pin = Kalibrierung_Pin,
 					.state = BUTTON_RELEASED
 			},
 			.eventHandler = _button_event_move_right_toggle
 	};
-	buttons[btn_move_right] = button_move_right;
+	buttons[button_ID_move_right] = button_move_right;
 
 	Button_t button_calibrate = {
 			.pin = {
 					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_Vor_Pin,
+					.GPIO_Pin = Button_Vorfahren_Pin,
 					.state = BUTTON_RELEASED
 			},
 			.eventHandler = _button_event_calibrate
 	};
-	buttons[btn_calibrate] = button_calibrate;
+	buttons[button_ID_calibrate] = button_calibrate;
 
 	return buttons;
 }
@@ -78,7 +78,7 @@ void button_eventHandler(Button_t buttons[BUTTON_COUNT], Motor_t *motor_ptr, LED
 /* private function definitions -----------------------------------------------*/
 static boolean_t _button_state_changed(Button_t *button_ptr)
 {
-	return (boolean_t) button_ptr->pin.state ^ IO_readDigitalIN(&button_ptr->pin); // last state XOR current state -> True if changed
+	return IO_digitalRead_state_changed(&button_ptr->pin);
 }
 
 static void _button_move_toggle(Button_t button, Motor_t *motor_ptr, motor_function_t motor_function_direction)

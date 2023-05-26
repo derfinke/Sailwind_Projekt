@@ -46,12 +46,14 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
-void IO_writeDigitalOUT(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state);
-void IO_toggleDigitalOUT(IO_digitalPin_t *digital_OUT_ptr);
-GPIO_PinState IO_readDigitalIN(IO_digitalPin_t *digital_IN_ptr);
-void IO_readAnalogValue(IO_analogSensor_t *sensor_ptr);
-void IO_printAnalogValue(IO_analogSensor_t sensor);
-void IO_writeAnalogValue(IO_analogActuator_t *actuator_ptr, float value);
+void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state);
+void IO_digitalToggle(IO_digitalPin_t *digital_OUT_ptr);
+GPIO_PinState IO_digitalRead(IO_digitalPin_t *digital_IN_ptr);
+boolean_t IO_digitalRead_state_changed(IO_digitalPin_t *digital_IN_ptr);
+boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr);
+void IO_analogRead(IO_analogSensor_t *sensor_ptr);
+void IO_analogPrint(IO_analogSensor_t sensor);
+void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
 
 
 #endif /* SRC_IO_API_H_ */

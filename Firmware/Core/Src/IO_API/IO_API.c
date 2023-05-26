@@ -12,30 +12,44 @@ static void _IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
-void IO_writeDigitalOUT(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state)
+void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state)
 {
 	digital_OUT_ptr->state = state;
 	HAL_GPIO_WritePin(digital_OUT_ptr->GPIOx, digital_OUT_ptr->GPIO_Pin, digital_OUT_ptr->state);
 }
 
-void IO_toggleDigitalOUT(IO_digitalPin_t *digital_OUT_ptr)
+void IO_digitalToggle(IO_digitalPin_t *digital_OUT_ptr)
 {
 	digital_OUT_ptr->state ^= GPIO_PIN_SET;
 	HAL_GPIO_TogglePin(digital_OUT_ptr->GPIOx, digital_OUT_ptr->GPIO_Pin);
 }
 
-GPIO_PinState IO_readDigitalIN(IO_digitalPin_t *digital_IN_ptr)
+GPIO_PinState IO_digitalRead(IO_digitalPin_t *digital_IN_ptr)
 {
 	digital_IN_ptr->state = HAL_GPIO_ReadPin(digital_IN_ptr->GPIOx, digital_IN_ptr->GPIO_Pin);
 	return digital_IN_ptr->state;
 }
 
-void IO_printAnalogValue(IO_analogSensor_t as)
+boolean_t IO_digitalRead_state_changed(IO_digitalPin_t *digital_IN_ptr)
+{
+	GPIO_PinState previous_state = digital_IN_ptr->state;
+	GPIO_PinState current_state = IO_digitalRead(digital_IN_ptr);
+	return current_state ^ previous_state;
+}
+
+boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr)
+{
+	GPIO_PinState previous_state = digital_IN_ptr->state;
+	GPIO_PinState current_state = IO_digitalRead(digital_IN_ptr);
+	return previous_state == GPIO_PIN_RESET && current_state == GPIO_PIN_SET;
+}
+
+void IO_analogPrint(IO_analogSensor_t as)
 {
 	printf("%s: %.2f %s\r\n", as.name, as.currentValue, as.unit);
 }
 
-void IO_readAnalogValue(IO_analogSensor_t *sensor_ptr)
+void IO_analogRead(IO_analogSensor_t *sensor_ptr)
 {
 	//(source: https://controllerstech.com/stm32-adc-multi-channel-without-dma/)
 	ADC_ChannelConfTypeDef sConfig = {0};
@@ -56,7 +70,7 @@ void IO_readAnalogValue(IO_analogSensor_t *sensor_ptr)
 	HAL_ADC_Stop(sensor_ptr->hadc);
 }
 
-void IO_writeAnalogValue(IO_analogActuator_t *actuator_ptr, float value)
+void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
 {
 	actuator_ptr->currentValue = value;
 	_IO_convertToDAC(actuator_ptr);

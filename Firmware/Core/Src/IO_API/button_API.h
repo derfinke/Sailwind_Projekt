@@ -13,7 +13,7 @@
 
 /* typedefs ------------------------------------------------------------------*/
 typedef GPIO_PinState button_state_t;
-typedef enum {btn_switch_mode, btn_move_left, btn_move_right, btn_calibrate} button_ID_t;
+typedef enum {button_ID_switch_mode, button_ID_move_left, button_ID_move_right, button_ID_calibrate} button_ID_t;
 typedef struct Button_t Button_t;
 struct Button_t {
 	IO_digitalPin_t pin;
