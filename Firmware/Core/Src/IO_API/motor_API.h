@@ -44,21 +44,19 @@ typedef enum {
 typedef struct {
 	uint32_t timer_cycle_count;
 	IO_digitalPin_t puls;
-	uint32_t currentValue;
+	float currentValue;
 	TIM_HandleTypeDef *htim;
 } RPM_Measurement_t;
 
 typedef struct {
 	motor_calibration_state_t state;
 	motor_set_endpoints_state_t set_endpoints_state;
-	int32_t start_pos_mm;
 	int32_t end_pos_mm;
 	int32_t center_pos_mm;
 	int32_t current_pos_mm;
 	int32_t current_pos_pulse_count;
-	int32_t max_distance_pulse_count;
 	int32_t max_distance_mm;
-	boolean_t start_pulse_count;
+	boolean_t is_calibrated;
 } motor_calibration_t;
 
 typedef struct {
@@ -100,7 +98,7 @@ void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
 void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim); //only for use in timer callback function
 void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance);
 void motor_set_operating_mode(Motor_t *motor_ptr, motor_operating_mode_t operating_mode);
-void motor_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set);
+void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set);
 void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr);
 
 

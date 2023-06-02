@@ -7,8 +7,8 @@
 #include "IO_API.h"
 
 /* private function prototypes -----------------------------------------------*/
-static void _IO_convertFromADC(IO_analogSensor_t *sensor_ptr);
-static void _IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
+static void convertFromADC(IO_analogSensor_t *sensor_ptr);
+static void convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
@@ -66,26 +66,26 @@ void IO_analogRead(IO_analogSensor_t *sensor_ptr)
 	HAL_ADC_Start(sensor_ptr->hadc);
 	HAL_ADC_PollForConversion(sensor_ptr->hadc, 1000);
 	sensor_ptr->adc_value = HAL_ADC_GetValue(sensor_ptr->hadc);
-	_IO_convertFromADC(sensor_ptr);
+	convertFromADC(sensor_ptr);
 	HAL_ADC_Stop(sensor_ptr->hadc);
 }
 
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
 {
 	actuator_ptr->currentValue = value;
-	_IO_convertToDAC(actuator_ptr);
+	convertToDAC(actuator_ptr);
 	HAL_DAC_SetValue(actuator_ptr->hdac, actuator_ptr->channel, DAC_ALIGN_12B_R, actuator_ptr->adc_value);
 }
 
 
 /* private function definitions -----------------------------------------------*/
 
-static void _IO_convertFromADC(IO_analogSensor_t *sensor_ptr)
+static void convertFromADC(IO_analogSensor_t *sensor_ptr)
 {
-	sensor_ptr->currentValue = (float)(sensor_ptr->adc_value) / (float)(ANALOG_MAX) * sensor_ptr->maxValue;
+	sensor_ptr->currentValue = sensor_ptr->adc_value / (float)(ANALOG_MAX) * sensor_ptr->maxValue;
 }
 
-static void _IO_convertToDAC(IO_analogActuator_t *actuator_ptr)
+static void convertToDAC(IO_analogActuator_t *actuator_ptr)
 {
 	actuator_ptr->adc_value = (uint16_t) (actuator_ptr->currentValue / actuator_ptr->maxValue * ANALOG_MAX) ;
 }
