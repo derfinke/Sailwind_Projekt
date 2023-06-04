@@ -58,23 +58,23 @@ void IO_analogRead(IO_analogSensor_t *sensor_ptr)
 	sConfig.Channel = sensor_ptr->channel;
 	sConfig.Rank = 1;
 	sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-	if (HAL_ADC_ConfigChannel(sensor_ptr->hadc, &sConfig) != HAL_OK)
+	if (HAL_ADC_ConfigChannel(sensor_ptr->hadc_ptr, &sConfig) != HAL_OK)
 	{
 		Error_Handler();
 	}
 
-	HAL_ADC_Start(sensor_ptr->hadc);
-	HAL_ADC_PollForConversion(sensor_ptr->hadc, 1000);
-	sensor_ptr->adc_value = HAL_ADC_GetValue(sensor_ptr->hadc);
+	HAL_ADC_Start(sensor_ptr->hadc_ptr);
+	HAL_ADC_PollForConversion(sensor_ptr->hadc_ptr, 1000);
+	sensor_ptr->adc_value = HAL_ADC_GetValue(sensor_ptr->hadc_ptr);
 	convertFromADC(sensor_ptr);
-	HAL_ADC_Stop(sensor_ptr->hadc);
+	HAL_ADC_Stop(sensor_ptr->hadc_ptr);
 }
 
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
 {
 	actuator_ptr->currentValue = value;
 	convertToDAC(actuator_ptr);
-	HAL_DAC_SetValue(actuator_ptr->hdac, actuator_ptr->channel, DAC_ALIGN_12B_R, actuator_ptr->adc_value);
+	HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->channel, DAC_ALIGN_12B_R, actuator_ptr->adc_value);
 }
 
 

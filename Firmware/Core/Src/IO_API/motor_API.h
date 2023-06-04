@@ -24,6 +24,12 @@ typedef enum {
 } motor_function_t;
 
 typedef enum {
+	motor_moving_state_aus,
+	motor_moving_state_rechtslauf,
+	motor_moving_state_linkslauf
+} motor_moving_state_t;
+
+typedef enum {
 	motor_calibration_state_0_init,
 	motor_calibration_state_1_save_endpoints,
 	motor_calibration_state_2_set_center_pos,
@@ -39,7 +45,7 @@ typedef struct {
 	uint32_t timer_cycle_count;
 	IO_digitalPin_t puls;
 	float currentValue;
-	TIM_HandleTypeDef *htim;
+	TIM_HandleTypeDef *htim_ptr;
 } RPM_Measurement_t;
 
 typedef struct {
@@ -60,12 +66,13 @@ typedef struct {
 
 typedef struct {
 	IO_operating_mode_t operating_mode;
+	motor_moving_state_t moving_state;
 	motor_calibration_t calibration;
+	motor_function_t current_function;
 	IO_digitalPin_t IN0;
 	IO_digitalPin_t IN1;
 	IO_digitalPin_t IN2;
 	IO_digitalPin_t IN3;
-	motor_function_t current_function;
 
 	IO_analogActuator_t AIN_Drehzahl_Soll;
 
