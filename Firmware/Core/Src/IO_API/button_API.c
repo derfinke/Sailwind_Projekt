@@ -90,7 +90,7 @@ static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_
 			case BUTTON_PRESSED:
 				if (motor_ptr->calibration.is_calibrated)
 				{
-					LED_switch(&led_bar_ptr->center_pos_set, LED_OFF);
+					LED_switch(&led_bar_ptr->calibration, LED_OFF);
 				}
 				motor_start_moving(motor_ptr, motor_function_direction);
 				break;
@@ -120,9 +120,9 @@ static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED
 			if (motor_ptr->calibration.is_calibrated)
 			{
 				operating_mode = IO_operating_mode_automatic;
-				if (led_bar_ptr->center_pos_set.state == LED_OFF)
+				if (led_bar_ptr->calibration.state == LED_OFF)
 				{
-					LED_switch(&led_bar_ptr->center_pos_set, LED_ON);
+					LED_switch(&led_bar_ptr->calibration, LED_ON);
 				}
 			}
 			break;
@@ -145,7 +145,7 @@ static void event_calibrate(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_
 		switch (button.pin.state)
 		{
 			case BUTTON_PRESSED:
-				motor_button_calibrate_state_machine(motor_ptr, &led_bar_ptr->center_pos_set);
+				motor_button_calibrate_state_machine(motor_ptr, &led_bar_ptr->calibration);
 				break;
 			case BUTTON_RELEASED:
 				break;

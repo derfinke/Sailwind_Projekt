@@ -30,14 +30,20 @@ LED_bar_t LED_init_bar()
 			},
 			.sail_adjustment_mode = {
 					.rollung = {
-							//ToDo
+							.GPIOx = GPIOE,
+							.GPIO_Pin = LED_Rollen_Pin,
+							.state = LED_OFF
 					},
 					.trimmung = {
-							//ToDo
+							.GPIOx = GPIOB,
+							.GPIO_Pin = LED_Trimmen_Pin,
+							.state = LED_OFF
 					}
 			},
-			.center_pos_set = {
-					//ToDo
+			.calibration = {
+					.GPIOx = GPIOD,
+					.GPIO_Pin = LED_Kalibrieren_Speichern_Pin,
+					.state = LED_OFF
 			}
 	};
 	return LED_bar;
