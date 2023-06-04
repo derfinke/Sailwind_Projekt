@@ -22,7 +22,7 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim)
 {
 	Motor_t motor =
 	{
-			.operating_mode = motor_operating_mode_manual,
+			.operating_mode = IO_operating_mode_manual,
 			.calibration =
 			{
 					.state = motor_calibration_state_0_init,
@@ -196,19 +196,18 @@ void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim)
 	}
 }
 
-void motor_set_operating_mode(Motor_t *motor_ptr, motor_operating_mode_t operating_mode)
+void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode)
 {
-	boolean_t set_automatic = operating_mode == motor_operating_mode_automatic;
-	boolean_t set_manual = operating_mode == motor_operating_mode_manual;
-	boolean_t is_alibrated = motor_ptr->calibration.is_calibrated;
-	if ((set_automatic AND is_alibrated) OR set_manual)
+	boolean_t set_automatic = operating_mode == IO_operating_mode_automatic;
+	boolean_t set_manual = operating_mode == IO_operating_mode_manual;
+	boolean_t is_calibrated = motor_ptr->calibration.is_calibrated;
+	if ((set_automatic AND is_calibrated) OR set_manual)
 	{
 		motor_ptr->operating_mode = operating_mode;
 	}
-	//ToDo
 }
 
-void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set)
+void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set_ptr)
 {
 	switch(motor_ptr->calibration.state)
 	{
@@ -220,11 +219,9 @@ void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_
 			break;
 		case motor_calibration_state_2_set_center_pos:
 			calibrate_set_center(motor_ptr);
+			LED_switch(led_center_pos_set_ptr, LED_ON);
 			motor_stop_moving(motor_ptr);
 			motor_ptr->calibration.is_calibrated = True;
-			break;
-		case motor_calibration_state_3_done:
-			//do nothing
 			break;
 	}
 }

@@ -38,7 +38,7 @@ typedef struct {
 LED_bar_t LED_init_bar();
 void LED_switch(LED_t *led_ptr, GPIO_PinState led_state);
 void LED_toggle(LED_t *led_ptr);
-void LED_toggle_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr);
+void LED_set_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr, IO_operating_mode_t operating_mode);
 void LED_toggle_sail_adjustment_mode(LED_dual_sail_adjustment_mode_t *led_sail_adjustment_mode_ptr);
 
 #endif /* SRC_IO_API_LED_API_H_ */

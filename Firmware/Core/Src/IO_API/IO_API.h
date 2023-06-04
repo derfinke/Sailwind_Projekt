@@ -14,6 +14,10 @@
 #include "std_types.h"
 
 /* typedefs -----------------------------------------------------------*/
+typedef enum {
+	IO_operating_mode_manual,
+	IO_operating_mode_automatic
+} IO_operating_mode_t;
 
 typedef struct {
 	char* name;					//nur für print ausgabe wichtig

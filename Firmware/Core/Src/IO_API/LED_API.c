@@ -53,10 +53,18 @@ void LED_toggle(LED_t *led_ptr)
 	IO_digitalToggle(led_ptr);
 }
 
-void LED_toggle_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr)
+void LED_set_operating_mode(LED_dual_operating_mode_t *led_operating_mode_ptr, IO_operating_mode_t operating_mode)
 {
-	LED_toggle(&led_operating_mode_ptr->automatic);
-	LED_toggle(&led_operating_mode_ptr->manual);
+	GPIO_PinState automatic, manual;
+	switch(operating_mode)
+	{
+		case IO_operating_mode_manual:
+			manual = LED_ON, automatic = LED_OFF; break;
+		case IO_operating_mode_automatic:
+			manual = LED_OFF, automatic = LED_ON; break;
+	}
+	LED_switch(&led_operating_mode_ptr->automatic, automatic);
+	LED_switch(&led_operating_mode_ptr->manual, manual);
 }
 
 void LED_toggle_sail_adjustment_mode(LED_dual_sail_adjustment_mode_t *led_sail_adjustment_mode_ptr)

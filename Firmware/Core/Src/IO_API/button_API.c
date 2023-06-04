@@ -9,7 +9,7 @@
 
 /* private function prototypes -----------------------------------------------*/
 static boolean_t state_changed(Button_t *button_ptr);
-static void move_toggle(Button_t button, Motor_t *motor_ptr, motor_function_t motor_function_direction);
+static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_function_t motor_function_direction);
 
 static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
 static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
@@ -81,17 +81,21 @@ static boolean_t state_changed(Button_t *button_ptr)
 	return IO_digitalRead_state_changed(&button_ptr->pin);
 }
 
-static void move_toggle(Button_t button, Motor_t *motor_ptr, motor_function_t motor_function_direction)
+static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_function_t motor_function_direction)
 {
-	if (motor_ptr->operating_mode == motor_operating_mode_manual)
+	if (motor_ptr->operating_mode == IO_operating_mode_manual && (motor_ptr->calibration.is_calibrated || motor_ptr->calibration.state == motor_calibration_state_0_init))
 	{
 		switch (button.pin.state)
 		{
 			case BUTTON_PRESSED:
-				printf("\nmotor_start_moving(motor_ptr, motor_function_direction);\n");
+				if (motor_ptr->calibration.is_calibrated)
+				{
+					LED_switch(&led_bar_ptr->center_pos_set, LED_OFF);
+				}
+				motor_start_moving(motor_ptr, motor_function_direction);
 				break;
 			case BUTTON_RELEASED:
-				printf("\nmotor_stop_moving(motor_ptr);\n");
+				motor_stop_moving(motor_ptr);
 				break;
 		}
 	}
@@ -99,33 +103,44 @@ static void move_toggle(Button_t button, Motor_t *motor_ptr, motor_function_t mo
 
 static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, motor_function_linkslauf);
+	move_toggle(button, motor_ptr, led_bar_ptr, motor_function_linkslauf);
 }
 
 static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, motor_function_rechtslauf);
+	move_toggle(button, motor_ptr, led_bar_ptr, motor_function_rechtslauf);
 }
 
 static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	//motor_operating_mode_t operating_mode;
+	IO_operating_mode_t operating_mode = motor_ptr->operating_mode;
 	switch (button.pin.state)
 	{
 		case BUTTON_SWITCH_AUTOMATIC:
-			printf("\nmotor_ptr->operating_mode = motor_operating_mode_automatic;\n");
+			if (motor_ptr->calibration.is_calibrated)
+			{
+				operating_mode = IO_operating_mode_automatic;
+				if (led_bar_ptr->center_pos_set.state == LED_OFF)
+				{
+					LED_switch(&led_bar_ptr->center_pos_set, LED_ON);
+				}
+			}
 			break;
 		case BUTTON_SWITCH_MANUAL:
-			printf("\nmotor_ptr->operating_mode = motor_operating_mode_manual;\n");
+			operating_mode = IO_operating_mode_manual;
 			break;
 	}
-	//motor_set_operating_mode(motor_ptr, operating_mode);
-	LED_toggle_operating_mode(&led_bar_ptr->operating_mode);
+	if (operating_mode != motor_ptr->operating_mode)
+	{
+		LED_set_operating_mode(&led_bar_ptr->operating_mode, operating_mode);
+		motor_set_operating_mode(motor_ptr, operating_mode);
+	}
+
 }
 
 static void event_calibrate(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	if (motor_ptr->operating_mode == motor_operating_mode_manual)
+	if (motor_ptr->operating_mode == IO_operating_mode_manual)
 	{
 		switch (button.pin.state)
 		{

@@ -24,15 +24,9 @@ typedef enum {
 } motor_function_t;
 
 typedef enum {
-	motor_operating_mode_manual,
-	motor_operating_mode_automatic
-} motor_operating_mode_t;
-
-typedef enum {
 	motor_calibration_state_0_init,
 	motor_calibration_state_1_save_endpoints,
 	motor_calibration_state_2_set_center_pos,
-	motor_calibration_state_3_done
 } motor_calibration_state_t;
 
 typedef enum {
@@ -65,7 +59,7 @@ typedef struct {
 } motor_endschalter_t;
 
 typedef struct {
-	motor_operating_mode_t operating_mode;
+	IO_operating_mode_t operating_mode;
 	motor_calibration_t calibration;
 	IO_digitalPin_t IN0;
 	IO_digitalPin_t IN1;
@@ -97,7 +91,7 @@ void motor_stop_rpm_measurement(Motor_t *motor_ptr);
 void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
 void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim); //only for use in timer callback function
 void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance);
-void motor_set_operating_mode(Motor_t *motor_ptr, motor_operating_mode_t operating_mode);
+void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode);
 void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set);
 void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr);
 
