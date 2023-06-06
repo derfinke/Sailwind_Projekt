@@ -90,7 +90,7 @@ typedef struct {
 
 /* API function prototypes -----------------------------------------------*/
 Motor_t motor_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim);
-void motor_start_moving(Motor_t *motor_ptr, motor_function_t motor_function_direction);
+void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t moving_state);
 void motor_stop_moving(Motor_t *motor_ptr);
 void motor_set_function(Motor_t *motor_ptr, motor_function_t function);
 void motor_start_rpm_measurement(Motor_t *motor_ptr);

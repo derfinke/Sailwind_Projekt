@@ -9,7 +9,7 @@
 
 /* private function prototypes -----------------------------------------------*/
 static boolean_t state_changed(Button_t *button_ptr);
-static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_function_t motor_function_direction);
+static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction);
 
 static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
 static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
@@ -81,7 +81,7 @@ static boolean_t state_changed(Button_t *button_ptr)
 	return IO_digitalRead_state_changed(&button_ptr->pin);
 }
 
-static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_function_t motor_function_direction)
+static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
 {
 	if (motor_ptr->operating_mode == IO_operating_mode_manual && (motor_ptr->calibration.is_calibrated || motor_ptr->calibration.state == motor_calibration_state_0_init))
 	{
@@ -92,7 +92,7 @@ static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_
 				{
 					LED_switch(&led_bar_ptr->calibration, LED_OFF);
 				}
-				motor_start_moving(motor_ptr, motor_function_direction);
+				motor_start_moving(motor_ptr, direction);
 				break;
 			case BUTTON_RELEASED:
 				motor_stop_moving(motor_ptr);
@@ -103,12 +103,12 @@ static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_
 
 static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, led_bar_ptr, motor_function_linkslauf);
+	move_toggle(button, motor_ptr, led_bar_ptr, motor_moving_state_linkslauf);
 }
 
 static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, led_bar_ptr, motor_function_rechtslauf);
+	move_toggle(button, motor_ptr, led_bar_ptr, motor_moving_state_rechtslauf);
 }
 
 static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)

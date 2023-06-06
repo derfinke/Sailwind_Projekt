@@ -95,10 +95,10 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 	return motor;
 }
 
-void motor_start_moving(Motor_t *motor_ptr, motor_function_t motor_function_direction)
+void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
 {
-	motor_ptr->moving_state = (motor_moving_state_t)(motor_function_direction);
-	motor_set_function(motor_ptr, motor_function_direction);
+	motor_ptr->moving_state = direction;
+	motor_set_function(motor_ptr, (motor_function_t)(direction));
 	motor_set_function(motor_ptr, motor_function_speed1);
 }
 
@@ -240,21 +240,21 @@ void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
 		switch(calibration->set_endpoints_state)
 		{
 			case motor_set_endpoints_state_0_init:
-				motor_start_moving(motor_ptr, motor_function_linkslauf);
+				motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
 				calibration->set_endpoints_state = motor_set_endpoints_state_1_move_to_end_pos_vorne;
 				break;
 			case motor_set_endpoints_state_1_move_to_end_pos_vorne:
 				if (endschalter_detected(&motor_ptr->endschalter.vorne))
 				{
 					start_rpm_measurement(motor_ptr);
-					motor_start_moving(motor_ptr, motor_function_rechtslauf);
+					motor_start_moving(motor_ptr, motor_moving_state_rechtslauf);
 					calibration->set_endpoints_state = motor_set_endpoints_state_2_move_to_end_pos_hinten;
 				}
 				break;
 			case motor_set_endpoints_state_2_move_to_end_pos_hinten:
 				if (endschalter_detected(&motor_ptr->endschalter.hinten))
 				{
-					motor_start_moving(motor_ptr, motor_function_linkslauf);
+					motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
 					calibrate_set_endpoints(calibration);
 					calibration->state = motor_calibration_state_2_set_center_pos;
 				}
