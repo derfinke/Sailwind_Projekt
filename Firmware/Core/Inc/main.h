@@ -83,8 +83,6 @@ void Error_Handler(void);
 #define Windsensor_Rx_GPIO_Port GPIOA
 #define Drehzahl_DAC_OUT_Pin GPIO_PIN_4
 #define Drehzahl_DAC_OUT_GPIO_Port GPIOA
-#define Temperaturmessung_Pin GPIO_PIN_5
-#define Temperaturmessung_GPIO_Port GPIOA
 #define Analog_IN_Optional_Pin GPIO_PIN_6
 #define Analog_IN_Optional_GPIO_Port GPIOA
 #define RMII_CRS_DV_Pin GPIO_PIN_7
