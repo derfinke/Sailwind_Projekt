@@ -11,29 +11,30 @@
 #include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include "main.h"
-#include "std_types.h"
 
 /* typedefs -----------------------------------------------------------*/
+typedef enum {False, True} boolean_t;
+
 typedef enum {
 	IO_operating_mode_manual,
 	IO_operating_mode_automatic
 } IO_operating_mode_t;
 
 typedef struct {
-	char* name;					//nur für print ausgabe wichtig
-	char* unit;						//nur für print ausgabe wichtig
-	ADC_HandleTypeDef *hadc_ptr; 	//zb "hadc1" wie bereits in der main automatisch generiert (hadc1 ist bereits ein pointer)
-	uint32_t channel;			//zb "ADC_CHANNEL_0" (je nachdem wo der sensor eingetragen ist
-	float maxValue;			//max wert der zu messenden Größe (wichtig, um den aktuellen wert aus dem adc wert zu berechnen
-	float currentValue;		//wird automatisch gesetzt
-	uint16_t adc_value;			//wird automatisch gesetzt
+	char* name;					
+	char* unit;						
+	ADC_HandleTypeDef *hadc_ptr; 	
+	uint32_t hadc_channel;
+	float maxConvertedValue;
+	float currentConvertedValue;
+	uint16_t adc_value;			
 } IO_analogSensor_t;
 
 typedef struct {
 	DAC_HandleTypeDef *hdac_ptr;
-	uint32_t channel;
-	float maxValue;
-	float currentValue;
+	uint32_t hdac_channel;
+	float maxConvertedValue;
+	float currentConvertedValue;
 	uint16_t adc_value;
 } IO_analogActuator_t;
 

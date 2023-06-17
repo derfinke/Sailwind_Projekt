@@ -12,7 +12,6 @@
 #include "LED_API.h"
 
 /* typedefs ------------------------------------------------------------------*/
-typedef GPIO_PinState button_state_t;
 typedef enum {button_ID_switch_mode, button_ID_move_left, button_ID_move_right, button_ID_calibrate} button_ID_t;
 typedef struct Button_t Button_t;
 struct Button_t {

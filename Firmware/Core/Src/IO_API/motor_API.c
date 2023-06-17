@@ -60,9 +60,9 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 			.AIN_Drehzahl_Soll =
 			{
 					.hdac_ptr = hdac_ptr,
-					.channel = DAC_CHANNEL_1,
-					.maxValue = MOTOR_RPM_MAX,
-					.currentValue = 0.0F,
+					.hdac_channel = DAC_CHANNEL_1,
+					.maxConvertedValue = MOTOR_RPM_MAX,
+					.currentConvertedValue = 0.0F,
 					.adc_value = 0
 			},
 			.OUT1_Drehzahl_Messung =
@@ -95,6 +95,11 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 	return motor;
 }
 
+/* void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
+ *  Description:
+ *   - write digital motor Inputs to start motor movement in desired direction (motor_moving_state_rechtslauf / ...linkslauf)
+ *   - save the new moving state to the motor reference
+ */
 void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
 {
 	motor_ptr->moving_state = direction;
@@ -102,43 +107,80 @@ void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
 	motor_set_function(motor_ptr, motor_function_speed1);
 }
 
+/* void motor_stop_moving(Motor_t *motor_ptr)
+ *  Description:
+ *   - write digital motor Inputs to stop the motor
+ *   - save the new moving state to the motor reference
+ */
 void motor_stop_moving(Motor_t *motor_ptr)
 {
 	motor_ptr->moving_state = motor_moving_state_aus;
 	motor_set_function(motor_ptr, motor_function_aus);
 }
 
+/* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
+ *  Description:
+ *   - convert the "function" enum (0..7) to a binary number between 00 and 11 to set the digital motor Inputs as following:
+ *   - function |IN0 	IN1 |IN2	IN3	|meaning
+ *     ---------------------------------------------------------
+ *   		0	|0		0	|-		-	|aus
+ *   		1	|1		0	|-		-	|rechtslauf
+ *   		2	|0		1	|-		-	|linkslauf
+ *   		3	|1		1	|-		-	|stopp mit haltemoment
+ *   		4	|-		-	|0		0	|drehzahlvorgabe
+ *   		5	|-		-	|1		0	|stromvorgabe
+ *   		6	|-		-	|0		1	|speed1
+ *   		7	|-		-	|1		1	|speed2
+ *   - the digits are calculated separately in a for loop that does a bitwise "and" operation with the value 2 and the function value and checks, if the result is != 0
+ *   - afterwards the function value is left shifted and the process is repeated for the second digit
+ */
 void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
 {
 	motor_ptr->current_function = function;
 	IO_digitalPin_t *motor_INs_ptr[] = {&motor_ptr->IN0, &motor_ptr->IN1, &motor_ptr->IN2, &motor_ptr->IN3};
-	boolean_t pin_offset = function >= 4;
-	int8_t function_bits = function - pin_offset * 4; //subtract 4 to function id if its >= 4 -> convert number {0..3} to binary in following for loop
+	uint8_t pin_offset = (function >= 4) * 2; // 0 or 2 -> write IN0+0, IN1+0 or IN0+2, IN1+2
+	int8_t function_bits = function - pin_offset * 2; //subtract 4 to function id if its >= 4 -> convert number {0..3} to binary in following for loop
 	for (int i = 0; i < 2; i++)
 	{ // write IN0 and IN1 (function in {0..3}) or IN2 and IN3 (function in {4..7}
-		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET;
-		uint8_t INx = i + pin_offset*2;
+		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET; // example: function = 3_d = 11_b, 2_d == 10_b -> 11 & 10 = 10  -> 10 != 0 -> 1
+		uint8_t INx = i + pin_offset;											 //			 function << 1 -> 110_b             -> 110 & 10 = 10 -> 10 != 0 -> 1
 		IO_digitalWrite(motor_INs_ptr[INx], state);
 		function_bits <<= 1;
 	}
 }
 
+/* void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
+ *  Description:
+ *   -
+ */
 void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 {
 	motor_set_function(motor_ptr, motor_function_drehzahlvorgabe);
 	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, rpm_value);
 }
 
+/* void motor_start_rpm_measurement(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
 void motor_start_rpm_measurement(Motor_t *motor_ptr)
 {
 	HAL_TIM_Base_Start_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
 }
 
+/* void motor_stop_rpm_measurement(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
 void motor_stop_rpm_measurement(Motor_t *motor_ptr)
 {
 	HAL_TIM_Base_Stop_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
 }
 
+/* void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
+ *  Description:
+ *   -
+ */
 void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
 {
 	printf("\nstoppt Motor...\n");
@@ -173,6 +215,10 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	press_enter_to_continue();
 }
 
+/* void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
+ *  Description:
+ *   -
+ */
 void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
 {
 	RPM_Measurement_t *drehzahl_messung_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
@@ -202,17 +248,25 @@ void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
 	}
 }
 
+/* void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode)
+ *  Description:
+ *   -
+ */
 void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode)
 {
 	boolean_t set_automatic = operating_mode == IO_operating_mode_automatic;
 	boolean_t set_manual = operating_mode == IO_operating_mode_manual;
 	boolean_t is_calibrated = motor_ptr->calibration.is_calibrated;
-	if ((set_automatic AND is_calibrated) OR set_manual)
+	if ((set_automatic && is_calibrated) || set_manual)
 	{
 		motor_ptr->operating_mode = operating_mode;
 	}
 }
 
+/* void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set_ptr)
+ *  Description:
+ *   -
+ */
 void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set_ptr)
 {
 	switch(motor_ptr->calibration.state)
@@ -232,6 +286,10 @@ void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_
 	}
 }
 
+/* void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
 void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
 {
 	motor_calibration_t *calibration = &motor_ptr->calibration;
@@ -264,6 +322,11 @@ void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
 }
 
 /* private function definitions -----------------------------------------------*/
+
+/* static void convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
+ *  Description:
+ *   -
+ */
 static void convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
 {
 	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
@@ -278,38 +341,59 @@ static void press_enter_to_continue()
 	getchar();
 }
 
+/* static void calibrate_set_center(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
 static void calibrate_set_center(Motor_t *motor_ptr)
 {
 	motor_ptr->calibration.center_pos_mm = motor_ptr->calibration.current_pos_mm;
 }
 
+/* static boolean_t endschalter_detected(IO_digitalPin_t *motor_endschalter_ptr)
+ *  Description:
+ *   -
+ */
 static boolean_t endschalter_detected(IO_digitalPin_t *motor_endschalter_ptr)
 {
 	return (boolean_t) IO_digitalRead(motor_endschalter_ptr);
 }
 
+/* static int32_t convert_pulse_count_to_distance(int32_t pulse_count)
+ *  Description:
+ *   -
+ */
 static int32_t convert_pulse_count_to_distance(int32_t pulse_count)
 {
 	return (uint32_t) (pulse_count / (float)(MOTOR_PULSE_PER_ROTATION) * MOTOR_DISTANCE_PER_ROTATION);
 }
 
+/* static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr)
+ *  Description:
+ *   -
+ */
 static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr)
 {
 	calibration_ptr->end_pos_mm = convert_pulse_count_to_distance(calibration_ptr->current_pos_pulse_count)/2;
 	calibration_ptr->current_pos_mm = calibration_ptr->end_pos_mm;
 }
 
+/* static void update_current_position(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
 static void update_current_position(Motor_t *motor_ptr)
 {
 	motor_ptr->calibration.current_pos_mm = convert_pulse_count_to_distance(motor_ptr->calibration.current_pos_pulse_count) - motor_ptr->calibration.end_pos_mm;
 }
 
-static void start_rpm_measurement(Motor_t *motor_ptr)
-{
-	HAL_TIM_Base_Start_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
-}
 
 /* Timer Callback implementation for rpm measurement --------------------------*/
+
+/* void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
+ *  Description:
+ *   -
+ */
 /*
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
 {
