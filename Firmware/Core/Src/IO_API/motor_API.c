@@ -8,14 +8,8 @@
 #include "motor_API.h"
 
 /* private function prototypes -----------------------------------------------*/
-static void convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr);
 static void press_enter_to_continue();
-static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr);
-static void calibrate_set_center(Motor_t *motor_ptr);
-static boolean_t endschalter_detected(IO_digitalPin_t *motor_endschalter_ptr);
-static int32_t convert_pulse_count_to_distance(int32_t pulse_count);
-static void update_current_position(Motor_t *motor_ptr);
-static void start_rpm_measurement(Motor_t *motor_ptr);
+
 
 
 /* API function definitions -----------------------------------------------*/
@@ -23,16 +17,8 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 {
 	Motor_t motor =
 	{
-			.operating_mode = IO_operating_mode_manual,
 			.moving_state = motor_moving_state_aus,
 			.current_function = motor_function_aus,
-			.calibration =
-			{
-					.state = motor_calibration_state_0_init,
-					.set_endpoints_state = motor_set_endpoints_state_0_init,
-					.current_pos_pulse_count = 0,
-					.is_calibrated = False
-			},
 			.IN0 =
 			{
 					.GPIOx = GPIOD,
@@ -177,6 +163,19 @@ void motor_stop_rpm_measurement(Motor_t *motor_ptr)
 	HAL_TIM_Base_Stop_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
 }
 
+/* void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
+ *  Description:
+ *   -
+ */
+void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
+{
+	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
+	float f_timer = HAL_RCC_GetPCLK2Freq() / (float)(drehzahl_messung_ptr->htim_ptr->Init.Prescaler) / (float)(drehzahl_messung_ptr->htim_ptr->Init.Period);
+	float f_pulse = f_timer / (float)(drehzahl_messung_ptr->timer_cycle_count);
+	drehzahl_messung_ptr->currentValue = f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
+	drehzahl_messung_ptr->timer_cycle_count = 0;
+}
+
 /* void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
  *  Description:
  *   -
@@ -215,191 +214,12 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	press_enter_to_continue();
 }
 
-/* void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
- *  Description:
- *   -
- */
-void motor_callback_get_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
-{
-	RPM_Measurement_t *drehzahl_messung_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
-	if (htim_ptr==drehzahl_messung_ptr->htim_ptr)
-	{
-		drehzahl_messung_ptr->timer_cycle_count++;
-		if (IO_digitalRead_rising_edge(&drehzahl_messung_ptr->puls))
-		{
-			convert_timeStep_to_rpm(drehzahl_messung_ptr);
-			if (motor_ptr->calibration.set_endpoints_state == motor_set_endpoints_state_2_move_to_end_pos_hinten || motor_ptr->calibration.is_calibrated)
-			{
-				switch(motor_ptr->moving_state)
-				{
-					case motor_moving_state_rechtslauf:
-						motor_ptr->calibration.current_pos_pulse_count++; break;
-					case motor_moving_state_linkslauf:
-						motor_ptr->calibration.current_pos_pulse_count--; break;
-					default:
-						;
-				}
-				if (motor_ptr->calibration.state == motor_calibration_state_2_set_center_pos  || motor_ptr->calibration.is_calibrated)
-				{
-					update_current_position(motor_ptr);
-				}
-			}
-		}
-	}
-}
-
-/* void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode)
- *  Description:
- *   -
- */
-void motor_set_operating_mode(Motor_t *motor_ptr, IO_operating_mode_t operating_mode)
-{
-	boolean_t set_automatic = operating_mode == IO_operating_mode_automatic;
-	boolean_t set_manual = operating_mode == IO_operating_mode_manual;
-	boolean_t is_calibrated = motor_ptr->calibration.is_calibrated;
-	if ((set_automatic && is_calibrated) || set_manual)
-	{
-		motor_ptr->operating_mode = operating_mode;
-	}
-}
-
-/* void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set_ptr)
- *  Description:
- *   -
- */
-void motor_button_calibrate_state_machine(Motor_t *motor_ptr, LED_t *led_center_pos_set_ptr)
-{
-	switch(motor_ptr->calibration.state)
-	{
-		case motor_calibration_state_0_init:
-			motor_ptr->calibration.state = motor_calibration_state_1_save_endpoints;
-			break;
-		case motor_calibration_state_1_save_endpoints:
-			//wait for endpoints_set
-			break;
-		case motor_calibration_state_2_set_center_pos:
-			calibrate_set_center(motor_ptr);
-			LED_switch(led_center_pos_set_ptr, LED_ON);
-			motor_stop_moving(motor_ptr);
-			motor_ptr->calibration.is_calibrated = True;
-			break;
-	}
-}
-
-/* void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
- *  Description:
- *   -
- */
-void motor_calibrate_state_machine_set_endpoints(Motor_t *motor_ptr)
-{
-	motor_calibration_t *calibration = &motor_ptr->calibration;
-	if (calibration->state == motor_calibration_state_1_save_endpoints)
-	{
-		switch(calibration->set_endpoints_state)
-		{
-			case motor_set_endpoints_state_0_init:
-				motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
-				calibration->set_endpoints_state = motor_set_endpoints_state_1_move_to_end_pos_vorne;
-				break;
-			case motor_set_endpoints_state_1_move_to_end_pos_vorne:
-				if (endschalter_detected(&motor_ptr->endschalter.vorne))
-				{
-					start_rpm_measurement(motor_ptr);
-					motor_start_moving(motor_ptr, motor_moving_state_rechtslauf);
-					calibration->set_endpoints_state = motor_set_endpoints_state_2_move_to_end_pos_hinten;
-				}
-				break;
-			case motor_set_endpoints_state_2_move_to_end_pos_hinten:
-				if (endschalter_detected(&motor_ptr->endschalter.hinten))
-				{
-					motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
-					calibrate_set_endpoints(calibration);
-					calibration->state = motor_calibration_state_2_set_center_pos;
-				}
-				break;
-		}
-	}
-}
-
 /* private function definitions -----------------------------------------------*/
-
-/* static void convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
- *  Description:
- *   -
- */
-static void convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
-{
-	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
-	float f_timer = HAL_RCC_GetPCLK2Freq() / (float)(drehzahl_messung_ptr->htim_ptr->Init.Prescaler) / (float)(drehzahl_messung_ptr->htim_ptr->Init.Period);
-	float f_pulse = f_timer / (float)(drehzahl_messung_ptr->timer_cycle_count);
-	drehzahl_messung_ptr->currentValue = f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
-	drehzahl_messung_ptr->timer_cycle_count = 0;
-}
 
 static void press_enter_to_continue()
 {
 	getchar();
 }
-
-/* static void calibrate_set_center(Motor_t *motor_ptr)
- *  Description:
- *   -
- */
-static void calibrate_set_center(Motor_t *motor_ptr)
-{
-	motor_ptr->calibration.center_pos_mm = motor_ptr->calibration.current_pos_mm;
-}
-
-/* static boolean_t endschalter_detected(IO_digitalPin_t *motor_endschalter_ptr)
- *  Description:
- *   -
- */
-static boolean_t endschalter_detected(IO_digitalPin_t *motor_endschalter_ptr)
-{
-	return (boolean_t) IO_digitalRead(motor_endschalter_ptr);
-}
-
-/* static int32_t convert_pulse_count_to_distance(int32_t pulse_count)
- *  Description:
- *   -
- */
-static int32_t convert_pulse_count_to_distance(int32_t pulse_count)
-{
-	return (uint32_t) (pulse_count / (float)(MOTOR_PULSE_PER_ROTATION) * MOTOR_DISTANCE_PER_ROTATION);
-}
-
-/* static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr)
- *  Description:
- *   -
- */
-static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr)
-{
-	calibration_ptr->end_pos_mm = convert_pulse_count_to_distance(calibration_ptr->current_pos_pulse_count)/2;
-	calibration_ptr->current_pos_mm = calibration_ptr->end_pos_mm;
-}
-
-/* static void update_current_position(Motor_t *motor_ptr)
- *  Description:
- *   -
- */
-static void update_current_position(Motor_t *motor_ptr)
-{
-	motor_ptr->calibration.current_pos_mm = convert_pulse_count_to_distance(motor_ptr->calibration.current_pos_pulse_count) - motor_ptr->calibration.end_pos_mm;
-}
-
-
-/* Timer Callback implementation for rpm measurement --------------------------*/
-
-/* void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
- *  Description:
- *   -
- */
-/*
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
-{
-	motor_callback_get_rpm(&motor, htim_ptr);
-}
-*/
 
 
 

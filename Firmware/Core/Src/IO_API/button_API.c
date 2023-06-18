@@ -9,12 +9,12 @@
 
 /* private function prototypes -----------------------------------------------*/
 static boolean_t state_changed(Button_t *button_ptr);
-static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction);
+static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction);
 
-static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
-static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
-static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
-static void event_calibrate(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
+static void event_move_left_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
+static void event_move_right_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
+static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
+static void event_calibrate(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
@@ -70,20 +70,20 @@ Button_t* button_init_array()
 	return buttons;
 }
 
-/* void button_eventHandler(Button_t buttons[BUTTON_COUNT], Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+/* void button_eventHandler(Button_t buttons[BUTTON_COUNT], Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
  * 	Description:
  * 	 - to be called in main loop
  * 	 - iterates through the button array and checks for each button, if its state has changed
  * 	 - if so, its eventHandler is called and the button itself together with the motor and the led_bar are passed as standard parameter
  * 	 - the specific eventHandler functions are defined below and must have the same parameters to be called in a loop
  */
-void button_eventHandler(Button_t buttons[BUTTON_COUNT], Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+void button_eventHandler(Button_t buttons[BUTTON_COUNT], Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
 	for (button_ID_t btn_idx = 0; btn_idx < BUTTON_COUNT; btn_idx++)
 	{
 		if (state_changed(&buttons[btn_idx]))
 		{
-			buttons[btn_idx].eventHandler(buttons[btn_idx], motor_ptr, led_bar_ptr);
+			buttons[btn_idx].eventHandler(buttons[btn_idx], linear_guide_ptr, led_bar_ptr);
 		}
 	}
 }
@@ -99,21 +99,23 @@ static boolean_t state_changed(Button_t *button_ptr)
 	return IO_digitalRead_state_changed(&button_ptr->pin);
 }
 
-/* static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
+/* static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
  *  Description:
  *   - called within the two eventHandler to move either left or right depending on the parameter "direction"
  *   - manual moving is only possible, if operating mode is manual and if the calibration process is not running currently (so it cannot be interrupted)
  *   - if the button is pressed, a function is called to start the motor in the given direction
  *   - if it is released, the motor is commanded to stop
  */
-static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
+static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
 {
-	if (motor_ptr->operating_mode == IO_operating_mode_manual && (motor_ptr->calibration.is_calibrated || motor_ptr->calibration.state == motor_calibration_state_0_init))
+	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
+	Motor_t *motor_ptr = &linear_guide_ptr->motor;
+	if (linear_guide_ptr->operating_mode == IO_operating_mode_manual && (calibration_ptr->is_calibrated || calibration_ptr->state == linear_guide_calibration_state_0_init))
 	{
 		switch (button.pin.state)
 		{
 			case BUTTON_PRESSED:
-				if (motor_ptr->calibration.is_calibrated)
+				if (calibration_ptr->is_calibrated)
 				{
 					LED_switch(&led_bar_ptr->calibration, LED_OFF); // switch calibration LED off, so it can be switched on, after setting a new center position
 				}
@@ -126,17 +128,17 @@ static void move_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_
 	}
 }
 
-static void event_move_left_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+static void event_move_left_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, led_bar_ptr, motor_moving_state_linkslauf);
+	move_toggle(button, linear_guide_ptr, led_bar_ptr, motor_moving_state_linkslauf);
 }
 
-static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+static void event_move_right_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
-	move_toggle(button, motor_ptr, led_bar_ptr, motor_moving_state_rechtslauf);
+	move_toggle(button, linear_guide_ptr, led_bar_ptr, motor_moving_state_rechtslauf);
 }
 
-/* static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+/* static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
  *  Description:
  *   - eventHandler to switch operating mode
  *   - switching the button to automatic only works, if the calibration process is done
@@ -145,13 +147,13 @@ static void event_move_right_toggle(Button_t button, Motor_t *motor_ptr, LED_bar
  *   - if the operating mode could be changed, the corresponding LEDs are set and reset
  *     and also the operating mode state of the motor object is set
  */
-static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
-	IO_operating_mode_t operating_mode = motor_ptr->operating_mode;
+	IO_operating_mode_t operating_mode = linear_guide_ptr->operating_mode;
 	switch (button.pin.state)
 	{
 		case BUTTON_SWITCH_AUTOMATIC:
-			if (motor_ptr->calibration.is_calibrated)
+			if (linear_guide_ptr->calibration.is_calibrated)
 			{
 				operating_mode = IO_operating_mode_automatic;
 				if (led_bar_ptr->calibration.state == LED_OFF)
@@ -164,15 +166,15 @@ static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED
 			operating_mode = IO_operating_mode_manual;
 			break;
 	}
-	if (operating_mode != motor_ptr->operating_mode)
+	if (operating_mode != linear_guide_ptr->operating_mode)
 	{
-		LED_set_operating_mode(&led_bar_ptr, operating_mode);
-		motor_set_operating_mode(motor_ptr, operating_mode);
+		LED_set_operating_mode(led_bar_ptr, operating_mode);
+		linear_guide_set_operating_mode(linear_guide_ptr, operating_mode);
 	}
 
 }
 
-/* static void event_calibrate(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+/* static void event_calibrate(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
  *  Description:
  *   - eventHandler for the calibration button
  *   - only works in manual mode
@@ -182,14 +184,14 @@ static void event_switch_operating_mode(Button_t button, Motor_t *motor_ptr, LED
  *   - 2. press only works, if the calibration process is ready to finish
  *   - further presses can be made to adjust the center position after manually moving the motor with the respective buttons
  */
-static void event_calibrate(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr)
+static void event_calibrate(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
-	if (motor_ptr->operating_mode == IO_operating_mode_manual)
+	if (linear_guide_ptr->operating_mode == IO_operating_mode_manual)
 	{
 		switch (button.pin.state)
 		{
 			case BUTTON_PRESSED:
-				motor_button_calibrate_state_machine(motor_ptr, &led_bar_ptr->calibration);
+				linear_guide_calibrate_button_state_machine(linear_guide_ptr, &led_bar_ptr->calibration);
 				break;
 			case BUTTON_RELEASED:
 				break;
