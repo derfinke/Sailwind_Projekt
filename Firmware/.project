@@ -29,4 +29,10 @@
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
 	</natures>
+	<variableList>
+		<variable>
+			<name>SAILWIND</name>
+			<value>$%7BPROJECT_LOC%7D/Sailwind</value>
+		</variable>
+	</variableList>
 </projectDescription>
