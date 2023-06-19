@@ -51,6 +51,7 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
+IO_digitalPin_t IO_digitalPin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state);
 void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state);
 void IO_digitalToggle(IO_digitalPin_t *digital_OUT_ptr);
 GPIO_PinState IO_digitalRead(IO_digitalPin_t *digital_IN_ptr);

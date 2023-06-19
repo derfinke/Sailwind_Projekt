@@ -150,16 +150,8 @@ static linear_guide_calibration_t calibration_init()
 static linear_guide_endschalter_t endschalter_init()
 {
 	linear_guide_endschalter_t endschalter = {
-			.hinten = {
-					.GPIOx = GPIOB,
-					.GPIO_Pin = Endschalter_Hinten_Pin,
-					.state = GPIO_PIN_RESET
-			},
-			.vorne = {
-					.GPIOx = GPIOB,
-					.GPIO_Pin = Endschalter_Vorne_Pin,
-					.state = GPIO_PIN_RESET
-			}
+			.hinten = IO_digitalPin_init(GPIOB, Endschalter_Hinten_Pin, GPIO_PIN_RESET),
+			.vorne = IO_digitalPin_init(GPIOB, Endschalter_Vorne_Pin, GPIO_PIN_RESET),
 	};
 	return endschalter;
 }

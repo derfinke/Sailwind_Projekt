@@ -11,40 +11,16 @@
 LED_bar_t LED_init_bar()
 {
 	LED_bar_t LED_bar = {
-			.motor_error = {
-					.GPIOx = GPIOE,
-					.GPIO_Pin = LED_Stoerung_Pin,
-					.state = LED_OFF
-			},
+			.motor_error = IO_digitalPin_init(GPIOD, LED_Stoerung_Pin, LED_OFF),
 			.operating_mode = {
-					.manual = {
-							.GPIOx = GPIOE,
-							.GPIO_Pin = LED_Manuell_Pin,
-							.state = LED_OFF
-					},
-					.automatic = {
-							.GPIOx = GPIOE,
-							.GPIO_Pin = LED_Automatik_Pin,
-							.state = LED_OFF
-					}
+					.manual = IO_digitalPin_init(GPIOD, LED_Manuell_Pin, LED_OFF),
+					.automatic = IO_digitalPin_init(GPIOB, LED_Automatik_Pin, LED_OFF),
 			},
 			.sail_adjustment_mode = {
-					.rollung = {
-							.GPIOx = GPIOE,
-							.GPIO_Pin = LED_Rollen_Pin,
-							.state = LED_OFF
-					},
-					.trimmung = {
-							.GPIOx = GPIOB,
-							.GPIO_Pin = LED_Trimmen_Pin,
-							.state = LED_OFF
-					}
+					.rollung = IO_digitalPin_init(GPIOE, LED_Rollen_Pin, LED_OFF),
+					.trimmung = IO_digitalPin_init(GPIOB, LED_Trimmen_Pin, LED_OFF),
 			},
-			.calibration = {
-					.GPIOx = GPIOD,
-					.GPIO_Pin = LED_Kalibrieren_Speichern_Pin,
-					.state = LED_OFF
-			}
+			.calibration = IO_digitalPin_init(GPIOD, LED_Kalibrieren_Speichern_Pin, LED_OFF),
 	};
 	return LED_bar;
 }

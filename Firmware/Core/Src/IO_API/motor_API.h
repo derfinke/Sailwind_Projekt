@@ -31,7 +31,7 @@ typedef enum {
 typedef struct {
 	uint32_t timer_cycle_count;
 	IO_digitalPin_t puls;
-	float currentValue;
+	float currentConvertedValue;
 	TIM_HandleTypeDef *htim_ptr;
 } RPM_Measurement_t;
 

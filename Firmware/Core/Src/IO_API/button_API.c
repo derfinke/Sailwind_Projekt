@@ -28,41 +28,25 @@ Button_t* button_init_array()
 	static Button_t buttons[BUTTON_COUNT];
 
 	Button_t button_switch_mode = {
-			.pin = {
-					.GPIOx = GPIOE,
-					.GPIO_Pin = BUTTON_SWITCH_AUTOMATIC,
-					.state = BUTTON_SWITCH_MANUAL
-			},
+			.pin = IO_digitalPin_init(GPIOF, Switch_Betriebsmodus_Pin, BUTTON_SWITCH_MANUAL),
 			.eventHandler = event_switch_operating_mode
 	};
 	buttons[button_ID_switch_mode] = button_switch_mode;
 
 	Button_t button_move_left = {
-			.pin = {
-					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_Zurueck_Pin,
-					.state = BUTTON_RELEASED
-			},
+			.pin = IO_digitalPin_init(GPIOB, Button_Zurueck_Pin, BUTTON_RELEASED),
 			.eventHandler = event_move_left_toggle
 	};
 	buttons[button_ID_move_left] = button_move_left;
 
 	Button_t button_move_right = {
-			.pin = {
-					.GPIOx = GPIOE,
-					.GPIO_Pin = Kalibrierung_Pin,
-					.state = BUTTON_RELEASED
-			},
+			.pin = IO_digitalPin_init(GPIOB, Button_Vorfahren_Pin, BUTTON_RELEASED),
 			.eventHandler = event_move_right_toggle
 	};
 	buttons[button_ID_move_right] = button_move_right;
 
 	Button_t button_calibrate = {
-			.pin = {
-					.GPIOx = GPIOE,
-					.GPIO_Pin = Button_Vorfahren_Pin,
-					.state = BUTTON_RELEASED
-			},
+			.pin = IO_digitalPin_init(GPIOC, Kalibrierung_Pin, BUTTON_RELEASED),
 			.eventHandler = event_calibrate
 	};
 	buttons[button_ID_calibrate] = button_calibrate;

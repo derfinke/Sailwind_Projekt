@@ -12,6 +12,22 @@ static void convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
+/* IO_digitalPin_t IO_digitalPin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
+ *  Description:
+ *   - return an IO_digitalPin Instance with members passed as parameters
+ *   - write the initial state to the GPIO Pin
+ */
+IO_digitalPin_t IO_digitalPin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
+{
+	IO_digitalPin_t digitalPin = {
+			.GPIOx = GPIOx,
+			.GPIO_Pin = GPIO_Pin,
+			.state = state
+	};
+	IO_digitalWrite(&digitalPin, state);
+	return digitalPin;
+}
+
 /* void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state)
  * 	Description:
  * 	 - save the new state (from parameter "state") in the digitalPin structure reference

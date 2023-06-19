@@ -11,7 +11,6 @@
 static void press_enter_to_continue();
 
 
-
 /* API function definitions -----------------------------------------------*/
 Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 {
@@ -19,30 +18,10 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 	{
 			.moving_state = motor_moving_state_aus,
 			.current_function = motor_function_aus,
-			.IN0 =
-			{
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN_0_Pin,
-					.state = GPIO_PIN_RESET
-			},
-			.IN1 =
-			{
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN_1_Pin,
-					.state = GPIO_PIN_RESET
-			},
-			.IN2 =
-			{
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN_2_Pin,
-					.state = GPIO_PIN_RESET
-			},
-			.IN3 =
-			{
-					.GPIOx = GPIOD,
-					.GPIO_Pin = IN_3_Pin,
-					.state = GPIO_PIN_RESET
-			},
+			.IN0 = IO_digitalPin_init(GPIOB, IN_0_Pin, GPIO_PIN_RESET),
+			.IN1 = IO_digitalPin_init(GPIOC, IN_1_Pin, GPIO_PIN_RESET),
+			.IN2 = IO_digitalPin_init(GPIOD, IN_2_Pin, GPIO_PIN_RESET),
+			.IN3 = IO_digitalPin_init(GPIOC, IN_3_Pin, GPIO_PIN_RESET),
 			.AIN_Drehzahl_Soll =
 			{
 					.hdac_ptr = hdac_ptr,
@@ -54,27 +33,12 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 			.OUT1_Drehzahl_Messung =
 			{
 					.timer_cycle_count = 0,
-					.puls =
-					{
-							.GPIOx = GPIOF,
-							.GPIO_Pin = Drehzahl_DAC_OUT_Pin,
-							.state = GPIO_PIN_RESET
-					},
-					.currentValue = 0.0F,
+					.puls = IO_digitalPin_init(GPIOC, OUT_1_Pin, GPIO_PIN_RESET),
+					.currentConvertedValue = 0.0F,
 					.htim_ptr = htim_ptr,
 			},
-			.OUT2_Fehler =
-			{
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT_1_Pin,
-					.state = GPIO_PIN_RESET
-			},
-			.OUT3_Drehrichtung =
-			{
-					.GPIOx = GPIOF,
-					.GPIO_Pin = OUT_3_Pin,
-					.state = GPIO_PIN_RESET
-			}
+			.OUT2_Fehler = IO_digitalPin_init(GPIOC, OUT_2_Pin, GPIO_PIN_RESET),
+			.OUT3_Drehrichtung = IO_digitalPin_init(GPIOC, OUT_3_Pin, GPIO_PIN_RESET),
 	};
 	motor_set_function(&motor, motor_function_aus);
 	
@@ -172,7 +136,7 @@ void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
 	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
 	float f_timer = HAL_RCC_GetPCLK2Freq() / (float)(drehzahl_messung_ptr->htim_ptr->Init.Prescaler) / (float)(drehzahl_messung_ptr->htim_ptr->Init.Period);
 	float f_pulse = f_timer / (float)(drehzahl_messung_ptr->timer_cycle_count);
-	drehzahl_messung_ptr->currentValue = f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
+	drehzahl_messung_ptr->currentConvertedValue = f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
 	drehzahl_messung_ptr->timer_cycle_count = 0;
 }
 
@@ -197,7 +161,7 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	printf("Motor auf Zieldrehzahl bringen...\n");
 	motor_set_rpm(motor_ptr, rpm_value);
 	printf("wartet bis Zieldrehzahl erreicht wurde...\n");
-	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.currentValue) > tolerance);
+	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.currentConvertedValue) > tolerance);
 	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %ld rpm\n", speed-5, rpm_value);
 	motor_set_function(motor_ptr, speed);
 	printf("\nstoppt Motor...\n");
