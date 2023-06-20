@@ -21,15 +21,34 @@
 #define SPI_HAL_TIMEOUT 5U
 #define FRAM_OK 0U
 #define FRAM_ERROR 1U
+#define WEL_SET 2U
+#define STATUS_REGISTER_BUFFER_SIZE 2U
 
-static uint8_t FRAM_read_status_register(uint8_t *pRegisterStatus);
+static uint8_t FRAM_read_status_register(void);
 static uint8_t FRAM_write_enable(void);
 
 
-static uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t sizeInByte)
+uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t sizeInByte)
 {
+	uint8_t registerStatus;
+	uint32_t address;
+
+	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 	assert(pStructToSave != 0);
 	assert(sizeInByte != 0);
+
+	if(FRAM_read_status_register() != WEL_SET)
+	{
+		printf("WEL not set!\r\n");
+		HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
+		return FRAM_ERROR;
+	}
+
+	address = little_to_big_endian(startAddress);
+
+	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
+
+
 
 
 }
@@ -60,7 +79,6 @@ uint8_t FRAM_init(void)
 
 	printf("Starting FRAM init\r\n");
 
-	FRAM_write_enable();
 	if((FRAM_write_enable() || FRAM_read_status_register(&registerStatus)) != FRAM_OK)
 	{
 		printf("FRAM init failed!\r\n");
@@ -77,22 +95,29 @@ uint8_t FRAM_init(void)
 	return FRAM_OK;
 }
 
-static uint8_t FRAM_read_status_register(uint8_t *pRegisterStatus)
+static uint8_t FRAM_read_status_register()
 {
 	HAL_SPI_StateTypeDef spiStatus;
+	uint8_t statusRegTx[STATUS_REGISTER_BUFFER_SIZE];
+	uint8_t statusRegRx[STATUS_REGISTER_BUFFER_SIZE];
 
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 
+	statusRegTx[0] = RDSR;
+
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
-	spiSTatus = HAL_SPI_TransmitReceive(&hspi4, RDSR, *pRegisterStatus, 2U, SPI_HAL_TIMEOUT);
+	spiSTatus = HAL_SPI_TransmitReceive(&hspi4, statusRegTx, statusRegRx, STATUS_REGISTER_BUFFER_SIZE, SPI_HAL_TIMEOUT);
 
 	if(spiStatus != HAL_OK)
 	{
 		printf("Failed reading status register!\r\n");
-		HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
-		return FRAM_ERROR;
 	}
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
-	return FRAM_OK;
+	return statusRegRx[1];
+}
+
+uint32_t little_to_big_endian(uint32_t address)
+{
+	return (uint32_t)(((address>>24) & 0x000000ff) | ((address>>8) & 0x0000ff00) | ((x<<8) & 0x00ff0000) | ((x<<24) & 0xff000000));
 }
