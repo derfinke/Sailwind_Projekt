@@ -10,6 +10,7 @@
 /* private function prototypes -----------------------------------------------*/
 static boolean_t state_changed(Button_t *button_ptr);
 static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction);
+static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr);
 
 static void event_move_left_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
 static void event_move_right_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
@@ -92,23 +93,47 @@ static boolean_t state_changed(Button_t *button_ptr)
  */
 static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
 {
-	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
-	if (linear_guide_ptr->operating_mode == IO_operating_mode_manual && (calibration_ptr->is_calibrated || calibration_ptr->state == linear_guide_calibration_state_0_init))
+
+	if (!linear_guide_get_manual_moving_permission(*linear_guide_ptr))
 	{
-		switch (button.pin.state)
-		{
-			case BUTTON_PRESSED:
-				if (calibration_ptr->is_calibrated)
-				{
-					LED_switch(&led_bar_ptr->calibration, LED_OFF); // switch calibration LED off, so it can be switched on, after setting a new center position
-				}
-				motor_start_moving(motor_ptr, direction);
-				break;
-			case BUTTON_RELEASED:
-				motor_stop_moving(motor_ptr);
-				break;
-		}
+		return;
+	}
+	switch (button.pin.state)
+	{
+		case BUTTON_PRESSED:
+			if (linear_guide_ptr->calibration.is_calibrated)
+			{
+				LED_switch(&led_bar_ptr->center_pos_set, LED_OFF); // switch calibration LED off, so it can be switched on, after setting a new center position
+			}
+			motor_start_moving(motor_ptr, direction);
+			break;
+		case BUTTON_RELEASED:
+			motor_stop_moving(motor_ptr);
+			break;
+	}
+}
+
+/* static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
+ *  Description:
+ *   -
+ */
+static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
+{
+	switch(linear_guide_ptr->calibration.calibrate_button_state)
+	{
+		case linear_guide_calibrate_button_state_0_init:
+			linear_guide_ptr->calibration.calibrate_button_state = linear_guide_calibrate_button_state_1_approach_borders;
+			break;
+		case linear_guide_calibrate_button_state_1_approach_borders:
+			//wait for endpoints_set
+			break;
+		case linear_guide_calibrate_button_state_2_set_center_pos:
+			linear_guide_set_center(&linear_guide_ptr->calibration);
+			LED_switch(led_center_pos_set_ptr, LED_ON);
+			motor_stop_moving(&linear_guide_ptr->motor);
+			linear_guide_ptr->calibration.is_calibrated = True;
+			break;
 	}
 }
 
@@ -137,13 +162,14 @@ static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_
 	switch (button.pin.state)
 	{
 		case BUTTON_SWITCH_AUTOMATIC:
-			if (linear_guide_ptr->calibration.is_calibrated)
+			if (!linear_guide_ptr->calibration.is_calibrated)
 			{
-				operating_mode = IO_operating_mode_automatic;
-				if (led_bar_ptr->calibration.state == LED_OFF)
-				{
-					LED_switch(&led_bar_ptr->calibration, LED_ON);
-				}
+				return;
+			}
+			operating_mode = IO_operating_mode_automatic;
+			if (led_bar_ptr->center_pos_set.state == LED_OFF)
+			{
+				LED_switch(&led_bar_ptr->center_pos_set, LED_ON);
 			}
 			break;
 		case BUTTON_SWITCH_MANUAL:
@@ -170,16 +196,17 @@ static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_
  */
 static void event_calibrate(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {
-	if (linear_guide_ptr->operating_mode == IO_operating_mode_manual)
+	if (linear_guide_ptr->operating_mode != IO_operating_mode_manual)
 	{
-		switch (button.pin.state)
-		{
-			case BUTTON_PRESSED:
-				linear_guide_calibrate_button_state_machine(linear_guide_ptr, &led_bar_ptr->calibration);
-				break;
-			case BUTTON_RELEASED:
-				break;
-		}
+		return;
+	}
+	switch (button.pin.state)
+	{
+		case BUTTON_PRESSED:
+			calibrate_button_state_machine(linear_guide_ptr, &led_bar_ptr->center_pos_set);
+			break;
+		case BUTTON_RELEASED:
+			break;
 	}
 }
 

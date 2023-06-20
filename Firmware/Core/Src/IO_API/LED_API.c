@@ -20,7 +20,7 @@ LED_bar_t LED_init_bar()
 					.rollung = IO_digitalPin_init(GPIOE, LED_Rollen_Pin, LED_OFF),
 					.trimmung = IO_digitalPin_init(GPIOB, LED_Trimmen_Pin, LED_OFF),
 			},
-			.calibration = IO_digitalPin_init(GPIOD, LED_Kalibrieren_Speichern_Pin, LED_OFF),
+			.center_pos_set = IO_digitalPin_init(GPIOD, LED_Kalibrieren_Speichern_Pin, LED_OFF),
 	};
 	return LED_bar;
 }

@@ -11,7 +11,6 @@
 static linear_guide_calibration_t calibration_init();
 static linear_guide_endschalter_t endschalter_init();
 static void calibrate_set_endpoints(linear_guide_calibration_t *calibration_ptr);
-static void calibrate_set_center(linear_guide_calibration_t *calibration_ptr);
 static boolean_t endschalter_detected(IO_digitalPin_t *endschalter_ptr);
 static void update_current_position(linear_guide_calibration_t *calibration_ptr);
 static int32_t convert_pulse_count_to_distance(int32_t pulse_count);
@@ -39,62 +38,45 @@ void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operat
 	}
 }
 
-/* void linear_guide_button_calibrate_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
- *  Description:
- *   -
- */
-void linear_guide_calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
-{
-	switch(linear_guide_ptr->calibration.state)
-	{
-		case linear_guide_calibration_state_0_init:
-			linear_guide_ptr->calibration.state = linear_guide_calibration_state_1_save_endpoints;
-			break;
-		case linear_guide_calibration_state_1_save_endpoints:
-			//wait for endpoints_set
-			break;
-		case linear_guide_calibration_state_2_set_center_pos:
-			calibrate_set_center(&linear_guide_ptr->calibration);
-			LED_switch(led_center_pos_set_ptr, LED_ON);
-			motor_stop_moving(&linear_guide_ptr->motor);
-			linear_guide_ptr->calibration.is_calibrated = True;
-			break;
-	}
-}
-
 /* void linear_guide_calibrate_state_machine_set_endpoints(Linear_guide_t *linear_guide_ptr)
  *  Description:
  *   -
  */
 void linear_guide_calibrate_state_machine_set_endpoints(Linear_guide_t *linear_guide_ptr)
 {
-	linear_guide_calibration_t *calibration = &linear_guide_ptr->calibration;
+	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
 	linear_guide_endschalter_t *endschalter_ptr = &linear_guide_ptr->endschalter;
-	if (calibration->state == linear_guide_calibration_state_1_save_endpoints)
+	if (calibration_ptr->calibrate_button_state == linear_guide_calibrate_button_state_1_approach_borders)
 	{
-		switch(calibration->set_endpoints_state)
+		switch(calibration_ptr->approach_borders_state)
 		{
-			case linear_guide_set_endpoints_state_0_init:
+			case linear_guide_approach_borders_state_0_init:
 				motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
-				calibration->set_endpoints_state = linear_guide_set_endpoints_state_1_move_to_end_pos_vorne;
+				calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_1_approach_vorne;
 				break;
-			case linear_guide_set_endpoints_state_1_move_to_end_pos_vorne:
+			case linear_guide_approach_borders_state_1_approach_vorne:
 				if (endschalter_detected(&endschalter_ptr->vorne))
 				{
 					motor_start_rpm_measurement(motor_ptr);
 					motor_start_moving(motor_ptr, motor_moving_state_rechtslauf);
-					calibration->set_endpoints_state = linear_guide_set_endpoints_state_2_move_to_end_pos_hinten;
+					calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_2_approach_hinten;
 				}
 				break;
-			case linear_guide_set_endpoints_state_2_move_to_end_pos_hinten:
+			case linear_guide_approach_borders_state_2_approach_hinten:
 				if (endschalter_detected(&linear_guide_ptr->endschalter.hinten))
 				{
 					motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
-					calibrate_set_endpoints(calibration);
-					calibration->state = linear_guide_calibration_state_2_set_center_pos;
+					calibrate_set_endpoints(calibration_ptr);
+					calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_3_approach_center;
 				}
 				break;
+			case linear_guide_approach_borders_state_3_approach_center:
+				if (calibration_ptr->current_pos_mm == 0)
+				{
+					motor_stop_moving(motor_ptr);
+					calibration_ptr->calibrate_button_state = linear_guide_calibrate_button_state_2_set_center_pos;
+				}
 		}
 	}
 }
@@ -108,30 +90,58 @@ void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleT
 	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
 	RPM_Measurement_t *drehzahl_messung_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
-	if (htim_ptr==drehzahl_messung_ptr->htim_ptr)
+	if (htim_ptr!=drehzahl_messung_ptr->htim_ptr)
 	{
-		drehzahl_messung_ptr->timer_cycle_count++;
-		if (IO_digitalRead_rising_edge(&drehzahl_messung_ptr->puls))
-		{
-			motor_convert_timeStep_to_rpm(drehzahl_messung_ptr);
-			if (calibration_ptr->set_endpoints_state == linear_guide_set_endpoints_state_2_move_to_end_pos_hinten || calibration_ptr->is_calibrated)
-			{
-				switch(motor_ptr->moving_state)
-				{
-					case motor_moving_state_rechtslauf:
-						calibration_ptr->current_pos_pulse_count++; break;
-					case motor_moving_state_linkslauf:
-						calibration_ptr->current_pos_pulse_count--; break;
-					default:
-						;
-				}
-				if (calibration_ptr->state == linear_guide_calibration_state_2_set_center_pos  || calibration_ptr->is_calibrated)
-				{
-					update_current_position(calibration_ptr);
-				}
-			}
-		}
+		return;
 	}
+	drehzahl_messung_ptr->timer_cycle_count++;
+	if (!IO_digitalRead_rising_edge(&drehzahl_messung_ptr->puls))
+	{
+		return;
+	}
+	motor_convert_timeStep_to_rpm(drehzahl_messung_ptr);
+	if (calibration_ptr->approach_borders_state < linear_guide_approach_borders_state_2_approach_hinten)
+	{
+		return;
+	}
+	switch(motor_ptr->moving_state)
+	{
+		case motor_moving_state_rechtslauf:
+			calibration_ptr->current_pos_pulse_count++; break;
+		case motor_moving_state_linkslauf:
+			calibration_ptr->current_pos_pulse_count--; break;
+		default:
+			;
+	}
+	if (calibration_ptr->approach_borders_state >= linear_guide_approach_borders_state_3_approach_center)
+	{
+		update_current_position(calibration_ptr);
+	}
+}
+
+/* void calibrate_set_center(Motor_t *motor_ptr)
+ *  Description:
+ *   -
+ */
+void linear_guide_set_center(linear_guide_calibration_t *calibration_ptr)
+{
+	calibration_ptr->center_pos_mm = calibration_ptr->current_pos_mm;
+}
+
+/* boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t linear_guide)
+ *  Description:
+ *   -
+ */
+boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t linear_guide)
+{
+	return
+			linear_guide.operating_mode == IO_operating_mode_manual
+			&&
+			(
+				linear_guide.calibration.calibrate_button_state == linear_guide_calibrate_button_state_2_set_center_pos
+				||
+				linear_guide.calibration.calibrate_button_state == linear_guide_calibrate_button_state_0_init
+			);
 }
 
 /* private function definitions -----------------------------------------------*/
@@ -139,8 +149,8 @@ static linear_guide_calibration_t calibration_init()
 {
 	linear_guide_calibration_t calibration =
 	{
-			.state = linear_guide_calibration_state_0_init,
-			.set_endpoints_state = linear_guide_set_endpoints_state_0_init,
+			.calibrate_button_state = linear_guide_calibrate_button_state_0_init,
+			.approach_borders_state = linear_guide_approach_borders_state_0_init,
 			.current_pos_pulse_count = 0,
 			.is_calibrated = False
 	};
@@ -163,15 +173,6 @@ static linear_guide_endschalter_t endschalter_init()
 static boolean_t endschalter_detected(IO_digitalPin_t *endschalter_ptr)
 {
 	return (boolean_t) IO_digitalRead(endschalter_ptr);
-}
-
-/* static void calibrate_set_center(Motor_t *motor_ptr)
- *  Description:
- *   -
- */
-static void calibrate_set_center(linear_guide_calibration_t *calibration_ptr)
-{
-	calibration_ptr->center_pos_mm = calibration_ptr->current_pos_mm;
 }
 
 /* static void calibrate_set_endpoints(motor_calibration_t *calibration_ptr)

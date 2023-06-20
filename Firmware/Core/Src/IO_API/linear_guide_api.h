@@ -13,20 +13,21 @@
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
-	linear_guide_calibration_state_0_init,
-	linear_guide_calibration_state_1_save_endpoints,
-	linear_guide_calibration_state_2_set_center_pos,
-} linear_guide_calibration_state_t;
+	linear_guide_calibrate_button_state_0_init,
+	linear_guide_calibrate_button_state_1_approach_borders,
+	linear_guide_calibrate_button_state_2_set_center_pos,
+} linear_guide_calibrate_button_state_t;
 
 typedef enum {
-	linear_guide_set_endpoints_state_0_init,
-	linear_guide_set_endpoints_state_1_move_to_end_pos_vorne,
-	linear_guide_set_endpoints_state_2_move_to_end_pos_hinten,
-} linear_guide_set_endpoints_state_t;
+	linear_guide_approach_borders_state_0_init,
+	linear_guide_approach_borders_state_1_approach_vorne,
+	linear_guide_approach_borders_state_2_approach_hinten,
+	linear_guide_approach_borders_state_3_approach_center
+} linear_guide_approach_borders_state_t;
 
 typedef struct {
-	linear_guide_calibration_state_t state;
-	linear_guide_set_endpoints_state_t set_endpoints_state;
+	linear_guide_calibrate_button_state_t calibrate_button_state;
+	linear_guide_approach_borders_state_t approach_borders_state;
 	int32_t end_pos_mm;
 	int32_t center_pos_mm;
 	int32_t current_pos_mm;
@@ -55,5 +56,7 @@ void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operat
 void linear_guide_calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set);
 void linear_guide_calibrate_state_machine_set_endpoints(Linear_guide_t *linear_guide_ptr);
 void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr);
+void linear_guide_set_center(linear_guide_calibration_t *calibration_ptr);
+boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t linear_guide);
 
 #endif /* SRC_IO_API_LINEAR_GUIDE_API_H_ */
