@@ -115,7 +115,7 @@ void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linea
  */
 void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr)
 {
-	RPM_Measurement_t *drehzahl_messung_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
+	RPM_Measurement_t *drehzahl_messung_ptr = &linear_guide_ptr->motor.OUT1_Drehzahl_Messung;
 	if (htim_ptr!=drehzahl_messung_ptr->htim_ptr)
 	{
 		return;
