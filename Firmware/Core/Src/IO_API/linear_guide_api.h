@@ -13,26 +13,21 @@
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
-	linear_guide_calibrate_button_state_0_init,
-	linear_guide_calibrate_button_state_1_approach_borders,
-	linear_guide_calibrate_button_state_2_set_center_pos,
-} linear_guide_calibrate_button_state_t;
+	linear_guide_calibration_state_0_init,
+	linear_guide_calibration_state_1_approach_vorne,
+	linear_guide_calibration_state_2_approach_hinten,
+	linear_guide_calibration_state_3_approach_center,
+	linear_guide_calibration_state_4_set_center_pos,
+} linear_guide_calibration_state_t;
 
-typedef enum {
-	linear_guide_approach_borders_state_0_init,
-	linear_guide_approach_borders_state_1_approach_vorne,
-	linear_guide_approach_borders_state_2_approach_hinten,
-	linear_guide_approach_borders_state_3_approach_center
-} linear_guide_approach_borders_state_t;
 
 typedef struct {
-	linear_guide_calibrate_button_state_t calibrate_button_state;
-	linear_guide_approach_borders_state_t approach_borders_state;
+	linear_guide_calibration_state_t state;
+	boolean_t is_calibrated;
 	int32_t end_pos_mm;
 	int32_t center_pos_mm;
 	int32_t current_pos_mm;
 	int32_t current_pos_pulse_count;
-	boolean_t is_calibrated;
 } linear_guide_calibration_t;
 
 typedef struct {

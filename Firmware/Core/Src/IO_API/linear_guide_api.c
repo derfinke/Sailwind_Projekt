@@ -48,8 +48,8 @@ void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operat
  *  Description:
  *   - state machine to be called in main loop
  *   - controls the process of approaching both end points and finally the calculated center
- *   - state machine only runs, if calibrate button is in approach borders state (1)
- *   - in initial state 0 the motor starts moving to the first end point and state is set to 1 (approach front)
+ *   - state machine only runs, after first press of calibration button
+ *   - from initial state 0 the motor starts moving to the first end point and state is set to 1 (approach front)
  *   - state 1 is active until the front end switch is detected (high)
  *   		-> set state to 2 (approach back)
  *   		-> start motor moving to other end point
@@ -60,45 +60,40 @@ void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operat
  *   		-> start motor moving to the calculated center													   ->
  *   - state 3 waits until center is reached
  *   		-> motor is stopped
- *   		-> state machine is terminated setting the calibrate button to state 2 (set center)
+ *   		-> state is set to state 4 (set center)
  */
 void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linear_guide_ptr)
 {
 	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
-	if (calibration_ptr->calibrate_button_state != linear_guide_calibrate_button_state_1_approach_borders)
-	{
-		return;
-	}
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
 	linear_guide_endschalter_t *endschalter_ptr = &linear_guide_ptr->endschalter;
-	switch(calibration_ptr->approach_borders_state)
+	switch(calibration_ptr->state)
 	{
-		case linear_guide_approach_borders_state_0_init:
-			motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
-			calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_1_approach_vorne;
-			break;
-		case linear_guide_approach_borders_state_1_approach_vorne:
+		case linear_guide_calibration_state_1_approach_vorne:
 			if (endschalter_detected(&endschalter_ptr->vorne))
 			{
 				motor_start_rpm_measurement(motor_ptr);
 				motor_start_moving(motor_ptr, motor_moving_state_rechtslauf);
-				calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_2_approach_hinten;
+				calibration_ptr->state = linear_guide_calibration_state_2_approach_hinten;
 			}
 			break;
-		case linear_guide_approach_borders_state_2_approach_hinten:
+		case linear_guide_calibration_state_2_approach_hinten:
 			if (endschalter_detected(&endschalter_ptr->hinten))
 			{
 				motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
 				calibrate_set_endpoints(calibration_ptr);
-				calibration_ptr->approach_borders_state = linear_guide_approach_borders_state_3_approach_center;
+				calibration_ptr->state = linear_guide_calibration_state_3_approach_center;
 			}
 			break;
-		case linear_guide_approach_borders_state_3_approach_center:
+		case linear_guide_calibration_state_3_approach_center:
 			if (calibration_ptr->current_pos_mm == 0)
 			{
 				motor_stop_moving(motor_ptr);
-				calibration_ptr->calibrate_button_state = linear_guide_calibrate_button_state_2_set_center_pos;
+				calibration_ptr->state = linear_guide_calibration_state_4_set_center_pos;
 			}
+			break;
+		default:
+			break;
 	}
 }
 
@@ -127,7 +122,7 @@ void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleT
 	}
 	motor_convert_timeStep_to_rpm(drehzahl_messung_ptr);
 	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
-	if (calibration_ptr->approach_borders_state < linear_guide_approach_borders_state_2_approach_hinten)
+	if (calibration_ptr->state < linear_guide_calibration_state_2_approach_hinten)
 	{
 		return;
 	}
@@ -140,7 +135,7 @@ void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleT
 		default:
 			;
 	}
-	if (calibration_ptr->approach_borders_state >= linear_guide_approach_borders_state_3_approach_center)
+	if (calibration_ptr->state >= linear_guide_calibration_state_3_approach_center)
 	{
 		update_current_position(calibration_ptr);
 	}
@@ -165,9 +160,9 @@ boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t linear_guide)
 			linear_guide.operating_mode == IO_operating_mode_manual
 			&&
 			(
-				linear_guide.calibration.calibrate_button_state == linear_guide_calibrate_button_state_2_set_center_pos
+				linear_guide.calibration.state == linear_guide_calibration_state_4_set_center_pos
 				||
-				linear_guide.calibration.calibrate_button_state == linear_guide_calibrate_button_state_0_init
+				linear_guide.calibration.state == linear_guide_calibration_state_0_init
 			);
 }
 
@@ -176,8 +171,7 @@ static linear_guide_calibration_t calibration_init()
 {
 	linear_guide_calibration_t calibration =
 	{
-			.calibrate_button_state = linear_guide_calibrate_button_state_0_init,
-			.approach_borders_state = linear_guide_approach_borders_state_0_init,
+			.state = linear_guide_calibration_state_0_init,
 			.current_pos_pulse_count = 0,
 			.is_calibrated = False
 	};
