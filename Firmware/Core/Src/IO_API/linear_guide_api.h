@@ -53,8 +53,7 @@ typedef struct {
 /* API function prototypes -----------------------------------------------*/
 Linear_guide_t linear_guide_init(DAC_HandleTypeDef *hdac, TIM_HandleTypeDef *htim);
 void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operating_mode_t operating_mode);
-void linear_guide_calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set);
-void linear_guide_calibrate_state_machine_set_endpoints(Linear_guide_t *linear_guide_ptr);
+void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linear_guide_ptr);
 void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr);
 void linear_guide_set_center(linear_guide_calibration_t *calibration_ptr);
 boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t linear_guide);

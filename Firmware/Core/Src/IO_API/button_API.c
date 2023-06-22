@@ -116,7 +116,10 @@ static void move_toggle(Button_t button, Linear_guide_t *linear_guide_ptr, LED_b
 
 /* static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
  *  Description:
- *   -
+ *   - called, when the calibration button is pressed
+ *   - first press sets state to state_1 which starts the calibration process in the "approach borders state machine"
+ *   - state_2 is set from the other state machine when the calculated center position is reached
+ *   - pressing the button at state_2, the center position is saved, the is_calibrated flag is set True and the LED for the center position is switched on
  */
 static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
 {
@@ -131,7 +134,6 @@ static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED
 		case linear_guide_calibrate_button_state_2_set_center_pos:
 			linear_guide_set_center(&linear_guide_ptr->calibration);
 			LED_switch(led_center_pos_set_ptr, LED_ON);
-			motor_stop_moving(&linear_guide_ptr->motor);
 			linear_guide_ptr->calibration.is_calibrated = True;
 			break;
 	}
@@ -188,11 +190,11 @@ static void event_switch_operating_mode(Button_t button, Linear_guide_t *linear_
  *  Description:
  *   - eventHandler for the calibration button
  *   - only works in manual mode
- *   - if the button is pressed, the calibration state machine is called and initiated
+ *   - if the button is pressed, the calibration state machine is called
  *   - 1. press starts the automatic calibration process
- *   - 2. press finishes the calibration process by manually setting the center position and stopping the motor at this point
- *   - 2. press only works, if the calibration process is ready to finish
- *   - further presses can be made to adjust the center position after manually moving the motor with the respective buttons
+ *   - 2. press can be made after the motor stopped at the calculated center to confirm and save the position of the linear guide
+ *   - if necessary, the position can be adjusted manually with the moving buttons before pressing the button
+ *   - further presses can be made afterwards to adjust the center position again
  */
 static void event_calibrate(Button_t button, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr)
 {

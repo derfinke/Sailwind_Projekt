@@ -101,7 +101,8 @@ void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
 
 /* void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
  *  Description:
- *   -
+ *   - set digital INs of the motor to configure its engine speed
+ *   - send an analog value (converted from rpm - valaue) to the analog Input of the motor
  */
 void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 {
@@ -111,7 +112,7 @@ void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 
 /* void motor_start_rpm_measurement(Motor_t *motor_ptr)
  *  Description:
- *   -
+ *   - start hal timer to trigger HAL_TIM_PeriodElapsedCallback() function which calls linear_guide_callback_get_rpm()
  */
 void motor_start_rpm_measurement(Motor_t *motor_ptr)
 {
@@ -120,7 +121,7 @@ void motor_start_rpm_measurement(Motor_t *motor_ptr)
 
 /* void motor_stop_rpm_measurement(Motor_t *motor_ptr)
  *  Description:
- *   -
+ *   - stop hal timer
  */
 void motor_stop_rpm_measurement(Motor_t *motor_ptr)
 {
@@ -129,7 +130,8 @@ void motor_stop_rpm_measurement(Motor_t *motor_ptr)
 
 /* void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
  *  Description:
- *   -
+ *   - calculate pulse frequency of the motor with the timer cycle count between two pulses
+ *   - convert pulse frequency to rpm value and save it to RPM_Measurement reference
  */
 void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
 {
@@ -142,7 +144,8 @@ void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
 
 /* void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
  *  Description:
- *   -
+ *   - teach speed 1 or speed 2
+ *   - probably not working yet!
  */
 void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
 {
