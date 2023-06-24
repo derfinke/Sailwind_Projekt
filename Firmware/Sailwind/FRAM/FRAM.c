@@ -9,8 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "stm32f4xx_hal.h"
-#include "data_logger.h"
+#include "main.h"
 
 #define WRSR 1
 #define WRITE 2
@@ -27,11 +26,10 @@
 static uint8_t FRAM_read_status_register(void);
 
 
-uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t sizeInByte)
+uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress, uint16_t sizeInByte)
 {
 	HAL_SPI_StateTypeDef spiStatus;
-	uint8_t registerStatus;
-	uint32_t address;
+	uint16_t address;
 
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 	assert(pStructToSave != 0);
@@ -63,8 +61,8 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t
 		return FRAM_ERROR;
 	}
 
-	hal_SPI_status= HAL_SPI_Transmit(&hspi3, struct_to_save, size_in_bytes, SPI_HAL_TIMEOUT);
-	if (hal_SPI_status != HAL_OK)
+	spiStatus = HAL_SPI_Transmit(&hspi4, pStructToSave, sizeInByte, SPI_HAL_TIMEOUT);
+	if (spiStatus != HAL_OK)
 	{
 		printf("Failed sending data to be saved!\r\n");
 		HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
@@ -77,11 +75,11 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t
 
 }
 
-uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, const uint16_t sizeInByte)
+uint8_t FRAM_read(uint16_t startAddress, uint8_t *pData, const uint16_t sizeInByte)
 {
 	HAL_SPI_StateTypeDef spiStatus;
 	uint8_t tx_dummy[sizeInByte];
-	uint32_t address;
+	uint16_t address;
 
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 	assert(pData != 0);
@@ -91,7 +89,7 @@ uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, const uint16_t sizeInBy
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
 
-	spiSTatus = HAL_SPI_Transmit(&hspi4, READ, 1U, SPI_HAL_TIMEOUT);
+	spiStatus = HAL_SPI_Transmit(&hspi4, READ, 1U, SPI_HAL_TIMEOUT);
 	if(spiStatus != HAL_OK)
 	{
 		printf("Failed sending READ!\r\n");
@@ -137,7 +135,7 @@ static uint8_t FRAM_write_enable(void)
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
-	spiSTatus = HAL_SPI_Transmit(&hspi4, WREN, 1U, SPI_HAL_TIMEOUT);
+	spiStatus = HAL_SPI_Transmit(&hspi4, WREN, 1U, SPI_HAL_TIMEOUT);
 
 	if(spiStatus != HAL_OK)
 	{
@@ -156,7 +154,7 @@ uint8_t FRAM_init(void)
 
 	printf("Starting FRAM init\r\n");
 
-	if((FRAM_write_enable() || FRAM_read_status_register(&registerStatus)) != FRAM_OK)
+	if((FRAM_write_enable() || FRAM_read_status_register()) != FRAM_OK)
 	{
 		printf("FRAM init failed!\r\n");
 		return FRAM_ERROR;
@@ -172,7 +170,7 @@ uint8_t FRAM_init(void)
 	return FRAM_OK;
 }
 
-uint8_t FRAM_read_status_register()
+uint8_t FRAM_read_status_register(void)
 {
 	HAL_SPI_StateTypeDef spiStatus;
 	uint8_t statusRegTx[STATUS_REGISTER_BUFFER_SIZE];
@@ -183,7 +181,7 @@ uint8_t FRAM_read_status_register()
 	statusRegTx[0] = RDSR;
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
-	spiSTatus = HAL_SPI_TransmitReceive(&hspi4, statusRegTx, statusRegRx, STATUS_REGISTER_BUFFER_SIZE, SPI_HAL_TIMEOUT);
+	spiStatus = HAL_SPI_TransmitReceive(&hspi4, statusRegTx, statusRegRx, STATUS_REGISTER_BUFFER_SIZE, SPI_HAL_TIMEOUT);
 
 	if(spiStatus != HAL_OK)
 	{
@@ -194,7 +192,13 @@ uint8_t FRAM_read_status_register()
 	return statusRegRx[1];
 }
 
-uint32_t little_to_big_endian(uint32_t address)
+uint32_t little_to_big_endian(uint16_t address)
 {
-	return (uint32_t)(((address>>24) & 0x000000ff) | ((address>>8) & 0x0000ff00) | ((x<<8) & 0x00ff0000) | ((x<<24) & 0xff000000));
+	return (uint16_t)(((address>>8) & 0x00ff) | ((address<<8) & 0xff00));
+}
+
+PUTCHAR_PROTOTYPE
+{
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
+  return ch;
 }

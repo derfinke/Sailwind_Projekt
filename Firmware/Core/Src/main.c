@@ -26,6 +26,7 @@
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 #include "IO_API/LED_API.h"
+#include "FRAM.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -133,8 +134,47 @@ int main(void)
   motor = motor_init(&hdac, &htim10);
   buttons = button_init_array();
   led_bar = LED_init_bar();
+  IO_analogSensor_t Abstandsensor;
+  IO_analogSensor_t Stromsensor;
+
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
+#if LED_TEST
+  LED_toggle(&led_bar.calibration);
+  LED_toggle(&led_bar.motor_error);
+  LED_toggle(&led_bar.operating_mode.automatic);
+  LED_toggle(&led_bar.operating_mode.manual);
+  LED_toggle(&led_bar.sail_adjustment_mode.rollung);
+  LED_toggle(&led_bar.sail_adjustment_mode.trimmung);
+#endif
+#if MOTOR_TEST
+  motor_start_moving(&motor, motor_moving_state_rechtslauf);
+#endif
+#if ABSTAND_TEST
+  Abstandsensor.name = "Abstand";
+  Abstandsensor.hadc_channel = 0;
+  Abstandsensor.hadc_ptr = &hadc1;
+  Abstandsensor.maxConvertedValue = 2.97;
+  IO_analogRead(&Abstandsensor);
+  IO_analogPrint(Abstandsensor);
+#endif
+#if STROM_TEST
+  Abstandsensor.name = "Strom";
+  Abstandsensor.hadc_channel = 8;
+  Abstandsensor.hadc_ptr = &hadc3;
+  Abstandsensor.maxConvertedValue = 11.0;
+  IO_analogRead(&Stromsensor;
+  IO_analogPrint(Stromsensor);
+#endif
+#if FRAM_TEST
+  uint8_t test[4];
+  memset(test, 0, sizeof(test));
+  FRAM_init();
+  FRAM_write((uint8_t*)"Test", 0x0000, 4);
+  HAL_Delay(5);
+  FRAM_read(0x0000, test, sizeof(test));
+  printf("read from FRAM: %u\r\n", test);
+#endif
 
   /* USER CODE END 2 */
 
