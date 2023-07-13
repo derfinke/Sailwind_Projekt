@@ -34,8 +34,9 @@ typedef struct {
 	DAC_HandleTypeDef *hdac_ptr;
 	uint32_t hdac_channel;
 	float maxConvertedValue;
+	float limitConvertedValue;
 	float currentConvertedValue;
-	uint16_t adc_value;
+	uint16_t dac_value;
 } IO_analogActuator_t;
 
 typedef struct {

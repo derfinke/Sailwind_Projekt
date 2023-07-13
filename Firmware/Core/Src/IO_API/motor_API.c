@@ -27,8 +27,9 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 					.hdac_ptr = hdac_ptr,
 					.hdac_channel = DAC_CHANNEL_1,
 					.maxConvertedValue = MOTOR_RPM_MAX,
+					.limitConvertedValue = MOTOR_RPM_LIMIT,
 					.currentConvertedValue = 0.0F,
-					.adc_value = 0
+					.dac_value = 0
 			},
 			.OUT1_Drehzahl_Messung =
 			{

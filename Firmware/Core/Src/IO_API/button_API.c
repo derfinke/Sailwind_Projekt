@@ -84,6 +84,31 @@ static boolean_t state_changed(Button_t *button_ptr)
 	return IO_digitalRead_state_changed(&button_ptr->pin);
 }
 
+/* static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
+ *  Description:
+ *   - called, when the calibration button is pressed
+ *   - first press sets state to state_1 which starts the calibration process in the "approach borders state machine"
+ *   - state_4 is set from the other state machine when the calculated center position is reached
+ *   - pressing the button at state_4, the center position is saved, the is_calibrated flag is set True and the LED for the center position is switched on
+ */
+static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
+{
+	switch(linear_guide_ptr->calibration.state)
+	{
+		case linear_guide_calibration_state_0_init:
+			motor_start_moving(&linear_guide_ptr->motor, motor_moving_state_linkslauf);
+			linear_guide_ptr->calibration.state = linear_guide_calibration_state_1_approach_vorne;
+			break;
+		case linear_guide_calibration_state_4_set_center_pos:
+			linear_guide_set_center(&linear_guide_ptr->calibration);
+			LED_switch(led_center_pos_set_ptr, LED_ON);
+			linear_guide_ptr->calibration.is_calibrated = True;
+			break;
+		default:
+			break;
+	}
+}
+
 /* static void move_toggle(GPIO_PinState button_state, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr, motor_moving_state_t direction)
  *  Description:
  *   - called within the two eventHandler to move either left or right depending on the parameter "direction"
@@ -110,31 +135,6 @@ static void move_toggle(GPIO_PinState button_state, Linear_guide_t *linear_guide
 			break;
 		case BUTTON_RELEASED:
 			motor_stop_moving(motor_ptr);
-			break;
-	}
-}
-
-/* static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
- *  Description:
- *   - called, when the calibration button is pressed
- *   - first press sets state to state_1 which starts the calibration process in the "approach borders state machine"
- *   - state_4 is set from the other state machine when the calculated center position is reached
- *   - pressing the button at state_4, the center position is saved, the is_calibrated flag is set True and the LED for the center position is switched on
- */
-static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED_t *led_center_pos_set_ptr)
-{
-	switch(linear_guide_ptr->calibration.state)
-	{
-		case linear_guide_calibration_state_0_init:
-			motor_start_moving(&linear_guide_ptr->motor, motor_moving_state_linkslauf);
-			linear_guide_ptr->calibration.state = linear_guide_calibration_state_1_approach_vorne;
-			break;
-		case linear_guide_calibration_state_4_set_center_pos:
-			linear_guide_set_center(&linear_guide_ptr->calibration);
-			LED_switch(led_center_pos_set_ptr, LED_ON);
-			linear_guide_ptr->calibration.is_calibrated = True;
-			break;
-		default:
 			break;
 	}
 }

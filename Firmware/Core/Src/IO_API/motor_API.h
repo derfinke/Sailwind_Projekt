@@ -52,7 +52,8 @@ typedef struct {
 } Motor_t;
 
 /* defines ------------------------------------------------------------*/
-#define MOTOR_RPM_MAX 642
+#define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
+#define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
 #define MOTOR_PULSE_PER_ROTATION 12
 
 /* API function prototypes -----------------------------------------------*/

@@ -12,11 +12,11 @@
 
 /* typedefs ------------------------------------------------------------------*/
 typedef enum {button_ID_switch_mode, button_ID_move_left, button_ID_move_right, button_ID_calibrate} button_ID_t;
-typedef struct Button_t Button_t;
-struct Button_t {
+
+typedef struct {
 	IO_digitalPin_t pin;
 	void (*eventHandler)(GPIO_PinState button_state, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
-};
+} Button_t;
 
 
 /* defines -------------------------------------------------------------------*/
