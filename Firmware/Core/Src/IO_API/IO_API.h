@@ -34,8 +34,9 @@ typedef struct {
 	DAC_HandleTypeDef *hdac_ptr;
 	uint32_t hdac_channel;
 	float maxConvertedValue;
+	float limitConvertedValue;
 	float currentConvertedValue;
-	uint16_t adc_value;
+	uint16_t dac_value;
 } IO_analogActuator_t;
 
 typedef struct {
@@ -51,6 +52,7 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
+IO_digitalPin_t IO_digitalPin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state);
 void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state);
 void IO_digitalToggle(IO_digitalPin_t *digital_OUT_ptr);
 GPIO_PinState IO_digitalRead(IO_digitalPin_t *digital_IN_ptr);

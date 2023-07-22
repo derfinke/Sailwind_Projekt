@@ -8,16 +8,15 @@
 #ifndef SRC_IO_API_BUTTON_API_H_
 #define SRC_IO_API_BUTTON_API_H_
 
-#include "motor_API.h"
-#include "LED_API.h"
+#include "linear_guide_API.h"
 
 /* typedefs ------------------------------------------------------------------*/
 typedef enum {button_ID_switch_mode, button_ID_move_left, button_ID_move_right, button_ID_calibrate} button_ID_t;
-typedef struct Button_t Button_t;
-struct Button_t {
+
+typedef struct {
 	IO_digitalPin_t pin;
-	void (*eventHandler)(Button_t button, Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
-};
+	void (*eventHandler)(GPIO_PinState button_state, Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
+} Button_t;
 
 
 /* defines -------------------------------------------------------------------*/
@@ -29,7 +28,7 @@ struct Button_t {
 
 /* API function prototypes ---------------------------------------------------*/
 Button_t* button_init_array();
-void button_eventHandler(Button_t buttons[4], Motor_t *motor_ptr, LED_bar_t *led_bar_ptr);
+void button_eventHandler(Button_t buttons[4], Linear_guide_t *linear_guide_ptr, LED_bar_t *led_bar_ptr);
 
 
 #endif /* SRC_IO_API_BUTTON_API_H_ */

@@ -27,7 +27,7 @@ typedef struct {
 	LED_t motor_error;
 	LED_dual_operating_mode_t operating_mode;
 	LED_dual_sail_adjustment_mode_t sail_adjustment_mode;
-	LED_t calibration;
+	LED_t center_pos_set;
 } LED_bar_t;
 
 /* defines -------------------------------------------------------------------*/
