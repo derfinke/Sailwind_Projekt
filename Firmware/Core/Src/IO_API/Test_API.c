@@ -11,25 +11,9 @@
 
 static void read_endschalter(char *Tx_data, linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID);
 static void uart_transmit(UART_HandleTypeDef *huart, char *Tx_data);
-static void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr);
 
 
-void test_uart_receive_test_ID_Callback(UART_HandleTypeDef *huart, char *Rx_data, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
-{
-	char data_byte[2];
-	HAL_UART_Receive_IT(huart, (uint8_t*)data_byte, 1);
-	if (data_byte[0] != '\r' && data_byte[0] != '\n')
-	{
-		strncat(Rx_data, data_byte, 1);
-	}
-	else
-	{
-		switch_test_ID(huart, atoi(Rx_data), led_bar_ptr, linear_guide_ptr);
-		Rx_data[0] = '\0';
-	}
-}
-
-static void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
+void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
 {
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
 	char *Tx_data = "";

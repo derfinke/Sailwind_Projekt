@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <stdlib.h>
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 #include "IO_API/LED_API.h"
@@ -37,7 +38,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define UART_TEST 1
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -68,7 +69,7 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-char Rx_data[10] = "";
+uint8_t Rx_buffer[10];
 Linear_guide_t linear_guide;
 Button_t *buttons;
 LED_bar_t led_bar;
@@ -89,15 +90,10 @@ static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
-
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	test_uart_receive_test_ID_Callback(huart, Rx_data, &led_bar, &linear_guide);
-}
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
 {
@@ -188,17 +184,20 @@ int main(void)
   FRAM_read(0x0000, test, sizeof(test));
   printf("read from FRAM: %u\r\n", test);
 #endif
-#if UART_TEST
-  test_uart_receive_test_ID_Callback(&huart3, Rx_data, &led_bar, &linear_guide);
-#endif
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  button_eventHandler(buttons, &linear_guide, &led_bar);
-	  linear_guide_calibrate_state_machine_approach_borders(&linear_guide);
+		button_eventHandler(buttons, &linear_guide, &led_bar);
+		linear_guide_calibrate_state_machine_approach_borders(&linear_guide);
+		if (__HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE) == SET)
+		{
+			HAL_UART_Receive(&huart3, Rx_buffer, 10, 1);
+			switch_test_ID(&huart3, atoi((char*) Rx_buffer), &led_bar, &linear_guide);
+		}
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -711,12 +710,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_PWR_GPIO_Port, LED_PWR_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : SPI4_CS_Pin Ext_Relais_1_Pin LED_Rollen_Pin */
-  GPIO_InitStruct.Pin = SPI4_CS_Pin|Ext_Relais_1_Pin|LED_Rollen_Pin;
+  /*Configure GPIO pin : SPI4_CS_Pin */
+  GPIO_InitStruct.Pin = SPI4_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(SPI4_CS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Switch_Betriebsmodus_Pin Betriebsmodus_2_Nur_Prototyp_Pin Betriebsmodus_Prototyp_Pin */
   GPIO_InitStruct.Pin = Switch_Betriebsmodus_Pin|Betriebsmodus_2_Nur_Prototyp_Pin|Betriebsmodus_Prototyp_Pin;
@@ -745,6 +744,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Rollen_Pin */
+  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Rollen_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
   /*Configure GPIO pins : Endschalter_Hinten_Pin Endschalter_Vorne_Pin */
   GPIO_InitStruct.Pin = Endschalter_Hinten_Pin|Endschalter_Vorne_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
@@ -752,9 +758,9 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin IN_2_Pin
-                           HOLD_Pin Windsensor_EN_Pin */
+                           Windsensor_EN_Pin */
   GPIO_InitStruct.Pin = LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
-                          |HOLD_Pin|Windsensor_EN_Pin;
+                          |Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -766,6 +772,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : HOLD_Pin */
+  GPIO_InitStruct.Pin = HOLD_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(HOLD_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
