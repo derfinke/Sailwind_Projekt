@@ -53,6 +53,7 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
  */
 void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
 {
+	printf("motor start moving\r\n");
 	motor_ptr->moving_state = direction;
 	motor_set_function(motor_ptr, (motor_function_t)(direction));
 	motor_set_function(motor_ptr, motor_function_speed1);
@@ -65,6 +66,7 @@ void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
  */
 void motor_stop_moving(Motor_t *motor_ptr)
 {
+	printf("motor stop moving\r\n");
 	motor_ptr->moving_state = motor_moving_state_aus;
 	motor_set_function(motor_ptr, motor_function_aus);
 }

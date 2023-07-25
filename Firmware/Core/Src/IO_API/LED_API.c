@@ -13,7 +13,7 @@ LED_bar_t LED_init_bar()
 	LED_bar_t LED_bar = {
 			.motor_error = IO_digitalPin_init(GPIOD, LED_Stoerung_Pin, LED_OFF),
 			.operating_mode = {
-					.manual = IO_digitalPin_init(GPIOD, LED_Manuell_Pin, LED_OFF),
+					.manual = IO_digitalPin_init(GPIOD, LED_Manuell_Pin, LED_ON),
 					.automatic = IO_digitalPin_init(GPIOB, LED_Automatik_Pin, LED_OFF),
 			},
 			.sail_adjustment_mode = {

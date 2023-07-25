@@ -26,6 +26,7 @@
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 #include "IO_API/LED_API.h"
+#include "IO_API/Test_API.h"
 #include "FRAM.h"
 /* USER CODE END Includes */
 
@@ -36,7 +37,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define UART_TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,11 +63,13 @@ SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim10;
 
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-Motor_t motor;
+char Rx_data[10] = "";
+Linear_guide_t linear_guide;
 Button_t *buttons;
 LED_bar_t led_bar;
 /* USER CODE END PV */
@@ -83,6 +86,7 @@ static void MX_DAC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_TIM10_Init(void);
 static void MX_SPI4_Init(void);
+static void MX_USART1_UART_Init(void);
 /* USER CODE BEGIN PFP */
 
 
@@ -90,7 +94,15 @@ static void MX_SPI4_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
+{
+	test_uart_receive_test_ID_Callback(huart, Rx_data, &led_bar, &linear_guide);
+}
 
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
+{
+	linear_guide_callback_get_rpm(&linear_guide, htim_ptr);
+}
 /* USER CODE END 0 */
 
 /**
@@ -130,8 +142,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM10_Init();
   MX_SPI4_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-  motor = motor_init(&hdac, &htim10);
+  linear_guide = linear_guide_init(&hdac, &htim10);
   buttons = button_init_array();
   led_bar = LED_init_bar();
   IO_analogSensor_t Abstandsensor;
@@ -148,7 +161,7 @@ int main(void)
   LED_toggle(&led_bar.sail_adjustment_mode.trimmung);
 #endif
 #if MOTOR_TEST
-  motor_start_moving(&motor, motor_moving_state_rechtslauf);
+  motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
 #endif
 #if ABSTAND_TEST
   Abstandsensor.name = "Abstand";
@@ -163,7 +176,7 @@ int main(void)
   Abstandsensor.hadc_channel = 8;
   Abstandsensor.hadc_ptr = &hadc3;
   Abstandsensor.maxConvertedValue = 11.0;
-  IO_analogRead(&Stromsensor;
+  IO_analogRead(&Stromsensor);
   IO_analogPrint(Stromsensor);
 #endif
 #if FRAM_TEST
@@ -175,16 +188,21 @@ int main(void)
   FRAM_read(0x0000, test, sizeof(test));
   printf("read from FRAM: %u\r\n", test);
 #endif
-
+#if UART_TEST
+  test_uart_receive_test_ID_Callback(&huart3, Rx_data, &led_bar, &linear_guide);
+#endif
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  button_eventHandler(buttons, &linear_guide, &led_bar);
+	  linear_guide_calibrate_state_machine_approach_borders(&linear_guide);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
@@ -558,6 +576,39 @@ static void MX_TIM10_Init(void)
 }
 
 /**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
+
+}
+
+/**
   * @brief USART2 Initialization Function
   * @param None
   * @retval None
@@ -679,8 +730,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Zurueck_Pin Endschalter_Hinten_Pin Button_Vorfahren_Pin Endschalter_Vorne_Pin */
-  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Endschalter_Hinten_Pin|Button_Vorfahren_Pin|Endschalter_Vorne_Pin;
+  /*Configure GPIO pins : Button_Zurueck_Pin Button_Vorfahren_Pin */
+  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Button_Vorfahren_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -692,6 +743,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : Endschalter_Hinten_Pin Endschalter_Vorne_Pin */
+  GPIO_InitStruct.Pin = Endschalter_Hinten_Pin|Endschalter_Vorne_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin IN_2_Pin

@@ -68,6 +68,7 @@ void button_eventHandler(Button_t buttons[BUTTON_COUNT], Linear_guide_t *linear_
 	{
 		if (state_changed(&buttons[btn_idx]))
 		{
+			printf("Event of Button %d\r\n", btn_idx);
 			buttons[btn_idx].eventHandler(buttons[btn_idx].pin.state, linear_guide_ptr, led_bar_ptr);
 		}
 	}
@@ -96,10 +97,13 @@ static void calibrate_button_state_machine(Linear_guide_t *linear_guide_ptr, LED
 	switch(linear_guide_ptr->calibration.state)
 	{
 		case linear_guide_calibration_state_0_init:
+			printf("calibration init\r\n");
 			motor_start_moving(&linear_guide_ptr->motor, motor_moving_state_linkslauf);
 			linear_guide_ptr->calibration.state = linear_guide_calibration_state_1_approach_vorne;
+			printf("new state approach vorne\r\n");
 			break;
 		case linear_guide_calibration_state_4_set_center_pos:
+			printf("center set!\r\n");
 			linear_guide_set_center(&linear_guide_ptr->calibration);
 			LED_switch(led_center_pos_set_ptr, LED_ON);
 			linear_guide_ptr->calibration.is_calibrated = True;
@@ -122,6 +126,7 @@ static void move_toggle(GPIO_PinState button_state, Linear_guide_t *linear_guide
 
 	if (!linear_guide_get_manual_moving_permission(*linear_guide_ptr))
 	{
+		printf("no moving permission\r\n");
 		return;
 	}
 	switch (button_state)
@@ -166,8 +171,10 @@ static void event_switch_operating_mode(GPIO_PinState button_state, Linear_guide
 		case BUTTON_SWITCH_AUTOMATIC:
 			if (!linear_guide_ptr->calibration.is_calibrated)
 			{
+				printf("not calibrated yet\r\n");
 				return;
 			}
+			printf("set to automatic\r\n");
 			operating_mode = IO_operating_mode_automatic;
 			if (led_bar_ptr->center_pos_set.state == LED_OFF)
 			{
@@ -175,12 +182,14 @@ static void event_switch_operating_mode(GPIO_PinState button_state, Linear_guide
 			}
 			break;
 		case BUTTON_SWITCH_MANUAL:
+			printf("set to manual\r\n");
 			operating_mode = IO_operating_mode_manual;
 			break;
 	}
 	if (operating_mode != linear_guide_ptr->operating_mode)
 	{
 		LED_set_operating_mode(led_bar_ptr, operating_mode);
+		printf("operating mode changed\r\n");
 		linear_guide_set_operating_mode(linear_guide_ptr, operating_mode);
 	}
 

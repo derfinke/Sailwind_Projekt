@@ -57,7 +57,7 @@ void linear_guide_set_operating_mode(Linear_guide_t *linear_guide_ptr, IO_operat
  *   - state 2 is active until the back end switch is detected (high)
  *   		-> set state to 3 (approach center)
  *   		-> calculate range of linear guide
- *   		-> start motor moving to the calculated center													   ->
+ *   		-> start motor moving to the calculated center
  *   - state 3 waits until center is reached
  *   		-> motor is stopped
  *   		-> state is set to state 4 (set center)
@@ -72,6 +72,7 @@ void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linea
 		case linear_guide_calibration_state_1_approach_vorne:
 			if (endschalter_detected(&endschalter_ptr->vorne))
 			{
+				printf("new state approach hinten\r\n");
 				motor_start_rpm_measurement(motor_ptr);
 				motor_start_moving(motor_ptr, motor_moving_state_rechtslauf);
 				calibration_ptr->state = linear_guide_calibration_state_2_approach_hinten;
@@ -80,6 +81,7 @@ void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linea
 		case linear_guide_calibration_state_2_approach_hinten:
 			if (endschalter_detected(&endschalter_ptr->hinten))
 			{
+				printf("new state approach center\r\n");
 				motor_start_moving(motor_ptr, motor_moving_state_linkslauf);
 				calibrate_set_endpoints(calibration_ptr);
 				calibration_ptr->state = linear_guide_calibration_state_3_approach_center;
@@ -88,6 +90,7 @@ void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linea
 		case linear_guide_calibration_state_3_approach_center:
 			if (calibration_ptr->current_pos_mm == 0)
 			{
+				printf("new state set center\r\n");
 				motor_stop_moving(motor_ptr);
 				calibration_ptr->state = linear_guide_calibration_state_4_set_center_pos;
 			}
