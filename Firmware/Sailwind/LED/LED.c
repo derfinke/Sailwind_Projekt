@@ -5,7 +5,7 @@
  *      Author: Bene
  */
 
-#include "LED_API.h"
+#include "../LED/LED.h"
 
 /* API function definitions -----------------------------------------------*/
 LED_bar_t LED_init_bar()

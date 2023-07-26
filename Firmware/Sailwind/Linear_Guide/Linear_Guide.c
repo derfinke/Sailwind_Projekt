@@ -5,13 +5,14 @@
  *      Author: Bene
  */
 
-#include "linear_guide_api.h"
+#include "../Linear_Guide/Linear_Guide.h"
 
 /* private function prototypes -----------------------------------------------*/
 static linear_guide_calibration_t calibration_init();
 static linear_guide_endschalter_t endschalter_init();
 static void calibrate_set_endpoints(linear_guide_calibration_t *calibration_ptr);
 static boolean_t endschalter_detected(IO_digitalPin_t *endschalter_ptr);
+static void callback_update_pulse_count(linear_guide_calibration_t *calibration_ptr, motor_moving_state_t motor_moving_state);
 static void update_current_position(linear_guide_calibration_t *calibration_ptr);
 static int32_t convert_pulse_count_to_distance(int32_t pulse_count);
 
@@ -100,47 +101,11 @@ void linear_guide_calibrate_state_machine_approach_borders(Linear_guide_t *linea
 	}
 }
 
-/* void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr)
- *  Description:
- *   - called periodically by the timer referenced in the RPM Measurement object of the motor
- *   - check, if the callback is triggered by the rpm timer
- *   - count up timer cycle count
- *   - detect pulse signal as rising edge
- *   - if pulse signal is detected, the pulse frequency is calculated via the timer cycle count
- *   - if the system is still in calibration process and the first end point is not reached yet, the function is returned here
- *   - else, the pulses of the motor are count up or down, depending on the direction of the motor for calculating range or the current position of the linear guide
- *   - if the system is as far as having reached the second end point, hence the range is already determined, the current position can be updated
- */
-void linear_guide_callback_get_rpm(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr)
+void linear_guide_callback_motor_pulse_capture(Linear_guide_t *linear_guide_ptr, TIM_HandleTypeDef *htim_ptr)
 {
-	RPM_Measurement_t *drehzahl_messung_ptr = &linear_guide_ptr->motor.OUT1_Drehzahl_Messung;
-	if (htim_ptr!=drehzahl_messung_ptr->htim_ptr)
+	if (motor_callback_measure_rpm(&linear_guide_ptr->motor, htim_ptr))
 	{
-		return;
-	}
-	drehzahl_messung_ptr->timer_cycle_count++;
-	if (!IO_digitalRead_rising_edge(&drehzahl_messung_ptr->puls))
-	{
-		return;
-	}
-	motor_convert_timeStep_to_rpm(drehzahl_messung_ptr);
-	linear_guide_calibration_t *calibration_ptr = &linear_guide_ptr->calibration;
-	if (calibration_ptr->state < linear_guide_calibration_state_2_approach_hinten)
-	{
-		return;
-	}
-	switch(linear_guide_ptr->motor.moving_state)
-	{
-		case motor_moving_state_rechtslauf:
-			calibration_ptr->current_pos_pulse_count++; break;
-		case motor_moving_state_linkslauf:
-			calibration_ptr->current_pos_pulse_count--; break;
-		default:
-			;
-	}
-	if (calibration_ptr->state >= linear_guide_calibration_state_3_approach_center)
-	{
-		update_current_position(calibration_ptr);
+		callback_update_pulse_count(&linear_guide_ptr->calibration, linear_guide_ptr->motor.moving_state);
 	}
 }
 
@@ -211,6 +176,27 @@ static void calibrate_set_endpoints(linear_guide_calibration_t *calibration_ptr)
 	calibration_ptr->current_pos_mm = calibration_ptr->end_pos_mm;
 }
 
+static void callback_update_pulse_count(linear_guide_calibration_t *calibration_ptr, motor_moving_state_t motor_moving_state)
+{
+	if (calibration_ptr->state < linear_guide_calibration_state_2_approach_hinten)
+	{
+		return;
+	}
+	switch(motor_moving_state)
+	{
+		case motor_moving_state_rechtslauf:
+			calibration_ptr->current_pos_pulse_count++; break;
+		case motor_moving_state_linkslauf:
+			calibration_ptr->current_pos_pulse_count--; break;
+		case motor_moving_state_aus:
+			break;
+		}
+	if (calibration_ptr->state >= linear_guide_calibration_state_3_approach_center)
+	{
+		update_current_position(calibration_ptr);
+	}
+}
+
 /* static void update_current_position(linear_guide_calibration_t *calibration_ptr)
  *  Description:
  *   - convert the pulse count of the motor to a distance and center it
@@ -232,15 +218,16 @@ static int32_t convert_pulse_count_to_distance(int32_t pulse_count)
 
 /* Timer Callback implementation for rpm measurement --------------------------*/
 
-/* void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
+/* void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
  *  Description:
- *   - triggered, when the period of the timer for the rpm measurement elapsed
- *   - calls function to count cycles and detect pulse signals of the motor
+ *   - must be redefined in main.c
+ *   - triggered, when a rising edge of the motor pulse signal (OUT1) is detected
+ *   - calls function to measure the frequency between two pulses and converts it to an rpm value
  */
 /*
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 {
-	linear_guide_callback_get_rpm(&linear_guide, htim_ptr);
+	linear_guide_callback_motor_pulse_capture(&linear_guide, htim_ptr);
 }
 */
 

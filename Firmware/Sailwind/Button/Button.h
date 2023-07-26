@@ -8,7 +8,7 @@
 #ifndef SRC_IO_API_BUTTON_API_H_
 #define SRC_IO_API_BUTTON_API_H_
 
-#include "linear_guide_API.h"
+#include "../Linear_Guide/Linear_Guide.h"
 
 /* typedefs ------------------------------------------------------------------*/
 typedef enum {button_ID_switch_mode, button_ID_move_left, button_ID_move_right, button_ID_calibrate} button_ID_t;

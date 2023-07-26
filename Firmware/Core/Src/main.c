@@ -18,17 +18,17 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "string.h"
+#include <string.h>
+#include <stdlib.h>
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include <stdlib.h>
-#include "IO_API/button_API.h"
-#include "IO_API/motor_API.h"
-#include "IO_API/LED_API.h"
-#include "IO_API/Test_API.h"
-#include "FRAM.h"
+#include "../../Sailwind/FRAM/FRAM.h"
+#include "../../Sailwind/Button/Button.h"
+#include "../../Sailwind/LED/LED.h"
+#include "../../Sailwind/Motor/Motor.h"
+#include "../../Sailwind/Test/Test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -38,7 +38,6 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -62,7 +61,7 @@ ETH_HandleTypeDef heth;
 
 SPI_HandleTypeDef hspi4;
 
-TIM_HandleTypeDef htim10;
+TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -85,9 +84,9 @@ static void MX_ADC2_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_DAC_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM10_Init(void);
 static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -95,9 +94,9 @@ static void MX_USART1_UART_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim_ptr)
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 {
-	linear_guide_callback_get_rpm(&linear_guide, htim_ptr);
+	linear_guide_callback_motor_pulse_capture(&linear_guide, htim_ptr);
 }
 /* USER CODE END 0 */
 
@@ -136,11 +135,11 @@ int main(void)
   MX_ADC3_Init();
   MX_DAC_Init();
   MX_USART2_UART_Init();
-  MX_TIM10_Init();
   MX_SPI4_Init();
   MX_USART1_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  linear_guide = linear_guide_init(&hdac, &htim10);
+  linear_guide = linear_guide_init(&hdac, &htim3);
   buttons = button_init_array();
   led_bar = LED_init_bar();
   IO_analogSensor_t Abstandsensor;
@@ -544,33 +543,60 @@ static void MX_SPI4_Init(void)
 }
 
 /**
-  * @brief TIM10 Initialization Function
+  * @brief TIM3 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM10_Init(void)
+static void MX_TIM3_Init(void)
 {
 
-  /* USER CODE BEGIN TIM10_Init 0 */
+  /* USER CODE BEGIN TIM3_Init 0 */
 
-  /* USER CODE END TIM10_Init 0 */
+  /* USER CODE END TIM3_Init 0 */
 
-  /* USER CODE BEGIN TIM10_Init 1 */
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
 
-  /* USER CODE END TIM10_Init 1 */
-  htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 168-1;
-  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 400;
-  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 84;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 65535;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM10_Init 2 */
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim3, &sConfigIC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
 
-  /* USER CODE END TIM10_Init 2 */
+  /* USER CODE END TIM3_Init 2 */
 
 }
 
@@ -723,8 +749,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);

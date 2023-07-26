@@ -5,8 +5,7 @@
  *      Author: Bene
  */
 
-#include "Test_API.h"
-#include <stdlib.h>
+#include "../Test/Test.h"
 #include <string.h>
 
 static void read_endschalter(char *Tx_data, linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID);
@@ -68,11 +67,3 @@ static void uart_transmit(UART_HandleTypeDef *huart, char *Tx_data)
 	sprintf(Tx_data_line, "%s\r\n", Tx_data);
 	HAL_UART_Transmit(huart, (uint8_t *)(Tx_data_line), sizeof(Tx_data_line), 100);
 }
-
-
-/*
-void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
-{
-	test_uart_receive_test_ID_Callback(huart, Rx_data, &led_bar, &linear_guide)
-}
-*/
