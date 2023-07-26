@@ -29,9 +29,10 @@ typedef enum {
 } motor_moving_state_t;
 
 typedef struct {
-	uint32_t timer_cycle_count;
-	IO_digitalPin_t puls;
-	float currentConvertedValue;
+	uint32_t IC_Val1;
+	uint32_t IC_Val2;
+	int Is_First_Captured;
+	float rpm_value;
 	TIM_HandleTypeDef *htim_ptr;
 } RPM_Measurement_t;
 
@@ -62,9 +63,10 @@ void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t moving_state);
 void motor_stop_moving(Motor_t *motor_ptr);
 void motor_set_function(Motor_t *motor_ptr, motor_function_t function);
 void motor_start_rpm_measurement(Motor_t *motor_ptr);
+boolean_t motor_callback_measure_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr);
 void motor_stop_rpm_measurement(Motor_t *motor_ptr);
 void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
-void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr);
+float motor_pulse_to_rpm(float f_pulse);
 void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance);
 
 

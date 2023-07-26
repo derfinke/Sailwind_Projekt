@@ -33,9 +33,10 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 			},
 			.OUT1_Drehzahl_Messung =
 			{
-					.timer_cycle_count = 0,
-					.puls = IO_digitalPin_init(GPIOC, OUT_1_Pin, GPIO_PIN_RESET),
-					.currentConvertedValue = 0.0F,
+					.IC_Val1 = 0,
+					.IC_Val2 = 0,
+					.Is_First_Captured = False,
+					.rpm_value = 0.0F,
 					.htim_ptr = htim_ptr,
 			},
 			.OUT2_Fehler = IO_digitalPin_init(GPIOC, OUT_2_Pin, GPIO_PIN_RESET),
@@ -115,11 +116,44 @@ void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 
 /* void motor_start_rpm_measurement(Motor_t *motor_ptr)
  *  Description:
- *   - start hal timer to trigger HAL_TIM_PeriodElapsedCallback() function which calls linear_guide_callback_get_rpm()
+ *   - start hal timer to trigger HAL_TIM_IC_CaptureCallback() function which calls linear_guide_callback_get_rpm()
  */
 void motor_start_rpm_measurement(Motor_t *motor_ptr)
 {
-	HAL_TIM_Base_Start_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
+	HAL_TIM_IC_Start_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr, TIM_CHANNEL_4);
+}
+
+boolean_t motor_callback_measure_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
+{
+	if (!(htim_ptr->Channel == HAL_TIM_ACTIVE_CHANNEL_4))
+	{
+		return False;
+	}
+	RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
+	if (!rpm_ptr->Is_First_Captured) // if the first rising edge is not captured
+	{
+		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
+		rpm_ptr->Is_First_Captured = True;  // set the first captured as true
+		return False;
+	}
+	// If the first rising edge is captured, now we will capture the second edge
+	float diff;
+	rpm_ptr->IC_Val2 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4);  // read second value
+	if (rpm_ptr->IC_Val2 > rpm_ptr->IC_Val1)
+	{
+		diff = rpm_ptr->IC_Val2-rpm_ptr->IC_Val1;
+	}
+	else
+	{
+		diff = (htim_ptr->Init.Period - rpm_ptr->IC_Val1) + rpm_ptr->IC_Val2;
+	}
+	float ref_clock = HAL_RCC_GetPCLK1Freq() / (float)(htim_ptr->Init.Prescaler);
+	float f_pulse = ref_clock/diff;
+	rpm_ptr->rpm_value = motor_pulse_to_rpm(f_pulse);
+
+	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
+	rpm_ptr->Is_First_Captured = False; // set it back to false
+	return True;
 }
 
 /* void motor_stop_rpm_measurement(Motor_t *motor_ptr)
@@ -128,21 +162,16 @@ void motor_start_rpm_measurement(Motor_t *motor_ptr)
  */
 void motor_stop_rpm_measurement(Motor_t *motor_ptr)
 {
-	HAL_TIM_Base_Stop_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr);
+	HAL_TIM_IC_Stop_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr, TIM_CHANNEL_4);
 }
 
-/* void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
+/* float motor_pulse_to_rpm(float f_pulse)
  *  Description:
- *   - calculate pulse frequency of the motor with the timer cycle count between two pulses
- *   - convert pulse frequency to rpm value and save it to RPM_Measurement reference
+ *   - convert pulse frequency to rpm value via pulse per rotation constant (12) and return the result
  */
-void motor_convert_timeStep_to_rpm(RPM_Measurement_t *drehzahl_messung_ptr)
+float motor_pulse_to_rpm(float f_pulse)
 {
-	//max rpm = 642 -> 10,7 Hz -> max f_pulse = 128,4 Hz -> ~ min 20 samples / period -> f_timer = 2500 Hz
-	float f_timer = HAL_RCC_GetPCLK2Freq() / (float)(drehzahl_messung_ptr->htim_ptr->Init.Prescaler) / (float)(drehzahl_messung_ptr->htim_ptr->Init.Period);
-	float f_pulse = f_timer / (float)(drehzahl_messung_ptr->timer_cycle_count);
-	drehzahl_messung_ptr->currentConvertedValue = f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
-	drehzahl_messung_ptr->timer_cycle_count = 0;
+	return f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
 }
 
 /* void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
@@ -167,7 +196,7 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 	printf("Motor auf Zieldrehzahl bringen...\n");
 	motor_set_rpm(motor_ptr, rpm_value);
 	printf("wartet bis Zieldrehzahl erreicht wurde...\n");
-	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.currentConvertedValue) > tolerance);
+	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.rpm_value) > tolerance);
 	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %ld rpm\n", speed-5, rpm_value);
 	motor_set_function(motor_ptr, speed);
 	printf("\nstoppt Motor...\n");
