@@ -31,7 +31,7 @@ typedef enum {
 typedef struct {
 	uint32_t IC_Val1;
 	uint32_t IC_Val2;
-	int Is_First_Captured;
+	boolean_t Is_First_Captured;
 	float rpm_value;
 	TIM_HandleTypeDef *htim_ptr;
 } RPM_Measurement_t;

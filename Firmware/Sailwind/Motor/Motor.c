@@ -8,6 +8,8 @@
 #include "../Motor/Motor.h"
 
 /* private function prototypes -----------------------------------------------*/
+static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr);
+static IO_analogActuator_t AIN_init(DAC_HandleTypeDef *hdac_ptr);
 static void press_enter_to_continue();
 
 
@@ -22,23 +24,8 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
 			.IN1 = IO_digitalPin_init(GPIOC, IN_1_Pin, GPIO_PIN_RESET),
 			.IN2 = IO_digitalPin_init(GPIOD, IN_2_Pin, GPIO_PIN_RESET),
 			.IN3 = IO_digitalPin_init(GPIOC, IN_3_Pin, GPIO_PIN_RESET),
-			.AIN_Drehzahl_Soll =
-			{
-					.hdac_ptr = hdac_ptr,
-					.hdac_channel = DAC_CHANNEL_1,
-					.maxConvertedValue = MOTOR_RPM_MAX,
-					.limitConvertedValue = MOTOR_RPM_LIMIT,
-					.currentConvertedValue = 0.0F,
-					.dac_value = 0
-			},
-			.OUT1_Drehzahl_Messung =
-			{
-					.IC_Val1 = 0,
-					.IC_Val2 = 0,
-					.Is_First_Captured = False,
-					.rpm_value = 0.0F,
-					.htim_ptr = htim_ptr,
-			},
+			.AIN_Drehzahl_Soll = AIN_init(hdac_ptr),
+			.OUT1_Drehzahl_Messung = OUT1_init(htim_ptr),
 			.OUT2_Fehler = IO_digitalPin_init(GPIOC, OUT_2_Pin, GPIO_PIN_RESET),
 			.OUT3_Drehrichtung = IO_digitalPin_init(GPIOC, OUT_3_Pin, GPIO_PIN_RESET),
 	};
@@ -214,6 +201,33 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 }
 
 /* private function definitions -----------------------------------------------*/
+
+static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr)
+{
+	RPM_Measurement_t rpm_measurement =
+	{
+			.IC_Val1 = 0,
+			.IC_Val2 = 0,
+			.Is_First_Captured = False,
+			.htim_ptr = htim_ptr,
+			.rpm_value = 0
+	};
+	return rpm_measurement;
+}
+
+static IO_analogActuator_t AIN_init(DAC_HandleTypeDef *hdac_ptr)
+{
+	IO_analogActuator_t rpm_setting =
+	{
+			.hdac_ptr = hdac_ptr,
+			.hdac_channel = DAC_CHANNEL_1,
+			.maxConvertedValue = MOTOR_RPM_MAX,
+			.limitConvertedValue = MOTOR_RPM_LIMIT,
+			.currentConvertedValue = 0.0F,
+			.dac_value = 0
+	};
+	return rpm_setting;
+}
 
 static void press_enter_to_continue()
 {
