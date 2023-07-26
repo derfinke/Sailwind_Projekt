@@ -8,8 +8,8 @@
 #ifndef SRC_IO_API_LINEAR_GUIDE_API_H_
 #define SRC_IO_API_LINEAR_GUIDE_API_H_
 
-#include "motor_API.h"
-#include "LED_API.h"
+#include "../LED/LED.h"
+#include "../Motor/Motor.h"
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {

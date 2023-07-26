@@ -8,7 +8,7 @@
 #ifndef SRC_IO_API_LED_API_H_
 #define SRC_IO_API_LED_API_H_
 
-#include "IO_API.h"
+#include "../IO/IO.h"
 
 /* typedefs -----------------------------------------------------------*/
 typedef IO_digitalPin_t LED_t;

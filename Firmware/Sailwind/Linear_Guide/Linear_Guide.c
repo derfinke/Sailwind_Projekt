@@ -5,7 +5,7 @@
  *      Author: Bene
  */
 
-#include "linear_guide_api.h"
+#include "../Linear_Guide/Linear_Guide.h"
 
 /* private function prototypes -----------------------------------------------*/
 static linear_guide_calibration_t calibration_init();

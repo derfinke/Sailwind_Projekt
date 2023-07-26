@@ -5,7 +5,7 @@
  *      Author: Bene
  */
 
-#include "motor_API.h"
+#include "../Motor/Motor.h"
 
 /* private function prototypes -----------------------------------------------*/
 static void press_enter_to_continue();

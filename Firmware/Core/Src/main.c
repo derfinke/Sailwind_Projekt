@@ -23,11 +23,11 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
-#include "IO_API/button_API.h"
-#include "IO_API/motor_API.h"
-#include "IO_API/LED_API.h"
-#include "IO_API/Test_API.h"
-#include "FRAM.h"
+#include "../../Sailwind/FRAM/FRAM.h"
+#include "../../Sailwind/Button/Button.h"
+#include "../../Sailwind/LED/LED.h"
+#include "../../Sailwind/Motor/Motor.h"
+#include "../../Sailwind/Test/Test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

@@ -5,7 +5,8 @@
  *      Author: Bene
  */
 
-#include "Test_API.h"
+#include "../Test/Test.h"
+
 #include <stdlib.h>
 #include <string.h>
 
