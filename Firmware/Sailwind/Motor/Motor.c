@@ -5,7 +5,7 @@
  *      Author: Bene
  */
 
-#include "../Motor/Motor.h"
+#include "Motor.h"
 
 /* private function prototypes -----------------------------------------------*/
 static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr);

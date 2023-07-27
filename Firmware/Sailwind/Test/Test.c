@@ -5,19 +5,25 @@
  *      Author: Bene
  */
 
-#include "../Test/Test.h"
-#include <string.h>
+#include "Test.h"
 
-static void read_endschalter(char *Tx_data, linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID);
-static void uart_transmit(UART_HandleTypeDef *huart, char *Tx_data);
+static void read_endschalter(linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID);
+static void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr);
 
+void test_uart_poll(UART_HandleTypeDef *huart_ptr, uint8_t *Rx_buffer, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
+{
+	if (__HAL_UART_GET_FLAG(huart_ptr, UART_FLAG_RXNE) == SET)
+	{
+		HAL_UART_Receive(huart_ptr, Rx_buffer, 5, 1);
+		uint16_t test_ID = atoi((char*) Rx_buffer);
+		switch_test_ID(huart_ptr, test_ID, led_bar_ptr, linear_guide_ptr);
+	}
+}
 
-void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
+static void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_bar_ptr, Linear_guide_t *linear_guide_ptr)
 {
 	Motor_t *motor_ptr = &linear_guide_ptr->motor;
-	char *Tx_data = "";
-	sprintf(Tx_data, "Message Received: %d", test_ID);
-	uart_transmit(huart, Tx_data);
+	printf("Message Received: %d\r\n", test_ID);
 	switch (test_ID)
 	{
 		case 11:
@@ -36,17 +42,15 @@ void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_t *led_
 		case 30000 ... 33000:
 			motor_set_rpm(motor_ptr, test_ID - 30000); break;
 		case 41 ... 42: ;
-			char * Tx_data = "";
-			read_endschalter(Tx_data, &linear_guide_ptr->endschalter, test_ID);
-			uart_transmit(huart, Tx_data);
+			read_endschalter(&linear_guide_ptr->endschalter, test_ID);
 			break;
 		default:
-			uart_transmit(huart, "no valid test ID!");
+			printf("no valid test ID!\r\n");
 			break;
 	}
 }
 
-static void read_endschalter(char *Tx_data, linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID)
+static void read_endschalter(linear_guide_endschalter_t *endschalter_ptr, uint16_t test_ID)
 {
 	char *endschalter_ID;
 	GPIO_PinState state;
@@ -58,12 +62,5 @@ static void read_endschalter(char *Tx_data, linear_guide_endschalter_t *endschal
 		endschalter_ID = "hinten";
 		state = IO_digitalRead(&endschalter_ptr->hinten);
 	}
-	sprintf(Tx_data, "Endschalter %s: %d", endschalter_ID, state);
-}
-
-static void uart_transmit(UART_HandleTypeDef *huart, char *Tx_data)
-{
-	char *Tx_data_line = "";
-	sprintf(Tx_data_line, "%s\r\n", Tx_data);
-	HAL_UART_Transmit(huart, (uint8_t *)(Tx_data_line), sizeof(Tx_data_line), 100);
+	printf("Endschalter %s: %d\r\n", endschalter_ID, state);
 }

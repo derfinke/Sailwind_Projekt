@@ -5,7 +5,7 @@
  *      Author: Bene
  */
 
-#include "../Button/Button.h"
+#include "Button.h"
 
 /* private function prototypes -----------------------------------------------*/
 static boolean_t state_changed(Button_t *button_ptr);

@@ -4,7 +4,7 @@
  *  Created on: Apr 17, 2023
  *      Author: Bene
  */
-#include "../IO/IO.h"
+#include "IO.h"
 
 /* private function prototypes -----------------------------------------------*/
 static void convertFromADC(IO_analogSensor_t *sensor_ptr);

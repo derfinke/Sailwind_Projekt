@@ -23,11 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
 #include "../../Sailwind/FRAM/FRAM.h"
 #include "../../Sailwind/Button/Button.h"
-#include "../../Sailwind/LED/LED.h"
-#include "../../Sailwind/Motor/Motor.h"
 #include "../../Sailwind/Test/Test.h"
 /* USER CODE END Includes */
 
@@ -192,11 +189,7 @@ int main(void)
   {
 		button_eventHandler(buttons, &linear_guide, &led_bar);
 		linear_guide_calibrate_state_machine_approach_borders(&linear_guide);
-		if (__HAL_UART_GET_FLAG(&huart3, UART_FLAG_RXNE) == SET)
-		{
-			HAL_UART_Receive(&huart3, Rx_buffer, 10, 1);
-			switch_test_ID(&huart3, atoi((char*) Rx_buffer), &led_bar, &linear_guide);
-		}
+		test_uart_poll(&huart3, Rx_buffer, &led_bar, &linear_guide);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
