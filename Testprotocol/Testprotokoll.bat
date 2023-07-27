@@ -47,6 +47,8 @@ ECHO.
 SET /P T=selection:
 CLS
 IF %T%==0 GOTO STARTMENU
+SET T=00000%T%
+SET T=%T:~-5%
 SET /P x=%T% <nul >\\.\%C%
 GOTO TESTMENU
 :EXIT
