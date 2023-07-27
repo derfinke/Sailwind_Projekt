@@ -42,11 +42,17 @@ static void switch_test_ID(UART_HandleTypeDef *huart, uint16_t test_ID, LED_bar_
 		case 30000 ... 33000:
 			motor_set_rpm(motor_ptr, test_ID - 30000); break;
 		case 41 ... 42: ;
-			read_endschalter(&linear_guide_ptr->endschalter, test_ID);
-			break;
+			read_endschalter(&linear_guide_ptr->endschalter, test_ID); break;
+		case 511:
+			motor_start_rpm_measurement(motor_ptr); break;
+		case 512:
+			printf("motor rpm: %.2f\r\n", motor_ptr->OUT1_Drehzahl_Messung.rpm_value); break;
+		case 52:
+			printf("motor error: %d\r\n", IO_digitalRead(&motor_ptr->OUT2_Fehler)); break;
+		case 53:
+			printf("motor direction: %d\r\n", IO_digitalRead(&motor_ptr->OUT3_Drehrichtung)); break;
 		default:
-			printf("no valid test ID!\r\n");
-			break;
+			printf("no valid test ID!\r\n"); break;
 	}
 }
 
