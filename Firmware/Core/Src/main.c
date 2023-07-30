@@ -18,13 +18,12 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include <string.h>
-#include <stdlib.h>
+#include "string.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "../../Sailwind/FRAM/FRAM.h"
-#include "../../Sailwind/Button/Button.h"
+#include "../../Sailwind/Manual_Control/Manual_Control.h"
 #include "../../Sailwind/Test/Test.h"
 /* USER CODE END Includes */
 
@@ -66,9 +65,9 @@ UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
 uint8_t Rx_buffer[10];
-Linear_guide_t linear_guide;
+Linear_Guide_t linear_guide;
 Button_t *buttons;
-LED_bar_t led_bar;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -93,7 +92,7 @@ static void MX_TIM3_Init(void);
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 {
-	linear_guide_callback_motor_pulse_capture(&linear_guide, htim_ptr);
+	LG_callback_motor_pulse_capture(&linear_guide);
 }
 /* USER CODE END 0 */
 
@@ -136,21 +135,20 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  linear_guide = linear_guide_init(&hdac, &htim3);
-  buttons = button_init_array();
-  led_bar = LED_init_bar();
+  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+  buttons = MC_Button_bar_init();
   IO_analogSensor_t Abstandsensor;
   IO_analogSensor_t Stromsensor;
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
-  LED_toggle(&led_bar.calibration);
-  LED_toggle(&led_bar.motor_error);
-  LED_toggle(&led_bar.operating_mode.automatic);
-  LED_toggle(&led_bar.operating_mode.manual);
-  LED_toggle(&led_bar.sail_adjustment_mode.rollung);
-  LED_toggle(&led_bar.sail_adjustment_mode.trimmung);
+  LED_toggle(&linear_guide.led_bar[LG_LED_center_pos_set]);
+  LED_toggle(&linear_guide.led_bar[LG_LED_error]);
+  LED_toggle(&linear_guide.led_bar[LG_LED_manual]);
+  LED_toggle(&linear_guide.led_bar[LG_LED_automatic]);
+  LED_toggle(&linear_guide.led_bar[LG_LED_rollung]);
+  LED_toggle(&linear_guide.led_bar[LG_LED_trimmung]);
 #endif
 #if MOTOR_TEST
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
@@ -187,9 +185,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		button_eventHandler(buttons, &linear_guide, &led_bar);
-		linear_guide_calibrate_state_machine_approach_borders(&linear_guide);
-		test_uart_poll(&huart3, Rx_buffer, &led_bar, &linear_guide);
+		MC_button_eventHandler(buttons, &linear_guide);
+		MC_Localization_state_machine_loop_based(&linear_guide);
+		test_uart_poll(&huart3, Rx_buffer, &linear_guide);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -555,7 +553,7 @@ static void MX_TIM3_Init(void)
 
   /* USER CODE END TIM3_Init 1 */
   htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 84;
+  htim3.Init.Prescaler = 84-1;
   htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim3.Init.Period = 65535;
   htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;

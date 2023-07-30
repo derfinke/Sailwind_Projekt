@@ -1,5 +1,5 @@
 /*
- * motor_API.c
+ * Motor.c
  *
  *  Created on: 20.04.2023
  *      Author: Bene
@@ -8,29 +8,28 @@
 #include "Motor.h"
 
 /* private function prototypes -----------------------------------------------*/
-static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr);
-static IO_analogActuator_t AIN_init(DAC_HandleTypeDef *hdac_ptr);
-static void press_enter_to_continue();
+static RPM_Measurement_t Motor_OUT1_init(TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
+static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
+static void Motor_press_enter_to_continue();
 
 
 /* API function definitions -----------------------------------------------*/
-Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
+Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
 {
 	Motor_t motor =
 	{
-			.moving_state = motor_moving_state_aus,
-			.current_function = motor_function_aus,
-			.IN0 = IO_digitalPin_init(GPIOB, IN_0_Pin, GPIO_PIN_RESET),
-			.IN1 = IO_digitalPin_init(GPIOC, IN_1_Pin, GPIO_PIN_RESET),
-			.IN2 = IO_digitalPin_init(GPIOD, IN_2_Pin, GPIO_PIN_RESET),
-			.IN3 = IO_digitalPin_init(GPIOC, IN_3_Pin, GPIO_PIN_RESET),
-			.AIN_Drehzahl_Soll = AIN_init(hdac_ptr),
-			.OUT1_Drehzahl_Messung = OUT1_init(htim_ptr),
-			.OUT2_Fehler = IO_digitalPin_init(GPIOC, OUT_2_Pin, GPIO_PIN_RESET),
-			.OUT3_Drehrichtung = IO_digitalPin_init(GPIOC, OUT_3_Pin, GPIO_PIN_RESET),
+			.current_function = Motor_function_aus,
+			.IN0 = IO_digital_Out_Pin_init(GPIOB, IN_0_Pin, GPIO_PIN_RESET),
+			.IN1 = IO_digital_Out_Pin_init(GPIOC, IN_1_Pin, GPIO_PIN_RESET),
+			.IN2 = IO_digital_Out_Pin_init(GPIOD, IN_2_Pin, GPIO_PIN_RESET),
+			.IN3 = IO_digital_Out_Pin_init(GPIOC, IN_3_Pin, GPIO_PIN_RESET),
+			.AIN_Drehzahl_Soll = Motor_AIN_init(hdac_ptr),
+			.OUT1_Drehzahl_Messung = Motor_OUT1_init(htim_ptr, htim_channel, htim_active_channel),
+			.OUT2_Fehler = IO_digital_Pin_init(GPIOC, OUT_2_Pin),
+			.OUT3_Drehrichtung = IO_digital_Pin_init(GPIOC, OUT_3_Pin),
 	};
-	motor_set_function(&motor, motor_function_aus);
-	
+	Motor_set_function(&motor, Motor_function_aus);
+	Motor_start_rpm_measurement(&motor);
 	return motor;
 }
 
@@ -39,12 +38,11 @@ Motor_t motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr)
  *   - write digital motor Inputs to start motor movement in desired direction (motor_moving_state_rechtslauf / ...linkslauf)
  *   - save the new moving state to the motor reference
  */
-void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
+void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction)
 {
 	printf("motor start moving\r\n");
-	motor_ptr->moving_state = direction;
-	motor_set_function(motor_ptr, (motor_function_t)(direction));
-	motor_set_function(motor_ptr, motor_function_speed1);
+	Motor_set_function(motor_ptr, (Motor_function_t)(direction));
+	Motor_set_function(motor_ptr, Motor_function_speed1);
 }
 
 /* void motor_stop_moving(Motor_t *motor_ptr)
@@ -52,11 +50,10 @@ void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
  *   - write digital motor Inputs to stop the motor
  *   - save the new moving state to the motor reference
  */
-void motor_stop_moving(Motor_t *motor_ptr)
+void Motor_stop_moving(Motor_t *motor_ptr)
 {
 	printf("motor stop moving\r\n");
-	motor_ptr->moving_state = motor_moving_state_aus;
-	motor_set_function(motor_ptr, motor_function_aus);
+	Motor_set_function(motor_ptr, Motor_function_aus);
 }
 
 /* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
@@ -75,7 +72,7 @@ void motor_stop_moving(Motor_t *motor_ptr)
  *   - the digits are calculated separately in a for loop that does a bitwise "and" operation with the value 2 and the function value and checks, if the result is != 0
  *   - afterwards the function value is left shifted and the process is repeated for the second digit
  */
-void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
+void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function)
 {
 	motor_ptr->current_function = function;
 	IO_digitalPin_t *motor_INs_ptr[] = {&motor_ptr->IN0, &motor_ptr->IN1, &motor_ptr->IN2, &motor_ptr->IN3};
@@ -95,9 +92,9 @@ void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
  *   - set digital INs of the motor to configure its engine speed
  *   - send an analog value (converted from rpm - valaue) to the analog Input of the motor
  */
-void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
+void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 {
-	motor_set_function(motor_ptr, motor_function_drehzahlvorgabe);
+	Motor_set_function(motor_ptr, Motor_function_drehzahlvorgabe);
 	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, rpm_value);
 }
 
@@ -105,18 +102,20 @@ void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
  *  Description:
  *   - start hal timer to trigger HAL_TIM_IC_CaptureCallback() function which calls linear_guide_callback_get_rpm()
  */
-void motor_start_rpm_measurement(Motor_t *motor_ptr)
+void Motor_start_rpm_measurement(Motor_t *motor_ptr)
 {
-	HAL_TIM_IC_Start_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr, TIM_CHANNEL_4);
+	RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
+	HAL_TIM_IC_Start_IT(rpm_ptr->htim_ptr, rpm_ptr->htim_channel);
 }
 
-boolean_t motor_callback_measure_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim_ptr)
+boolean_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
 {
-	if (!(htim_ptr->Channel == HAL_TIM_ACTIVE_CHANNEL_4))
+	RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
+	TIM_HandleTypeDef *htim_ptr = rpm_ptr->htim_ptr;
+	if (!(htim_ptr->Channel == rpm_ptr->active_channel))
 	{
 		return False;
 	}
-	RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
 	if (!rpm_ptr->Is_First_Captured) // if the first rising edge is not captured
 	{
 		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
@@ -136,7 +135,7 @@ boolean_t motor_callback_measure_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim
 	}
 	float ref_clock = HAL_RCC_GetPCLK1Freq() / (float)(htim_ptr->Init.Prescaler);
 	float f_pulse = ref_clock/diff;
-	rpm_ptr->rpm_value = motor_pulse_to_rpm(f_pulse);
+	rpm_ptr->rpm_value = Motor_pulse_to_rpm(f_pulse);
 
 	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
 	rpm_ptr->Is_First_Captured = False; // set it back to false
@@ -147,16 +146,17 @@ boolean_t motor_callback_measure_rpm(Motor_t *motor_ptr, TIM_HandleTypeDef *htim
  *  Description:
  *   - stop hal timer
  */
-void motor_stop_rpm_measurement(Motor_t *motor_ptr)
+void Motor_stop_rpm_measurement(Motor_t *motor_ptr)
 {
-	HAL_TIM_IC_Stop_IT(motor_ptr->OUT1_Drehzahl_Messung.htim_ptr, TIM_CHANNEL_4);
+	RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
+	HAL_TIM_IC_Stop_IT(rpm_ptr->htim_ptr, rpm_ptr->htim_channel);
 }
 
 /* float motor_pulse_to_rpm(float f_pulse)
  *  Description:
  *   - convert pulse frequency to rpm value via pulse per rotation constant (12) and return the result
  */
-float motor_pulse_to_rpm(float f_pulse)
+float Motor_pulse_to_rpm(float f_pulse)
 {
 	return f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
 }
@@ -166,12 +166,12 @@ float motor_pulse_to_rpm(float f_pulse)
  *   - teach speed 1 or speed 2
  *   - probably not working yet!
  */
-void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
+void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
 {
 	printf("\nstoppt Motor...\n");
-	motor_set_function(motor_ptr, motor_function_stopp_mit_haltemoment);
+	Motor_set_function(motor_ptr, Motor_function_stopp_mit_haltemoment);
 	printf("Enter drücken um Lernmodus einzuleiten, sobald Motor angehalten...\n");
-	press_enter_to_continue();
+	Motor_press_enter_to_continue();
 	printf("leite Lernmodus ein...\n");
 	for (int i=0; i<5; i++)
 	{
@@ -179,17 +179,17 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 		HAL_Delay(500);
 	}
 	printf("Lernmodus aktiviert, wenn rote LED schnell blinkt -> Enter um fortzufahren...\n");
-	press_enter_to_continue();
+	Motor_press_enter_to_continue();
 	printf("Motor auf Zieldrehzahl bringen...\n");
-	motor_set_rpm(motor_ptr, rpm_value);
+	Motor_set_rpm(motor_ptr, rpm_value);
 	printf("wartet bis Zieldrehzahl erreicht wurde...\n");
 	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.rpm_value) > tolerance);
 	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %ld rpm\n", speed-5, rpm_value);
-	motor_set_function(motor_ptr, speed);
+	Motor_set_function(motor_ptr, speed);
 	printf("\nstoppt Motor...\n");
-	motor_set_function(motor_ptr, motor_function_stopp_mit_haltemoment);
+	Motor_set_function(motor_ptr, Motor_function_stopp_mit_haltemoment);
 	printf("Enter drücken um Lernmodus zu verlassen, sobald Motor angehalten...\n");
-	press_enter_to_continue();
+	Motor_press_enter_to_continue();
 	printf("verlasse Lernmodus...\n");
 	for (int i=0; i<5; i++)
 	{
@@ -197,12 +197,12 @@ void motor_teach_speed(Motor_t *motor_ptr, motor_function_t speed, uint32_t rpm_
 		HAL_Delay(500);
 	}
 	printf("Lernmodus deaktiviert, wenn rote LED langsam blinkt -> Enter um fortzufahren...\n");
-	press_enter_to_continue();
+	Motor_press_enter_to_continue();
 }
 
 /* private function definitions -----------------------------------------------*/
 
-static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr)
+static RPM_Measurement_t Motor_OUT1_init(TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
 {
 	RPM_Measurement_t rpm_measurement =
 	{
@@ -210,12 +210,14 @@ static RPM_Measurement_t OUT1_init(TIM_HandleTypeDef *htim_ptr)
 			.IC_Val2 = 0,
 			.Is_First_Captured = False,
 			.htim_ptr = htim_ptr,
+			.htim_channel = htim_channel,
+			.active_channel = htim_active_channel,
 			.rpm_value = 0
 	};
 	return rpm_measurement;
 }
 
-static IO_analogActuator_t AIN_init(DAC_HandleTypeDef *hdac_ptr)
+static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr)
 {
 	IO_analogActuator_t rpm_setting =
 	{
@@ -229,7 +231,7 @@ static IO_analogActuator_t AIN_init(DAC_HandleTypeDef *hdac_ptr)
 	return rpm_setting;
 }
 
-static void press_enter_to_continue()
+static void Motor_press_enter_to_continue()
 {
 	getchar();
 }

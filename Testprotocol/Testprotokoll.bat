@@ -32,7 +32,8 @@ ECHO.
 ECHO 0	- back to start menu
 ECHO.
 ECHO 11	- toggle "Error" LED
-ECHO 12	- toggle "sail adjustment mode" LEDs
+ECHO 121	- set "sail adjustment mode" LEDs to "Rollung"
+ECHO 122	- set "sail adjustment mode" LEDs to "Trimmung"
 ECHO 131	- set "manual" LED
 ECHO 132	- set "automatic" LED
 ECHO 14	- toggle "center pos set" LED
