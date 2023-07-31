@@ -34,6 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+#define LED_TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -66,7 +67,7 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 uint8_t Rx_buffer[10];
 Linear_Guide_t linear_guide;
-Button_t *buttons;
+Manual_Control_t *manual_controls;
 
 /* USER CODE END PV */
 
@@ -92,7 +93,7 @@ static void MX_TIM3_Init(void);
 
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 {
-	LG_callback_motor_pulse_capture(&linear_guide);
+	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 /* USER CODE END 0 */
 
@@ -136,19 +137,19 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-  buttons = MC_Button_bar_init();
+  manual_controls = Manual_Controls_init();
   IO_analogSensor_t Abstandsensor;
   IO_analogSensor_t Stromsensor;
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
-  LED_toggle(&linear_guide.led_bar[LG_LED_center_pos_set]);
-  LED_toggle(&linear_guide.led_bar[LG_LED_error]);
-  LED_toggle(&linear_guide.led_bar[LG_LED_manual]);
-  LED_toggle(&linear_guide.led_bar[LG_LED_automatic]);
-  LED_toggle(&linear_guide.led_bar[LG_LED_rollung]);
-  LED_toggle(&linear_guide.led_bar[LG_LED_trimmung]);
+  LED_toggle(&linear_guide.leds.center_pos_set);
+  LED_toggle(&linear_guide.leds.error);
+  LED_toggle(&linear_guide.leds.manual);
+  LED_toggle(&linear_guide.leds.automatic);
+  LED_toggle(&linear_guide.leds.rollung);
+  LED_toggle(&linear_guide.leds.trimmung);
 #endif
 #if MOTOR_TEST
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
@@ -185,9 +186,9 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-		MC_button_eventHandler(buttons, &linear_guide);
-		MC_Localization_state_machine_loop_based(&linear_guide);
-		test_uart_poll(&huart3, Rx_buffer, &linear_guide);
+		Manual_Control_poll(manual_controls, &linear_guide);
+		Manual_Control_Localization(&linear_guide);
+		Test_uart_poll(&huart3, Rx_buffer, &linear_guide);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

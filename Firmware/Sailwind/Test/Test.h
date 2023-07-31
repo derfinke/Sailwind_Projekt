@@ -11,6 +11,6 @@
 #include <stdlib.h>
 #include "../Linear_Guide/Linear_Guide.h"
 
-void test_uart_poll(UART_HandleTypeDef *huart_ptr, uint8_t *Rx_buffer, Linear_Guide_t *lg_ptr);
+void Test_uart_poll(UART_HandleTypeDef *huart_ptr, uint8_t *Rx_buffer, Linear_Guide_t *lg_ptr);
 
 #endif /* TEST_TEST_H_ */

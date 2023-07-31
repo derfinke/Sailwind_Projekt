@@ -8,10 +8,10 @@
 #include "Linear_Guide.h"
 
 /* private function prototypes -----------------------------------------------*/
-static Endswitch_t *LG_Endswitch_bar_init();
-static LED_t* LG_LED_bar_init();
-static void LG_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
-static void LG_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode);
+static LG_LEDs_t Linear_Guide_LEDs_init();
+static LG_Endswitches_t Linear_Guide_Endswitches_init();
+static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
+static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode);
 
 /* API function definitions --------------------------------------------------*/
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
@@ -20,19 +20,19 @@ Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef 
 			.operating_mode = LG_operating_mode_manual,
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
 			.localization = Localization_init(MOTOR_PULSE_PER_ROTATION, LG_DISTANCE_PER_ROTATION),
-			.endswitch_bar = LG_Endswitch_bar_init(),
-			.led_bar = LG_LED_bar_init()
+			.endswitches = Linear_Guide_Endswitches_init(),
+			.leds = Linear_Guide_LEDs_init()
 	};
 	return linear_guide;
 }
 
-/* void LG_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+/* void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
  *  Description:
  *   - set operating mode depending on current state of the system
  *   - operating mode can always be switched to manual
  *   - operating mode can only be switched to automatic, if the linear guide is localized
  */
-void LG_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
 {
 	boolean_t set_automatic = operating_mode == LG_operating_mode_automatic;
 	boolean_t set_manual = operating_mode == LG_operating_mode_manual;
@@ -40,35 +40,19 @@ void LG_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating
 	if ((set_automatic && is_localized) || set_manual)
 	{
 		lg_ptr->operating_mode = operating_mode;
-		LG_LED_set_operating_mode(lg_ptr, operating_mode);
+		Linear_Guide_LED_set_operating_mode(lg_ptr, operating_mode);
 	}
 }
 
-void LG_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
+void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 {
 	if (Motor_callback_measure_rpm(&lg_ptr->motor))
 	{
-		Loc_update_pulse_count(&lg_ptr->localization);
+		Localization_callback_pulse_count(&lg_ptr->localization);
 	}
 }
 
-/* boolean_t linear_guide_get_manual_moving_permission(Linear_guide_t lg)
- *  Description:
- *   - return True, if operating mode is manual and motor is not currently moving automatically due to localization process
- */
-boolean_t LG_get_manual_moving_permission(Linear_Guide_t lg)
-{
-	return
-			lg.operating_mode == LG_operating_mode_manual
-			&&
-			(
-				lg.localization.state == Loc_state_4_set_center_pos
-				||
-				lg.localization.state == Loc_state_0_init
-			);
-}
-
-void LG_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
+void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 {
 	switch(movement)
 	{
@@ -80,64 +64,53 @@ void LG_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 			Motor_start_moving(&lg_ptr->motor, Motor_function_linkslauf); break;
 	}
 	lg_ptr->localization.movement = movement;
-	LED_switch(&lg_ptr->led_bar[LG_LED_center_pos_set], LED_OFF);
 }
 
-void LG_set_center(Linear_Guide_t *lg_ptr)
+boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
 {
-	Loc_set_center(&lg_ptr->localization);
-	LED_switch(&lg_ptr->led_bar[LG_LED_center_pos_set], LED_ON);
+	return Endswitch_detected(endswitch_ptr);
 }
 
-void LG_set_endpos(Linear_Guide_t *lg_ptr)
+/* test function definitions -------------------------------------------*/
+void Linear_Guide_Test_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
 {
-	Loc_set_endpos(&lg_ptr->localization);
+	Linear_Guide_LED_set_operating_mode(lg_ptr, operating_mode);
 }
-
-boolean_t LG_Endswitch_detected(Linear_Guide_t *lg_ptr, LG_Endswitch_ID_t endswitch_ID)
+void Linear_Guide_Test_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
 {
-	return Endswitch_detected(&lg_ptr->endswitch_bar[endswitch_ID]);
-}
-
-/* private function test definitions -------------------------------------------*/
-void LG_Test_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
-{
-	LG_LED_set_operating_mode(lg_ptr, operating_mode);
-}
-void LG_Test_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
-{
-	LG_LED_set_sail_adjustment_mode(lg_ptr, sail_adjustment_mode);
+	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr, sail_adjustment_mode);
 }
 
 /* private function definitions -----------------------------------------------*/
 
-static Endswitch_t *LG_Endswitch_bar_init()
+static LG_Endswitches_t Linear_Guide_Endswitches_init()
 {
-	static Endswitch_t endswitch_bar[LG_ENDSWITCH_COUNT];
-	endswitch_bar[LG_Endswitch_front] = Endswitch_init(GPIOB, Endschalter_Vorne_Pin);
-	endswitch_bar[LG_Endswitch_back] = Endswitch_init(GPIOB, Endschalter_Hinten_Pin);
-	return endswitch_bar;
+	LG_Endswitches_t lg_endswitches = {
+			.front = Endswitch_init(Endschalter_Vorne_GPIO_Port, Endschalter_Vorne_Pin),
+			.back = Endswitch_init(Endschalter_Hinten_GPIO_Port, Endschalter_Hinten_Pin)
+	};
+	return lg_endswitches;
 }
 
-static LED_t* LG_LED_bar_init()
+static LG_LEDs_t Linear_Guide_LEDs_init()
 {
-	static LED_t led_bar[LG_LED_COUNT];
-	led_bar[LG_LED_error] = LED_init(GPIOD, LED_Stoerung_Pin, LED_OFF);
-	led_bar[LG_LED_manual] = LED_init(GPIOD, LED_Manuell_Pin, LED_ON);
-	led_bar[LG_LED_error] = LED_init(GPIOB, LED_Automatik_Pin, LED_OFF);
-	led_bar[LG_LED_error] = LED_init(GPIOE, LED_Rollen_Pin, LED_OFF);
-	led_bar[LG_LED_error] = LED_init(GPIOB, LED_Trimmen_Pin, LED_OFF);
-	led_bar[LG_LED_error] = LED_init(GPIOD, LED_Kalibrieren_Speichern_Pin, LED_OFF);
-	return led_bar;
+	LG_LEDs_t lg_leds = {
+			.error = LED_init(LED_Stoerung_GPIO_Port, LED_Stoerung_Pin, LED_OFF),
+			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, LED_ON),
+			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, LED_OFF),
+			.rollung = LED_init(LED_Rollen_GPIO_Port, LED_Rollen_Pin, LED_OFF),
+			.trimmung = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF),
+			.center_pos_set = LED_init(LED_Kalibrieren_Speichern_GPIO_Port, LED_Kalibrieren_Speichern_Pin, LED_OFF)
+	};
+	return lg_leds;
 }
 
-/* static void LG_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+/* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
  * 	Description:
  * 	 - depending on parameter "operating_mode" (IO_operating_mode_manual / ..._automatic)
  * 	   switch corresponding LEDs on and off
- * 	 - when automatic mode is set, the center pos LED is assured to be switched on (in case it was turned off due to manually adapting the center pos)
  */
-static void LG_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
 {
 	LED_State_t automatic, manual;
 	switch(operating_mode)
@@ -147,19 +120,18 @@ static void LG_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_
 			break;
 		case LG_operating_mode_automatic:
 			manual = LED_OFF, automatic = LED_ON;
-			LED_switch(&lg_ptr->led_bar[LG_LED_center_pos_set], LED_ON);
 			break;
 	}
-	LED_switch(&lg_ptr->led_bar[LG_LED_automatic], automatic);
-	LED_switch(&lg_ptr->led_bar[LG_LED_manual], manual);
+	LED_switch(&lg_ptr->leds.automatic, automatic);
+	LED_switch(&lg_ptr->leds.manual, manual);
 }
 
-/* static void LG_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
+/* static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
  * 	Description:
  * 	 - when sail adjustment mode changes (rollung / trimmung)
  * 	   the corresponding LEDs are switched on and off
  */
-static void LG_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
+static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
 {
 	LED_State_t rollung, trimmung;
 	switch(sail_adjustment_mode)
@@ -171,8 +143,8 @@ static void LG_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adju
 			rollung = LED_OFF, trimmung = LED_ON;
 			break;
 	}
-	LED_switch(&lg_ptr->led_bar[LG_LED_rollung], rollung);
-	LED_switch(&lg_ptr->led_bar[LG_LED_trimmung], trimmung);
+	LED_switch(&lg_ptr->leds.rollung, rollung);
+	LED_switch(&lg_ptr->leds.trimmung, trimmung);
 }
 /* Timer Callback implementation for rpm measurement --------------------------*/
 
@@ -185,6 +157,6 @@ static void LG_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adju
 /*
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 {
-	LG_callback_motor_pulse_capture(&linear_guide);
+	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 */

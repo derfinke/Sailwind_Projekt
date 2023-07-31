@@ -30,6 +30,7 @@ typedef struct {
 	Loc_state_t state;
 	Loc_movement_t movement;
 	boolean_t is_localized;
+	boolean_t is_triggered;
 	uint8_t motor_ppr;
 	uint8_t distance_per_rotation;
 	int32_t end_pos_mm;
@@ -40,9 +41,8 @@ typedef struct {
 
 /* API function prototypes ---------------------------------------------------*/
 Localization_t Localization_init(uint8_t motor_pulse_per_rotation, uint8_t distance_per_rotation);
-void Loc_set_endpos(Localization_t *loc_ptr);
-void Loc_set_center(Localization_t *loc_ptr);
-void Loc_update_pulse_count(Localization_t *loc_ptr);
-void Loc_update_current_position(Localization_t *loc_ptr);
+void Localization_set_endpos(Localization_t *loc_ptr);
+void Localization_set_center(Localization_t *loc_ptr);
+void Localization_callback_pulse_count(Localization_t *loc_ptr);
 
 #endif /* LOCALIZATION_LOCALIZATION_H_ */
