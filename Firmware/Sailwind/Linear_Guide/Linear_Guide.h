@@ -15,6 +15,7 @@
 
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_PER_ROTATION 5
+#define LG_DISTANCE_PER_PULSE LG_DISTANCE_PER_ROTATION / (float) MOTOR_PULSE_PER_ROTATION
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {

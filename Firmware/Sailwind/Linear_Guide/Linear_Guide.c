@@ -19,7 +19,7 @@ Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef 
 	Linear_Guide_t linear_guide = {
 			.operating_mode = LG_operating_mode_manual,
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
-			.localization = Localization_init(MOTOR_PULSE_PER_ROTATION, LG_DISTANCE_PER_ROTATION),
+			.localization = Localization_init(LG_DISTANCE_PER_PULSE),
 			.endswitches = Linear_Guide_Endswitches_init(),
 			.leds = Linear_Guide_LEDs_init()
 	};
