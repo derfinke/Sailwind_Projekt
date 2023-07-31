@@ -1,0 +1,78 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry} %
+\usepackage{ragged2e}%
+\usepackage{tabularx, makecell, booktabs, caption}
+\usepackage{amsmath}
+
+\begin{document}
+	\section{Testspezifikationen}
+	\subsection{FRAM}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{FRAM\char`_init} & Write Enable Latch (WEL) setzen und Status Register auslesen & Status Register ist 2 & Funktional \\
+			\hline
+				\texttt{FRAM\char`_test} & FRAM initialisieren und and Addresse \texttt{0x0000} "Test" schreiben und diese Adresse auslesen & Geschriebene Nachricht ist identisch mit gelesener Nachricht & Funktional\\
+			\hline
+		\end{tabular}
+	\subsection{LEDs}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				 \texttt{-} & Alle Status LEDs werden erst an und danach ausgeschaltet & - & - \\
+			\hline
+		\end{tabular}
+		\subsection{Buttons/Switch}
+	\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\hline
+			\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+		\hline
+			 \texttt{-} & - & - & - \\
+		\hline
+	\end{tabular}
+	\subsection{Motor}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+		\end{tabular}
+	\subsection{IFS204 (Endschalter)}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				 \texttt{-} & Auslesen der Endschalter Zustände & Ausgelesene Zustände entsprechen den Endschalter Zuständen & Funktional \\
+			 \hline
+		\end{tabular}
+	\subsection{OGD580 (Abstandssensor)}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{-} & Analoger Abstandswert wird ausgelesen und mit dem Angezeigten Wert des Displays verglichen & - & - \\
+			\hline
+				\texttt{-} & Linearführung wird um eine gewisse Distanz bewegt. Distanz sollte der Differenz aus End- und Startposition entsprechen & - & - \\
+			\hline
+		\end{tabular}
+	\subsection{WSWD (Windsensor)}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{-} & Abfragen der Seriennummer über RS485 und Überprüfung dieser & - & - \\
+			\hline
+		\end{tabular}
+	\subsection{Stromsensor}
+		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+			\hline
+				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{-} & Auslesen des Stroms während der Motor nicht in Bewegung ist. Ausgelesene Spannung sollte der halben Versorgungsspannung des Sensors entsprechen (ca. 1.6V) & - & - \\
+			\hline
+				\texttt{-} & Motor wird über die Stromvorgabe angesteuert. Gemessener Strom sollte dem vorgegebenen Strom entsprechen. & - & - \\
+			\hline
+		\end{tabular} 
+\end{document} 
