@@ -15,6 +15,8 @@
 #define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
 #define MOTOR_PULSE_PER_ROTATION 12
 #define MOTOR_IN_COUNT 4
+#define MOTOR_RPM_SPEED_1 75
+#define MOTOR_RPM_SPEED_2 150
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -34,7 +36,7 @@ typedef struct {
 	uint32_t IC_Val1;
 	uint32_t IC_Val2;
 	boolean_t Is_First_Captured;
-	float rpm_value;
+	uint16_t rpm_value;
 	TIM_HandleTypeDef *htim_ptr;
 	HAL_TIM_ActiveChannel active_channel;
 	uint32_t htim_channel;
@@ -47,6 +49,7 @@ typedef struct {
 	Motor_RPM_Measurement_t OUT1_Drehzahl_Messung;
 	IO_digitalPin_t OUT2_Fehler;
 	IO_digitalPin_t OUT3_Drehrichtung;
+	uint16_t rpm_set_point;
 } Motor_t;
 
 
@@ -58,8 +61,9 @@ void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_start_rpm_measurement(Motor_t *motor_ptr);
 boolean_t Motor_callback_measure_rpm(Motor_t *motor_ptr);
 void Motor_stop_rpm_measurement(Motor_t *motor_ptr);
-void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
-void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint32_t rpm_value, uint32_t tolerance);
+void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware);
+uint16_t Motor_get_rpm(Motor_t motor);
+void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance);
 
 
 #endif /* MOTOR_MOTOR_H_ */

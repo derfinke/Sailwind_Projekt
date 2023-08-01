@@ -32,6 +32,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 			.OUT1_Drehzahl_Messung = Motor_OUT1_init(htim_ptr, htim_channel, htim_active_channel),
 			.OUT2_Fehler = IO_digital_Pin_init(OUT_2_GPIO_Port, OUT_2_Pin),
 			.OUT3_Drehrichtung = IO_digital_Pin_init(OUT_3_GPIO_Port, OUT_3_Pin),
+			.rpm_set_point = MOTOR_RPM_SPEED_1
 	};
 	Motor_start_rpm_measurement(&motor);
 	return motor;
@@ -40,13 +41,12 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 /* void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
  *  Description:
  *   - write digital motor Inputs to start motor movement in desired direction (motor_moving_state_rechtslauf / ...linkslauf)
- *   - save the new moving state to the motor reference
  */
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction)
 {
 	printf("motor start moving\r\n");
-	Motor_set_function(motor_ptr, (Motor_function_t)(direction));
-	Motor_set_function(motor_ptr, Motor_function_speed1);
+	Motor_set_function(motor_ptr, direction);
+	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point, True);
 }
 
 /* void motor_stop_moving(Motor_t *motor_ptr)
@@ -58,6 +58,7 @@ void Motor_stop_moving(Motor_t *motor_ptr)
 {
 	printf("motor stop moving\r\n");
 	Motor_set_function(motor_ptr, Motor_function_aus);
+	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, 0.0F);
 }
 
 /* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
@@ -90,15 +91,41 @@ void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function)
 	}
 }
 
-/* void motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
+/* void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware)
  *  Description:
  *   - set digital INs of the motor to configure its engine speed
  *   - send an analog value (converted from rpm - valaue) to the analog Input of the motor
+ *   - or set default speeds
  */
-void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
+void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware)
 {
-	Motor_set_function(motor_ptr, Motor_function_drehzahlvorgabe);
-	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, rpm_value);
+	motor_ptr->rpm_set_point = rpm_value;
+	if (!write_to_Hardware)
+	{
+		return;
+	}
+	Motor_function_t rpm_function;
+	uint16_t AIN_value = 0;
+	switch(motor_ptr->rpm_set_point)
+	{
+		case MOTOR_RPM_SPEED_1:
+			rpm_function = Motor_function_speed1;
+			break;
+		case MOTOR_RPM_SPEED_2:
+			rpm_function = Motor_function_speed2;
+			break;
+		default:
+			rpm_function = Motor_function_drehzahlvorgabe;
+			AIN_value = motor_ptr->rpm_set_point;
+			break;
+	}
+	IO_analogWrite(&motor_ptr->AIN_Drehzahl_Soll, (float) AIN_value);
+	Motor_set_function(motor_ptr, rpm_function);
+}
+
+uint16_t Motor_get_rpm(Motor_t motor)
+{
+	return motor.OUT1_Drehzahl_Messung.rpm_value;
 }
 
 /* void motor_start_rpm_measurement(Motor_t *motor_ptr)
@@ -160,7 +187,7 @@ void Motor_stop_rpm_measurement(Motor_t *motor_ptr)
  *   - teach speed 1 or speed 2
  *   - probably not working yet!
  */
-void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint32_t rpm_value, uint32_t tolerance)
+void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance)
 {
 	printf("\nstoppt Motor...\n");
 	Motor_set_function(motor_ptr, Motor_function_stopp_mit_haltemoment);
@@ -175,10 +202,10 @@ void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint32_t rpm_
 	printf("Lernmodus aktiviert, wenn rote LED schnell blinkt -> Enter um fortzufahren...\n");
 	Motor_press_enter_to_continue();
 	printf("Motor auf Zieldrehzahl bringen...\n");
-	Motor_set_rpm(motor_ptr, rpm_value);
+	Motor_set_rpm(motor_ptr, rpm_value, True);
 	printf("wartet bis Zieldrehzahl erreicht wurde...\n");
 	while((rpm_value - motor_ptr->OUT1_Drehzahl_Messung.rpm_value) > tolerance);
-	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %ld rpm\n", speed-5, rpm_value);
+	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %d rpm\n", speed-5, rpm_value);
 	Motor_set_function(motor_ptr, speed);
 	printf("\nstoppt Motor...\n");
 	Motor_set_function(motor_ptr, Motor_function_stopp_mit_haltemoment);

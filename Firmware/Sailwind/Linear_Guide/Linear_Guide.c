@@ -12,6 +12,8 @@ static LG_LEDs_t Linear_Guide_LEDs_init();
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
 static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode);
+static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
+static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
 /* API function definitions --------------------------------------------------*/
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
@@ -19,9 +21,9 @@ Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef 
 	Linear_Guide_t linear_guide = {
 			.operating_mode = LG_operating_mode_manual,
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
-			.localization = Localization_init(LG_DISTANCE_PER_PULSE),
+			.localization = Localization_init(LG_DISTANCE_MM_PER_PULSE),
 			.endswitches = Linear_Guide_Endswitches_init(),
-			.leds = Linear_Guide_LEDs_init()
+			.leds = Linear_Guide_LEDs_init(),
 	};
 	return linear_guide;
 }
@@ -64,6 +66,17 @@ void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 			Motor_start_moving(&lg_ptr->motor, Motor_function_linkslauf); break;
 	}
 	lg_ptr->localization.movement = movement;
+}
+
+void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms)
+{
+	boolean_t write_to_hardware = lg_ptr->localization.movement != Loc_movement_stop;
+	Motor_set_rpm(&lg_ptr->motor, Linear_Guide_speed_mms_to_rpm(speed_mms), write_to_hardware);
+}
+
+uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr)
+{
+	return Linear_Guide_rpm_to_speed_mms(Motor_get_rpm(lg_ptr->motor));
 }
 
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
@@ -145,6 +158,16 @@ static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG
 	}
 	LED_switch(&lg_ptr->leds.rollung, rollung);
 	LED_switch(&lg_ptr->leds.trimmung, trimmung);
+}
+
+static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value)
+{
+	return (uint16_t) (LG_DISTANCE_MM_PER_ROTATION * rpm_value / 60.0F);
+}
+
+static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms)
+{
+	return (uint16_t) (speed_mms / (float) LG_DISTANCE_MM_PER_ROTATION * 60);
 }
 /* Timer Callback implementation for rpm measurement --------------------------*/
 

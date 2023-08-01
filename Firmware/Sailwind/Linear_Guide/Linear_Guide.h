@@ -14,8 +14,8 @@
 #include "Localization/Localization.h"
 
 /* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_PER_ROTATION 5
-#define LG_DISTANCE_PER_PULSE LG_DISTANCE_PER_ROTATION / (float) MOTOR_PULSE_PER_ROTATION
+#define LG_DISTANCE_MM_PER_ROTATION 5
+#define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION / (float) MOTOR_PULSE_PER_ROTATION
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -58,6 +58,8 @@ void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr);
 void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
+void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
+uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
 
 /* test function prototypes ------------------ -------------------*/
 void Linear_Guide_Test_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);

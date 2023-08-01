@@ -49,7 +49,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			break;
 
 		case 30000 ... 33000:
-			Motor_set_rpm(motor_ptr, test_ID - 30000);
+			Motor_set_rpm(motor_ptr, test_ID - 30000, True);
 			break;
 		case 41 ... 42: ;
 			Test_read_endswitch(huart_ptr, lg_ptr, test_ID);
