@@ -14,6 +14,6 @@
 
 #define TEST_ID_SIZE 5
 
-void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
+void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr);
 
 #endif /* TEST_TEST_H_ */

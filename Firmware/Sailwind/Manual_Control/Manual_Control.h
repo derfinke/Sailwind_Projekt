@@ -17,25 +17,24 @@
 #define MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
 
 /* typedefs ------------------------------------------------------------------*/
-typedef enum {
-	Manual_Control_ID_switch_mode,
-	Manual_Control_ID_move_backwards,
-	Manual_Control_ID_move_forward,
-	Manual_Control_ID_localize
-} Manual_Control_ID_t;
-
-typedef void (*MC_function_t)(Button_state_t button_state, Linear_Guide_t *lg_ptr);
 
 typedef struct {
-	Button_t button;
-	MC_function_t function;
+	Button_t switch_mode;
+	Button_t move_backwards;
+	Button_t move_forward;
+	Button_t localize;
+} MC_buttons_t;
+
+typedef struct {
+	MC_buttons_t buttons;
+	Linear_Guide_t *lg_ptr;
 } Manual_Control_t;
 
 
 
 /* API function prototypes ---------------------------------------------------*/
-Manual_Control_t *Manual_Controls_init();
-void Manual_Control_poll(Manual_Control_t *manual_controls, Linear_Guide_t *lg_ptr);
-void Manual_Control_Localization(Linear_Guide_t *lg_ptr);
+Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr);
+void Manual_Control_poll(Manual_Control_t *mc_ptr);
+void Manual_Control_Localization(Manual_Control_t *mc_ptr);
 
 #endif /* MANUAL_CONTROL_MANUAL_CONTROL_H_ */

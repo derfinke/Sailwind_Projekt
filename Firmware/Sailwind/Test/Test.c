@@ -7,27 +7,27 @@
 
 #include "Test.h"
 
-static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
-static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
-static void Test_LED(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
+static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr);
+static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
+static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 
-void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
+void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
 	if (UART_receive(huart_ptr, Rx_buffer, TEST_ID_SIZE))
 	{
 		uint16_t test_ID = atoi(Rx_buffer);
-		Test_switch_test_ID(huart_ptr, test_ID, lg_ptr, MCs);
+		Test_switch_test_ID(huart_ptr, test_ID, mc_ptr);
 	}
 }
 
-static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
+static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr)
 {
-	Motor_t *motor_ptr = &lg_ptr->motor;
+	Motor_t *motor_ptr = &mc_ptr->lg_ptr->motor;
 	UART_transmit_ln_int(huart_ptr, "Message Received: %d", test_ID);
 	switch (test_ID)
 	{
 		case 1:
-			Test_LED(huart_ptr, lg_ptr, MCs);
+			Test_LED(huart_ptr, mc_ptr);
 			break;
 
 		case 20 ... 27:
@@ -39,7 +39,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			break;
 
 		case 4:
-			Test_endswitch(huart_ptr, lg_ptr, MCs);
+			Test_endswitch(huart_ptr, mc_ptr);
 			break;
 
 		case 511:
@@ -60,10 +60,11 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 	}
 }
 
-static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
+static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 {
+	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	UART_transmit_ln(huart_ptr, "switch operating mode button to start motor");
-	while (!Button_state_changed(&MCs[Manual_Control_ID_switch_mode].button));
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 
 	Linear_Guide_move(lg_ptr, Loc_movement_forward);
 	while (!Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front));
@@ -73,22 +74,23 @@ static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr
 
 	Linear_Guide_move(lg_ptr, Loc_movement_forward);
 	UART_transmit_ln(huart_ptr, "switch operating mode button to stop motor");
-	while (!Button_state_changed(&MCs[Manual_Control_ID_switch_mode].button));
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	UART_transmit_ln(huart_ptr, "end switch Test done!");
 }
 
-static void Test_LED(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
+static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 {
+	LG_LEDs_t *leds_ptr = &mc_ptr->lg_ptr->leds;
 	for (LED_State_t state = LED_OFF; state <= LED_ON; state++)
 	{
 		UART_transmit_ln_int(huart_ptr, "switch operating mode button to set LEDs state: %d", state);
-		while (!Button_state_changed(&MCs[Manual_Control_ID_switch_mode].button));
-		LED_switch(&lg_ptr->leds.automatic, state);
-		LED_switch(&lg_ptr->leds.manual, state);
-		LED_switch(&lg_ptr->leds.rollung, state);
-		LED_switch(&lg_ptr->leds.trimmung, state);
-		LED_switch(&lg_ptr->leds.center_pos_set, state);
-		LED_switch(&lg_ptr->leds.error, state);
+		while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+		LED_switch(&leds_ptr->automatic, state);
+		LED_switch(&leds_ptr->manual, state);
+		LED_switch(&leds_ptr->rollung, state);
+		LED_switch(&leds_ptr->trimmung, state);
+		LED_switch(&leds_ptr->center_pos_set, state);
+		LED_switch(&leds_ptr->error, state);
 	}
 	UART_transmit_ln(huart_ptr, "LED Test done!");
 }

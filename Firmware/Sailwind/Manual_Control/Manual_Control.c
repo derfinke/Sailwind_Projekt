@@ -8,70 +8,65 @@
 #include "Manual_Control.h"
 
 /* private function prototypes -----------------------------------------------*/
-static void Manual_Control_move_toggle(GPIO_PinState button_state, Linear_Guide_t *lg_ptr, Loc_movement_t movement);
+static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement);
 
-static void Manual_Control_function_move_backwards_toggle(GPIO_PinState button_state, Linear_Guide_t *linear_guide_ptr);
-static void Manual_Control_function_move_forward_toggle(GPIO_PinState button_state, Linear_Guide_t *linear_guide_ptr);
-static void Manual_Control_function_switch_operating_mode(GPIO_PinState button_state, Linear_Guide_t *lg_ptr);
-static void Manual_Control_function_localization(GPIO_PinState button_state, Linear_Guide_t *lg_ptr);
+static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr);
+static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr);
+static void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr);
+static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 
-static boolean_t Manual_Control_get_moving_permission(Linear_Guide_t lg);
-static void Manual_Control_set_center(Linear_Guide_t *lg_ptr);
-static void Manual_Control_set_endpos(Linear_Guide_t *lg_ptr);
+static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
+static void Manual_Control_set_center(Manual_Control_t *mc_ptr);
+static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
-Manual_Control_t *Manual_Controls_init()
+Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 {
-	static Manual_Control_t manual_controls[MANUAL_CONTROL_COUNT];
-
-	Manual_Control_t control_switch_mode = {
-			.button = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
-			.function = Manual_Control_function_switch_operating_mode
+	MC_buttons_t buttons = {
+			.switch_mode = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
+			.move_backwards = Button_init(Button_Zurueck_GPIO_Port, Button_Zurueck_Pin),
+			.move_forward = Button_init(Button_Vorfahren_GPIO_Port, Button_Vorfahren_Pin),
+			.localize = Button_init(Kalibrierung_GPIO_Port, Kalibrierung_Pin),
 	};
-	manual_controls[Manual_Control_ID_switch_mode] = control_switch_mode;
 
-	Manual_Control_t control_move_backwards = {
-			.button = Button_init(Button_Zurueck_GPIO_Port, Button_Zurueck_Pin),
-			.function = Manual_Control_function_move_backwards_toggle
+	Manual_Control_t manual_control = {
+			.buttons = buttons,
+			.lg_ptr = lg_ptr
 	};
-	manual_controls[Manual_Control_ID_move_backwards] = control_move_backwards;
 
-	Manual_Control_t control_move_forward = {
-			.button = Button_init(Button_Vorfahren_GPIO_Port, Button_Vorfahren_Pin),
-			.function = Manual_Control_function_move_forward_toggle
-	};
-	manual_controls[Manual_Control_ID_move_forward] = control_move_forward;
-
-	Manual_Control_t control_localize = {
-			.button = Button_init(Kalibrierung_GPIO_Port, Kalibrierung_Pin),
-			.function = Manual_Control_function_localization
-	};
-	manual_controls[Manual_Control_ID_localize] = control_localize;
-
-	return manual_controls;
+	return manual_control;
 }
 
-/* void Manual_Control_poll(Button_t buttons[BUTTON_COUNT], Linear_guide_t *lg_ptr)
+/* void Manual_Control_poll(Manual_Control_t *mc_ptr)
  * 	Description:
  * 	 - to be called in main loop
  * 	 - iterates through the button array and checks for each button, if its state has changed
  * 	 - if so, its eventHandler is called passing its state and the linear guide object
  * 	 - the specific eventHandler functions are defined below and must have the same parameters to be called in a loop
  */
-void Manual_Control_poll(Manual_Control_t manual_controls[MANUAL_CONTROL_COUNT], Linear_Guide_t *lg_ptr)
+void Manual_Control_poll(Manual_Control_t *mc_ptr)
 {
-	for (Manual_Control_ID_t btn_idx = 0; btn_idx < MANUAL_CONTROL_COUNT; btn_idx++)
+	MC_buttons_t *btns = &mc_ptr->buttons;
+	if (Button_state_changed(&btns->switch_mode))
 	{
-		if (Button_state_changed(&manual_controls[btn_idx].button))
-		{
-			printf("function of Button %d\r\n", btn_idx);
-			manual_controls[btn_idx].function(manual_controls[btn_idx].button.state, lg_ptr);
-		}
+		Manual_Control_function_switch_operating_mode(mc_ptr);
+	}
+	if (Button_state_changed(&btns->move_backwards))
+	{
+		Manual_Control_function_move_backwards_toggle(mc_ptr);
+	}
+	if (Button_state_changed(&btns->move_forward))
+	{
+		Manual_Control_function_move_forward_toggle(mc_ptr);
+	}
+	if (Button_state_changed(&btns->localize))
+	{
+		Manual_Control_function_localization(mc_ptr);
 	}
 }
 
-/* void Manual_Control_Localization(Linear_guide_t *linear_guide_ptr)
+/* void Manual_Control_Localization(Manual_Control_t *mc_ptr)
  *  Description:
  *   - state machine to be called in main loop
  *   - controls the process of approaching both end points and finally the calculated center
@@ -92,8 +87,9 @@ void Manual_Control_poll(Manual_Control_t manual_controls[MANUAL_CONTROL_COUNT],
  *   - state 4 waits for second button press to confirm or update the center pos
  *   		-> Localization process finished: ready for automatic mode
  */
-void Manual_Control_Localization(Linear_Guide_t *lg_ptr)
+void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 {
+	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	Loc_state_t *state = &lg_ptr->localization.state;
 	switch(*state)
 	{
@@ -119,7 +115,7 @@ void Manual_Control_Localization(Linear_Guide_t *lg_ptr)
 			{
 				printf("new state approach center\r\n");
 				Linear_Guide_move(lg_ptr, Loc_movement_forward);
-				Manual_Control_set_endpos(lg_ptr);
+				Manual_Control_set_endpos(mc_ptr);
 				*state = Loc_state_3_approach_center;
 			}
 			break;
@@ -135,7 +131,7 @@ void Manual_Control_Localization(Linear_Guide_t *lg_ptr)
 			if (lg_ptr->localization.is_triggered)
 			{
 				printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
-				Manual_Control_set_center(lg_ptr);
+				Manual_Control_set_center(mc_ptr);
 				lg_ptr->localization.is_triggered = False;
 			}
 			break;
@@ -146,42 +142,42 @@ void Manual_Control_Localization(Linear_Guide_t *lg_ptr)
 
 /* private function definitions -----------------------------------------------*/
 
-/* static void Manual_Control_move_toggle(Button_state_t button_state, Linear_guide_t *lg_ptr, motor_moving_state_t direction)
+/* static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
  *  Description:
  *   - called within the two event to move either left or right depending on the parameter "direction"
  *   - manual moving is only possible, if operating mode is manual and if the calibration process is not running currently (so it cannot be interrupted)
  *   - if the button is pressed, a function is called to start the motor in the given direction
  *   - if it is released, the motor is commanded to stop
  */
-static void Manual_Control_move_toggle(Button_state_t button_state, Linear_Guide_t *lg_ptr, Loc_movement_t movement)
+static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
 {
-	if (Manual_Control_get_moving_permission(*lg_ptr))
+	if (Manual_Control_get_moving_permission(*mc_ptr))
 	{
 		printf("no moving permission\r\n");
 		return;
 	}
-	switch (button_state)
+	switch (btn.state)
 	{
 		case BUTTON_PRESSED:
-			Linear_Guide_move(lg_ptr, movement);
+			Linear_Guide_move(mc_ptr->lg_ptr, movement);
 			break;
 		case BUTTON_RELEASED:
-			Linear_Guide_move(lg_ptr, Loc_movement_stop);
+			Linear_Guide_move(mc_ptr->lg_ptr, Loc_movement_stop);
 			break;
 	}
 }
 
-static void Manual_Control_function_move_backwards_toggle(Button_state_t button_state, Linear_Guide_t *linear_guide_ptr)
+static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr)
 {
-	Manual_Control_move_toggle(button_state, linear_guide_ptr, Loc_movement_backwards);
+	Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_backwards, Loc_movement_backwards);
 }
 
-static void Manual_Control_function_move_forward_toggle(Button_state_t button_state, Linear_Guide_t *linear_guide_ptr)
+static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr)
 {
-	Manual_Control_move_toggle(button_state, linear_guide_ptr, Loc_movement_forward);
+	Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_forward, Loc_movement_forward);
 }
 
-/* static void MC_event_switch_operating_mode(Button_state_t button_state, Linear_guide_t *lg_ptr)
+/* static void MC_event_switch_operating_mode(Manual_Control_t *mc_ptr)
  *  Description:
  *   - event to switch operating mode
  *   - switching the button to automatic only works, if the calibration process is done
@@ -189,10 +185,11 @@ static void Manual_Control_function_move_forward_toggle(Button_state_t button_st
  *   - on the other hand, in automatic mode the operating mode can always be switched to manual
  *   - if the operating mode could be changed, the corresponding LEDs are set and reset
  */
-static void Manual_Control_function_switch_operating_mode(Button_state_t button_state, Linear_Guide_t *lg_ptr)
+static void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 {
+	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	LG_operating_mode_t new_operating_mode = lg_ptr->operating_mode;
-	switch (button_state)
+	switch (mc_ptr->buttons.switch_mode.state)
 	{
 		case MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC:
 			if (!lg_ptr->localization.is_localized)
@@ -216,7 +213,7 @@ static void Manual_Control_function_switch_operating_mode(Button_state_t button_
 
 }
 
-/* static void MC_event_localization(Button_state_t button_state, Linear_guide_t *lg_ptr)
+/* static void MC_event_localization(Manual_Control_t *mc_ptr)
  *  Description:
  *   - event for the localization button
  *   - only works in manual mode
@@ -226,13 +223,14 @@ static void Manual_Control_function_switch_operating_mode(Button_state_t button_
  *   - if necessary, the position can be adjusted manually with the moving buttons before pressing the button
  *   - further presses can be made afterwards to adjust the center position again
  */
-static void Manual_Control_function_localization(Button_state_t button_state, Linear_Guide_t *lg_ptr)
+static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 {
+	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	if (lg_ptr->operating_mode != LG_operating_mode_manual)
 	{
 		return;
 	}
-	switch (button_state)
+	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
 			LED_switch(&lg_ptr->leds.center_pos_set, LED_OFF);
@@ -243,12 +241,13 @@ static void Manual_Control_function_localization(Button_state_t button_state, Li
 	}
 }
 
-/* static boolean_t Manual_Control_get_moving_permission(Linear_Guide_t lg)
+/* static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
  *  Description:
  *   - return True, if operating mode is manual and motor is not currently moving automatically due to localization process
  */
-static boolean_t Manual_Control_get_moving_permission(Linear_Guide_t lg)
+static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
 {
+	Linear_Guide_t lg = *mc.lg_ptr;
 	return
 			lg.operating_mode == LG_operating_mode_manual
 			&&
@@ -259,14 +258,14 @@ static boolean_t Manual_Control_get_moving_permission(Linear_Guide_t lg)
 			);
 }
 
-static void Manual_Control_set_center(Linear_Guide_t *lg_ptr)
+static void Manual_Control_set_center(Manual_Control_t *mc_ptr)
 {
-	Localization_set_center(&lg_ptr->localization);
-	LED_switch(&lg_ptr->leds.center_pos_set, LED_ON);
+	Localization_set_center(&mc_ptr->lg_ptr->localization);
+	LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
 }
 
-static void Manual_Control_set_endpos(Linear_Guide_t *lg_ptr)
+static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)
 {
-	Localization_set_endpos(&lg_ptr->localization);
+	Localization_set_endpos(&mc_ptr->lg_ptr->localization);
 }
 
