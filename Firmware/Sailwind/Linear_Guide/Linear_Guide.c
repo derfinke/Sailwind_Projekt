@@ -84,16 +84,6 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
 	return Endswitch_detected(endswitch_ptr);
 }
 
-/* test function definitions -------------------------------------------*/
-void Linear_Guide_Test_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
-{
-	Linear_Guide_LED_set_operating_mode(lg_ptr, operating_mode);
-}
-void Linear_Guide_Test_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
-{
-	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr, sail_adjustment_mode);
-}
-
 /* private function definitions -----------------------------------------------*/
 
 static LG_Endswitches_t Linear_Guide_Endswitches_init()

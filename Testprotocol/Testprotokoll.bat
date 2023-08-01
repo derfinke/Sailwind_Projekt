@@ -31,19 +31,13 @@ ECHO choose and enter Test ID
 ECHO.
 ECHO 0	- back to start menu
 ECHO.
-ECHO 11	- toggle "Error" LED
-ECHO 121	- set "sail adjustment mode" LEDs to "Rollung"
-ECHO 122	- set "sail adjustment mode" LEDs to "Trimmung"
-ECHO 131	- set "manual" LED
-ECHO 132	- set "automatic" LED
-ECHO 14	- toggle "center pos set" LED
+ECHO 1	- LED Test
 ECHO.
 ECHO 2x	- set motor function x {0...7}
 ECHO.
 ECHO 3xxxx	- set motor rpm xxxx {0000...3000}
 ECHO.
-ECHO 41	- read endswitch vorne
-ECHO 42	- read endswitch hinten
+ECHO 4	- Endswitch Test
 ECHO.
 ECHO 511	- OUT1: start rpm measurement
 ECHO 512	- OUT1: get rpm value

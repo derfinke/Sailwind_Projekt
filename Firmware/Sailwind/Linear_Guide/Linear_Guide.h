@@ -61,8 +61,5 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
 
-/* test function prototypes ------------------ -------------------*/
-void Linear_Guide_Test_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
-void Linear_Guide_Test_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode);
 
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */

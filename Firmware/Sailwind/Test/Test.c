@@ -8,7 +8,7 @@
 #include "Test.h"
 
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
-static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, uint16_t test_ID);
+static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs);
 
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
@@ -29,18 +29,6 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 		case 1:
 			Test_LED(huart_ptr, lg_ptr, MCs);
 			break;
-		case 121:
-			Linear_Guide_Test_LED_set_sail_adjustment_mode(lg_ptr, LG_sail_adjustment_mode_rollung);
-			break;
-		case 122:
-			Linear_Guide_Test_LED_set_sail_adjustment_mode(lg_ptr, LG_sail_adjustment_mode_trimmung);
-			break;
-		case 131:
-			Linear_Guide_Test_LED_set_operating_mode(lg_ptr, LG_operating_mode_manual);
-			break;
-		case 132:
-			Linear_Guide_Test_LED_set_operating_mode(lg_ptr, LG_operating_mode_automatic);
-			break;
 
 		case 20 ... 27:
 			Motor_set_function(motor_ptr, (Motor_function_t)(test_ID - 20));
@@ -49,8 +37,9 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 		case 30000 ... 33000:
 			Motor_set_rpm(motor_ptr, test_ID - 30000, True);
 			break;
-		case 41 ... 42: ;
-			Test_endswitch(huart_ptr, lg_ptr, test_ID);
+
+		case 4:
+			Test_endswitch(huart_ptr, lg_ptr, MCs);
 			break;
 
 		case 511:
@@ -71,20 +60,21 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 	}
 }
 
-static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, uint16_t test_ID)
+static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
 {
-	char *f_string;
-	boolean_t is_active;
-	if (test_ID == 41) {
-		f_string = "End Switch front active: %d";
-		is_active = Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front);
-	}
-	else {
-		f_string = "End Switch back active: %d";
-		is_active = Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back);
-	}
-	UART_transmit_ln_int(huart_ptr, f_string, is_active);
+	UART_transmit_ln(huart_ptr, "switch operating mode button to start motor");
+	while (!Button_state_changed(&MCs[Manual_Control_ID_switch_mode].button));
 
+	Linear_Guide_move(lg_ptr, Loc_movement_forward);
+	while (!Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front));
+
+	Linear_Guide_move(lg_ptr, Loc_movement_backwards);
+	while (!Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back));
+
+	Linear_Guide_move(lg_ptr, Loc_movement_forward);
+	UART_transmit_ln(huart_ptr, "switch operating mode button to stop motor");
+	while (!Button_state_changed(&MCs[Manual_Control_ID_switch_mode].button));
+	UART_transmit_ln(huart_ptr, "end switch Test done!");
 }
 
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Linear_Guide_t *lg_ptr, Manual_Control_t *MCs)
