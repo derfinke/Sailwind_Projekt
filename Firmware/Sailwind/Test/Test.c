@@ -94,3 +94,34 @@ static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	}
 	UART_transmit_ln(huart_ptr, "LED Test done!");
 }
+
+static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
+{
+	LED_t *led_ptr = mc_ptr->lg_ptr->leds.center_pos_set;
+	UART_transmit_ln(huart_ptr, "set and reset buttons and check, if center pos set led is switched on and off");
+
+	UART_transmit_ln(huart_ptr, "1. switch mode button");
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	LED_switch(led_ptr, LED_ON);
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	LED_switch(led_ptr, LED_OFF);
+
+	UART_transmit_ln(huart_ptr, "2. move backwards button");
+	while (!Button_state_changed(&mc_ptr->buttons.move_backwards));
+	LED_switch(led_ptr, LED_ON);
+	while (!Button_state_changed(&mc_ptr->buttons.move_backwards));
+	LED_switch(led_ptr, LED_OFF);
+
+	UART_transmit_ln(huart_ptr, "3. move forward button");
+	while (!Button_state_changed(&mc_ptr->buttons.move_forward));
+	LED_switch(led_ptr, LED_ON);
+	while (!Button_state_changed(&mc_ptr->buttons.move_forward));
+	LED_switch(led_ptr, LED_OFF);
+
+	UART_transmit_ln(huart_ptr, "4. localize button");
+	while (!Button_state_changed(&mc_ptr->buttons.localize));
+	LED_switch(led_ptr, LED_ON);
+	while (!Button_state_changed(&mc_ptr->buttons.localize));
+	LED_switch(led_ptr, LED_OFF);
+	UART_transmit_ln(huart_ptr, "Button Test done!");
+}
