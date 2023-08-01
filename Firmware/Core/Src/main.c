@@ -67,7 +67,7 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 char Rx_buffer[10];
 Linear_Guide_t linear_guide;
-Manual_Control_t *manual_controls;
+Manual_Control_t manual_control;
 
 /* USER CODE END PV */
 
@@ -137,7 +137,7 @@ int main(void)
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-  manual_controls = Manual_Controls_init();
+  manual_control = Manual_Control_init(&linear_guide);
   IO_analogSensor_t Abstandsensor;
   IO_analogSensor_t Stromsensor;
 
@@ -187,10 +187,10 @@ int main(void)
   while (1)
   {
 #if !TEST
-		Manual_Control_poll(manual_controls, &linear_guide);
-		Manual_Control_Localization(&linear_guide);
+		Manual_Control_poll(&manual_control);
+		Manual_Control_Localization(&manual_control);
 #else
-		Test_uart_poll(&huart3, Rx_buffer, &linear_guide, manual_controls);
+		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
 #endif
 
     /* USER CODE END WHILE */
