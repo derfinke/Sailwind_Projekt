@@ -34,7 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define LED_TEST 1
+#define TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -186,9 +186,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+#if !TEST
 		Manual_Control_poll(manual_controls, &linear_guide);
 		Manual_Control_Localization(&linear_guide);
-		Test_uart_poll(&huart3, Rx_buffer, &linear_guide);
+#else
+		Test_uart_poll(&huart3, Rx_buffer, &linear_guide, manual_controls);
+#endif
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
