@@ -65,7 +65,7 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-uint8_t Rx_buffer[10];
+char Rx_buffer[10];
 Linear_Guide_t linear_guide;
 Manual_Control_t *manual_controls;
 

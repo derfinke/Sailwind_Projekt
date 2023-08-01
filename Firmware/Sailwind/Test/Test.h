@@ -10,7 +10,10 @@
 
 #include <stdlib.h>
 #include "../Linear_Guide/Linear_Guide.h"
+#include "../UART/UART.h"
 
-void Test_uart_poll(UART_HandleTypeDef *huart_ptr, uint8_t *Rx_buffer, Linear_Guide_t *lg_ptr);
+#define TEST_ID_SIZE 5
+
+void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Linear_Guide_t *lg_ptr);
 
 #endif /* TEST_TEST_H_ */
