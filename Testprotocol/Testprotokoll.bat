@@ -39,6 +39,7 @@ ECHO 3xxxx	- set motor rpm xxxx {0000...3000}
 ECHO.
 ECHO 4	- Endswitch Test
 ECHO.
+ECHO 5	- Motor Test
 ECHO 511	- OUT1: start rpm measurement
 ECHO 512	- OUT1: get rpm value
 ECHO 52	- OUT2: get motor error

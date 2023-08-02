@@ -11,6 +11,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
+static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
@@ -43,17 +44,20 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			Test_endswitch(huart_ptr, mc_ptr);
 			break;
 
+		case 5:
+			Test_Motor(huart_ptr, mc_ptr);
+
 		case 511:
 			Motor_start_rpm_measurement(motor_ptr);
 			break;
 		case 512:
-			UART_transmit_ln_float(huart_ptr, "motor rpm: %.2f", motor_ptr->OUT1_Drehzahl_Messung.rpm_value);
+			UART_transmit_ln_float(huart_ptr, "motor rpm: %.2f", motor_ptr->OUT1_rpm_measurement.rpm_value);
 			break;
 		case 52:
-			UART_transmit_ln_int(huart_ptr, "motor error: %d", IO_digitalRead(&motor_ptr->OUT2_Fehler));
+			UART_transmit_ln_int(huart_ptr, "motor error: %d", IO_digitalRead(&motor_ptr->OUT2_error));
 			break;
 		case 53:
-			UART_transmit_ln_int(huart_ptr, "motor direction: %d", IO_digitalRead(&motor_ptr->OUT3_Drehrichtung));
+			UART_transmit_ln_int(huart_ptr, "motor direction: %d", IO_digitalRead(&motor_ptr->OUT3_rot_dir));
 			break;
 
 		case 6:
@@ -128,4 +132,40 @@ static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	while (!Button_state_changed(&mc_ptr->buttons.localize));
 	LED_switch(led_ptr, LED_OFF);
 	UART_transmit_ln(huart_ptr, "Button Test done!");
+}
+
+static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
+{
+	Motor_t *motor_ptr = &mc_ptr->lg_ptr->motor;
+	if (Motor_error(motor_ptr))
+	{
+		UART_transmit_ln(huart_ptr, "Motor Error! -> Test failed");
+		return;
+	}
+	Motor_set_rpm(motor_ptr, MOTOR_RPM_SPEED_1, False);
+	UART_transmit_ln(huart_ptr, "switch button to start motor move clock wise with speed 1");
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	Motor_start_moving(motor_ptr, Motor_function_cw_rotation);
+	while (IO_digitalRead(&motor_ptr->OUT3_rot_dir) != MOTOR_DIRECTION_CW);
+	UART_transmit_ln(huart_ptr, "detected clockwise rotation!");
+
+	UART_transmit_ln(huart_ptr, "switch button to change direction to counter clock wise");
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	Motor_start_moving(motor_ptr, Motor_function_ccw_rotation);
+	while (IO_digitalRead(&motor_ptr->OUT3_rot_dir) != MOTOR_DIRECTION_CCW);
+	UART_transmit_ln(huart_ptr, "detected counter clockwise rotation!");
+
+	UART_transmit_ln(huart_ptr, "switch button to accelerate motor");
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	for (uint16_t rpm_value=MOTOR_RPM_SPEED_1; rpm_value <= MOTOR_RPM_SPEED_2; rpm_value+=15)
+	{
+		Motor_set_rpm(motor_ptr, rpm_value, True);
+		HAL_Delay(2000);
+		UART_transmit_ln_int(huart_ptr, "rpm_set_point: %d", rpm_value);
+		UART_transmit_ln_int(huart_ptr, "rpm_measurement: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
+	}
+	UART_transmit_ln(huart_ptr, "switch button to stop motor");
+	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
+	Motor_stop_moving(motor_ptr);
+	UART_transmit_ln(huart_ptr, "Motor Test done!");
 }

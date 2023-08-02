@@ -17,15 +17,17 @@
 #define MOTOR_IN_COUNT 4
 #define MOTOR_RPM_SPEED_1 75
 #define MOTOR_RPM_SPEED_2 150
+#define MOTOR_DIRECTION_CCW GPIO_PIN_SET
+#define MOTOR_DIRECTION_CW GPIO_PIN_RESET
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
-	Motor_function_aus,
-	Motor_function_rechtslauf,
-	Motor_function_linkslauf,
-	Motor_function_stopp_mit_haltemoment,
-	Motor_function_drehzahlvorgabe,
-	Motor_function_Stromvorgabe,
+	Motor_function_stop,
+	Motor_function_cw_rotation,
+	Motor_function_ccw_rotation,
+	Motor_function_stop_holding_torque,
+	Motor_function_velocity_setting,
+	Motor_function_current_setting,
 	Motor_function_speed1,
 	Motor_function_speed2
 } Motor_function_t;
@@ -51,10 +53,10 @@ typedef enum {
 typedef struct {
 	Motor_function_t current_function;
 	Motor_INs_t INs;
-	IO_analogActuator_t AIN_Drehzahl_Soll;
-	Motor_RPM_Measurement_t OUT1_Drehzahl_Messung;
-	IO_digitalPin_t OUT2_Fehler;
-	IO_digitalPin_t OUT3_Drehrichtung;
+	IO_analogActuator_t AIN_set_rpm;
+	Motor_RPM_Measurement_t OUT1_rpm_measurement;
+	IO_digitalPin_t OUT2_error;
+	IO_digitalPin_t OUT3_rot_dir;
 	uint16_t rpm_set_point;
 } Motor_t;
 
@@ -69,6 +71,7 @@ Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr);
 void Motor_stop_rpm_measurement(Motor_t *motor_ptr);
 void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware);
 uint16_t Motor_get_rpm(Motor_t motor);
+boolean_t Motor_error(Motor_t *motor_ptr);
 void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance);
 
 
