@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  1 AUG 2023 21:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  2 AUG 2023 11:22
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -290,6 +290,11 @@ Overfull \hbox (26.86981pt too wide) in paragraph at lines 21--28
  []
 
 
+Underfull \hbox (badness 3439) in paragraph at lines 33--33
+\OT1/cmr/m/n/10 der eine steigende und fal-l-ende
+ []
+
+
 Overfull \hbox (26.86981pt too wide) in paragraph at lines 29--36
 [] 
  []
@@ -329,14 +334,14 @@ Overfull \hbox (26.86981pt too wide) in paragraph at lines 53--62
 [] 
  []
 
+[1
 
+{C:/Users/Bene/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Overfull \hbox (26.86981pt too wide) in paragraph at lines 63--70
 [] 
  []
 
-[1
 
-{C:/Users/Bene/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Underfull \hbox (badness 1910) in paragraph at lines 77--77
 \OT1/cmr/m/n/10 anges-teuert. Gemessener Strom
  []
@@ -355,7 +360,7 @@ Overfull \hbox (26.86981pt too wide) in paragraph at lines 71--80
 Here is how much of TeX's memory you used:
  3606 strings out of 476331
  63123 string characters out of 5788237
- 1866660 words of memory out of 5000000
+ 1864660 words of memory out of 5000000
  24061 multiletter control sequences out of 15000+600000
  514427 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -365,7 +370,7 @@ type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Bene/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Bene/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on template_Article.pdf (2 pages, 70033 bytes).
+Output written on template_Article.pdf (2 pages, 71105 bytes).
 PDF statistics:
  29 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
