@@ -10,9 +10,10 @@
 /* private function prototypes -----------------------------------------------*/
 static int32_t Localization_pulse_count_to_distance(Localization_t loc);
 static void Localization_update_current_position(Localization_t *loc_ptr);
+static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
 
 /* API function definitions -----------------------------------------------*/
-Localization_t Localization_init(float distance_per_pulse)
+Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE])
 {
 	Localization_t localization = {
 			.is_localized = False,
@@ -23,6 +24,10 @@ Localization_t Localization_init(float distance_per_pulse)
 			.pulse_count = 0,
 			.distance_per_pulse = distance_per_pulse
 	};
+	if (Localization_deserialize(&localization, serial_buffer))
+	{
+		Localization_update_current_position(&localization);
+	}
 	return localization;
 }
 /* void Localization_set_endpos(Localization_t *loc_ptr)
@@ -81,6 +86,11 @@ void Localization_update_current_position(Localization_t *loc_ptr)
 	loc_ptr->current_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
 }
 
+void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
+{
+	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (uint8_t) loc.state, loc.pulse_count, loc.end_pos_mm, loc.center_pos_mm);
+}
+
 /* private function definitions -----------------------------------------------*/
 
 /* static int32_t Localization_pulse_count_to_distance(Localization_t loc)
@@ -90,4 +100,17 @@ void Localization_update_current_position(Localization_t *loc_ptr)
 static int32_t Localization_pulse_count_to_distance(Localization_t loc)
 {
 	return (uint32_t) (loc.pulse_count * loc.distance_per_pulse);
+}
+
+static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
+{
+	if (!sscanf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (uint8_t *) &loc_ptr->state, &loc_ptr->pulse_count, &loc_ptr->end_pos_mm, &loc_ptr->center_pos_mm))
+	{
+		return False;
+	}
+	if (loc_ptr->state == Loc_state_5_center_pos_set)
+	{
+		loc_ptr->is_localized = True;
+	}
+	return True;
 }
