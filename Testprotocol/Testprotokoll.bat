@@ -43,6 +43,8 @@ ECHO 511	- OUT1: start rpm measurement
 ECHO 512	- OUT1: get rpm value
 ECHO 52	- OUT2: get motor error
 ECHO 53	- OUT3: get motor direction
+ECHO.
+ECHO 6	- Button Test
 
 
 ECHO.
@@ -54,4 +56,5 @@ SET T=%T:~-5%
 ECHO %T%
 SET /P x=%T% <nul >\\.\%C%
 GOTO TESTMENU
+
 :EXIT

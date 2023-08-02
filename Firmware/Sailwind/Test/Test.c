@@ -10,6 +10,7 @@
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr);
 static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
+static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
@@ -54,6 +55,9 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 		case 53:
 			UART_transmit_ln_int(huart_ptr, "motor direction: %d", IO_digitalRead(&motor_ptr->OUT3_Drehrichtung));
 			break;
+
+		case 6:
+			Test_Button(huart_ptr, mc_ptr);
 		default:
 			UART_transmit_ln(huart_ptr, "no valid test ID!");
 			break;
@@ -97,7 +101,7 @@ static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 
 static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 {
-	LED_t *led_ptr = mc_ptr->lg_ptr->leds.center_pos_set;
+	LED_t *led_ptr = &mc_ptr->lg_ptr->leds.center_pos_set;
 	UART_transmit_ln(huart_ptr, "set and reset buttons and check, if center pos set led is switched on and off");
 
 	UART_transmit_ln(huart_ptr, "1. switch mode button");
