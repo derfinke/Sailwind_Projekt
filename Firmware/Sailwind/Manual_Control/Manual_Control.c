@@ -16,7 +16,7 @@ static void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_p
 static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
-static void Manual_Control_set_center(Manual_Control_t *mc_ptr);
+static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
 
 /* API function definitions -----------------------------------------------*/
@@ -128,12 +128,13 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			}
 			break;
 		case Loc_state_4_set_center_pos:
-			if (lg_ptr->localization.is_triggered)
+			if (Manual_Control_set_center(mc_ptr))
 			{
-				printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
-				Manual_Control_set_center(mc_ptr);
-				lg_ptr->localization.is_triggered = False;
+				*state = Loc_state_5_center_pos_set;
 			}
+			break;
+		case Loc_state_5_center_pos_set:
+			Manual_Control_set_center(mc_ptr);
 			break;
 		default:
 			break;
@@ -180,8 +181,7 @@ static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr
 /* static void MC_event_switch_operating_mode(Manual_Control_t *mc_ptr)
  *  Description:
  *   - event to switch operating mode
- *   - switching the button to automatic only works, if the calibration process is done
- *   - if so, besides the center pos LED is turned on again, if it was switched off due to moving the motor manually before
+ *   - switching the button to automatic only works, if the localization process is done
  *   - on the other hand, in automatic mode the operating mode can always be switched to manual
  *   - if the operating mode could be changed, the corresponding LEDs are set and reset
  */
@@ -258,10 +258,18 @@ static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
 			);
 }
 
-static void Manual_Control_set_center(Manual_Control_t *mc_ptr)
+static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
 {
-	Localization_set_center(&mc_ptr->lg_ptr->localization);
-	LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
+	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
+	boolean_t set_center_triggered = lg_ptr->localization.is_triggered;
+	if (set_center_triggered)
+	{
+		printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
+		Localization_set_center(&mc_ptr->lg_ptr->localization);
+		LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
+		lg_ptr->localization.is_triggered = False;
+	}
+	return set_center_triggered;
 }
 
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)

@@ -47,11 +47,11 @@ void Localization_set_center(Localization_t *loc_ptr)
 	loc_ptr->is_localized = True;
 }
 
-void Localization_callback_pulse_count(Localization_t *loc_ptr)
+boolean_t Localization_callback_update_position(Localization_t *loc_ptr)
 {
 	if (loc_ptr->state < Loc_state_2_approach_back)
 	{
-		return;
+		return loc_ptr->is_localized;
 	}
 	switch(loc_ptr->movement)
 	{
@@ -62,10 +62,12 @@ void Localization_callback_pulse_count(Localization_t *loc_ptr)
 		case Loc_movement_stop:
 			break;
 		}
-	if (loc_ptr->state >= Loc_state_3_approach_center)
+	if (loc_ptr->state < Loc_state_3_approach_center)
 	{
-		Localization_update_current_position(loc_ptr);
+		return loc_ptr->is_localized;
 	}
+	Localization_update_current_position(loc_ptr);
+	return loc_ptr->is_localized;
 }
 
 /* void Localization_update_current_position(Localization_t *loc_ptr)

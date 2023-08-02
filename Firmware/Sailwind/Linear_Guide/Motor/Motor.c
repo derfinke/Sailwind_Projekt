@@ -138,19 +138,19 @@ void Motor_start_rpm_measurement(Motor_t *motor_ptr)
 	HAL_TIM_IC_Start_IT(rpm_ptr->htim_ptr, rpm_ptr->htim_channel);
 }
 
-boolean_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
+Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
 {
 	Motor_RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_Drehzahl_Messung;
 	TIM_HandleTypeDef *htim_ptr = rpm_ptr->htim_ptr;
 	if (!(htim_ptr->Channel == rpm_ptr->active_channel))
 	{
-		return False;
+		return Motor_RPM_state_wrong_channel;
 	}
 	if (!rpm_ptr->Is_First_Captured) // if the first rising edge is not captured
 	{
 		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
 		rpm_ptr->Is_First_Captured = True;  // set the first captured as true
-		return False;
+		return Motor_RPM_state_first_pulse;
 	}
 	// If the first rising edge is captured, now we will capture the second edge
 	float diff;
@@ -169,7 +169,7 @@ boolean_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
 
 	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
 	rpm_ptr->Is_First_Captured = False; // set it back to false
-	return True;
+	return Motor_RPM_state_rpm_measured;
 }
 
 /* void motor_stop_rpm_measurement(Motor_t *motor_ptr)

@@ -42,6 +42,12 @@ typedef struct {
 	uint32_t htim_channel;
 } Motor_RPM_Measurement_t;
 
+typedef enum {
+	Motor_RPM_state_wrong_channel,
+	Motor_RPM_state_first_pulse,
+	Motor_RPM_state_rpm_measured
+} Motor_RPM_state_t;
+
 typedef struct {
 	Motor_function_t current_function;
 	Motor_INs_t INs;
@@ -59,7 +65,7 @@ void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_stop_moving(Motor_t *motor_ptr);
 void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_start_rpm_measurement(Motor_t *motor_ptr);
-boolean_t Motor_callback_measure_rpm(Motor_t *motor_ptr);
+Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr);
 void Motor_stop_rpm_measurement(Motor_t *motor_ptr);
 void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware);
 uint16_t Motor_get_rpm(Motor_t motor);

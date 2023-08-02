@@ -18,6 +18,7 @@ typedef enum {
 	Loc_state_2_approach_back,
 	Loc_state_3_approach_center,
 	Loc_state_4_set_center_pos,
+	Loc_state_5_center_pos_set
 } Loc_state_t;
 
 typedef enum {
@@ -42,6 +43,6 @@ typedef struct {
 Localization_t Localization_init(float distance_per_pulse);
 void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
-void Localization_callback_pulse_count(Localization_t *loc_ptr);
+boolean_t Localization_callback_update_position(Localization_t *loc_ptr);
 
 #endif /* LOCALIZATION_LOCALIZATION_H_ */

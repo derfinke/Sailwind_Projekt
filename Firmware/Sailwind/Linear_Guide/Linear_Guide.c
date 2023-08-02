@@ -10,8 +10,9 @@
 /* private function prototypes -----------------------------------------------*/
 static LG_LEDs_t Linear_Guide_LEDs_init();
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
-static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
-static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode);
+static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
+static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr);
+static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
@@ -42,7 +43,7 @@ void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t
 	if ((set_automatic && is_localized) || set_manual)
 	{
 		lg_ptr->operating_mode = operating_mode;
-		Linear_Guide_LED_set_operating_mode(lg_ptr, operating_mode);
+		Linear_Guide_LED_set_operating_mode(lg_ptr);
 	}
 }
 
@@ -50,7 +51,10 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 {
 	if (Motor_callback_measure_rpm(&lg_ptr->motor))
 	{
-		Localization_callback_pulse_count(&lg_ptr->localization);
+		if (Localization_callback_update_position(&lg_ptr->localization))
+		{
+			Linear_Guide_update_sail_adjustment_mode(lg_ptr);
+		}
 	}
 }
 
@@ -108,15 +112,23 @@ static LG_LEDs_t Linear_Guide_LEDs_init()
 	return lg_leds;
 }
 
-/* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
+{
+	int32_t current_pos = lg_ptr->localization.current_pos_mm;
+	int32_t center_pos = lg_ptr->localization.center_pos_mm;
+	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_rollung : LG_sail_adjustment_mode_trimmung;
+	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr);
+}
+
+/* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
  * 	Description:
  * 	 - depending on parameter "operating_mode" (IO_operating_mode_manual / ..._automatic)
  * 	   switch corresponding LEDs on and off
  */
-static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
 {
 	LED_State_t automatic, manual;
-	switch(operating_mode)
+	switch(lg_ptr->operating_mode)
 	{
 		case LG_operating_mode_manual:
 			manual = LED_ON, automatic = LED_OFF;
@@ -129,15 +141,15 @@ static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr, LG_opera
 	LED_switch(&lg_ptr->leds.manual, manual);
 }
 
-/* static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
+/* static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
  * 	Description:
  * 	 - when sail adjustment mode changes (rollung / trimmung)
  * 	   the corresponding LEDs are switched on and off
  */
-static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr, LG_sail_adjustment_mode_t sail_adjustment_mode)
+static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
 	LED_State_t rollung, trimmung;
-	switch(sail_adjustment_mode)
+	switch(lg_ptr->sail_adjustment_mode)
 	{
 		case LG_sail_adjustment_mode_rollung:
 			rollung = LED_ON, trimmung = LED_OFF;
