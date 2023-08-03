@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  2 AUG 2023 11:22
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  3 AUG 2023 12:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -280,97 +280,142 @@ Overfull \hbox (1.5589pt too wide) in paragraph at lines 17--18
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 11--20
+Underfull \hbox (badness 1968) in paragraph at lines 19--19
+[]|\OT1/cmr/m/n/10 Essentieller Teil des Lo-cal-iza-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
+\OT1/cmr/m/n/10 structs mit Test-werten ini-tial-
+ []
+
+
+Underfull \hbox (badness 2556) in paragraph at lines 19--19
+\OT1/cmr/m/n/10 schreiben. An-schlie^^Yend wieder
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 11--22
 [] 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 21--28
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 23--30
 [] 
  []
 
 
-Underfull \hbox (badness 3439) in paragraph at lines 33--33
+Underfull \hbox (badness 3439) in paragraph at lines 35--35
 \OT1/cmr/m/n/10 der eine steigende und fal-l-ende
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 29--36
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 31--38
 [] 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 37--42
+Underfull \hbox (badness 10000) in paragraph at lines 43--43
+[]|\OT1/cmr/m/n/10 Zun^^?achst Fehler-sta-tus ausle-sen.
+ []
+
+
+Underfull \hbox (badness 2644) in paragraph at lines 43--43
+[]\OT1/cmr/m/n/10 Uber den Switch-Button wer-den
+ []
+
+
+Underfull \hbox (badness 5637) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 mehrere Schritte ein-geleitet: -
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Links-/Rechtslauf mit Speed1
+ []
+
+
+Underfull \hbox (badness 1546) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Rich-tung - Stufen-weises Erh^^?ohen
+ []
+
+
+Underfull \hbox (badness 3209) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Ausle-sen der jew-eils gemesse-nen
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 39--46
 [] 
  []
 
 
-Overfull \hbox (3.45045pt too wide) in paragraph at lines 47--47
+Overfull \hbox (3.45045pt too wide) in paragraph at lines 51--51
 []|\OT1/cmtt/m/n/10 Endswitch_detected| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 47--47
+Underfull \hbox (badness 10000) in paragraph at lines 51--51
 []|\OT1/cmr/m/n/10 Ausgelesene Zust^^?ande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 47--47
+Underfull \hbox (badness 10000) in paragraph at lines 51--51
 \OT1/cmr/m/n/10 entsprechen den End-
  []
 
 
-Overfull \hbox (1.5589pt too wide) in paragraph at lines 47--48
+Overfull \hbox (1.5589pt too wide) in paragraph at lines 51--52
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 43--52
-[] 
- []
-
-
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 53--62
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 47--56
 [] 
  []
 
 [1
 
 {C:/Users/Bene/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 63--70
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 57--66
 [] 
  []
 
 
-Underfull \hbox (badness 1910) in paragraph at lines 77--77
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 67--74
+[] 
+ []
+
+
+Underfull \hbox (badness 1910) in paragraph at lines 81--81
 \OT1/cmr/m/n/10 anges-teuert. Gemessener Strom
  []
 
 
-Underfull \hbox (badness 6380) in paragraph at lines 77--77
+Underfull \hbox (badness 6380) in paragraph at lines 81--81
 \OT1/cmr/m/n/10 sollte dem vorgegebe-nen Strom
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 71--80
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 75--84
 [] 
  []
 
 [2] (template_Article.aux) ) 
 Here is how much of TeX's memory you used:
- 3606 strings out of 476331
- 63123 string characters out of 5788237
- 1864660 words of memory out of 5000000
- 24061 multiletter control sequences out of 15000+600000
+ 3607 strings out of 476331
+ 63131 string characters out of 5788237
+ 1863660 words of memory out of 5000000
+ 24062 multiletter control sequences out of 15000+600000
  514427 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,9n,63p,258b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,9n,63p,359b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/
 type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTe
 X/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Bene/AppData/Local/Progra
 ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Bene/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on template_Article.pdf (2 pages, 71105 bytes).
+Output written on template_Article.pdf (2 pages, 72402 bytes).
 PDF statistics:
  29 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

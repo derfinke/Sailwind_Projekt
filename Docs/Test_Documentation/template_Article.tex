@@ -16,13 +16,15 @@
 			\hline
 				\texttt{FRAM\char`_test} & FRAM initialisieren und and Addresse \texttt{0x0000} "Test" schreiben und diese Adresse auslesen & Geschriebene Nachricht ist identisch mit gelesener Nachricht & Funktional\\
 			\hline
+				\texttt{Test\char`_FRAM} & Essentieller Teil des Localization structs mit Testwerten initialisieren, serialisieren und in FRAM schreiben. Anschließend wieder auslesen und in das struct Objekt zurück deserialisieren & - & - \\
+			\hline
 		\end{tabular}
 	\subsection{LEDs}
 		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
-				 \texttt{Test\char`_LED} & Alle Status LEDs werden über den switch button erst an und danach ausgeschaltet & - & - \\
+				 \texttt{Test\char`_LED} & Alle Status LEDs werden über den Switch-Button erst an und danach ausgeschaltet & - & - \\
 			\hline
 		\end{tabular}
 		\subsection{Buttons/Switch}
@@ -37,6 +39,8 @@
 		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{Test\char`_Motor} & Zunächst Fehlerstatus auslesen. Über den Switch-Button werden mehrere Schritte eingeleitet: - Links-/Rechtslauf mit Speed1 und anschließendem Auslesen der Richtung - Stufenweises Erhöhen der Drehzahl bis auf Speed2 und Auslesen der jeweils gemessenen Drehzahl & - & - \\
 			\hline
 		\end{tabular}
 	\subsection{IFS204 (Endschalter)}
