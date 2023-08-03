@@ -46,7 +46,8 @@ ECHO 52	- OUT2: get motor error
 ECHO 53	- OUT3: get motor direction
 ECHO.
 ECHO 6	- Button Test
-
+ECHO.
+ECHO 7	- FRAM Test
 
 ECHO.
 SET /P T=selection:

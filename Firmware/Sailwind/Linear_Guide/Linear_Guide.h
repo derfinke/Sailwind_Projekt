@@ -62,6 +62,7 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
 void Linear_Guide_safe_Localization(Linear_Guide_t *lg_ptr);
+Localization_t Linear_Guide_read_Localization();
 
 
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */
