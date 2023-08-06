@@ -88,10 +88,10 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
 	return Endswitch_detected(endswitch_ptr);
 }
 
-void Linear_Guide_safe_Localization(Linear_Guide_t *lg_ptr)
+void Linear_Guide_safe_Localization(Localization_t loc)
 {
 	char FRAM_buffer[LOC_SERIAL_SIZE];
-	Localization_serialize(lg_ptr->localization, FRAM_buffer);
+	Localization_serialize(loc, FRAM_buffer);
 	FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE);
 }
 

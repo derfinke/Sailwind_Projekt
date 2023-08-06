@@ -12,7 +12,7 @@ static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_p
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
-static void Test_FRAM(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
+static void Test_FRAM(UART_HandleTypeDef *huart_ptr);
 
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
@@ -47,7 +47,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			Motor_start_rpm_measurement(motor_ptr);
 			break;
 		case 512:
-			UART_transmit_ln_intt(huart_ptr, "motor rpm: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
+			UART_transmit_ln_int(huart_ptr, "motor rpm: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
 			break;
 		case 52:
 			UART_transmit_ln_int(huart_ptr, "motor error: %d", IO_digitalRead(&motor_ptr->OUT2_error));
@@ -59,7 +59,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			Test_Button(huart_ptr, mc_ptr);
 			break;
 		case 7:
-			Test_FRAM(huart_ptr, mc_ptr);
+			Test_FRAM(huart_ptr);
 			break;
 		default:
 			UART_transmit_ln(huart_ptr, "no valid test ID!");
@@ -169,34 +169,33 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	UART_transmit_ln(huart_ptr, "Motor Test done!");
 }
 
-static void Test_FRAM(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
+static void Test_FRAM(UART_HandleTypeDef *huart_ptr)
 {
 	char serial_buffer[LOC_SERIAL_SIZE];
-	Localization_t *loc_ptr = &mc_ptr->lg_ptr->localization;
 	Localization_t test_loc = {
 			.state = Loc_state_5_center_pos_set,
 			.pulse_count = -1234,
 			.end_pos_mm = 700,
 			.center_pos_mm = 10
 	};
-	*loc_ptr = test_loc;
+	Localization_t loc = test_loc;
 
 	UART_transmit_ln(huart_ptr, "save Localization:");
-	Localization_serialize(*loc_ptr, serial_buffer);
+	Localization_serialize(loc, serial_buffer);
 	UART_transmit_ln(huart_ptr, serial_buffer);
-	Linear_Guide_safe_Localization(mc_ptr->lg_ptr);
+	Linear_Guide_safe_Localization(loc);
 
 	HAL_Delay(5);
 
 	UART_transmit_ln(huart_ptr, "read Localization:");
-	*loc_ptr = Linear_Guide_read_Localization();
-	Localization_serialize(*loc_ptr, serial_buffer);
+	loc = Linear_Guide_read_Localization();
+	Localization_serialize(loc, serial_buffer);
 	UART_transmit_ln(huart_ptr, serial_buffer);
 
-	if (test_loc.state == loc_ptr->state &&
-		test_loc.pulse_count == loc_ptr->pulse_count &&
-		test_loc.end_pos_mm == loc_ptr->end_pos_mm &&
-		test_loc.pulse_count == loc_ptr->pulse_count)
+	if (test_loc.state == loc.state &&
+		test_loc.pulse_count == loc.pulse_count &&
+		test_loc.end_pos_mm == loc.end_pos_mm &&
+		test_loc.pulse_count == loc.pulse_count)
 	{
 		UART_transmit_ln(huart_ptr, "FRAM test passed");
 	}
