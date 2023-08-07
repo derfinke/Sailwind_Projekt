@@ -24,7 +24,6 @@ pipeline {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 dir("Doxygen")
                 {
-                    sh "mkdir doxygen_output"
                     sh "doxygen config_doxygen"
                 }
             }
