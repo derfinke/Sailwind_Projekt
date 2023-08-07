@@ -10,7 +10,6 @@
 #include <stdio.h>
 #include <string.h>
 #include "stm32f4xx_hal.h"
-#include "data_logger.h"
 
 #define WRSR 1
 #define WRITE 2
@@ -77,7 +76,7 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t
 
 }
 
-uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, const uint16_t sizeInByte)
+uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, uint32_t sizeInByte)
 {
 	HAL_SPI_StateTypeDef spiStatus;
 	uint8_t tx_dummy[sizeInByte];
@@ -192,9 +191,4 @@ uint8_t FRAM_read_status_register()
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
 	return statusRegRx[1];
-}
-
-uint32_t little_to_big_endian(uint32_t address)
-{
-	return (uint32_t)(((address>>24) & 0x000000ff) | ((address>>8) & 0x0000ff00) | ((x<<8) & 0x00ff0000) | ((x<<24) & 0xff000000));
 }
