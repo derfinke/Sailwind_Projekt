@@ -20,6 +20,8 @@ pipeline {
         stage("doxygen")
         {
             steps {
+                echo "Branch ${env.BRANCH_NAME}"
+                echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
                 echo "creating doxygen documentation"
             }
         }
