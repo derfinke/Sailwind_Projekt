@@ -1,5 +1,5 @@
 pipeline {
-    agent rockpi
+    agent any
 
     stages
     {
@@ -20,7 +20,6 @@ pipeline {
         stage("doxygen")
         {
             steps {
-                echo BRANCH_NAME
                 echo "creating doxygen documentation"
             }
         }
