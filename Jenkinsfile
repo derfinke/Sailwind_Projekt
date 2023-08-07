@@ -22,8 +22,8 @@ pipeline {
             steps {
                 echo "Branch ${env.BRANCH_NAME}"
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                cd Doxygen
-                mkdir output
+                cd doxygen
+                mkdir -p output
                 doxygen config_doxygen
             }
         }
