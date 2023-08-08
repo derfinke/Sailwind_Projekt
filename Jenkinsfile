@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     enviroment {
-        CHECK_DEFINES = ''
-        CHECK_ADDON = ''
         CHECK_CONF = 'CppCheck/suppressions.conf'
         SRC_DIR = 'Firmware'
     }
@@ -13,9 +11,7 @@ pipeline {
         stage("cpp-check")
         {
             steps {
-                    sh "cppcheck    ${CHECK_DEFINES}
-                                    ${CHECK_ADDON}
-                                    --enable=all
+                    sh "cppcheck    --enable=all
                                     --language=c
                                     --suppressions-list=${CHECK_CONF}
                                     --inline-suppr
