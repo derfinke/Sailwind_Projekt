@@ -11,14 +11,7 @@ pipeline {
         stage("cpp-check")
         {
             steps {
-                    sh """cppcheck  --enable=all
-                                    --language=c
-                                    --suppressions-list=${CHECK_CONF}
-                                    --inline-suppr
-                                    -q
-                                    --xml --xml-version=2
-                                    ${SRC_DIR}
-                                    2> ${env.BRANCH_NAME}/${env.BUILD_ID}_report.xml"""
+                    sh """cppcheck  --enable=all --language=c --suppressions-list=${CHECK_CONF} --inline-suppr -q --xml --xml-version=2 ${SRC_DIR} 2> ${env.BRANCH_NAME}/${env.BUILD_ID}_report.xml"""
             }
         }
         stage("doxygen")
