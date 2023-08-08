@@ -1,20 +1,28 @@
 pipeline {
     agent any
 
+    enviroment {
+        CHECK_DEFINES = ''
+        CHECK_ADDON = ''
+        CHECK_CONF = 'CppCheck/suppressions.conf'
+        SRC_DIR = 'Firmware'
+    }
+
     stages
     {
-
-        stage("build")
+        stage("cpp-check")
         {
             steps {
-                echo "building debug"
-                echo "building release"
-            }
-        }
-        stage("code-check")
-        {
-            steps {
-                echo "cppcheck"
+                    sh "cppcheck    ${CHECK_DEFINES}
+                                    ${CHECK_ADDON}
+                                    --enable=all
+                                    --language=c
+                                    --suppressions-list=${CHECK_CONF}
+                                    --inline-suppr
+                                    -q
+                                    --xml --xml-version=2
+                                    ${SRC_DIR}
+                                    2> ${env.BRANCH_NAME}/${env.BUILD_ID}_report.xml"
             }
         }
         stage("doxygen")
