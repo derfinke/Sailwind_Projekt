@@ -12,6 +12,7 @@ pipeline {
         {
             steps {
                     sh """cppcheck  --enable=all --language=c --suppressions-list=${CHECK_CONF} --inline-suppr -q --xml --xml-version=2 ${SRC_DIR} 2> report.xml"""
+                    scanForIssues tool: cppCheck(pattern: 'report.xml')
             }
         }
         stage("doxygen")
