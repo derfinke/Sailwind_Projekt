@@ -29,7 +29,7 @@ pipeline {
                 publishHTML (target : [allowMissing: false,
                 alwaysLinkToLastBuild: false,
                 keepAll: false,
-                reportDir: '/Doxygen/doxygen_output',
+                reportDir: '${env.BRANCH_NAME}/Doxygen/doxygen_output/html',
                 reportFiles: 'index.html',
                 reportName: 'Sailwind_Firmware_Documentation',
                 reportTitles: 'Sailwind Firmware'])
