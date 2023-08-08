@@ -8,6 +8,11 @@
 #ifndef FRAM_H_
 #define FRAM_H_
 
+#include <stdint.h>
+#include "stm32f4xx_hal.h"
+
+extern SPI_HandleTypeDef hspi4;
+
 /**
 * @brief initialize FRAM
 * Configures FRAM to be ready to write
@@ -33,12 +38,5 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t
 * @retval FRAM status
 */
 uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, uint32_t sizeInByte);
-
-/**
-* @brief Set WEL
-* @param none
-* @retval FRAM status
-*/
-uint8_t FRAM_write_enable(void);
 
 #endif /* FRAM_H_ */

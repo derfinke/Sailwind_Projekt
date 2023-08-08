@@ -19,7 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "string.h"
-
+#include "FRAM.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -56,8 +56,6 @@ ADC_HandleTypeDef hadc3;
 DAC_HandleTypeDef hdac;
 
 ETH_HandleTypeDef heth;
-
-SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim10;
 
