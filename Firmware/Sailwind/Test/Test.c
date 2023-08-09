@@ -65,6 +65,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			UART_transmit_ln(huart_ptr, "no valid test ID!");
 			break;
 	}
+	UART_transmit_ln_int(huart_ptr, "Test %d done!", test_ID);
 }
 
 static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
@@ -82,7 +83,6 @@ static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_p
 	Linear_Guide_move(lg_ptr, Loc_movement_forward);
 	UART_transmit_ln(huart_ptr, "switch operating mode button to stop motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
-	UART_transmit_ln(huart_ptr, "end switch Test done!");
 }
 
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
@@ -99,7 +99,6 @@ static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 		LED_switch(&leds_ptr->center_pos_set, state);
 		LED_switch(&leds_ptr->error, state);
 	}
-	UART_transmit_ln(huart_ptr, "LED Test done!");
 }
 
 static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
@@ -130,7 +129,6 @@ static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	LED_switch(led_ptr, LED_ON);
 	while (!Button_state_changed(&mc_ptr->buttons.localize));
 	LED_switch(led_ptr, LED_OFF);
-	UART_transmit_ln(huart_ptr, "Button Test done!");
 }
 
 static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
@@ -166,7 +164,6 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	UART_transmit_ln(huart_ptr, "switch button to stop motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	Motor_stop_moving(motor_ptr);
-	UART_transmit_ln(huart_ptr, "Motor Test done!");
 }
 
 static void Test_FRAM(UART_HandleTypeDef *huart_ptr)
