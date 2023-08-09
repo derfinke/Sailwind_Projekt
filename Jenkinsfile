@@ -21,10 +21,9 @@ pipeline {
             steps {
                 echo "Branch ${env.BRANCH_NAME}"
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                dir("Doxygen")
-                {
-                    sh "doxygen config_doxygen"
-                }
+
+                sh "doxygen Doxygen/config_doxygen"
+                
                 publishHTML (target : [allowMissing: false,
                 alwaysLinkToLastBuild: false,
                 keepAll: false,

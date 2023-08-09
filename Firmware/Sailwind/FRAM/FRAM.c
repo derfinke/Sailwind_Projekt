@@ -1,5 +1,5 @@
 /**
- * @file FRAM.c
+ * \file FRAM.c
  * @author finkbeiner
  * @date 18 Jun 2023
  * @brief File containing example of doxygen usage for quick reference.
