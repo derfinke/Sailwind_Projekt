@@ -25,7 +25,7 @@ pipeline {
                 sh "doxygen Doxygen/config_doxygen"
                 
                 publishHTML (target : [allowMissing: false,
-                alwaysLinkToLastBuild: false,
+                alwaysLinkToLastBuild: true,
                 keepAll: false,
                 reportDir: 'Doxygen/doxygen_output/html',
                 reportFiles: 'index.html',
