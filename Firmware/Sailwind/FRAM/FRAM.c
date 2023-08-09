@@ -1,8 +1,8 @@
-/*
- * FRAM.c
- *
- *  Created on: 18 Jun 2023
- *      Author: nicof
+/**
+ * @file FRAM.c
+ * @author finkbeiner
+ * @date 18 Jun 2023
+ * @brief File containing example of doxygen usage for quick reference.
  */
 
 #include "FRAM.h"
