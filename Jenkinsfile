@@ -5,7 +5,6 @@ pipeline {
         CHECK_CONF = 'CppCheck/suppressions.conf'
         CHECK_CONF_MISRA = 'CppCheck/suppressions_misra.json'
         SRC_DIR = 'Firmware'
-        TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html\''
     }
 
     stages
@@ -24,7 +23,15 @@ pipeline {
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
     
                 sh "doxygen Doxygen/config_doxygen"
-                withEnv(["TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html\''"])
+            }
+        }
+        stage("deploy doxygen")
+        {
+            environment {
+                TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html\''
+            }
+
+            steps {
                 publishHTML([allowMissing: false, 
                 alwaysLinkToLastBuild: true, 
                 keepAll: true, 
