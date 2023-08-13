@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     dir('doxygen_output/html') {
-                        env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f' 
+                        env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f | sed \'s/^..//\'' 
                     }
                 }
                 echo "${env.WEBSITE}"
