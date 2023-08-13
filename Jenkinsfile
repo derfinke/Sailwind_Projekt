@@ -24,9 +24,11 @@ pipeline {
 
                 sh "doxygen Doxygen/config_doxygen"
                 
-                publishHTML (target : [allowMissing: false,
-                alwaysLinkToLastBuild: true,
-                keepAll: false,
+                archive(includes:'')
+                publishHTML (target : [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
                 reportDir: 'Doxygen/doxygen_output/html',
                 reportFiles: 'index.html',
                 reportName: 'Sailwind_Firmware_Documentation',
