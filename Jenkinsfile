@@ -37,7 +37,7 @@ pipeline {
                         publishHTML([allowMissing: false, 
                         alwaysLinkToLastBuild: true, 
                         keepAll: true, 
-                        reportDir: 'Doxygen/doxygen_output/html', 
+                        reportDir: '', 
                         reportFiles: "${env.TEST}", 
                         reportName: 'HTML Report', 
                         reportTitles: '', 
