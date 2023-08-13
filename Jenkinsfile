@@ -36,11 +36,10 @@ pipeline {
                 }
                 echo "${env.WEBSITE}"
                 dir('doxygen_output/html') {
-                    echo "${env.TEST}"
                     publishHTML([allowMissing: false, 
                     alwaysLinkToLastBuild: true, 
                     keepAll: true, 
-                    reportDir: '', 
+                    reportDir: "${env.WEBSITE}", 
                     reportFiles: "index.html", 
                     reportName: 'HTML Report', 
                     reportTitles: '', 
