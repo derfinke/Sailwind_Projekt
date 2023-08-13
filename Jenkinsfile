@@ -34,6 +34,7 @@ pipeline {
             steps {
                 dir('Doxygen/doxygen_output/html') {
                     withEnv(['TEST = sh returnStdout: true, script: \'find -maxdepth 1 -name \\\'*.html\\\' -type f\'']) {
+                        echo "${env.TEST}"
                         publishHTML([allowMissing: false, 
                         alwaysLinkToLastBuild: true, 
                         keepAll: true, 
