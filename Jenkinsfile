@@ -30,7 +30,7 @@ pipeline {
             environment {
                 TEST = sh 'find -name \'Doxygen/doxygen_output/html/*.html\''
             }
-
+            echo "${env.TEST}"
             steps {
                 publishHTML([allowMissing: false, 
                 alwaysLinkToLastBuild: true, 
