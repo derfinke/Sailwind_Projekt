@@ -28,7 +28,7 @@ pipeline {
         stage("deploy doxygen")
         {
             environment {
-                TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html'
+                TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html'\
             }
             
             steps {
