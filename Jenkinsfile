@@ -24,7 +24,7 @@ pipeline {
 
                 sh "doxygen Doxygen/config_doxygen"
                 
-                archiveArtifacts(artifacts: 'Doxygen/doxygen_output/html')
+                archiveArtifacts(artifacts: 'Doxygen/doxygen_output/html/*.html')
                 publishHTML (target : [
                 allowMissing: false,
                 alwaysLinkToLastBuild: false,
