@@ -32,16 +32,18 @@ pipeline {
             }
             
             steps {
-                
-                echo "${env.TEST}"
-                publishHTML([allowMissing: false, 
-                alwaysLinkToLastBuild: true, 
-                keepAll: true, 
-                reportDir: 'Doxygen/doxygen_output/html', 
-                reportFiles: "${env.TEST}", 
-                reportName: 'HTML Report', 
-                reportTitles: '', 
-                useWrapperFileDirectly: true])
+                dir('Doxygen/doxygen_output/html') {
+                    withEnv(['TEST = sh returnStdout: true, script: \'find -maxdepth 1 -name \\\'*.html\\\' -type f\'']) {
+                        publishHTML([allowMissing: false, 
+                        alwaysLinkToLastBuild: true, 
+                        keepAll: true, 
+                        reportDir: 'Doxygen/doxygen_output/html', 
+                        reportFiles: "${env.TEST}", 
+                        reportName: 'HTML Report', 
+                        reportTitles: '', 
+                        useWrapperFileDirectly: true])
+                    }
+                }
             }
         }
     }
