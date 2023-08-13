@@ -27,18 +27,14 @@ pipeline {
             }
         }
         stage("deploy doxygen")
-        {   
-            environment {
-
-            }
-            
-            script {
-                dir('doxygen_output/html') {
-                    env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f' 
-                }
-            }
+        {      
             steps {
-                echo ${env.WEBSITE}
+                script {
+                    dir('doxygen_output/html') {
+                        env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f' 
+                    }
+                }
+                echo "${env.WEBSITE}"
                 dir('doxygen_output/html') {
                     echo "${env.TEST}"
                     publishHTML([allowMissing: false, 
