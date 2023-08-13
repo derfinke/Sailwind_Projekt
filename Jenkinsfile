@@ -28,7 +28,7 @@ pipeline {
                 alwaysLinkToLastBuild: true, 
                 keepAll: true, 
                 reportDir: 'Doxygen/doxygen_output/html', 
-                reportFiles: 'index.html', 
+                reportFiles: '*.html', 
                 reportName: 'HTML Report', 
                 reportTitles: '', 
                 useWrapperFileDirectly: true])
