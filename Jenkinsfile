@@ -28,10 +28,11 @@ pipeline {
         stage("deploy doxygen")
         {
             environment {
-                TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html'\
+                TEST = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f'
             }
             
             steps {
+                
                 echo "${env.TEST}"
                 publishHTML([allowMissing: false, 
                 alwaysLinkToLastBuild: true, 
