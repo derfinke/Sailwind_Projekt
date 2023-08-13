@@ -5,6 +5,7 @@ pipeline {
         CHECK_CONF = 'CppCheck/suppressions.conf'
         CHECK_CONF_MISRA = 'CppCheck/suppressions_misra.json'
         SRC_DIR = 'Firmware'
+        TEST = "lol"
     }
 
     stages
@@ -26,14 +27,10 @@ pipeline {
             }
         }
         stage("deploy doxygen")
-        {
-            environment {
-                TEST = "lol"
-            }
-            
+        {   
             steps {
                 dir('doxygen_output/html') {
-                    withEnv(['TEST = sh returnStdout: true, script: \'find -maxdepth 1 -name \\\'*.html\\\' -type f\'']) {
+                    withEnv(["TEST = sh returnStdout: true, script: \'find -maxdepth 1 -name \\\'*.html\\\' -type f\'"]) {
                         echo "${env.TEST}"
                         publishHTML([allowMissing: false, 
                         alwaysLinkToLastBuild: true, 
