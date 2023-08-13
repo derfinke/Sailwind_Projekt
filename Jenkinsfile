@@ -22,14 +22,14 @@ pipeline {
             steps {
                 echo "Branch ${env.BRANCH_NAME}"
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-
+    
                 sh "doxygen Doxygen/config_doxygen"
-                TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html\''
+                withEnv(["TEST = sh returnStdout: true, script: 'find -name \'Doxygen/doxygen_output/html/*.html\''"])
                 publishHTML([allowMissing: false, 
                 alwaysLinkToLastBuild: true, 
                 keepAll: true, 
                 reportDir: 'Doxygen/doxygen_output/html', 
-                reportFiles: '${env.HTML_FILES}', 
+                reportFiles: "${env.TEST}", 
                 reportName: 'HTML Report', 
                 reportTitles: '', 
                 useWrapperFileDirectly: true])
