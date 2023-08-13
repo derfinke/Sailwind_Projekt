@@ -24,15 +24,14 @@ pipeline {
 
                 sh "doxygen Doxygen/config_doxygen"
                 
-                archiveArtifacts(artifacts: 'Doxygen/doxygen_output/html//**/*.*')
-                publishHTML (target : [
-                allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: true,
-                reportDir: 'Doxygen/doxygen_output/html',
-                reportFiles: 'index.html',
-                reportName: 'Sailwind_Firmware_Documentation',
-                reportTitles: 'Sailwind Firmware'])
+                publishHTML([allowMissing: false, 
+                alwaysLinkToLastBuild: true, 
+                keepAll: true, 
+                reportDir: 'Doxygen/doxygen_output/', 
+                reportFiles: 'index.html', 
+                reportName: 'HTML Report', 
+                reportTitles: '', 
+                useWrapperFileDirectly: true])
             }
         }
     }
