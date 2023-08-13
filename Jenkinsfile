@@ -28,19 +28,27 @@ pipeline {
         }
         stage("deploy doxygen")
         {   
-            steps {
+            environment {
+
+            }
+            
+            script {
                 dir('doxygen_output/html') {
-                    withEnv(["TEST = sh returnStdout: true, script: \'find -maxdepth 1 -name \\\'*.html\\\' -type f\'"]) {
-                        echo "${env.TEST}"
-                        publishHTML([allowMissing: false, 
-                        alwaysLinkToLastBuild: true, 
-                        keepAll: true, 
-                        reportDir: '', 
-                        reportFiles: "index.html", 
-                        reportName: 'HTML Report', 
-                        reportTitles: '', 
-                        useWrapperFileDirectly: true])
-                    }
+                    env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f' 
+                }
+            }
+            steps {
+                echo ${env.WEBSITE}
+                dir('doxygen_output/html') {
+                    echo "${env.TEST}"
+                    publishHTML([allowMissing: false, 
+                    alwaysLinkToLastBuild: true, 
+                    keepAll: true, 
+                    reportDir: '', 
+                    reportFiles: "index.html", 
+                    reportName: 'HTML Report', 
+                    reportTitles: '', 
+                    useWrapperFileDirectly: true])
                 }
             }
         }
