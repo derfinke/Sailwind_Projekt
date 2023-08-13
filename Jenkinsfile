@@ -28,7 +28,7 @@ pipeline {
         stage("deploy doxygen")
         {
             environment {
-                TEST = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f'
+                TEST = "lol"
             }
             
             steps {
@@ -39,7 +39,7 @@ pipeline {
                         alwaysLinkToLastBuild: true, 
                         keepAll: true, 
                         reportDir: '', 
-                        reportFiles: "${env.TEST}", 
+                        reportFiles: "index.html", 
                         reportName: 'HTML Report', 
                         reportTitles: '', 
                         useWrapperFileDirectly: true])
