@@ -22,9 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../../Sailwind/FRAM/FRAM.h"
-#include "../../Sailwind/Manual_Control/Manual_Control.h"
-#include "../../Sailwind/Test/Test.h"
+#include "FRAM.h"
+#include "Manual_Control.h"
+#include "Test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

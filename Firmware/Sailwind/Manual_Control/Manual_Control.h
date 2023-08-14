@@ -8,8 +8,8 @@
 #ifndef MANUAL_CONTROL_MANUAL_CONTROL_H_
 #define MANUAL_CONTROL_MANUAL_CONTROL_H_
 
-#include "Button/Button.h"
-#include "../Linear_Guide/Linear_Guide.h"
+#include "Button.h"
+#include "Linear_Guide.h"
 
 /* defines -------------------------------------------------------------------*/
 #define MANUAL_CONTROL_COUNT 4

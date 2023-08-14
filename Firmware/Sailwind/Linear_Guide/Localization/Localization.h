@@ -8,7 +8,7 @@
 #ifndef LOCALIZATION_LOCALIZATION_H_
 #define LOCALIZATION_LOCALIZATION_H_
 
-#include "../boolean.h"
+#include "boolean.h"
 #include <stdio.h>
 
 /* defines ------------------------------------------------------------*/

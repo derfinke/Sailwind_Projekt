@@ -8,7 +8,7 @@
 #ifndef MOTOR_MOTOR_H_
 #define MOTOR_MOTOR_H_
 
-#include "../IO/IO.h"
+#include "IO.h"
 
 /* defines ------------------------------------------------------------*/
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)

@@ -8,7 +8,7 @@
 #ifndef ENDSWITCH_ENDSWITCH_H_
 #define ENDSWITCH_ENDSWITCH_H_
 
-#include "../IO/IO.h"
+#include "IO.h"
 
 /* defines ------------------------------------------------------------*/
 

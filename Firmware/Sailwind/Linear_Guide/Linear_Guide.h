@@ -8,11 +8,11 @@
 #ifndef LINEAR_GUIDE_LINEAR_GUIDE_H_
 #define LINEAR_GUIDE_LINEAR_GUIDE_H_
 
-#include "LED/LED.h"
-#include "Motor/Motor.h"
-#include "Endswitch/Endswitch.h"
-#include "Localization/Localization.h"
-#include "../FRAM/FRAM.h"
+#include "LED.h"
+#include "Motor.h"
+#include "Endswitch.h"
+#include "Localization.h"
+#include "FRAM.h"
 
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_MM_PER_ROTATION 5

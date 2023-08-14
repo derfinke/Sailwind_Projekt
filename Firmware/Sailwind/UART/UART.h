@@ -8,7 +8,7 @@
 #ifndef UART_UART_H_
 #define UART_UART_H_
 
-#include "../boolean.h"
+#include "boolean.h"
 #include "stm32f4xx_hal.h"
 #include <string.h>
 #include <stdio.h>

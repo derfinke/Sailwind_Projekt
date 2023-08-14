@@ -8,7 +8,7 @@
 #ifndef LED_LED_H_
 #define LED_LED_H_
 
-#include "../IO/IO.h"
+#include "IO.h"
 
 /* typedefs -----------------------------------------------------------*/
 typedef IO_digitalPin_t LED_t;

@@ -8,7 +8,7 @@
 #ifndef BUTTON_BUTTON_H_
 #define BUTTON_BUTTON_H_
 
-#include "../IO/IO.h"
+#include "IO.h"
 
 /* typedefs ------------------------------------------------------------------*/
 typedef IO_digitalPin_t Button_t;

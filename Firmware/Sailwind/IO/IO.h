@@ -11,7 +11,7 @@
 #include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include "main.h"
-#include "../boolean.h"
+#include "boolean.h"
 
 /* typedefs -----------------------------------------------------------*/
 

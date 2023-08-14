@@ -9,8 +9,8 @@
 #define TEST_TEST_H_
 
 #include <stdlib.h>
-#include "../Manual_Control/Manual_Control.h"
-#include "../UART/UART.h"
+#include "Manual_Control.h"
+#include "UART.h"
 
 #define TEST_ID_SIZE 5
 
