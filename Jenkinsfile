@@ -29,19 +29,13 @@ pipeline {
         stage("deploy doxygen")
         {      
             steps {
-                script {
-                    dir('doxygen_output/html') {
-                        env.WEBSITE = sh returnStdout: true, script: 'find -maxdepth 1 -name \'*.html\' -type f | sed \'s/^..//\'' 
-                    }
-                }
-                echo "${env.WEBSITE}"
                 dir('doxygen_output/html') {
                     publishHTML([allowMissing: false, 
                     alwaysLinkToLastBuild: true, 
                     keepAll: true, 
                     reportDir: "", 
-                    reportFiles: "${env.WEBSITE}", 
-                    reportName: 'HTML Report', 
+                    reportFiles: "index.html", 
+                    reportName: 'Sailwindfirmware_doc', 
                     reportTitles: '', 
                     useWrapperFileDirectly: true])
                 }
