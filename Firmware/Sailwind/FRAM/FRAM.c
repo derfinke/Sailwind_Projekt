@@ -9,7 +9,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
-#include "stm32f4xx_hal.h"
 #include "main.h"
 
 #define WRSR 1
@@ -23,8 +22,6 @@
 #define FRAM_ERROR 1U
 #define WEL_SET 2U
 #define STATUS_REGISTER_BUFFER_SIZE 2U
-
-SPI_HandleTypeDef hspi4;
 
 /**
 * @brief check status register of FRAM
@@ -40,9 +37,10 @@ static uint8_t FRAM_read_status_register(void);
 */
 static uint8_t FRAM_write_enable(void);
 
-uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t sizeInByte)
+uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress, uint16_t sizeInByte)
 {
 	HAL_SPI_StateTypeDef spiStatus;
+
 	uint8_t command = WRITE;
 
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
@@ -171,6 +169,7 @@ uint8_t FRAM_init(void)
 	return FRAM_OK;
 }
 
+
 static uint8_t FRAM_read_status_register()
 {
 	HAL_SPI_StateTypeDef spiStatus;
@@ -180,6 +179,7 @@ static uint8_t FRAM_read_status_register()
 	assert(HAL_GPIO_ReadPin(SPI4_CS_GPIO_Port, SPI4_CS_Pin) != 0);
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
+
 	spiStatus = HAL_SPI_TransmitReceive(&hspi4, &statusRegTx, &statusRegRx, STATUS_REGISTER_BUFFER_SIZE, SPI_HAL_TIMEOUT);
 
 	if(spiStatus != (HAL_SPI_StateTypeDef)HAL_OK)
@@ -188,5 +188,6 @@ static uint8_t FRAM_read_status_register()
 	}
 
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
+
 	return statusRegRx;
 }

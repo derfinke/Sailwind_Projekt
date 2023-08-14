@@ -9,9 +9,6 @@
 #define FRAM_H_
 
 #include <stdint.h>
-#include "stm32f4xx_hal.h"
-
-extern SPI_HandleTypeDef hspi4;
 
 /**
 * @brief initialize FRAM
@@ -28,7 +25,7 @@ uint8_t FRAM_init(void);
 * @param sizeInByte: size of struct to be saved
 * @retval FRAM status
 */
-uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t sizeInByte);
+uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress, uint16_t sizeInByte);
 
 /**
 * @brief write to FRAM
