@@ -5,6 +5,7 @@ pipeline {
         CHECK_CONF = 'CppCheck/suppressions.conf'
         CHECK_CONF_MISRA = 'CppCheck/suppressions_misra.json'
         SRC_DIR = 'Firmware'
+        TEST = "lol"
     }
 
     stages
@@ -21,17 +22,23 @@ pipeline {
             steps {
                 echo "Branch ${env.BRANCH_NAME}"
                 echo "Running ${env.BUILD_ID} on ${env.JENKINS_URL}"
-                dir("Doxygen")
-                {
-                    sh "doxygen config_doxygen"
+    
+                sh "doxygen Doxygen/config_doxygen"
+            }
+        }
+        stage("deploy doxygen")
+        {      
+            steps {
+                dir('doxygen_output/html') {
+                    publishHTML([allowMissing: false, 
+                    alwaysLinkToLastBuild: true, 
+                    keepAll: true, 
+                    reportDir: "", 
+                    reportFiles: "index.html", 
+                    reportName: 'Sailwindfirmware_doc', 
+                    reportTitles: '', 
+                    useWrapperFileDirectly: true])
                 }
-                publishHTML (target : [allowMissing: false,
-                alwaysLinkToLastBuild: false,
-                keepAll: false,
-                reportDir: 'Doxygen/doxygen_output/html',
-                reportFiles: 'index.html',
-                reportName: 'Sailwind_Firmware_Documentation',
-                reportTitles: 'Sailwind Firmware'])
             }
         }
     }
