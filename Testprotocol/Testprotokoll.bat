@@ -39,13 +39,15 @@ ECHO 3xxxx	- set motor rpm xxxx {0000...3000}
 ECHO.
 ECHO 4	- Endswitch Test
 ECHO.
+ECHO 5	- Motor Test
 ECHO 511	- OUT1: start rpm measurement
 ECHO 512	- OUT1: get rpm value
 ECHO 52	- OUT2: get motor error
 ECHO 53	- OUT3: get motor direction
 ECHO.
 ECHO 6	- Button Test
-
+ECHO.
+ECHO 7	- FRAM Test
 
 ECHO.
 SET /P T=selection:

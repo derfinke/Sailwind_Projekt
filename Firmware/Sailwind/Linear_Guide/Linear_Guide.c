@@ -19,13 +19,10 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 /* API function definitions --------------------------------------------------*/
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
 {
-	char FRAM_buffer[LOC_SERIAL_SIZE];
-	FRAM_init();
-	FRAM_read(0x0000, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
 	Linear_Guide_t linear_guide = {
 			.operating_mode = LG_operating_mode_manual,
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
-			.localization = Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer),
+			.localization = Linear_Guide_read_Localization(),
 			.endswitches = Linear_Guide_Endswitches_init(),
 			.leds = Linear_Guide_LEDs_init(),
 	};
@@ -68,9 +65,9 @@ void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 		case Loc_movement_stop:
 			Motor_stop_moving(&lg_ptr->motor); break;
 		case Loc_movement_backwards:
-			Motor_start_moving(&lg_ptr->motor, Motor_function_rechtslauf); break;
+			Motor_start_moving(&lg_ptr->motor, Motor_function_cw_rotation); break;
 		case Loc_movement_forward:
-			Motor_start_moving(&lg_ptr->motor, Motor_function_linkslauf); break;
+			Motor_start_moving(&lg_ptr->motor, Motor_function_ccw_rotation); break;
 	}
 	lg_ptr->localization.movement = movement;
 }
@@ -91,12 +88,21 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
 	return Endswitch_detected(endswitch_ptr);
 }
 
-void Linear_Guide_safe_Localization(Linear_Guide_t *lg_ptr)
+void Linear_Guide_safe_Localization(Localization_t loc)
 {
 	char FRAM_buffer[LOC_SERIAL_SIZE];
-	Localization_serialize(lg_ptr->localization, FRAM_buffer);
+	Localization_serialize(loc, FRAM_buffer);
 	FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE);
 }
+
+Localization_t Linear_Guide_read_Localization()
+{
+	char FRAM_buffer[LOC_SERIAL_SIZE];
+	FRAM_init();
+	FRAM_read(0x0000, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
+	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
+}
+
 /* private function definitions -----------------------------------------------*/
 
 static LG_Endswitches_t Linear_Guide_Endswitches_init()
