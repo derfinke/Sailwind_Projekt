@@ -22,10 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <stdio.h>
-#include "IO_API/button_API.h"
-#include "IO_API/motor_API.h"
-#include "IO_API/LED_API.h"
+#include "FRAM.h"
+#include "Manual_Control.h"
+#include "Test.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -57,15 +56,19 @@ DAC_HandleTypeDef hdac;
 
 ETH_HandleTypeDef heth;
 
-TIM_HandleTypeDef htim10;
+SPI_HandleTypeDef hspi4;
 
+TIM_HandleTypeDef htim3;
+
+UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-Motor_t motor;
-Button_t *buttons;
-LED_bar_t led_bar;
+char Rx_buffer[10];
+Linear_Guide_t linear_guide;
+Manual_Control_t manual_control;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -78,25 +81,20 @@ static void MX_ADC2_Init(void);
 static void MX_ADC3_Init(void);
 static void MX_DAC_Init(void);
 static void MX_USART2_UART_Init(void);
-static void MX_TIM10_Init(void);
+static void MX_SPI4_Init(void);
+static void MX_USART1_UART_Init(void);
+static void MX_TIM3_Init(void);
 /* USER CODE BEGIN PFP */
-#ifdef __GNUC__
-#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
-#else
-#define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
-#endif
-
-PUTCHAR_PROTOTYPE
-{
-	HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, HAL_MAX_DELAY);
-	return ch;
-}
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
+void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
+{
+	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
+}
 /* USER CODE END 0 */
 
 /**
@@ -134,13 +132,53 @@ int main(void)
   MX_ADC3_Init();
   MX_DAC_Init();
   MX_USART2_UART_Init();
-  MX_TIM10_Init();
+  MX_SPI4_Init();
+  MX_USART1_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  motor = motor_init(&hdac, &htim10);
-  buttons = button_init_array();
-  led_bar = LED_init_bar();
+  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+  manual_control = Manual_Control_init(&linear_guide);
+  IO_analogSensor_t Abstandsensor;
+  IO_analogSensor_t Stromsensor;
+
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
+#if LED_TEST
+  LED_toggle(&linear_guide.leds.center_pos_set);
+  LED_toggle(&linear_guide.leds.error);
+  LED_toggle(&linear_guide.leds.manual);
+  LED_toggle(&linear_guide.leds.automatic);
+  LED_toggle(&linear_guide.leds.rollung);
+  LED_toggle(&linear_guide.leds.trimmung);
+#endif
+#if MOTOR_TEST
+  motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
+#endif
+#if ABSTAND_TEST
+  Abstandsensor.name = "Abstand";
+  Abstandsensor.hadc_channel = 0;
+  Abstandsensor.hadc_ptr = &hadc1;
+  Abstandsensor.maxConvertedValue = 2.97;
+  IO_analogRead(&Abstandsensor);
+  IO_analogPrint(Abstandsensor);
+#endif
+#if STROM_TEST
+  Abstandsensor.name = "Strom";
+  Abstandsensor.hadc_channel = 8;
+  Abstandsensor.hadc_ptr = &hadc3;
+  Abstandsensor.maxConvertedValue = 11.0;
+  IO_analogRead(&Stromsensor);
+  IO_analogPrint(Stromsensor);
+#endif
+#if FRAM_TEST
+  uint8_t test[4];
+  memset(test, 0, sizeof(test));
+  FRAM_init();
+  FRAM_write((uint8_t*)"Test", 0x0000, 4);
+  HAL_Delay(5);
+  FRAM_read(0x0000, test, sizeof(test));
+  printf("read from FRAM: %u\r\n", test);
+#endif
 
   /* USER CODE END 2 */
 
@@ -148,9 +186,17 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+#if !TEST
+		Manual_Control_poll(&manual_control);
+		Manual_Control_Localization(&manual_control);
+#else
+		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+#endif
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
   }
   /* USER CODE END 3 */
 }
@@ -302,7 +348,7 @@ static void MX_ADC2_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_6;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -354,7 +400,7 @@ static void MX_ADC3_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -455,33 +501,131 @@ static void MX_ETH_Init(void)
 }
 
 /**
-  * @brief TIM10 Initialization Function
+  * @brief SPI4 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM10_Init(void)
+static void MX_SPI4_Init(void)
 {
 
-  /* USER CODE BEGIN TIM10_Init 0 */
+  /* USER CODE BEGIN SPI4_Init 0 */
 
-  /* USER CODE END TIM10_Init 0 */
+  /* USER CODE END SPI4_Init 0 */
 
-  /* USER CODE BEGIN TIM10_Init 1 */
+  /* USER CODE BEGIN SPI4_Init 1 */
 
-  /* USER CODE END TIM10_Init 1 */
-  htim10.Instance = TIM10;
-  htim10.Init.Prescaler = 168-1;
-  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim10.Init.Period = 400;
-  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
+  /* USER CODE END SPI4_Init 1 */
+  /* SPI4 parameter configuration*/
+  hspi4.Instance = SPI4;
+  hspi4.Init.Mode = SPI_MODE_MASTER;
+  hspi4.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi4.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi4.Init.CLKPolarity = SPI_POLARITY_LOW;
+  hspi4.Init.CLKPhase = SPI_PHASE_1EDGE;
+  hspi4.Init.NSS = SPI_NSS_SOFT;
+  hspi4.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi4.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi4.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi4.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+  hspi4.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi4) != HAL_OK)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN TIM10_Init 2 */
+  /* USER CODE BEGIN SPI4_Init 2 */
 
-  /* USER CODE END TIM10_Init 2 */
+  /* USER CODE END SPI4_Init 2 */
+
+}
+
+/**
+  * @brief TIM3 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM3_Init(void)
+{
+
+  /* USER CODE BEGIN TIM3_Init 0 */
+
+  /* USER CODE END TIM3_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  TIM_IC_InitTypeDef sConfigIC = {0};
+
+  /* USER CODE BEGIN TIM3_Init 1 */
+
+  /* USER CODE END TIM3_Init 1 */
+  htim3.Instance = TIM3;
+  htim3.Init.Prescaler = 84-1;
+  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim3.Init.Period = 65535;
+  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  if (HAL_TIM_IC_Init(&htim3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
+  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
+  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
+  sConfigIC.ICFilter = 0;
+  if (HAL_TIM_IC_ConfigChannel(&htim3, &sConfigIC, TIM_CHANNEL_4) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM3_Init 2 */
+
+  /* USER CODE END TIM3_Init 2 */
+
+}
+
+/**
+  * @brief USART1 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_USART1_UART_Init(void)
+{
+
+  /* USER CODE BEGIN USART1_Init 0 */
+
+  /* USER CODE END USART1_Init 0 */
+
+  /* USER CODE BEGIN USART1_Init 1 */
+
+  /* USER CODE END USART1_Init 1 */
+  huart1.Instance = USART1;
+  huart1.Init.BaudRate = 115200;
+  huart1.Init.WordLength = UART_WORDLENGTH_8B;
+  huart1.Init.StopBits = UART_STOPBITS_1;
+  huart1.Init.Parity = UART_PARITY_NONE;
+  huart1.Init.Mode = UART_MODE_TX_RX;
+  huart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart1.Init.OverSampling = UART_OVERSAMPLING_16;
+  if (HAL_UART_Init(&huart1) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN USART1_Init 2 */
+
+  /* USER CODE END USART1_Init 2 */
 
 }
 
@@ -588,20 +732,12 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(LED_PWR_GPIO_Port, LED_PWR_Pin, GPIO_PIN_SET);
 
-  /*Configure GPIO pins : PE2 PE5 PE6 */
-  GPIO_InitStruct.Pin = GPIO_PIN_2|GPIO_PIN_5|GPIO_PIN_6;
-  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-  GPIO_InitStruct.Alternate = GPIO_AF5_SPI4;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
-
-  /*Configure GPIO pins : SPI4_CS_Pin Ext_Relais_1_Pin LED_Rollen_Pin */
-  GPIO_InitStruct.Pin = SPI4_CS_Pin|Ext_Relais_1_Pin|LED_Rollen_Pin;
+  /*Configure GPIO pin : SPI4_CS_Pin */
+  GPIO_InitStruct.Pin = SPI4_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+  HAL_GPIO_Init(SPI4_CS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : Switch_Betriebsmodus_Pin Betriebsmodus_2_Nur_Prototyp_Pin Betriebsmodus_Prototyp_Pin */
   GPIO_InitStruct.Pin = Switch_Betriebsmodus_Pin|Betriebsmodus_2_Nur_Prototyp_Pin|Betriebsmodus_Prototyp_Pin;
@@ -609,14 +745,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Zurueck_Pin Endschalter_Hinten_Pin Button_Vorfahren_Pin Endschalter_Vorne_Pin */
-  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Endschalter_Hinten_Pin|Button_Vorfahren_Pin|Endschalter_Vorne_Pin;
+  /*Configure GPIO pins : Button_Zurueck_Pin Button_Vorfahren_Pin */
+  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Button_Vorfahren_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -630,10 +766,23 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Rollen_Pin */
+  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Rollen_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : Endschalter_Hinten_Pin Endschalter_Vorne_Pin */
+  GPIO_InitStruct.Pin = Endschalter_Hinten_Pin|Endschalter_Vorne_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
   /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin IN_2_Pin
-                           HOLD_Pin Windsensor_EN_Pin */
+                           Windsensor_EN_Pin */
   GPIO_InitStruct.Pin = LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
-                          |HOLD_Pin|Windsensor_EN_Pin;
+                          |Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -645,6 +794,13 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : HOLD_Pin */
+  GPIO_InitStruct.Pin = HOLD_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_PULLDOWN;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(HOLD_GPIO_Port, &GPIO_InitStruct);
 
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
