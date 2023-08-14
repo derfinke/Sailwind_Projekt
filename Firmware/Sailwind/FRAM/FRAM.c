@@ -55,7 +55,6 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint32_t startAddress, uint32_t
 		HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
 		return FRAM_ERROR;
 	}
-
 	HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
 	spiStatus = HAL_SPI_Transmit(&hspi4, &command, 1U, SPI_HAL_TIMEOUT);
 	if(spiStatus != (HAL_SPI_StateTypeDef)HAL_OK)

@@ -57,6 +57,8 @@ DAC_HandleTypeDef hdac;
 
 ETH_HandleTypeDef heth;
 
+SPI_HandleTypeDef hspi4;
+
 TIM_HandleTypeDef htim10;
 
 UART_HandleTypeDef huart2;
