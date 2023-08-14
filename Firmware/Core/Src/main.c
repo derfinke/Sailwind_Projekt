@@ -17,15 +17,15 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include "main.h"
-#include "string.h"
-#include "FRAM.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
 #include "IO_API/button_API.h"
 #include "IO_API/motor_API.h"
 #include "IO_API/LED_API.h"
+#include "main.h"
+#include "string.h"
+#include "FRAM.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -56,8 +56,6 @@ ADC_HandleTypeDef hadc3;
 DAC_HandleTypeDef hdac;
 
 ETH_HandleTypeDef heth;
-
-SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim10;
 
