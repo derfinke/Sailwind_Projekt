@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.7.28)  15 AUG 2023 14:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.7.28)  15 AUG 2023 15:23
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -260,13 +260,18 @@ LaTeX Font Info:    ... okay on input line 8.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: End \AtBeginDocument code.
 
+Overfull \hbox (2.92824pt too wide) in paragraph at lines 15--15
+[]|\OT1/cmr/m/n/10 1000| 
+ []
+
+
 Overfull \hbox (1.5589pt too wide) in paragraph at lines 15--16
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 17--17
-[]|\OT1/cmr/m/n/10 Geschriebene Nachricht
+[]|\OT1/cmr/m/n/10 Geschriebene
  []
 
 
@@ -290,13 +295,38 @@ Underfull \hbox (badness 1796) in paragraph at lines 19--19
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
+\OT1/cmr/m/n/10 mit den sel-ben
+ []
+
+
 Overfull \hbox (1.5589pt too wide) in paragraph at lines 19--20
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 11--22
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 11--22
 [] 
+ []
+
+
+Underfull \hbox (badness 2828) in paragraph at lines 27--27
+[]|\OT1/cmr/m/n/10 Alle LEDs haben
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+\OT1/cmr/m/n/10 ten(test proze-dur
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 27--27
+\OT1/cmr/m/n/10 sollte un-abh^^?angig
+ []
+
+
+Underfull \hbox (badness 7704) in paragraph at lines 27--27
+\OT1/cmr/m/n/10 von den but-tons
  []
 
 
@@ -305,7 +335,7 @@ Overfull \hbox (1.5589pt too wide) in paragraph at lines 27--28
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 23--30
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 23--30
 [] 
  []
 
@@ -330,17 +360,12 @@ Underfull \hbox (badness 2111) in paragraph at lines 35--35
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 35--35
-[]|\OT1/cmr/m/n/10 Alle Flanken wur-den
- []
-
-
 Overfull \hbox (1.5589pt too wide) in paragraph at lines 35--36
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 31--38
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 31--38
 [] 
  []
 
@@ -375,8 +400,13 @@ Underfull \hbox (badness 3209) in paragraph at lines 43--45
  []
 
 
+Underfull \hbox (badness 5681) in paragraph at lines 45--45
+\OT1/cmr/m/n/10 ein-trainiert ablauf
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 45--45
-\OT1/cmr/m/n/10 trainiert ablauf sollte
+\OT1/cmr/m/n/10 sollte aufgeteilt
  []
 
 
@@ -385,23 +415,35 @@ Underfull \hbox (badness 10000) in paragraph at lines 45--46
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 39--48
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 39--48
 [] 
  []
 
+[1
 
+{C:/Users/nicof/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Overfull \hbox (3.45045pt too wide) in paragraph at lines 53--53
 []|\OT1/cmtt/m/n/10 Endswitch_detected| 
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 53--53
-[]|\OT1/cmr/m/n/10 Ausgelesene Zust^^?ande
+[]|\OT1/cmr/m/n/10 Ausgelesene
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 53--53
-\OT1/cmr/m/n/10 entsprechen den End-
+\OT1/cmr/m/n/10 Zust^^?ande
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
+\OT1/cmr/m/n/10 entsprechen
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 53--53
+\OT1/cmr/m/n/10 den End-schal-
  []
 
 
@@ -410,45 +452,53 @@ Overfull \hbox (1.5589pt too wide) in paragraph at lines 53--54
  []
 
 
-Underfull \hbox (badness 4927) in paragraph at lines 55--55
-[]|\OT1/cmr/m/n/10 Motor ^^?andert Rich-tung
- []
-
-
 Overfull \hbox (1.5589pt too wide) in paragraph at lines 55--56
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 49--58
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 49--58
 [] 
  []
 
-[1
 
-{C:/Users/nicof/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
 Underfull \hbox (badness 10000) in paragraph at lines 63--63
-[]|\OT1/cmr/m/n/10 Abstandswert auf
+[]|\OT1/cmr/m/n/10 Abstandswert
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\OT1/cmr/m/n/10 dem dis-play be-trug
+\OT1/cmr/m/n/10 auf dem dis-play
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\OT1/cmr/m/n/10 14,6cm aus-gerech-neter
+\OT1/cmr/m/n/10 be-trug 14,6cm
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\OT1/cmr/m/n/10 wert entsprach 15,4.
+\OT1/cmr/m/n/10 aus-gerech-neter
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 63--63
-\OT1/cmr/m/n/10 Entspricht gemessener
+\OT1/cmr/m/n/10 wert entsprach
+ []
+
+
+Underfull \hbox (badness 2617) in paragraph at lines 63--63
+\OT1/cmr/m/n/10 15,4. Entspricht
+ []
+
+
+Underfull \hbox (badness 4779) in paragraph at lines 63--63
+\OT1/cmr/m/n/10 gemessener Ab-we-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 65--65
+\OT1/cmr/m/n/10 funk-tion-iert noch
  []
 
 
@@ -457,33 +507,38 @@ Underfull \hbox (badness 10000) in paragraph at lines 65--66
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 59--68
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 59--68
 [] 
  []
 
 
-Underfull \hbox (badness 1308) in paragraph at lines 73--73
-[]|\OT1/cmr/m/n/10 Seriennummer wird ko-r-
+Underfull \hbox (badness 2689) in paragraph at lines 75--75
+\OT1/cmr/m/n/10 aus-gegeben allerd-
  []
 
 
-Underfull \hbox (badness 2334) in paragraph at lines 75--75
-[]|\OT1/cmr/m/n/10 Windrichtung wird aus-
+Underfull \hbox (badness 2970) in paragraph at lines 75--75
+\OT1/cmr/m/n/10 nicht richtig kon-
  []
 
 
-Underfull \hbox (badness 3780) in paragraph at lines 75--75
-\OT1/cmr/m/n/10 gegeben allerd-ings wird
+Overfull \hbox (6.64192pt too wide) in paragraph at lines 77--77
+[]|\OT1/cmr/m/n/10 Windgeschwindigkeit
  []
 
 
-Underfull \hbox (badness 2478) in paragraph at lines 75--75
-\OT1/cmr/m/n/10 wert noch nicht richtig
+Underfull \hbox (badness 1292) in paragraph at lines 77--77
+\OT1/cmr/m/n/10 wird ak-tuell nicht
  []
 
 
-Underfull \hbox (badness 4792) in paragraph at lines 77--77
-\OT1/cmr/m/n/10 ak-tuell nicht ^^?uber das
+Underfull \hbox (badness 1418) in paragraph at lines 77--77
+\OT1/cmr/m/n/10 nal aus-gegeben ->
+ []
+
+
+Underfull \hbox (badness 3118) in paragraph at lines 77--77
+\OT1/cmr/m/n/10 kon-fig-urierung des
  []
 
 
@@ -492,11 +547,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 77--78
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 69--80
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 69--80
 [] 
  []
 
-
+[2]
 Overfull \hbox (1.5589pt too wide) in paragraph at lines 85--86
 []|\OT1/cmr/m/n/10 Funktional| 
  []
@@ -512,13 +567,13 @@ Underfull \hbox (badness 6380) in paragraph at lines 87--87
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 87--87
-\OT1/cmr/m/n/10 i-maler drehzahl und
+Underfull \hbox (badness 6792) in paragraph at lines 87--87
+\OT1/cmr/m/n/10 las-tung nur max
  []
 
 
 Underfull \hbox (badness 10000) in paragraph at lines 87--87
-\OT1/cmr/m/n/10 derzeit-iger Be-las-tung
+\OT1/cmr/m/n/10 1A. Test muss
  []
 
 
@@ -532,11 +587,11 @@ Overfull \hbox (14.00331pt too wide) in paragraph at lines 87--88
  []
 
 
-Overfull \hbox (26.86981pt too wide) in paragraph at lines 81--90
+Overfull \hbox (27.88887pt too wide) in paragraph at lines 81--90
 [] 
  []
 
-[2] [3] (template_Article.aux)
+[3] (template_Article.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-06-30>
@@ -549,11 +604,11 @@ Here is how much of TeX's memory you used:
  24800 multiletter control sequences out of 15000+600000
  560209 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,9n,65p,319b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 57i,9n,65p,322b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><D:/MiKTeX/fonts/type1/p
 ublic/amsfonts/cm/cmbx12.pfb><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pf
 b><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on template_Article.pdf (3 pages, 76312 bytes).
+Output written on template_Article.pdf (3 pages, 77189 bytes).
 PDF statistics:
  32 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
