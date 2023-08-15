@@ -1,0 +1,17 @@
+REST Interface zwischen controllino (client) und stm (Server)
+
+controllino -> stm (GET):
+	- Kalibrierungsprozess (abgeschlossen?) -> bereit für Automatikbetrieb
+	- (optional Windrichtung/-geschwindigkeit)
+	- Motor Strom
+	- Status Motor -> vorwärts/rückwärts/stehend
+	- Krafteinwirkung am Motor
+	- Endschalter Status
+	- Ist-Position
+	- Fehlerstatus
+
+controllino -> stm (POST):
+	- Notabschaltung
+	- Betriebsmodus
+	- Soll-Position (Rollen/Trimmen)
+	- Geschwindigkeit

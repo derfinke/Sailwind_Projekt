@@ -1,16 +1,37 @@
 /*
- * IO_API.c
+ * IO.c
  *
  *  Created on: Apr 17, 2023
  *      Author: Bene
  */
-#include "IO_API.h"
+#include "IO.h"
 
 /* private function prototypes -----------------------------------------------*/
-static void convertFromADC(IO_analogSensor_t *sensor_ptr);
-static void convertToDAC(IO_analogActuator_t *actuator_ptr);
+static void IO_convertFromADC(IO_analogSensor_t *sensor_ptr);
+static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 /* API function definitions -----------------------------------------------*/
+
+/* IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
+ *  Description:
+ *   - return an IO_digitalPin Instance with members passed as parameters
+ *   - write the initial state to the GPIO Pin
+ */
+IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
+{
+	IO_digitalPin_t digitalPin = IO_digital_Pin_init(GPIOx, GPIO_Pin);
+	IO_digitalWrite(&digitalPin, state);
+	return digitalPin;
+}
+
+IO_digitalPin_t IO_digital_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+	IO_digitalPin_t digitalPin = {
+			.GPIOx = GPIOx,
+			.GPIO_Pin = GPIO_Pin,
+	};
+	return digitalPin;
+}
 
 /* void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state)
  * 	Description:
@@ -102,20 +123,21 @@ void IO_analogRead(IO_analogSensor_t *sensor_ptr)
 	HAL_ADC_Start(sensor_ptr->hadc_ptr);
 	HAL_ADC_PollForConversion(sensor_ptr->hadc_ptr, 1000);
 	sensor_ptr->adc_value = HAL_ADC_GetValue(sensor_ptr->hadc_ptr);
-	convertFromADC(sensor_ptr);
+	IO_convertFromADC(sensor_ptr);
 	HAL_ADC_Stop(sensor_ptr->hadc_ptr);
 }
 
 /* void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
  *  Description:
- *   - save analog value from parameter to the analogActuator reference
+ *   - save analog value from parameter (limited to given "limitConvertedValue") to the analogActuator reference
  *   - convert analog to digital value and write it to the dac channel specified in the actuator reference
  */
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
 {
-	actuator_ptr->currentConvertedValue = value;
-	convertToDAC(actuator_ptr);
-	HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel, DAC_ALIGN_12B_R, actuator_ptr->adc_value);
+	actuator_ptr->currentConvertedValue = value <= actuator_ptr->limitConvertedValue? value: actuator_ptr->limitConvertedValue;
+	IO_convertToDAC(actuator_ptr);
+	HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel, DAC_ALIGN_12B_R, actuator_ptr->dac_value);
+	HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
 }
 
 
@@ -126,7 +148,7 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value)
  *   - convert digital value to the analog Value by using the ratio of the analog and digital max value
  *   - save the calculated value to the sensor reference
  */
-static void convertFromADC(IO_analogSensor_t *sensor_ptr)
+static void IO_convertFromADC(IO_analogSensor_t *sensor_ptr)
 {
 	sensor_ptr->currentConvertedValue = sensor_ptr->adc_value / (float)(ANALOG_MAX) * sensor_ptr->maxConvertedValue;
 }
@@ -135,7 +157,7 @@ static void convertFromADC(IO_analogSensor_t *sensor_ptr)
  *  Description:
  *   - convert the analog value to the corresponding digital value and save it to the actuator reference
  */
-static void convertToDAC(IO_analogActuator_t *actuator_ptr)
+static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr)
 {
-	actuator_ptr->adc_value = (uint16_t) (actuator_ptr->currentConvertedValue / actuator_ptr->maxConvertedValue * ANALOG_MAX) ;
+	actuator_ptr->dac_value = (uint16_t) (actuator_ptr->currentConvertedValue / actuator_ptr->maxConvertedValue * ANALOG_MAX);
 }

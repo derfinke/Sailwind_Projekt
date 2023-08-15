@@ -1,24 +1,19 @@
 /*
- * IO_API.h
+ * IO.h
  *
  *  Created on: Apr 17, 2023
  *      Author: Bene
  */
 
-#ifndef SRC_IO_API_H_
-#define SRC_IO_API_H_
+#ifndef IO_IO_H_
+#define IO_IO_H_
 
 #include "stm32f4xx_hal.h"
 #include <stdio.h>
 #include "main.h"
+#include "boolean.h"
 
 /* typedefs -----------------------------------------------------------*/
-typedef enum {False, True} boolean_t;
-
-typedef enum {
-	IO_operating_mode_manual,
-	IO_operating_mode_automatic
-} IO_operating_mode_t;
 
 typedef struct {
 	char* name;					
@@ -34,8 +29,9 @@ typedef struct {
 	DAC_HandleTypeDef *hdac_ptr;
 	uint32_t hdac_channel;
 	float maxConvertedValue;
+	float limitConvertedValue;
 	float currentConvertedValue;
-	uint16_t adc_value;
+	uint16_t dac_value;
 } IO_analogActuator_t;
 
 typedef struct {
@@ -51,6 +47,8 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
+IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state);
+IO_digitalPin_t IO_digital_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin);
 void IO_digitalWrite(IO_digitalPin_t *digital_OUT_ptr, GPIO_PinState state);
 void IO_digitalToggle(IO_digitalPin_t *digital_OUT_ptr);
 GPIO_PinState IO_digitalRead(IO_digitalPin_t *digital_IN_ptr);
@@ -61,4 +59,4 @@ void IO_analogPrint(IO_analogSensor_t sensor);
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
 
 
-#endif /* SRC_IO_API_H_ */
+#endif /* IO_IO_H_ */
