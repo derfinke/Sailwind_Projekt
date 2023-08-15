@@ -1,15 +1,15 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2023.7.28)  30 JUL 2023 16:45
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  3 AUG 2023 12:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **./template_Article.tex
 (template_Article.tex
-LaTeX2e <2023-06-01> patch level 1
-L3 programming layer <2023-06-30>
-(D:\MiKTeX\tex/latex/base\article.cls
-Document Class: article 2023/05/17 v1.4n Standard LaTeX document class
-(D:\MiKTeX\tex/latex/base\size10.clo
-File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
+LaTeX2e <2022-11-01> patch level 1
+L3 programming layer <2023-03-30>
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/base\article.cls
+Document Class: article 2022/07/02 v1.4n Standard LaTeX document class
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/base\size10.clo
+File: size10.clo 2022/07/02 v1.4n Standard LaTeX file (size option)
 )
 \c@part=\count185
 \c@section=\count186
@@ -22,21 +22,23 @@ File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 \abovecaptionskip=\skip48
 \belowcaptionskip=\skip49
 \bibindent=\dimen140
-) (D:\MiKTeX\tex/latex/base\inputenc.sty
-Package: inputenc 2021/02/14 v1.3d Input encoding file
-\inpenc@prehook=\toks17
-\inpenc@posthook=\toks18
 )
-(D:\MiKTeX\tex/latex/geometry\geometry.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/base\inputenc.sty
+Package: inputenc 2021/02/14 v1.3d Input encoding file
+\inpenc@prehook=\toks16
+\inpenc@posthook=\toks17
+)
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 
-(D:\MiKTeX\tex/latex/graphics\keyval.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/graphics\keyval.sty
 Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
-\KV@toks@=\toks19
+\KV@toks@=\toks18
 )
-(D:\MiKTeX\tex/generic/iftex\ifvtex.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/iftex\ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
- (D:\MiKTeX\tex/generic/iftex\iftex.sty
+
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/iftex\iftex.sty
 Package: iftex 2022/02/03 v1.0f TeX engine tests
 ))
 \Gm@cnth=\count193
@@ -50,10 +52,11 @@ Package: iftex 2022/02/03 v1.0f TeX engine tests
 \Gm@layoutheight=\dimen146
 \Gm@layouthoffset=\dimen147
 \Gm@layoutvoffset=\dimen148
-\Gm@dimlist=\toks20
- (D:\MiKTeX\tex/latex/geometry\geometry.cfg))
-(D:\MiKTeX\tex/latex/ragged2e\ragged2e.sty
-Package: ragged2e 2023/06/22 v3.6 ragged2e Package
+\Gm@dimlist=\toks19
+
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/geometry\geometry.cfg))
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/ragged2e\ragged2e.sty
+Package: ragged2e 2023/04/04 v3.5 ragged2e Package
 \CenteringLeftskip=\skip50
 \RaggedLeftLeftskip=\skip51
 \RaggedRightLeftskip=\skip52
@@ -69,14 +72,15 @@ Package: ragged2e 2023/06/22 v3.6 ragged2e Package
 \RaggedRightParindent=\skip62
 \JustifyingParindent=\skip63
 )
-(D:\MiKTeX\tex/latex/tools\tabularx.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/tools\tabularx.sty
 Package: tabularx 2020/01/15 v2.11c `tabularx' package (DPC)
- (D:\MiKTeX\tex/latex/tools\array.sty
+
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
 Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
 \col@sep=\dimen149
 \ar@mcellbox=\box51
 \extrarowheight=\dimen150
-\NC@list=\toks21
+\NC@list=\toks20
 \extratabsurround=\skip64
 \backup@length=\skip65
 \ar@cellbox=\box52
@@ -87,15 +91,15 @@ Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
 \TX@target=\dimen154
 \TX@delta=\dimen155
 \TX@cols=\count196
-\TX@ftn=\toks22
+\TX@ftn=\toks21
 )
-(D:\MiKTeX\tex/latex/makecell\makecell.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
 \rotheadsize=\dimen156
 \c@nlinenum=\count197
-\TeXr@lab=\toks23
+\TeXr@lab=\toks22
 )
-(D:\MiKTeX\tex/latex/booktabs\booktabs.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \heavyrulewidth=\dimen157
 \lightrulewidth=\dimen158
@@ -115,10 +119,10 @@ Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
 \@lastruleclass=\count267
 \@thisrulewidth=\dimen169
 )
-(D:\MiKTeX\tex/latex/caption\caption.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption.sty
 Package: caption 2023/03/12 v3.6j Customizing captions (AR)
 
-(D:\MiKTeX\tex/latex/caption\caption3.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/03/12 v2.4 caption3 kernel (AR)
 \caption@tempdima=\dimen170
 \captionmargin=\dimen171
@@ -133,24 +137,24 @@ Package caption Info: Standard document class detected.
 \c@caption@flags=\count268
 \c@continuedfloat=\count269
 )
-(D:\MiKTeX\tex/latex/amsmath\amsmath.sty
-Package: amsmath 2023/05/13 v2.17o AMS math features
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
+Package: amsmath 2022/04/08 v2.17n AMS math features
 \@mathmargin=\skip66
 
 For additional information on amsmath, use the `?' option.
-(D:\MiKTeX\tex/latex/amsmath\amstext.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amstext.sty
 Package: amstext 2021/08/26 v2.01 AMS text
 
-(D:\MiKTeX\tex/latex/amsmath\amsgen.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks24
+\@emptytoks=\toks23
 \ex@=\dimen178
 ))
-(D:\MiKTeX\tex/latex/amsmath\amsbsy.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 \pmbraise@=\dimen179
 )
-(D:\MiKTeX\tex/latex/amsmath\amsopn.sty
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
 \inf@bad=\count270
@@ -183,26 +187,27 @@ LaTeX Info: Redefining \Relbar on input line 971.
 \dotsspace@=\muskip16
 \c@parentequation=\count277
 \dspbrk@lvl=\count278
-\tag@help=\toks25
+\tag@help=\toks24
 \row@=\count279
 \column@=\count280
 \maxfields@=\count281
-\andhelp@=\toks26
+\andhelp@=\toks25
 \eqnshift@=\dimen181
 \alignsep@=\dimen182
 \tagshift@=\dimen183
 \tagwidth@=\dimen184
 \totwidth@=\dimen185
 \lineht@=\dimen186
-\@envbody=\toks27
+\@envbody=\toks26
 \multlinegap=\skip67
 \multlinetaggap=\skip68
-\mathdisplay@stack=\toks28
+\mathdisplay@stack=\toks27
 LaTeX Info: Redefining \[ on input line 2953.
 LaTeX Info: Redefining \] on input line 2954.
 )
-(D:\MiKTeX\tex/latex/l3backend\l3backend-pdftex.def
-File: l3backend-pdftex.def 2023-04-19 L3 backend support: PDF output (pdfTeX)
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/l3backend\l3backend-pdft
+ex.def
+File: l3backend-pdftex.def 2023-03-30 L3 backend support: PDF output (pdfTeX)
 \l__color_backend_stack_int=\count282
 \l__pdf_internal_box=\box55
 ) (template_Article.aux)
@@ -275,90 +280,142 @@ Overfull \hbox (1.5589pt too wide) in paragraph at lines 17--18
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 11--20
+Underfull \hbox (badness 1968) in paragraph at lines 19--19
+[]|\OT1/cmr/m/n/10 Essentieller Teil des Lo-cal-iza-tion
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 19--19
+\OT1/cmr/m/n/10 structs mit Test-werten ini-tial-
+ []
+
+
+Underfull \hbox (badness 2556) in paragraph at lines 19--19
+\OT1/cmr/m/n/10 schreiben. An-schlie^^Yend wieder
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 11--22
 [] 
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 21--28
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 23--30
 [] 
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 29--36
+Underfull \hbox (badness 3439) in paragraph at lines 35--35
+\OT1/cmr/m/n/10 der eine steigende und fal-l-ende
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 31--38
 [] 
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 37--42
+Underfull \hbox (badness 10000) in paragraph at lines 43--43
+[]|\OT1/cmr/m/n/10 Zun^^?achst Fehler-sta-tus ausle-sen.
+ []
+
+
+Underfull \hbox (badness 2644) in paragraph at lines 43--43
+[]\OT1/cmr/m/n/10 Uber den Switch-Button wer-den
+ []
+
+
+Underfull \hbox (badness 5637) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 mehrere Schritte ein-geleitet: -
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Links-/Rechtslauf mit Speed1
+ []
+
+
+Underfull \hbox (badness 1546) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Rich-tung - Stufen-weises Erh^^?ohen
+ []
+
+
+Underfull \hbox (badness 3209) in paragraph at lines 43--43
+\OT1/cmr/m/n/10 Ausle-sen der jew-eils gemesse-nen
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 39--46
 [] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 47--47
+Overfull \hbox (3.45045pt too wide) in paragraph at lines 51--51
+[]|\OT1/cmtt/m/n/10 Endswitch_detected| 
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 51--51
 []|\OT1/cmr/m/n/10 Ausgelesene Zust^^?ande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 47--47
+Underfull \hbox (badness 10000) in paragraph at lines 51--51
 \OT1/cmr/m/n/10 entsprechen den End-
  []
 
 
-Overfull \hbox (1.5589pt too wide) in paragraph at lines 47--48
+Overfull \hbox (1.5589pt too wide) in paragraph at lines 51--52
 []|\OT1/cmr/m/n/10 Funktional| 
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 43--50
-[] 
- []
-
-
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 51--60
-[] 
- []
-
-
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 61--68
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 47--56
 [] 
  []
 
 [1
 
-{C:/Users/nicof/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
-Underfull \hbox (badness 1910) in paragraph at lines 75--75
+{C:/Users/Bene/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}]
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 57--66
+[] 
+ []
+
+
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 67--74
+[] 
+ []
+
+
+Underfull \hbox (badness 1910) in paragraph at lines 81--81
 \OT1/cmr/m/n/10 anges-teuert. Gemessener Strom
  []
 
 
-Underfull \hbox (badness 6380) in paragraph at lines 75--75
+Underfull \hbox (badness 6380) in paragraph at lines 81--81
 \OT1/cmr/m/n/10 sollte dem vorgegebe-nen Strom
  []
 
 
-Overfull \hbox (12.64343pt too wide) in paragraph at lines 69--78
+Overfull \hbox (26.86981pt too wide) in paragraph at lines 75--84
 [] 
  []
 
-[2] (template_Article.aux)
- ***********
-LaTeX2e <2023-06-01> patch level 1
-L3 programming layer <2023-06-30>
- ***********
- ) 
+[2] (template_Article.aux) ) 
 Here is how much of TeX's memory you used:
- 3561 strings out of 475550
- 59101 string characters out of 5778948
- 1932238 words of memory out of 5000000
- 24799 multiletter control sequences out of 15000+600000
- 560209 words of font info for 44 fonts, out of 8000000 for 9000
+ 3607 strings out of 476331
+ 63131 string characters out of 5788237
+ 1863660 words of memory out of 5000000
+ 24062 multiletter control sequences out of 15000+600000
+ 514427 words of font info for 40 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 57i,9n,65p,258b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmbx10.pfb><D:/MiKTeX/fonts/type1/p
-ublic/amsfonts/cm/cmbx12.pfb><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pf
-b><D:/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
-Output written on template_Article.pdf (2 pages, 68498 bytes).
+ 57i,9n,63p,359b,173s stack positions out of 10000i,1000n,20000p,200000b,200000s
+<C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/
+type1/public/amsfonts/cm/cmbx10.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTe
+X/fonts/type1/public/amsfonts/cm/cmbx12.pfb><C:/Users/Bene/AppData/Local/Progra
+ms/MiKTeX/fonts/type1/public/amsfonts/cm/cmr10.pfb><C:/Users/Bene/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb>
+Output written on template_Article.pdf (2 pages, 72402 bytes).
 PDF statistics:
  29 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)

@@ -8,7 +8,7 @@
 \begin{document}
 	\section{Testspezifikationen}
 	\subsection{FRAM}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
@@ -16,39 +16,45 @@
 			\hline
 				\texttt{FRAM\char`_test} & FRAM initialisieren und and Addresse \texttt{0x0000} "Test" schreiben und diese Adresse auslesen & Geschriebene Nachricht ist identisch mit gelesener Nachricht & Funktional\\
 			\hline
+				\texttt{Test\char`_FRAM} & Essentieller Teil des Localization structs mit Testwerten initialisieren, serialisieren und in FRAM schreiben. Anschließend wieder auslesen und in das struct Objekt zurück deserialisieren & - & - \\
+			\hline
 		\end{tabular}
 	\subsection{LEDs}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
-				 \texttt{-} & Alle Status LEDs werden erst an und danach ausgeschaltet & - & - \\
+				 \texttt{Test\char`_LED} & Alle Status LEDs werden über den Switch-Button erst an und danach ausgeschaltet & - & - \\
 			\hline
 		\end{tabular}
 		\subsection{Buttons/Switch}
-	\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+	\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 		\hline
 			\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 		\hline
-			 \texttt{-} & - & - & - \\
+			 \texttt{Test\char`_Button} & Für jeden Button wird nacheinander eine steigende und fallende Flanke abgefragt, welche durch eine Kontroll-LED repräsentiert wird & - & - \\
 		\hline
 	\end{tabular}
 	\subsection{Motor}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\hline
+				\texttt{Test\char`_Motor} & Zunächst Fehlerstatus auslesen. Über den Switch-Button werden mehrere Schritte eingeleitet: - Links-/Rechtslauf mit Speed1 und anschließendem Auslesen der Richtung - Stufenweises Erhöhen der Drehzahl bis auf Speed2 und Auslesen der jeweils gemessenen Drehzahl & - & - \\
 			\hline
 		\end{tabular}
 	\subsection{IFS204 (Endschalter)}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
-				 \texttt{-} & Auslesen der Endschalter Zustände & Ausgelesene Zustände entsprechen den Endschalter Zuständen & Funktional \\
+				 \texttt{Endswitch\char`_detected} & Auslesen der Endschalter Zustände & Ausgelesene Zustände entsprechen den Endschalter Zuständen & Funktional \\
+			\hline
+				\texttt{Test\char`_endswitch} & Der Motor fährt die Endschalter an, und ändert die Richtung, sobald diese aktiviert werden & - & - \\
 			 \hline
 		\end{tabular}
 	\subsection{OGD580 (Abstandssensor)}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
@@ -58,7 +64,7 @@
 			\hline
 		\end{tabular}
 	\subsection{WSWD (Windsensor)}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
@@ -66,7 +72,7 @@
 			\hline
 		\end{tabular}
 	\subsection{Stromsensor}
-		\begin{tabular}{|p{2.7cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
 			\hline
 				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
 			\hline
