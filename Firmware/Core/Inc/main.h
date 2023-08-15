@@ -37,7 +37,7 @@ extern "C" {
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
 extern SPI_HandleTypeDef hspi4;
-
+extern ADC_HandleTypeDef hadc1;
 extern UART_HandleTypeDef huart3;
 
 /* USER CODE END ET */
