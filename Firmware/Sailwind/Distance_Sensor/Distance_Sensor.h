@@ -11,15 +11,12 @@
 #include <stdint.h>
 
 /**
-* @brief Get the measured distance of the distance sensor in mm
-* @param Measured distance in mm
-* @retval None
-* @note Distance is calculated through the equation:
-*
-* (DISTANCE_SENSOR_MAX_DISTANCE - DISTANCE_SENSOR_MIN_DISTANCE)   (  ADC_Voltage                            ) \n
-* ------------------------------------------------------------- x ( ------------ _  DISTANCE_SENSOR_MIN_AMP ) + DISTANCE_SENSOR_MIN_DISTANCE \n
-*     (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP)         (   RESISTOR                              ) \n
-*/
+ * @brief Get the measured distance of the distance sensor in mm
+ * @param Measured distance in mm
+ * @retval None
+ * @note Distance is calculated through the equation: \n
+ * \f$\frac{DISTANCE_SENSOR_MAX_DISTANCE - DISTANCE_SENSOR_MIN_DISTANCE}{DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP} \times (\frac{ADC_Voltage}{Resistor Value} - DISTANCE_SENSOR_MIN_AMP) + DISTANCE_SENSOR_MIN_DISTANCE\f$
+ */
 void Distance_Sensor_Get_Distance(uint16_t Distance_in_mm);
 
 #endif /* DISTANCE_SENSOR_DISTANCE_SENSOR_H_ */
