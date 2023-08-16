@@ -16,9 +16,9 @@
 * @retval None
 * @note Distance is calculated through the equation:
 *
-* (DISTANCE_SENSOR_MAX_DISTANCE - DISTANCE_SENSOR_MIN_DISTANCE)   (  ADC_Voltage                            )
-* ------------------------------------------------------------- x ( ------------ _  DISTANCE_SENSOR_MIN_AMP ) + DISTANCE_SENSOR_MIN_DISTANCE
-*     (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP)         (   RESISTOR                              )
+* (DISTANCE_SENSOR_MAX_DISTANCE - DISTANCE_SENSOR_MIN_DISTANCE)   (  ADC_Voltage                            ) \n
+* ------------------------------------------------------------- x ( ------------ _  DISTANCE_SENSOR_MIN_AMP ) + DISTANCE_SENSOR_MIN_DISTANCE \n
+*     (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP)         (   RESISTOR                              ) \n
 */
 void Distance_Sensor_Get_Distance(uint16_t Distance_in_mm);
 
