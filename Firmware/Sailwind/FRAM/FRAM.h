@@ -11,29 +11,30 @@
 #include <stdint.h>
 
 /**
-* @brief initialize FRAM
-* Configures FRAM to be ready to write
-* @param none
-* @retval FRAM status
-*/
+ * @brief initialize FRAM
+ * Configures FRAM to be ready to write
+ * @param none
+ * @retval FRAM status
+ */
 uint8_t FRAM_init(void);
 
 /**
-* @brief write to FRAM
-* @param pStructToSave: pointer to structer that should be saved
-* @param startAddress: address where struct is saved to
-* @param sizeInByte: size of struct to be saved
-* @retval FRAM status
-*/
-uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress, uint16_t sizeInByte);
+ * @brief write to FRAM
+ * @param pStructToSave: pointer to structer that should be saved
+ * @param startAddress: address where struct is saved to
+ * @param sizeInByte: size of struct to be saved
+ * @retval FRAM status
+ */
+uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress,
+                   uint16_t sizeInByte);
 
 /**
-* @brief write to FRAM
-* @param pData: pointer to buffer where read data is saved to
-* @param startAddress: address where data is read from
-* @param sizeInByte: size of data to be read
-* @retval FRAM status
-*/
-uint8_t FRAM_read(uint32_t startAddress, uint8_t *pData, uint32_t sizeInByte);
+ * @brief write to FRAM
+ * @param pData: pointer to buffer where read data is saved to
+ * @param startAddress: address where data is read from
+ * @param sizeInByte: size of data to be read
+ * @retval FRAM status
+ */
+uint8_t FRAM_read(uint16_t startAddress, uint8_t *pData, uint16_t sizeInByte);
 
 #endif /* FRAM_H_ */
