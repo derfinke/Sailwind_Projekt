@@ -11,30 +11,36 @@
 
 #include "main.h"
 
-#define ADC_RESOLUTION 					(4096 - 1)
-#define DISTANCE_SENSOR_MAX_AMP 		0.02
-#define DISTANCE_SENSOR_MIN_AMP 		0.004
+#define ADC_RESOLUTION 					      (4096 - 1)
+#define DISTANCE_SENSOR_MAX_AMP 		  0.02
+#define DISTANCE_SENSOR_MIN_AMP 		  0.004
 #define DISTANCE_SENSOR_MAX_DISTANCE	1500
 #define DISTANCE_SENSOR_MIN_DISTANCE	25
-#define RESISTOR						270
+#define RESISTOR						          270
+#define NUM_OF_ADC_SAMPLES            32
 
 /**
-* @brief Select the ADC Channel that is used to measure the voltage of the Distance Sensor
-* @param None
-* @retval None
-*/
+ * @brief Select the ADC Channel that is used to measure the voltage of the Distance Sensor
+ * @param None
+ * @retval None
+ */
 static void Distance_Sensor_Select_ADC(void);
 
-void Distance_Sensor_Get_Distance(uint16_t Distance_in_mm) {
+uint16_t Distance_Sensor_Get_Distance(void) {
   uint32_t ADC_val = 0;
   float ADC_voltage = 0.0;
+  uint16_t Distance_in_mm = 0;
 
   Distance_Sensor_Select_ADC();
 
-  HAL_ADC_Start(&hadc1);
-  HAL_ADC_PollForConversion(&hadc1, 1000);
-  ADC_val = HAL_ADC_GetValue(&hadc1);
-  HAL_ADC_Stop(&hadc1);
+  for (uint8_t i = 0; i < NUM_OF_ADC_SAMPLES; i++) {
+    HAL_ADC_Start(&hadc1);
+    HAL_ADC_PollForConversion(&hadc1, 1000);
+    ADC_val = HAL_ADC_GetValue(&hadc1);
+    HAL_ADC_Stop(&hadc1);
+  }
+
+  ADC_val = ADC_val / NUM_OF_ADC_SAMPLES;
 
   ADC_voltage = (float) ((ADC_val * 3.3) / ADC_RESOLUTION);
 
