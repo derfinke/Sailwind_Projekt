@@ -34,7 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEST 1
+#define ABSTAND_TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -138,9 +138,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
   linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
   manual_control = Manual_Control_init(&linear_guide);
-  IO_analogSensor_t Abstandsensor;
-  IO_analogSensor_t Stromsensor;
-
+  IO_analogSensor_t Abstandssensor = {0};
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -155,12 +153,14 @@ int main(void)
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
 #endif
 #if ABSTAND_TEST
-  Abstandsensor.name = "Abstand";
-  Abstandsensor.hadc_channel = 0;
-  Abstandsensor.hadc_ptr = &hadc1;
-  Abstandsensor.maxConvertedValue = 2.97;
-  IO_analogRead(&Abstandsensor);
-  IO_analogPrint(Abstandsensor);
+  Abstandssensor.Sensor_type = Distance_Sensor;
+  Abstandssensor.ADC_Channel = ADC_CHANNEL_0;
+  Abstandssensor.hadc_ptr = &hadc1;
+  Abstandssensor.ADC_Rank = 1;
+  Abstandssensor.max_possible_value = 1500;
+  Abstandssensor.min_possible_value = 25;
+  IO_Get_Measured_Value(&Abstandssensor);
+  printf("Abstand:%u\r\n", Abstandssensor.measured_value);
 #endif
 #if STROM_TEST
   Abstandsensor.name = "Strom";
