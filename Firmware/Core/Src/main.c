@@ -160,8 +160,8 @@ int main(void)
   Abstandssensor.ADC_Channel = ADC_CHANNEL_0;
   Abstandssensor.hadc_ptr = &hadc1;
   Abstandssensor.ADC_Rank = 1;
-  Abstandssensor.max_possible_value = 1500;
-  Abstandssensor.min_possible_value = 25;
+  Abstandssensor.max_possible_value = 730;
+  Abstandssensor.min_possible_value = 35;
   IO_Get_Measured_Value(&Abstandssensor);
   printf("Abstand:%u\r\n", Abstandssensor.measured_value);
 #endif
