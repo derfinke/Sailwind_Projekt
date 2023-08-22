@@ -139,8 +139,8 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-  manual_control = Manual_Control_init(&linear_guide);
+//  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+//  manual_control = Manual_Control_init(&linear_guide);
   IO_analogSensor_t Abstandssensor = {0};
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
