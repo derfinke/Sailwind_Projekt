@@ -16,6 +16,7 @@
 #define DISTANCE_SENSOR_MAX_DISTANCE  1500
 #define DISTANCE_SENSOR_MIN_DISTANCE  25
 #define NUM_OF_ADC_SAMPLES            32
+#define NUM_OF_DISPERESED_SAMPLES     4
 
 /* private function prototypes -----------------------------------------------*/
 static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
@@ -24,6 +25,8 @@ static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
 static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
                              IO_analogSensor_t *Sensor);
+
+static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples);
 
 /* IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
  *  Description:
@@ -107,7 +110,8 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
           value : actuator_ptr->limitConvertedValue;
   IO_convertToDAC(actuator_ptr);
   HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel,
-                   DAC_ALIGN_12B_R, actuator_ptr->dac_value);
+  DAC_ALIGN_12B_R,
+                   actuator_ptr->dac_value);
   HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
 }
 
@@ -159,15 +163,38 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
 static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
                              IO_analogSensor_t *Sensor) {
 
-  uint32_t ADC_val = 0;
+  uint16_t ADC_val[num_of_adc_samples];
+  uint32_t All_ADC_val = 0;
 
   for (uint8_t i = 0; i < num_of_adc_samples; i++) {
     HAL_ADC_Start(Sensor->hadc_ptr);
     HAL_ADC_PollForConversion(Sensor->hadc_ptr, HAL_MAX_DELAY);
-    ADC_val = HAL_ADC_GetValue(Sensor->hadc_ptr);
+    ADC_val[i] = HAL_ADC_GetValue(Sensor->hadc_ptr);
     HAL_ADC_Stop(Sensor->hadc_ptr);
   }
+  IO_Sort_ADC_Values(ADC_val, num_of_adc_samples);
+  for (uint8_t i = NUM_OF_DISPERESED_SAMPLES / 2;
+      i < num_of_adc_samples - NUM_OF_DISPERESED_SAMPLES / 2; i++) {
+    All_ADC_val += ADC_val[i];
+  }
+  Sensor->ADC_value = (uint16_t) (All_ADC_val
+      / (num_of_adc_samples - NUM_OF_DISPERESED_SAMPLES));
 
-  Sensor->ADC_value = (uint16_t) (ADC_val / num_of_adc_samples);
+}
 
+static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples) {
+  uint8_t exchange = 1U;
+  uint16_t tmp = 0U;
+  /* Sort tab */
+  while (exchange == 1) {
+    exchange = 0;
+    for (uint8_t i = 0U; i < num_of_adc_samples - 1U; i++) {
+      if (ADC_values[i] > ADC_values[i + 1U]) {
+        tmp = ADC_values[i];
+        ADC_values[i] = ADC_values[i + 1U];
+        ADC_values[i + 1U] = tmp;
+        exchange = 1U;
+      }
+    }
+  }
 }
