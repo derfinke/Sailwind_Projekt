@@ -11,10 +11,10 @@
 #define DISTANCE_SENSOR_RESISTOR      270
 #define WIND_SPEED_RESISTOR           160
 #define WIND_DIRECTION_RESISTOR       160
-#define SENSOR_MAX_AMP                0.01109
-#define SENSOR_MIN_AMP                0.00435
-#define NUM_OF_ADC_SAMPLES            32
-#define NUM_OF_DISPERESED_SAMPLES     4
+#define SENSOR_MAX_AMP                0.01106
+#define SENSOR_MIN_AMP                0.00426
+#define NUM_OF_ADC_SAMPLES            48
+#define NUM_OF_DISPERESED_SAMPLES     44
 
 /* private function prototypes -----------------------------------------------*/
 static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);

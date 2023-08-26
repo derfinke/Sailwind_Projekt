@@ -94,7 +94,7 @@ PUTCHAR_PROTOTYPE
 {
   /* Place your implementation of fputc here */
   /* e.g. write a character to the USART1 and Loop until the end of transmission */
-  HAL_UART_Transmit(&huart2, (uint8_t *)&ch, 1, 0xFFFF);
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
 
   return ch;
 }
@@ -161,7 +161,7 @@ int main(void)
   Abstandssensor.hadc_ptr = &hadc1;
   Abstandssensor.ADC_Rank = 1;
   Abstandssensor.max_possible_value = 730;
-  Abstandssensor.min_possible_value = 35;
+  Abstandssensor.min_possible_value = 30;
   IO_Get_Measured_Value(&Abstandssensor);
   printf("Abstand:%u\r\n", Abstandssensor.measured_value);
 #endif
