@@ -13,6 +13,8 @@
 #define WIND_DIRECTION_RESISTOR                       160
 #define DISTANCE_SENSOR_MAX_AMP                       0.01106
 #define DISTANCE_SENSOR_MIN_AMP                       0.00426
+#define CURRENT_SENSOR_MAX_VOLT                       3.3
+#define CURRENT_SENSOR_MIN_VOLT                       0
 #define NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR            48
 #define NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR     44
 
@@ -141,12 +143,18 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
     case Distance_Sensor:
       IO_Get_ADC_Value(NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR, NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR, Sensor);
       ADC_voltage = (float) ((Sensor->ADC_value * 3.3) / ADC_RESOLOUTION);
-      Sensor->measured_value = (uint16_t) (((Sensor->max_possible_value
+      Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
           - Sensor->min_possible_value) / (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP))
           * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - DISTANCE_SENSOR_MIN_AMP))
           + Sensor->min_possible_value;
       break;
     case Wind_Sensor:
+      IO_Get_ADC_Value(32, 0, Sensor);
+      ADC_voltage = (float) (Sensor->ADC_value/ADC_RESOLOUTION);
+      Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
+          - Sensor->min_possible_value) / (CURRENT_SENSOR_MAX_VOLT - CURRENT_SENSOR_MIN_VOLT))
+          * (ADC_voltage - CURRENT_SENSOR_MIN_VOLT))
+          + Sensor->min_possible_value;
       break;
     case Current_Sensor:
       break;
