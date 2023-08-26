@@ -6,23 +6,22 @@
  */
 #include "IO.h"
 
-#define ADC_RESOLOUTION               (4096 - 1)
-#define DAC_RESOLOUTION               (4096 - 1)
-#define DISTANCE_SENSOR_RESISTOR      270
-#define WIND_SPEED_RESISTOR           160
-#define WIND_DIRECTION_RESISTOR       160
-#define SENSOR_MAX_AMP                0.01106
-#define SENSOR_MIN_AMP                0.00426
-#define NUM_OF_ADC_SAMPLES            48
-#define NUM_OF_DISPERESED_SAMPLES     44
+#define ADC_RESOLOUTION                               (4096 - 1)
+#define DAC_RESOLOUTION                               (4096 - 1)
+#define DISTANCE_SENSOR_RESISTOR                      270
+#define WIND_SPEED_RESISTOR                           160
+#define WIND_DIRECTION_RESISTOR                       160
+#define DISTANCE_SENSOR_MAX_AMP                       0.01106
+#define DISTANCE_SENSOR_MIN_AMP                       0.00426
+#define NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR            48
+#define NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR     44
 
 /* private function prototypes -----------------------------------------------*/
 static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
-static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
-                             IO_analogSensor_t *Sensor);
+static void IO_Get_ADC_Value(uint8_t num_of_adc_samples, uint8_t num_of_disperesed_samples, IO_analogSensor_t *Sensor);
 
 static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples);
 
@@ -138,15 +137,13 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
 
   IO_Select_ADC_CH(Sensor);
 
-  IO_Get_ADC_Value(NUM_OF_ADC_SAMPLES, Sensor);
-
-  ADC_voltage = (float) ((Sensor->ADC_value * 3.3) / ADC_RESOLOUTION);
-
   switch (Sensor->Sensor_type) {
     case Distance_Sensor:
+      IO_Get_ADC_Value(NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR, NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR, Sensor);
+      ADC_voltage = (float) ((Sensor->ADC_value * 3.3) / ADC_RESOLOUTION);
       Sensor->measured_value = (uint16_t) (((Sensor->max_possible_value
-          - Sensor->min_possible_value) / (SENSOR_MAX_AMP - SENSOR_MIN_AMP))
-          * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - SENSOR_MIN_AMP))
+          - Sensor->min_possible_value) / (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP))
+          * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - DISTANCE_SENSOR_MIN_AMP))
           + Sensor->min_possible_value;
       break;
     case Wind_Sensor:
@@ -158,7 +155,7 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
   }
 }
 
-static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
+static void IO_Get_ADC_Value(uint8_t num_of_adc_samples, uint8_t num_of_disperesed_samples,
                              IO_analogSensor_t *Sensor) {
 
   uint16_t ADC_val[num_of_adc_samples];
@@ -171,12 +168,12 @@ static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
     HAL_ADC_Stop(Sensor->hadc_ptr);
   }
   IO_Sort_ADC_Values(ADC_val, num_of_adc_samples);
-  for (uint8_t i = NUM_OF_DISPERESED_SAMPLES / 2;
-      i < num_of_adc_samples - NUM_OF_DISPERESED_SAMPLES / 2; i++) {
+  for (uint8_t i = num_of_disperesed_samples / 2;
+      i < num_of_adc_samples - num_of_disperesed_samples / 2; i++) {
     All_ADC_val += ADC_val[i];
   }
   Sensor->ADC_value = (uint16_t) (All_ADC_val
-      / (num_of_adc_samples - NUM_OF_DISPERESED_SAMPLES));
+      / (num_of_adc_samples - num_of_disperesed_samples));
 
 }
 
