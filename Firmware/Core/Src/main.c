@@ -181,7 +181,7 @@ int main(void)
   printf("Abstand:%u\r\n", Stromsensor.measured_value);
 #endif
 #if WIND_TEST
-  Windsensor_geschw.Sensor_type = Wind_Sensor;
+  Windsensor_geschw.Sensor_type = Wind_Sensor_speed;
   Windsensor_geschw.ADC_Channel = ADC_CHANNEL_7;
   Windsensor_geschw.hadc_ptr = &hadc3;
   Windsensor_geschw.ADC_Rank = 1;
