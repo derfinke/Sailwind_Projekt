@@ -16,7 +16,7 @@
 /* typedefs -----------------------------------------------------------*/
 
 typedef enum {
-  Distance_Sensor, Wind_Sensor, Current_Sensor, Force_Sensor
+  Distance_Sensor, Wind_Sensor_speed, Wind_Sensor_direction, Current_Sensor, Force_Sensor
 } IO_SensorType_t;
 
 /** @struct IO_analogSensor_t

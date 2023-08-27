@@ -8,6 +8,8 @@
 #ifndef WSWD_WSWD_H_
 #define WSWD_WSWD_H_
 
-
+uint8_t WSWD_send_without_param(char* command);
+uint8_t WSWD_receive(char* receive_buffer);
+uint8_t WSWD_init(void);
 
 #endif /* WSWD_WSWD_H_ */
