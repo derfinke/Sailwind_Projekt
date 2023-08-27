@@ -148,7 +148,7 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
           * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - DISTANCE_SENSOR_MIN_AMP))
           + Sensor->min_possible_value;
       break;
-    case Wind_Sensor_speed:
+    case Current_Sensor:
       IO_Get_ADC_Value(32, 0, Sensor);
       ADC_voltage = (float) (Sensor->ADC_value/ADC_RESOLOUTION);
       Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
@@ -156,9 +156,9 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
           * (ADC_voltage - CURRENT_SENSOR_MIN_VOLT))
           + Sensor->min_possible_value;
       break;
-    case Wind_Sensor_direction:
+    case Wind_Sensor_speed:
       break;
-    case Current_Sensor:
+    case Wind_Sensor_direction:
       break;
     case Force_Sensor:
       break;
