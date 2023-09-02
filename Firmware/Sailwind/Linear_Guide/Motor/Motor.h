@@ -13,7 +13,7 @@
 /* defines ------------------------------------------------------------*/
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
 #define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
-#define MOTOR_PULSE_PER_ROTATION 12
+#define MOTOR_PULSE_PER_ROTATION 12.0
 #define MOTOR_IN_COUNT 4
 #define MOTOR_RPM_SPEED_1 75
 #define MOTOR_RPM_SPEED_2 150

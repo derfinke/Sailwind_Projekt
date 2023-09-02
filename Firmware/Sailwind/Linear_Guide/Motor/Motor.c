@@ -10,7 +10,7 @@
 /* private function prototypes -----------------------------------------------*/
 static Motor_RPM_Measurement_t Motor_OUT1_init(TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
-static float Motor_pulse_to_rpm(float f_pulse);
+static float Motor_frequency_to_rpm(float f_pulse);
 static void Motor_press_enter_to_continue();
 
 
@@ -141,31 +141,35 @@ void Motor_start_rpm_measurement(Motor_t *motor_ptr)
 Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
 {
 	Motor_RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_rpm_measurement;
-	TIM_HandleTypeDef *htim_ptr = rpm_ptr->htim_ptr;
-	if (!(htim_ptr->Channel == rpm_ptr->active_channel))
+	TIM_HandleTypeDef *htim_ptr = motor_ptr->OUT1_rpm_measurement->htim_ptr;
+	if (htim_ptr->Channel != rpm_ptr->active_channel)
 	{
 		return Motor_RPM_state_wrong_channel;
+		printf("Wrong RPM channel for measurement\r\n");
 	}
-	if (!rpm_ptr->Is_First_Captured) // if the first rising edge is not captured
+	if (rpm_ptr->Is_First_Captured == 0) // if the first rising edge is not captured
 	{
 		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
 		rpm_ptr->Is_First_Captured = True;  // set the first captured as true
 		return Motor_RPM_state_first_pulse;
 	}
 	// If the first rising edge is captured, now we will capture the second edge
-	float diff;
+	uint32_t difference;
 	rpm_ptr->IC_Val2 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4);  // read second value
 	if (rpm_ptr->IC_Val2 > rpm_ptr->IC_Val1)
 	{
-		diff = rpm_ptr->IC_Val2-rpm_ptr->IC_Val1;
+	  difference = rpm_ptr->IC_Val2-rpm_ptr->IC_Val1;
 	}
 	else
 	{
-		diff = (htim_ptr->Init.Period - rpm_ptr->IC_Val1) + rpm_ptr->IC_Val2;
+	  difference = (0xffffffff - rpm_ptr->IC_Val1) + rpm_ptr->IC_Val2;
 	}
-	float ref_clock = HAL_RCC_GetPCLK1Freq() / (float)(htim_ptr->Init.Prescaler);
-	float f_pulse = ref_clock/diff;
-	rpm_ptr->rpm_value = Motor_pulse_to_rpm(f_pulse);
+	uint32_t PCLK1_freq = 2 * HAL_RCC_GetPCLK1Freq();
+
+	float ref_clock = PCLK1_freq/(htim_ptr->Init.Prescaler);
+
+	float frequency = ref_clock/difference;
+	rpm_ptr->rpm_value = Motor_pulse_to_rpm(frequency);
 
 	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
 	rpm_ptr->Is_First_Captured = False; // set it back to false
@@ -266,9 +270,9 @@ static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr)
  *  Description:
  *   - convert pulse frequency to rpm value via pulse per rotation constant (12) and return the result
  */
-static float Motor_pulse_to_rpm(float f_pulse)
+static float Motor_frequency_to_rpm(float f_pulse)
 {
-	return f_pulse / (float)(MOTOR_PULSE_PER_ROTATION) * 60;
+	return f_pulse / (MOTOR_PULSE_PER_ROTATION * 60);
 }
 
 static void Motor_press_enter_to_continue()
