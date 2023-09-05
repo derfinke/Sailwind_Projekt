@@ -1,8 +1,7 @@
-/*
- * IO.c
- *
- *  Created on: Apr 17, 2023
- *      Author: Bene
+/**
+ * \file IO.c
+ * @date 18 Jun 2023
+ * @brief Access to Analog and Digital IO Pins
  */
 #include "IO.h"
 
@@ -21,8 +20,22 @@ static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
+/**
+ * @brief Take adc values and remove lowest values. Takes an average of the left over values
+ * @param num_of_adc_samples: number of taken adc values
+ * @param num_of_disperesed_samples: number of adc values to be disposed
+ * @param Sensor: ptr to a Sensor
+ * @retval none
+ */
+
 static void IO_Get_ADC_Value(uint8_t num_of_adc_samples, uint8_t num_of_disperesed_samples, IO_analogSensor_t *Sensor);
 
+/**
+ * @brief Sort taken adc values from lowest to highest
+ * @param ADC_Values: ptr to array of taken adc values
+ * @param num_of_adc_samples: number of taken adc values
+ * @retval none
+ */
 static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples);
 
 /* IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState state)
