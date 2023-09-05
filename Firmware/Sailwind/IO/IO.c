@@ -159,6 +159,12 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
           + Sensor->min_possible_value;
       break;
     case Wind_Sensor_speed:
+      IO_Get_ADC_Value(32, 0, Sensor);
+      ADC_voltage = (float) (Sensor->ADC_value * 3.3/ADC_RESOLOUTION);
+      Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
+          - Sensor->min_possible_value) / (WIND_SENSOR_MAX_CURRENT - WIND_SENSOR_MIN_CURRENT))
+          * (ADC_voltage - WIND_SENSOR_MIN_CURRENT))
+          + Sensor->min_possible_value;
       break;
     case Wind_Sensor_direction:
       IO_Get_ADC_Value(32, 0, Sensor);
@@ -170,6 +176,8 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
       break;
     case Force_Sensor:
       break;
+    default:
+      printf("no valid sensor\r\n");
   }
 }
 
