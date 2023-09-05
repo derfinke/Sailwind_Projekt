@@ -1,8 +1,7 @@
-/*
- * WSWD.c
- *
- *  Created on: Aug 26, 2023
- *      Author: nicof
+/**
+ * \file WSWD.c
+ * @date 18 Jun 2023
+ * @brief Access to Analog and Digital IO Pins
  */
 
 #include <stdio.h>
@@ -21,8 +20,20 @@
 #define SIZE_OF_WSWD_PARAM              5U
 #define WSWD_UART_TIMEOUT               2000U
 
+/**
+ * @brief Set pin to receive incoming rs485 transmission
+ * @param none
+ * @retval none
+ */
 static void WSWD_enable_receive(void);
+
+/**
+ * @brief Set pin to send a rs485 message
+ * @param none
+ * @retval none
+ */
 static void WSWD_enable_send(void);
+
 
 static void WSWD_enable_receive(void) {
   if (HAL_GPIO_ReadPin(Windsensor_EN_GPIO_Port, Windsensor_EN_Pin)

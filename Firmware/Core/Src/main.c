@@ -141,12 +141,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-//  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-//  manual_control = Manual_Control_init(&linear_guide);
+  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+  manual_control = Manual_Control_init(&linear_guide);
   IO_analogSensor_t Abstandssensor = {0};
   IO_analogSensor_t Stromsensor = {0};
-  IO_analogSensor_t Windsensor_geschw = {0};
-  IO_analogSensor_t Windsensor_richtung = {0};
+//  IO_analogSensor_t Windsensor_geschw = {0};
+//  IO_analogSensor_t Windsensor_richtung = {0};
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -176,11 +176,12 @@ int main(void)
   Stromsensor.hadc_ptr = &hadc3;
   Stromsensor.ADC_Rank = 1;
   Stromsensor.max_possible_value = 7250;
-  Stromsensor.min_possible_value = -7250;
+  Stromsensor.min_possible_value = 0;
   IO_Get_Measured_Value(&Stromsensor);
   printf("Abstand:%u\r\n", Stromsensor.measured_value);
 #endif
-#if WIND_TEST
+// Wind Data should be aquired through NMEA telegram for more accurate values
+//#if WIND_TEST
 //  Windsensor_geschw.Sensor_type = Wind_Sensor_speed;
 //  Windsensor_geschw.ADC_Channel = ADC_CHANNEL_7;
 //  Windsensor_geschw.hadc_ptr = &hadc3;
@@ -189,15 +190,15 @@ int main(void)
 //  Windsensor_geschw.min_possible_value = -7250;
 //  IO_Get_Measured_Value(&Stromsensor);
 //  printf("Abstand:%u\r\n", Stromsensor.measured_value);
-  Windsensor_richtung.Sensor_type = Wind_Sensor_direction;
-  Windsensor_richtung.ADC_Channel = ADC_CHANNEL_5;
-  Windsensor_richtung.hadc_ptr = &hadc3;
-  Windsensor_richtung.ADC_Rank = 3;
-  Windsensor_richtung.max_possible_value = 0;
-  Windsensor_richtung.min_possible_value = 359;
-  IO_Get_Measured_Value(&Windsensor_richtung);
-  printf("Abstand:%u\r\n", Windsensor_richtung.measured_value);
-#endif
+//  Windsensor_richtung.Sensor_type = Wind_Sensor_direction;
+//  Windsensor_richtung.ADC_Channel = ADC_CHANNEL_5;
+//  Windsensor_richtung.hadc_ptr = &hadc3;
+//  Windsensor_richtung.ADC_Rank = 3;
+//  Windsensor_richtung.max_possible_value = 0;
+//  Windsensor_richtung.min_possible_value = 359;
+//  IO_Get_Measured_Value(&Windsensor_richtung);
+//  printf("Abstand:%u\r\n", Windsensor_richtung.measured_value);
+//#endif
 #if FRAM_TEST
   uint8_t test[4];
   memset(test, 0, sizeof(test));
