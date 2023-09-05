@@ -34,7 +34,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define TEST 1
+#define ABSTAND_TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -90,10 +90,13 @@ static void MX_TIM3_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
+PUTCHAR_PROTOTYPE
 {
-	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the USART1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart3, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
 }
 /* USER CODE END 0 */
 
@@ -136,11 +139,9 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-  manual_control = Manual_Control_init(&linear_guide);
-  IO_analogSensor_t Abstandsensor;
-  IO_analogSensor_t Stromsensor;
-
+//  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+//  manual_control = Manual_Control_init(&linear_guide);
+  IO_analogSensor_t Abstandssensor = {0};
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -155,12 +156,14 @@ int main(void)
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
 #endif
 #if ABSTAND_TEST
-  Abstandsensor.name = "Abstand";
-  Abstandsensor.hadc_channel = 0;
-  Abstandsensor.hadc_ptr = &hadc1;
-  Abstandsensor.maxConvertedValue = 2.97;
-  IO_analogRead(&Abstandsensor);
-  IO_analogPrint(Abstandsensor);
+  Abstandssensor.Sensor_type = Distance_Sensor;
+  Abstandssensor.ADC_Channel = ADC_CHANNEL_0;
+  Abstandssensor.hadc_ptr = &hadc1;
+  Abstandssensor.ADC_Rank = 1;
+  Abstandssensor.max_possible_value = 730;
+  Abstandssensor.min_possible_value = 30;
+  IO_Get_Measured_Value(&Abstandssensor);
+  printf("Abstand:%u\r\n", Abstandssensor.measured_value);
 #endif
 #if STROM_TEST
   Abstandsensor.name = "Strom";
@@ -287,7 +290,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_0;
   sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -297,6 +300,7 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -552,7 +556,6 @@ static void MX_TIM3_Init(void)
 
   TIM_ClockConfigTypeDef sClockSourceConfig = {0};
   TIM_MasterConfigTypeDef sMasterConfig = {0};
-  TIM_IC_InitTypeDef sConfigIC = {0};
 
   /* USER CODE BEGIN TIM3_Init 1 */
 
@@ -572,21 +575,9 @@ static void MX_TIM3_Init(void)
   {
     Error_Handler();
   }
-  if (HAL_TIM_IC_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
   sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
   sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
   if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sConfigIC.ICPolarity = TIM_INPUTCHANNELPOLARITY_RISING;
-  sConfigIC.ICSelection = TIM_ICSELECTION_DIRECTTI;
-  sConfigIC.ICPrescaler = TIM_ICPSC_DIV1;
-  sConfigIC.ICFilter = 0;
-  if (HAL_TIM_IC_ConfigChannel(&htim3, &sConfigIC, TIM_CHANNEL_4) != HAL_OK)
   {
     Error_Handler();
   }
@@ -751,8 +742,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Kalibrierung_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
