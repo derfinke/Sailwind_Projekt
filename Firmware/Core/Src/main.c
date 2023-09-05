@@ -173,7 +173,7 @@ int main(void)
   Stromsensor.hadc_ptr = &hadc3;
   Stromsensor.ADC_Rank = 1;
   Stromsensor.max_possible_value = 7250;
-  Stromsensor.min_possible_value = -7250;
+  Stromsensor.min_possible_value = 0;
   IO_Get_Measured_Value(&Stromsensor);
   printf("Abstand:%u\r\n", Stromsensor.measured_value);
 #endif

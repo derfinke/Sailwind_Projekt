@@ -42,8 +42,8 @@ typedef struct {
   uint32_t ADC_Rank;
   uint16_t ADC_value;
   uint16_t max_possible_value;
-	int16_t measured_value;
-	int16_t min_possible_value;
+	uint16_t measured_value;
+	uint16_t min_possible_value;
 } IO_analogSensor_t;
 
 typedef struct {
