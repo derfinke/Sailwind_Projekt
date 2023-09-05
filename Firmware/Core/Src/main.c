@@ -36,6 +36,7 @@
 /* USER CODE BEGIN PD */
 #define ABSTAND_TEST 1
 #define STROM_TEST 1
+#define WIND_TEST 1
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -140,10 +141,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
-//  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-//  manual_control = Manual_Control_init(&linear_guide);
+  linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
+  manual_control = Manual_Control_init(&linear_guide);
   IO_analogSensor_t Abstandssensor = {0};
   IO_analogSensor_t Stromsensor = {0};
+//  IO_analogSensor_t Windsensor_geschw = {0};
+//  IO_analogSensor_t Windsensor_richtung = {0};
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -177,6 +180,25 @@ int main(void)
   IO_Get_Measured_Value(&Stromsensor);
   printf("Abstand:%u\r\n", Stromsensor.measured_value);
 #endif
+// Wind Data should be aquired through NMEA telegram for more accurate values
+//#if WIND_TEST
+//  Windsensor_geschw.Sensor_type = Wind_Sensor_speed;
+//  Windsensor_geschw.ADC_Channel = ADC_CHANNEL_7;
+//  Windsensor_geschw.hadc_ptr = &hadc3;
+//  Windsensor_geschw.ADC_Rank = 2;
+//  Windsensor_geschw.max_possible_value = 7250;
+//  Windsensor_geschw.min_possible_value = -7250;
+//  IO_Get_Measured_Value(&Stromsensor);
+//  printf("Abstand:%u\r\n", Stromsensor.measured_value);
+//  Windsensor_richtung.Sensor_type = Wind_Sensor_direction;
+//  Windsensor_richtung.ADC_Channel = ADC_CHANNEL_5;
+//  Windsensor_richtung.hadc_ptr = &hadc3;
+//  Windsensor_richtung.ADC_Rank = 3;
+//  Windsensor_richtung.max_possible_value = 0;
+//  Windsensor_richtung.min_possible_value = 359;
+//  IO_Get_Measured_Value(&Windsensor_richtung);
+//  printf("Abstand:%u\r\n", Windsensor_richtung.measured_value);
+//#endif
 #if FRAM_TEST
   uint8_t test[4];
   memset(test, 0, sizeof(test));
@@ -265,6 +287,7 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC1_Init 1 */
 
@@ -289,6 +312,25 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -307,6 +349,7 @@ static void MX_ADC2_Init(void)
 
   /* USER CODE END ADC2_Init 0 */
 
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC2_Init 1 */
 
@@ -331,6 +374,15 @@ static void MX_ADC2_Init(void)
     Error_Handler();
   }
 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -349,6 +401,7 @@ static void MX_ADC3_Init(void)
 
   /* USER CODE END ADC3_Init 0 */
 
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -369,6 +422,34 @@ static void MX_ADC3_Init(void)
   hadc3.Init.DMAContinuousRequests = DISABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Rank = 2;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -599,7 +680,7 @@ static void MX_USART2_UART_Init(void)
 
   /* USER CODE END USART2_Init 1 */
   huart2.Instance = USART2;
-  huart2.Init.BaudRate = 115200;
+  huart2.Init.BaudRate = 19200;
   huart2.Init.WordLength = UART_WORDLENGTH_8B;
   huart2.Init.StopBits = UART_STOPBITS_1;
   huart2.Init.Parity = UART_PARITY_NONE;

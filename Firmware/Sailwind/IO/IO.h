@@ -1,8 +1,7 @@
-/*
- * IO.h
- *
- *  Created on: Apr 17, 2023
- *      Author: Bene
+/**
+ * \file IO.h
+ * @date 18 Jun 2023
+ * @brief Access to Analog and Digital IO Pins
  */
 
 #ifndef IO_IO_H_
@@ -16,7 +15,7 @@
 /* typedefs -----------------------------------------------------------*/
 
 typedef enum {
-  Distance_Sensor, Wind_Sensor, Current_Sensor, Force_Sensor
+  Distance_Sensor, Wind_Sensor_speed, Wind_Sensor_direction, Current_Sensor, Force_Sensor
 } IO_SensorType_t;
 
 /** @struct IO_analogSensor_t

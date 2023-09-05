@@ -12,6 +12,8 @@
 #define WIND_DIRECTION_RESISTOR                       160
 #define DISTANCE_SENSOR_MAX_AMP                       0.01106
 #define DISTANCE_SENSOR_MIN_AMP                       0.00426
+#define WIND_SENSOR_MAX_AMP                           0.02
+#define WIND_SENSOR_MIN_AMP                           0.004
 #define CURRENT_SENSOR_MAX_VOLT                       3.057
 #define CURRENT_SENSOR_MIN_VOLT                       1.607
 #define NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR            48
@@ -161,18 +163,34 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
           * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - DISTANCE_SENSOR_MIN_AMP))
           + Sensor->min_possible_value;
       break;
-    case Wind_Sensor:
-      break;
     case Current_Sensor:
-      IO_Get_ADC_Value(32, 0, Sensor);
+      IO_Get_ADC_Value(48, 0, Sensor);
       ADC_voltage = (float) ((Sensor->ADC_value * 3.3)/ADC_RESOLOUTION);
       Sensor->measured_value = (uint16_t) (((Sensor->max_possible_value
           - Sensor->min_possible_value) / (CURRENT_SENSOR_MAX_VOLT - CURRENT_SENSOR_MIN_VOLT))
           * (ADC_voltage - CURRENT_SENSOR_MIN_VOLT))
           + Sensor->min_possible_value;
       break;
+    case Wind_Sensor_speed:
+      IO_Get_ADC_Value(48, 0, Sensor);
+      ADC_voltage = (float) (Sensor->ADC_value * 3.3/ADC_RESOLOUTION);
+      Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
+          - Sensor->min_possible_value) / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
+          * (ADC_voltage - WIND_SENSOR_MIN_AMP))
+          + Sensor->min_possible_value;
+      break;
+    case Wind_Sensor_direction:
+      IO_Get_ADC_Value(48, 0, Sensor);
+      ADC_voltage = (float) (Sensor->ADC_value * 3.3/ADC_RESOLOUTION);
+      Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
+          - Sensor->min_possible_value) / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
+          * (ADC_voltage - WIND_SENSOR_MIN_AMP))
+          + Sensor->min_possible_value;
+      break;
     case Force_Sensor:
       break;
+    default:
+      printf("no valid sensor\r\n");
   }
 }
 
