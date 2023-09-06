@@ -109,7 +109,7 @@ PUTCHAR_PROTOTYPE
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	hdac.State = HAL_DAC_STATE_RESET;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/

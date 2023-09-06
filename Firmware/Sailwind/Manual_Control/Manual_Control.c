@@ -122,6 +122,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
 			{
 				printf("new state approach center\r\n");
+				HAL_Delay(1000);
 				Linear_Guide_move(lg_ptr, Loc_movement_backwards);
 				Manual_Control_set_endpos(mc_ptr);
 				printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
@@ -135,6 +136,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			if (lg_ptr->localization.current_pos_mm == 0)
 			{
 				printf("new state set center\r\n");
+				HAL_Delay(1000);
 				Linear_Guide_move(lg_ptr, Loc_movement_forward);
 				while(count != (lg_ptr->localization.pulse_count))
 				{
@@ -143,7 +145,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 						lg_ptr->localization.pulse_count--;
 
 					}
-					while(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_RESET);
+					while(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET);
 				}
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
 				lg_ptr->localization.current_pos_mm = count * lg_ptr->localization.distance_per_pulse;
