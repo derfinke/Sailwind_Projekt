@@ -18,7 +18,7 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
-
+uint32_t pulses = 0;
 /* API function definitions -----------------------------------------------*/
 
 Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
@@ -96,31 +96,33 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 		case Loc_state_0_init:
 			if (lg_ptr->localization.is_triggered)
 			{
-				Linear_Guide_move(lg_ptr, Loc_movement_forward);
 				lg_ptr->localization.state = Loc_state_1_approach_front;
 				printf("new state approach front\r\n");
 				lg_ptr->localization.is_triggered = False;
+				Linear_Guide_move(lg_ptr, Loc_movement_forward);
 			}
 			break;
 		case Loc_state_1_approach_front:
-			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
-			{
-				printf("new state approach back\r\n");
-				Linear_Guide_move(lg_ptr, Loc_movement_backwards);
-				*state = Loc_state_2_approach_back;
-			}
+      printf("new state approach back\r\n");
+      Linear_Guide_move(lg_ptr, Loc_movement_backwards);
+      *state = Loc_state_2_approach_back;
 			break;
 		case Loc_state_2_approach_back:
-			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
-			{
-				printf("new state approach center\r\n");
-				Linear_Guide_move(lg_ptr, Loc_movement_forward);
+      printf("new state approach center\r\n");
+      Linear_Guide_move(lg_ptr, Loc_movement_forward);
+      while (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front) != True)
+      {
+        if(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET)
+        {
+          mc_ptr->lg_ptr->localization.pulse_count++;
+          while(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET);
+        }
+      }
 				Manual_Control_set_endpos(mc_ptr);
 				*state = Loc_state_3_approach_center;
-			}
 			break;
 		case Loc_state_3_approach_center:
-			if (lg_ptr->localization.current_pos_mm == 0)
+			if (lg_ptr->localization.current_pos_mm == lg_ptr->localization.end_pos_mm)
 			{
 				printf("new state set center\r\n");
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);

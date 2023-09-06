@@ -76,7 +76,7 @@ boolean_t IO_digitalRead_state_changed(IO_digitalPin_t *digital_IN_ptr);
 boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr);
 void IO_analogRead(IO_analogSensor_t *sensor_ptr);
 void IO_analogPrint(IO_analogSensor_t sensor);
-void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
+void IO_analogWrite(IO_analogActuator_t *actuator_ptr, uint16_t value);
 /**
  * @brief get the measured value of a sensor as the real output value depending on the sensor type
  * @param Sensor: ptr to a Sensor

@@ -10,7 +10,6 @@
 /* private function prototypes -----------------------------------------------*/
 static Motor_RPM_Measurement_t Motor_OUT1_init(TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
-static float Motor_frequency_to_rpm(float f_pulse);
 static void Motor_press_enter_to_continue();
 
 
@@ -32,7 +31,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 			.OUT1_rpm_measurement = Motor_OUT1_init(htim_ptr, htim_channel, htim_active_channel),
 			.OUT2_error = IO_digital_Pin_init(OUT_2_GPIO_Port, OUT_2_Pin),
 			.OUT3_rot_dir = IO_digital_Pin_init(OUT_3_GPIO_Port, OUT_3_Pin),
-			.rpm_set_point = MOTOR_RPM_SPEED_1
+			.rpm_set_point = 1500
 	};
 	Motor_start_rpm_measurement(&motor);
 	return motor;
@@ -79,16 +78,27 @@ void Motor_stop_moving(Motor_t *motor_ptr)
  */
 void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function)
 {
-	motor_ptr->current_function = function;
-	uint8_t pin_offset = (function >= 4) * 2; // 0 or 2 -> write IN0+0, IN1+0 or IN0+2, IN1+2
-	int8_t function_bits = function - pin_offset * 2; //subtract 4 to function id if its >= 4 -> convert number {0..3} to binary in following for loop
-	for (int i = 0; i < 2; i++)
-	{ // write IN0 and IN1 (function in {0..3}) or IN2 and IN3 (function in {4..7}
-		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET; // example: function = 3_d = 11_b, 2_d == 10_b -> 11 & 10 = 10  -> 10 != 0 -> 1
-		uint8_t IN_idx = i + pin_offset;											 //			 function << 1 -> 110_b             -> 110 & 10 = 10 -> 10 != 0 -> 1
-		IO_digitalWrite(&motor_ptr->INs[IN_idx], state);
-		function_bits <<= 1;
-	}
+//	motor_ptr->current_function = function;
+//	uint8_t pin_offset = (function >= 4) * 2; // 0 or 2 -> write IN0+0, IN1+0 or IN0+2, IN1+2
+//	int8_t function_bits = function - pin_offset * 2; //subtract 4 to function id if its >= 4 -> convert number {0..3} to binary in following for loop
+//	for (int i = 0; i < 2; i++)
+//	{ // write IN0 and IN1 (function in {0..3}) or IN2 and IN3 (function in {4..7}
+//		GPIO_PinState state = function_bits & 2 ? GPIO_PIN_SET : GPIO_PIN_RESET; // example: function = 3_d = 11_b, 2_d == 10_b -> 11 & 10 = 10  -> 10 != 0 -> 1
+//		uint8_t IN_idx = i + pin_offset;											 //			 function << 1 -> 110_b             -> 110 & 10 = 10 -> 10 != 0 -> 1
+//		IO_digitalWrite(&motor_ptr->INs[IN_idx], state);
+//		function_bits <<= 1;
+//	}
+  switch(function)
+  {
+    case Motor_function_cw_rotation:
+      HAL_GPIO_WritePin(IN_0_GPIO_Port, IN_0_Pin, GPIO_PIN_SET);
+      break;
+    case Motor_function_ccw_rotation:
+      HAL_GPIO_WritePin(IN_1_GPIO_Port, IN_1_Pin, GPIO_PIN_SET);
+      break;
+    default:
+      printf("incorrect dir\r\n");
+  }
 }
 
 /* void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware)
@@ -119,7 +129,7 @@ void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Ha
 			AIN_value = motor_ptr->rpm_set_point;
 			break;
 	}
-	IO_analogWrite(&motor_ptr->AIN_set_rpm, (float) AIN_value);
+	IO_analogWrite(&motor_ptr->AIN_set_rpm, AIN_value);
 	Motor_set_function(motor_ptr, rpm_function);
 }
 
@@ -140,39 +150,39 @@ void Motor_start_rpm_measurement(Motor_t *motor_ptr)
 
 Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr)
 {
-	Motor_RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_rpm_measurement;
-	TIM_HandleTypeDef *htim_ptr = motor_ptr->OUT1_rpm_measurement->htim_ptr;
-	if (htim_ptr->Channel != rpm_ptr->active_channel)
-	{
-		return Motor_RPM_state_wrong_channel;
-		printf("Wrong RPM channel for measurement\r\n");
-	}
-	if (rpm_ptr->Is_First_Captured == 0) // if the first rising edge is not captured
-	{
-		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
-		rpm_ptr->Is_First_Captured = True;  // set the first captured as true
-		return Motor_RPM_state_first_pulse;
-	}
-	// If the first rising edge is captured, now we will capture the second edge
-	uint32_t difference;
-	rpm_ptr->IC_Val2 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4);  // read second value
-	if (rpm_ptr->IC_Val2 > rpm_ptr->IC_Val1)
-	{
-	  difference = rpm_ptr->IC_Val2-rpm_ptr->IC_Val1;
-	}
-	else
-	{
-	  difference = (0xffffffff - rpm_ptr->IC_Val1) + rpm_ptr->IC_Val2;
-	}
-	uint32_t PCLK1_freq = 2 * HAL_RCC_GetPCLK1Freq();
-
-	float ref_clock = PCLK1_freq/(htim_ptr->Init.Prescaler);
-
-	float frequency = ref_clock/difference;
-	rpm_ptr->rpm_value = Motor_pulse_to_rpm(frequency);
-
-	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
-	rpm_ptr->Is_First_Captured = False; // set it back to false
+//	Motor_RPM_Measurement_t *rpm_ptr = &motor_ptr->OUT1_rpm_measurement;
+////	TIM_HandleTypeDef *htim_ptr = motor_ptr->OUT1_rpm_measurement->htim_ptr;
+//	if (htim_ptr->Channel != rpm_ptr->active_channel)
+//	{
+//		return Motor_RPM_state_wrong_channel;
+//		printf("Wrong RPM channel for measurement\r\n");
+//	}
+//	if (rpm_ptr->Is_First_Captured == 0) // if the first rising edge is not captured
+//	{
+//		rpm_ptr->IC_Val1 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4); // read the first value
+//		rpm_ptr->Is_First_Captured = True;  // set the first captured as true
+//		return Motor_RPM_state_first_pulse;
+//	}
+//	// If the first rising edge is captured, now we will capture the second edge
+//	uint32_t difference;
+//	rpm_ptr->IC_Val2 = HAL_TIM_ReadCapturedValue(htim_ptr, TIM_CHANNEL_4);  // read second value
+//	if (rpm_ptr->IC_Val2 > rpm_ptr->IC_Val1)
+//	{
+//	  difference = rpm_ptr->IC_Val2-rpm_ptr->IC_Val1;
+//	}
+//	else
+//	{
+//	  difference = (0xffffffff - rpm_ptr->IC_Val1) + rpm_ptr->IC_Val2;
+//	}
+//	uint32_t PCLK1_freq = 2 * HAL_RCC_GetPCLK1Freq();
+//
+//	float ref_clock = PCLK1_freq/(htim_ptr->Init.Prescaler);
+//
+//	float frequency = ref_clock/difference;
+////	rpm_ptr->rpm_value = Motor_pulse_to_rpm(frequency);
+//
+//	__HAL_TIM_SET_COUNTER(htim_ptr, 0);  // reset the counter
+//	rpm_ptr->Is_First_Captured = False; // set it back to false
 	return Motor_RPM_state_rpm_measured;
 }
 
@@ -270,10 +280,10 @@ static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr)
  *  Description:
  *   - convert pulse frequency to rpm value via pulse per rotation constant (12) and return the result
  */
-static float Motor_frequency_to_rpm(float f_pulse)
-{
-	return f_pulse / (MOTOR_PULSE_PER_ROTATION * 60);
-}
+//static float Motor_frequency_to_rpm(float f_pulse)
+//{
+//	return f_pulse / (MOTOR_PULSE_PER_ROTATION * 60);
+//}
 
 static void Motor_press_enter_to_continue()
 {

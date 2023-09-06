@@ -188,15 +188,3 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms)
 }
 /* Timer Callback implementation for rpm measurement --------------------------*/
 
-/* void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
- *  Description:
- *   - must be redefined in main.c
- *   - triggered, when a rising edge of the motor pulse signal (OUT1) is detected
- *   - calls function to measure the frequency between two pulses and converts it to an rpm value
- */
-
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
-{
-	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
-}
-
