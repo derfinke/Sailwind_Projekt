@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FRAM.h"
+#include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
 /* USER CODE END Includes */
@@ -67,7 +68,6 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-char Rx_buffer[10];
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
 
@@ -178,7 +178,7 @@ int main(void)
   Stromsensor.max_possible_value = 7250;
   Stromsensor.min_possible_value = 0;
   IO_Get_Measured_Value(&Stromsensor);
-  printf("Abstand:%u\r\n", Stromsensor.measured_value);
+  printf("Strom:%u\r\n", Stromsensor.measured_value);
 #endif
 // Wind Data should be aquired through NMEA telegram for more accurate values
 //#if WIND_TEST
@@ -208,20 +208,34 @@ int main(void)
   FRAM_read(0x0000, test, sizeof(test));
   printf("read from FRAM: %u\r\n", test);
 #endif
-
+  char NMEA[31];
+  float speed = 0.0;
+  float dir = 0.0;
+//  WSWD_receive_NMEA(NMEA);
+//  printf("%s",NMEA);
+//  WSWD_get_wind_infos(NMEA, &speed, &dir);
+//  printf("speed:%f, dir:%f\r\n", speed, dir);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-#if !TEST
-		Manual_Control_poll(&manual_control);
-		Manual_Control_Localization(&manual_control);
-#else
-		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-#endif
+//#if !TEST
+//		Manual_Control_poll(&manual_control);
+//		Manual_Control_Localization(&manual_control);
+//#else
+//		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+//#endif
 
+//	  HAL_UART_Receive(&huart2, (uint8_t*)NMEA, 30, 1000);
+
+//	  memset(NMEA,0,30);
+	  WSWD_receive_NMEA(NMEA);
+	  WSWD_get_wind_infos(NMEA, &speed, &dir);
+	  printf("speed:%f, dir:%f\r\n", speed, dir);
+	  printf("%s",NMEA);
+	  HAL_Delay(10000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
