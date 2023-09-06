@@ -221,21 +221,21 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-//#if !TEST
-//		Manual_Control_poll(&manual_control);
-//		Manual_Control_Localization(&manual_control);
-//#else
-//		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-//#endif
+#if !TEST
+		Manual_Control_poll(&manual_control);
+		Manual_Control_Localization(&manual_control);
+#else
+		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+#endif
 
 //	  HAL_UART_Receive(&huart2, (uint8_t*)NMEA, 30, 1000);
 
 //	  memset(NMEA,0,30);
-	  WSWD_receive_NMEA(NMEA);
-	  WSWD_get_wind_infos(NMEA, &speed, &dir);
-	  printf("speed:%f, dir:%f\r\n", speed, dir);
-	  printf("%s",NMEA);
-	  HAL_Delay(10000);
+//	  WSWD_receive_NMEA(NMEA);
+//	  WSWD_get_wind_infos(NMEA, &speed, &dir);
+//	  printf("speed:%f, dir:%f\r\n", speed, dir);
+//	  printf("%s",NMEA);
+//	  HAL_Delay(10000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

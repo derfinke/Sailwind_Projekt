@@ -32,7 +32,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 			.OUT1_rpm_measurement = Motor_OUT1_init(htim_ptr, htim_channel, htim_active_channel),
 			.OUT2_error = IO_digital_Pin_init(OUT_2_GPIO_Port, OUT_2_Pin),
 			.OUT3_rot_dir = IO_digital_Pin_init(OUT_3_GPIO_Port, OUT_3_Pin),
-			.rpm_set_point = MOTOR_RPM_SPEED_1
+			.rpm_set_point = 1600
 	};
 	Motor_start_rpm_measurement(&motor);
 	return motor;
@@ -108,12 +108,12 @@ void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Ha
 	uint16_t AIN_value = 0;
 	switch(motor_ptr->rpm_set_point)
 	{
-		case MOTOR_RPM_SPEED_1:
-			rpm_function = Motor_function_speed1;
-			break;
-		case MOTOR_RPM_SPEED_2:
-			rpm_function = Motor_function_speed2;
-			break;
+//		case MOTOR_RPM_SPEED_1:
+//			rpm_function = Motor_function_speed1;
+//			break;
+//		case MOTOR_RPM_SPEED_2:
+//			rpm_function = Motor_function_speed2;
+//			break;
 		default:
 			rpm_function = Motor_function_velocity_setting;
 			AIN_value = motor_ptr->rpm_set_point;

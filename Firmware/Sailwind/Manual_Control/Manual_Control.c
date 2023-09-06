@@ -18,7 +18,7 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
-
+int32_t count = 0;
 /* API function definitions -----------------------------------------------*/
 
 Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
@@ -111,11 +111,23 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			}
 			break;
 		case Loc_state_2_approach_back:
+			while(Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back) == False)
+			{
+				if(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET)
+				{
+					lg_ptr->localization.pulse_count++;
+				}
+				while(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET);
+			}
 			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
 			{
 				printf("new state approach center\r\n");
-				Linear_Guide_move(lg_ptr, Loc_movement_forward);
+				Linear_Guide_move(lg_ptr, Loc_movement_backwards);
 				Manual_Control_set_endpos(mc_ptr);
+				printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
+				printf("endpos:%ld\r\n", lg_ptr->localization.end_pos_mm);
+				count = lg_ptr->localization.pulse_count/2;
+				printf("center:%ld\r\n", count);
 				*state = Loc_state_3_approach_center;
 			}
 			break;
@@ -123,7 +135,19 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			if (lg_ptr->localization.current_pos_mm == 0)
 			{
 				printf("new state set center\r\n");
+				Linear_Guide_move(lg_ptr, Loc_movement_forward);
+				while(count != (lg_ptr->localization.pulse_count))
+				{
+					if(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_SET)
+					{
+						lg_ptr->localization.pulse_count--;
+
+					}
+					while(HAL_GPIO_ReadPin(OUT_1_GPIO_Port, OUT_1_Pin) == GPIO_PIN_RESET);
+				}
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
+				lg_ptr->localization.current_pos_mm = count * lg_ptr->localization.distance_per_pulse;
+				printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
 				*state = Loc_state_4_set_center_pos;
 			}
 			break;

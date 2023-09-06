@@ -39,7 +39,7 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 void Localization_set_endpos(Localization_t *loc_ptr)
 {
 	loc_ptr->end_pos_mm = Localization_pulse_count_to_distance(*loc_ptr)/2;
-	loc_ptr->current_pos_mm = loc_ptr->end_pos_mm;
+	loc_ptr->current_pos_mm = 0U;
 }
 
 /* void Localization_set_center(Localization_t *loc_ptr)
@@ -99,7 +99,7 @@ void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SI
  */
 static int32_t Localization_pulse_count_to_distance(Localization_t loc)
 {
-	return (uint32_t) (loc.pulse_count * loc.distance_per_pulse);
+	return (int32_t) (loc.pulse_count * loc.distance_per_pulse);
 }
 
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
