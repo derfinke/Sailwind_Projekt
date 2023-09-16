@@ -15,8 +15,8 @@
 #include "FRAM.h"
 
 /* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_MM_PER_ROTATION 5.62
-#define LG_DISTANCE_MM_PER_PULSE ((LG_DISTANCE_MM_PER_ROTATION/12.0)*2)
+#define LG_DISTANCE_MM_PER_ROTATION 5
+#define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION / (float) MOTOR_PULSE_PER_ROTATION
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -63,7 +63,6 @@ void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
 void Linear_Guide_safe_Localization(Localization_t loc);
 Localization_t Linear_Guide_read_Localization();
-void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 
 
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */
