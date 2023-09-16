@@ -10,7 +10,6 @@
 /* private function prototypes -----------------------------------------------*/
 static LG_LEDs_t Linear_Guide_LEDs_init();
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
-static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr);
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
@@ -121,15 +120,15 @@ static LG_LEDs_t Linear_Guide_LEDs_init()
 			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, LED_ON),
 			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, LED_OFF),
 			.rollung = LED_init(LED_Rollen_GPIO_Port, LED_Rollen_Pin, LED_OFF),
-			.trimmung = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF),
-			.center_pos_set = LED_init(LED_Kalibrieren_Speichern_GPIO_Port, LED_Kalibrieren_Speichern_Pin, LED_OFF)
+			.trimmung = LED_init(LED_Kalibrieren_Speichern_GPIO_Port, LED_Kalibrieren_Speichern_Pin, LED_OFF),
+			.center_pos_set = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF)
 	};
 	return lg_leds;
 }
 
-static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
+void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
-	int32_t current_pos = lg_ptr->localization.current_pos_mm;
+	int32_t current_pos = Localization_pulse_count_to_distance(lg_ptr->localization);
 	int32_t center_pos = lg_ptr->localization.center_pos_mm;
 	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_rollung : LG_sail_adjustment_mode_trimmung;
 	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr);

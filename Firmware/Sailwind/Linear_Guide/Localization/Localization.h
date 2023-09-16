@@ -49,5 +49,6 @@ void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
 boolean_t Localization_callback_update_position(Localization_t *loc_ptr);
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);
+int32_t Localization_pulse_count_to_distance(Localization_t loc);
 
 #endif /* LOCALIZATION_LOCALIZATION_H_ */
