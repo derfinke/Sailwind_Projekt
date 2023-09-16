@@ -8,7 +8,6 @@
 #include "Localization.h"
 
 /* private function prototypes -----------------------------------------------*/
-static int32_t Localization_pulse_count_to_distance(Localization_t loc);
 static void Localization_update_current_position(Localization_t *loc_ptr);
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
 
@@ -38,7 +37,7 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
  */
 void Localization_set_endpos(Localization_t *loc_ptr)
 {
-	loc_ptr->end_pos_mm = Localization_pulse_count_to_distance(*loc_ptr)/2;
+  loc_ptr->end_pos_mm = Localization_pulse_count_to_distance(*loc_ptr);
 	loc_ptr->current_pos_mm = 0U;
 }
 
@@ -97,7 +96,7 @@ void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SI
  *  Description:
  *   - convert measured pulse count of the motor to a distance in mm, using distance per pulse parameter of the Linear guide
  */
-static int32_t Localization_pulse_count_to_distance(Localization_t loc)
+int32_t Localization_pulse_count_to_distance(Localization_t loc)
 {
 	return (int32_t) (loc.pulse_count * loc.distance_per_pulse);
 }
