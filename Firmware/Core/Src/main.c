@@ -23,6 +23,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FRAM.h"
+#include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
 /* USER CODE END Includes */
@@ -67,7 +68,6 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-char Rx_buffer[10];
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
 
@@ -109,7 +109,7 @@ PUTCHAR_PROTOTYPE
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	hdac.State = HAL_DAC_STATE_RESET;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -178,7 +178,7 @@ int main(void)
   Stromsensor.max_possible_value = 7250;
   Stromsensor.min_possible_value = 0;
   IO_Get_Measured_Value(&Stromsensor);
-  printf("Abstand:%u\r\n", Stromsensor.measured_value);
+  printf("Strom:%u\r\n", Stromsensor.measured_value);
 #endif
 // Wind Data should be aquired through NMEA telegram for more accurate values
 //#if WIND_TEST
@@ -208,7 +208,13 @@ int main(void)
   FRAM_read(0x0000, test, sizeof(test));
   printf("read from FRAM: %u\r\n", test);
 #endif
-
+  char NMEA[31];
+  float speed = 0.0;
+  float dir = 0.0;
+//  WSWD_receive_NMEA(NMEA);
+//  printf("%s",NMEA);
+//  WSWD_get_wind_infos(NMEA, &speed, &dir);
+//  printf("speed:%f, dir:%f\r\n", speed, dir);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -222,6 +228,14 @@ int main(void)
 		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
 #endif
 
+//	  HAL_UART_Receive(&huart2, (uint8_t*)NMEA, 30, 1000);
+
+//	  memset(NMEA,0,30);
+//	  WSWD_receive_NMEA(NMEA);
+//	  WSWD_get_wind_infos(NMEA, &speed, &dir);
+//	  printf("speed:%f, dir:%f\r\n", speed, dir);
+//	  printf("%s",NMEA);
+//	  HAL_Delay(10000);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -786,8 +800,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -832,6 +846,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : OUT_1_Pin */
+  GPIO_InitStruct.Pin = OUT_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(OUT_1_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : IN_2_Pin */
   GPIO_InitStruct.Pin = IN_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -853,12 +873,27 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(IN_0_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  switch (manual_control.lg_ptr->localization.movement) {
+  case Loc_movement_backwards:
+    manual_control.lg_ptr->localization.pulse_count++;
+    break;
+  case Loc_movement_forward:
+    manual_control.lg_ptr->localization.pulse_count--;
+    break;
+  case Loc_movement_stop:
+    break;
+  }
+}
 /* USER CODE END 4 */
 
 /**

@@ -128,6 +128,7 @@ void Error_Handler(void);
 #define IN_1_GPIO_Port GPIOC
 #define OUT_1_Pin GPIO_PIN_9
 #define OUT_1_GPIO_Port GPIOC
+#define OUT_1_EXTI_IRQn EXTI9_5_IRQn
 #define OUT_2_Pin GPIO_PIN_10
 #define OUT_2_GPIO_Port GPIOC
 #define OUT_3_Pin GPIO_PIN_11
