@@ -14,11 +14,11 @@
 #define WSWD_ID                         "00"
 #define SIZE_OF_WSWD_ID                 2U
 #define SIZE_OF_WSWD_ANSWER             11U
-#define SIZE_OF_NMEA_TELEGRAM           30U
+#define SIZE_OF_NMEA_TELEGRAM           31U
 #define SIZE_OF_WSWD_COMMAND            6U
 #define SIZE_OF_WSWD_COMMAND_WITH_PARAM 7U
 #define SIZE_OF_WSWD_PARAM              5U
-#define WSWD_UART_TIMEOUT               2000U
+#define WSWD_UART_TIMEOUT               1000U
 
 /**
  * @brief Set pin to receive incoming rs485 transmission
@@ -98,7 +98,6 @@ uint8_t WSWD_receive(char* receive_buffer, uint8_t size_of_receive_buffer)
 
 uint8_t WSWD_receive_NMEA(char* receive_buffer)
 {
-  WSWD_enable_receive();
   if(HAL_UART_Receive(&huart2, (uint8_t*)receive_buffer, SIZE_OF_NMEA_TELEGRAM, WSWD_UART_TIMEOUT) != HAL_OK)
   {
     printf("error receiving from WSWD\r\n");
@@ -106,7 +105,7 @@ uint8_t WSWD_receive_NMEA(char* receive_buffer)
   return HAL_OK;
 }
 
-void WSWD_get_wind_infos(char* received_NMEA_telegramm, float Windspeed,  float Winddirection)
+void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float *Winddirection)
 {
   char Windspeed_buffer[6];
   char Winddirection_buffer[5];
@@ -114,8 +113,8 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float Windspeed,  float 
   {
     memcpy(Winddirection_buffer, &received_NMEA_telegramm[7], 5);
     memcpy(Windspeed_buffer, &received_NMEA_telegramm[15], 6);
-    Winddirection = (float)atof(Winddirection_buffer);
-    Windspeed = (float)atof(Windspeed_buffer);
+    *Winddirection = (float)atof(Winddirection_buffer);
+    *Windspeed = (float)atof(Windspeed_buffer);
   }
   else
   {

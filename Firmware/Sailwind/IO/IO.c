@@ -119,13 +119,13 @@ boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr) {
  *   - convert analog to digital value and write it to the dac channel specified in the actuator reference
  */
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
-  actuator_ptr->currentConvertedValue =
-      value <= actuator_ptr->limitConvertedValue ?
-          value : actuator_ptr->limitConvertedValue;
-  IO_convertToDAC(actuator_ptr);
+//  actuator_ptr->currentConvertedValue =
+//      value <= actuator_ptr->limitConvertedValue ?
+//          value : actuator_ptr->limitConvertedValue;
+//  IO_convertToDAC(actuator_ptr);
   HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel,
   DAC_ALIGN_12B_R,
-                   actuator_ptr->dac_value);
+                   (uint16_t)value);
   HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
 }
 

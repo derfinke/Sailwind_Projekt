@@ -37,7 +37,7 @@ uint8_t WSWD_receive(char* receive_buffer, uint8_t size_of_receive_buffer);
  * @param Winddirection:Winddirection extracted from telegram
  * @retval none
  */
-void WSWD_get_wind_infos(char* received_NMEA_telegramm, float Windspeed,  float Winddirection);
+void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float *Winddirection);
 
 /**
  * @brief extract the windspeed unit from a received NMEA telegram
@@ -46,5 +46,7 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float Windspeed,  float 
  * @retval none
  */
 void WSWD_get_windspeed_unit(char* received_NMEA_telegramm, char unit);
+
+uint8_t WSWD_receive_NMEA(char* receive_buffer);
 
 #endif /* WSWD_WSWD_H_ */
