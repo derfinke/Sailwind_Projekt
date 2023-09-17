@@ -27,6 +27,7 @@
 #include "Manual_Control.h"
 #include "Test.h"
 #include "httpd.h"
+#include "tcp_server.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -179,7 +180,7 @@ int main(void)
   WSWD_get_wind_infos(NMEA, &speed, &dir);
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
-
+  tcp_server_init();
   httpd_init();
   /* USER CODE END 2 */
 
