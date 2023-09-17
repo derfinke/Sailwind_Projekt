@@ -26,6 +26,7 @@
 #include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
+#include "httpd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
