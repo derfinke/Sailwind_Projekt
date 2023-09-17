@@ -32,7 +32,9 @@ static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
  * @retval none
  */
 
-static void IO_Get_ADC_Value(uint8_t num_of_adc_samples, uint8_t num_of_disperesed_samples, IO_analogSensor_t *Sensor);
+static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
+                             uint8_t num_of_disperesed_samples,
+                             IO_analogSensor_t *Sensor);
 
 /**
  * @brief Sort taken adc values from lowest to highest
@@ -119,13 +121,13 @@ boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr) {
  *   - convert analog to digital value and write it to the dac channel specified in the actuator reference
  */
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
-  actuator_ptr->currentConvertedValue =
-      value <= actuator_ptr->limitConvertedValue ?
-          value : actuator_ptr->limitConvertedValue;
-  IO_convertToDAC(actuator_ptr);
+//  actuator_ptr->currentConvertedValue =
+//      value <= actuator_ptr->limitConvertedValue ?
+//          value : actuator_ptr->limitConvertedValue;
+//  IO_convertToDAC(actuator_ptr);
   HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel,
   DAC_ALIGN_12B_R,
-                   actuator_ptr->dac_value);
+                   (uint16_t) value);
   HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
 }
 
@@ -156,36 +158,40 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
 
   switch (Sensor->Sensor_type) {
     case Distance_Sensor:
-      IO_Get_ADC_Value(NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR, NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR, Sensor);
+      IO_Get_ADC_Value(NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR,
+      NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR,
+                       Sensor);
       ADC_voltage = (float) ((Sensor->ADC_value * 3.3) / ADC_RESOLOUTION);
-      Sensor->measured_value = (uint16_t) (((Sensor->max_possible_value
-          - Sensor->min_possible_value) / (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP))
-          * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR) - DISTANCE_SENSOR_MIN_AMP))
-          + Sensor->min_possible_value;
+      Sensor->measured_value =
+          (uint16_t) (((Sensor->max_possible_value - Sensor->min_possible_value)
+              / (DISTANCE_SENSOR_MAX_AMP - DISTANCE_SENSOR_MIN_AMP))
+              * ((ADC_voltage / DISTANCE_SENSOR_RESISTOR)
+                  - DISTANCE_SENSOR_MIN_AMP)) + Sensor->min_possible_value;
       break;
     case Current_Sensor:
       IO_Get_ADC_Value(48, 0, Sensor);
-      ADC_voltage = (float) ((Sensor->ADC_value * 3.3)/ADC_RESOLOUTION);
+      ADC_voltage = (float) ((Sensor->ADC_value * 3.3) / ADC_RESOLOUTION);
       Sensor->measured_value = (uint16_t) (((Sensor->max_possible_value
-          - Sensor->min_possible_value) / (CURRENT_SENSOR_MAX_VOLT - CURRENT_SENSOR_MIN_VOLT))
+          - Sensor->min_possible_value)
+          / (CURRENT_SENSOR_MAX_VOLT - CURRENT_SENSOR_MIN_VOLT))
           * (ADC_voltage - CURRENT_SENSOR_MIN_VOLT))
           + Sensor->min_possible_value;
       break;
     case Wind_Sensor_speed:
       IO_Get_ADC_Value(48, 0, Sensor);
-      ADC_voltage = (float) (Sensor->ADC_value * 3.3/ADC_RESOLOUTION);
+      ADC_voltage = (float) (Sensor->ADC_value * 3.3 / ADC_RESOLOUTION);
       Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
-          - Sensor->min_possible_value) / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
-          * (ADC_voltage - WIND_SENSOR_MIN_AMP))
-          + Sensor->min_possible_value;
+          - Sensor->min_possible_value)
+          / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
+          * (ADC_voltage - WIND_SENSOR_MIN_AMP)) + Sensor->min_possible_value;
       break;
     case Wind_Sensor_direction:
       IO_Get_ADC_Value(48, 0, Sensor);
-      ADC_voltage = (float) (Sensor->ADC_value * 3.3/ADC_RESOLOUTION);
+      ADC_voltage = (float) (Sensor->ADC_value * 3.3 / ADC_RESOLOUTION);
       Sensor->measured_value = (int16_t) (((Sensor->max_possible_value
-          - Sensor->min_possible_value) / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
-          * (ADC_voltage - WIND_SENSOR_MIN_AMP))
-          + Sensor->min_possible_value;
+          - Sensor->min_possible_value)
+          / (WIND_SENSOR_MAX_AMP - WIND_SENSOR_MIN_AMP))
+          * (ADC_voltage - WIND_SENSOR_MIN_AMP)) + Sensor->min_possible_value;
       break;
     case Force_Sensor:
       break;
@@ -194,7 +200,8 @@ void IO_Get_Measured_Value(IO_analogSensor_t *Sensor) {
   }
 }
 
-static void IO_Get_ADC_Value(uint8_t num_of_adc_samples, uint8_t num_of_disperesed_samples,
+static void IO_Get_ADC_Value(uint8_t num_of_adc_samples,
+                             uint8_t num_of_disperesed_samples,
                              IO_analogSensor_t *Sensor) {
 
   uint16_t ADC_val[num_of_adc_samples];
@@ -231,4 +238,53 @@ static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples)
       }
     }
   }
+}
+
+void IO_init_distance_sensor(IO_analogSensor_t *distance_sensor,
+                             ADC_HandleTypeDef *hadc1) {
+  distance_sensor->Sensor_type = Distance_Sensor;
+  distance_sensor->ADC_Channel = ADC_CHANNEL_0;
+  distance_sensor->hadc_ptr = hadc1;
+  distance_sensor->ADC_Rank = 1;
+  distance_sensor->max_possible_value = 730;
+  distance_sensor->min_possible_value = 30;
+  IO_Get_Measured_Value(distance_sensor);
+  printf("distance sensor init done\r\n");
+  printf("init distance: %umm\r\n", distance_sensor->measured_value);
+}
+
+void IO_init_current_sensor(IO_analogSensor_t *current_sensor,
+                            ADC_HandleTypeDef *hadc3) {
+  current_sensor->Sensor_type = Current_Sensor;
+  current_sensor->ADC_Channel = ADC_CHANNEL_8;
+  current_sensor->hadc_ptr = hadc3;
+  current_sensor->ADC_Rank = 1;
+  current_sensor->max_possible_value = 7250;
+  current_sensor->min_possible_value = 0;
+  IO_Get_Measured_Value(current_sensor);
+  printf("current sensor init done\r\n");
+  printf("init current: %umA\r\n", current_sensor->measured_value);
+}
+
+void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
+                         IO_analogSensor_t *wind_sensor_direction,
+                         ADC_HandleTypeDef *hadc3) {
+  wind_sensor_speed->Sensor_type = Wind_Sensor_speed;
+  wind_sensor_speed->ADC_Channel = ADC_CHANNEL_7;
+  wind_sensor_speed->hadc_ptr = hadc3;
+  wind_sensor_speed->ADC_Rank = 2;
+  wind_sensor_speed->max_possible_value = 16667;
+  wind_sensor_speed->min_possible_value = 0;
+  IO_Get_Measured_Value(wind_sensor_speed);
+  wind_sensor_direction->Sensor_type = Wind_Sensor_direction;
+  wind_sensor_direction->ADC_Channel = ADC_CHANNEL_5;
+  wind_sensor_direction->hadc_ptr = hadc3;
+  wind_sensor_direction->ADC_Rank = 3;
+  wind_sensor_direction->max_possible_value = 0;
+  wind_sensor_direction->min_possible_value = 359;
+  IO_Get_Measured_Value(wind_sensor_direction);
+  printf("wind sensor init done\r\n");
+  printf("init speed:%umm/s\r\n init dir:%u°\r\n",
+         wind_sensor_speed->measured_value,
+         wind_sensor_direction->measured_value);
 }

@@ -18,13 +18,15 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "string.h"
+#include "lwip.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "FRAM.h"
+#include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
+#include "httpd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -45,18 +47,11 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-
-ETH_TxPacketConfig TxConfig;
-ETH_DMADescTypeDef  DMARxDscrTab[ETH_RX_DESC_CNT]; /* Ethernet Rx DMA Descriptors */
-ETH_DMADescTypeDef  DMATxDscrTab[ETH_TX_DESC_CNT]; /* Ethernet Tx DMA Descriptors */
-
 ADC_HandleTypeDef hadc1;
 ADC_HandleTypeDef hadc2;
 ADC_HandleTypeDef hadc3;
 
 DAC_HandleTypeDef hdac;
-
-ETH_HandleTypeDef heth;
 
 SPI_HandleTypeDef hspi4;
 
@@ -67,16 +62,20 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-char Rx_buffer[10];
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
+IO_analogSensor_t Abstandssensor = {0};
+IO_analogSensor_t Stromsensor = {0};
+
+extern struct netif gnetif;
+
+char Rx_buffer[20];
 
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_ETH_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_ADC1_Init(void);
 static void MX_ADC2_Init(void);
@@ -109,7 +108,7 @@ PUTCHAR_PROTOTYPE
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+	hdac.State = HAL_DAC_STATE_RESET;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -130,7 +129,6 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-  MX_ETH_Init();
   MX_USART3_UART_Init();
   MX_ADC1_Init();
   MX_ADC2_Init();
@@ -140,13 +138,14 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
+  IO_init_distance_sensor(&Abstandssensor, &hadc1);
+  IO_init_current_sensor(&Stromsensor, &hadc3);
+
   linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
   manual_control = Manual_Control_init(&linear_guide);
-  IO_analogSensor_t Abstandssensor = {0};
-  IO_analogSensor_t Stromsensor = {0};
-//  IO_analogSensor_t Windsensor_geschw = {0};
-//  IO_analogSensor_t Windsensor_richtung = {0};
+
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -160,45 +159,7 @@ int main(void)
 #if MOTOR_TEST
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
 #endif
-#if ABSTAND_TEST
-  Abstandssensor.Sensor_type = Distance_Sensor;
-  Abstandssensor.ADC_Channel = ADC_CHANNEL_0;
-  Abstandssensor.hadc_ptr = &hadc1;
-  Abstandssensor.ADC_Rank = 1;
-  Abstandssensor.max_possible_value = 730;
-  Abstandssensor.min_possible_value = 30;
-  IO_Get_Measured_Value(&Abstandssensor);
-  printf("Abstand:%u\r\n", Abstandssensor.measured_value);
-#endif
-#if STROM_TEST
-  Stromsensor.Sensor_type = Current_Sensor;
-  Stromsensor.ADC_Channel = ADC_CHANNEL_8;
-  Stromsensor.hadc_ptr = &hadc3;
-  Stromsensor.ADC_Rank = 1;
-  Stromsensor.max_possible_value = 7250;
-  Stromsensor.min_possible_value = 0;
-  IO_Get_Measured_Value(&Stromsensor);
-  printf("Abstand:%u\r\n", Stromsensor.measured_value);
-#endif
-// Wind Data should be aquired through NMEA telegram for more accurate values
-//#if WIND_TEST
-//  Windsensor_geschw.Sensor_type = Wind_Sensor_speed;
-//  Windsensor_geschw.ADC_Channel = ADC_CHANNEL_7;
-//  Windsensor_geschw.hadc_ptr = &hadc3;
-//  Windsensor_geschw.ADC_Rank = 2;
-//  Windsensor_geschw.max_possible_value = 7250;
-//  Windsensor_geschw.min_possible_value = -7250;
-//  IO_Get_Measured_Value(&Stromsensor);
-//  printf("Abstand:%u\r\n", Stromsensor.measured_value);
-//  Windsensor_richtung.Sensor_type = Wind_Sensor_direction;
-//  Windsensor_richtung.ADC_Channel = ADC_CHANNEL_5;
-//  Windsensor_richtung.hadc_ptr = &hadc3;
-//  Windsensor_richtung.ADC_Rank = 3;
-//  Windsensor_richtung.max_possible_value = 0;
-//  Windsensor_richtung.min_possible_value = 359;
-//  IO_Get_Measured_Value(&Windsensor_richtung);
-//  printf("Abstand:%u\r\n", Windsensor_richtung.measured_value);
-//#endif
+
 #if FRAM_TEST
   uint8_t test[4];
   memset(test, 0, sizeof(test));
@@ -209,18 +170,48 @@ int main(void)
   printf("read from FRAM: %u\r\n", test);
 #endif
 
+#if WIND_TEST
+  char NMEA[31];
+  float speed = 0.0;
+  float dir = 0.0;
+  WSWD_receive_NMEA(NMEA);
+  printf("%s",NMEA);
+  WSWD_get_wind_infos(NMEA, &speed, &dir);
+  printf("speed:%f, dir:%f\r\n", speed, dir);
+#endif
+
+  httpd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-#if !TEST
-		Manual_Control_poll(&manual_control);
-		Manual_Control_Localization(&manual_control);
-#else
-		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-#endif
+
+    while(linear_guide.operating_mode == LG_operating_mode_manual)
+    {
+      ethernetif_input(&gnetif);
+      sys_check_timeouts();
+      if(manual_control.lg_ptr->localization.is_triggered == True)
+      {
+        Manual_Control_Localization(&manual_control);
+      }
+      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      Manual_Control_poll(&manual_control);
+    }
+
+    while(linear_guide.operating_mode == LG_operating_mode_automatic)
+    {
+      /*
+       * add tcp handling
+       */
+      ethernetif_input(&gnetif);
+      sys_check_timeouts();
+      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
+      {
+        Manual_Control_function_switch_operating_mode(&manual_control);
+      }
+    }
 
     /* USER CODE END WHILE */
 
@@ -500,55 +491,6 @@ static void MX_DAC_Init(void)
 }
 
 /**
-  * @brief ETH Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_ETH_Init(void)
-{
-
-  /* USER CODE BEGIN ETH_Init 0 */
-
-  /* USER CODE END ETH_Init 0 */
-
-   static uint8_t MACAddr[6];
-
-  /* USER CODE BEGIN ETH_Init 1 */
-
-  /* USER CODE END ETH_Init 1 */
-  heth.Instance = ETH;
-  MACAddr[0] = 0x00;
-  MACAddr[1] = 0x80;
-  MACAddr[2] = 0xE1;
-  MACAddr[3] = 0x00;
-  MACAddr[4] = 0x00;
-  MACAddr[5] = 0x00;
-  heth.Init.MACAddr = &MACAddr[0];
-  heth.Init.MediaInterface = HAL_ETH_RMII_MODE;
-  heth.Init.TxDesc = DMATxDscrTab;
-  heth.Init.RxDesc = DMARxDscrTab;
-  heth.Init.RxBuffLen = 1524;
-
-  /* USER CODE BEGIN MACADDRESS */
-
-  /* USER CODE END MACADDRESS */
-
-  if (HAL_ETH_Init(&heth) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  memset(&TxConfig, 0 , sizeof(ETH_TxPacketConfig));
-  TxConfig.Attributes = ETH_TX_PACKETS_FEATURES_CSUM | ETH_TX_PACKETS_FEATURES_CRCPAD;
-  TxConfig.ChecksumCtrl = ETH_CHECKSUM_IPHDR_PAYLOAD_INSERT_PHDR_CALC;
-  TxConfig.CRCPadCtrl = ETH_CRC_PAD_INSERT;
-  /* USER CODE BEGIN ETH_Init 2 */
-
-  /* USER CODE END ETH_Init 2 */
-
-}
-
-/**
   * @brief SPI4 Initialization Function
   * @param None
   * @retval None
@@ -786,8 +728,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOF, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Kalibrierung_Pin OUT_1_Pin OUT_2_Pin OUT_3_Pin */
-  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_1_Pin|OUT_2_Pin|OUT_3_Pin;
+  /*Configure GPIO pins : Kalibrierung_Pin OUT_2_Pin OUT_3_Pin */
+  GPIO_InitStruct.Pin = Kalibrierung_Pin|OUT_2_Pin|OUT_3_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
@@ -832,6 +774,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
+  /*Configure GPIO pin : OUT_1_Pin */
+  GPIO_InitStruct.Pin = OUT_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(OUT_1_GPIO_Port, &GPIO_InitStruct);
+
   /*Configure GPIO pin : IN_2_Pin */
   GPIO_InitStruct.Pin = IN_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -853,12 +801,27 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(IN_0_GPIO_Port, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
+
 /* USER CODE BEGIN MX_GPIO_Init_2 */
 /* USER CODE END MX_GPIO_Init_2 */
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+  switch (manual_control.lg_ptr->localization.movement) {
+  case Loc_movement_backwards:
+    manual_control.lg_ptr->localization.pulse_count++;
+    break;
+  case Loc_movement_forward:
+    manual_control.lg_ptr->localization.pulse_count--;
+    break;
+  case Loc_movement_stop:
+    break;
+  }
+}
 /* USER CODE END 4 */
 
 /**
