@@ -26,6 +26,7 @@
 #include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
+#include "httpd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +64,7 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
-
+extern struct netif gnetif;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -92,6 +93,7 @@ PUTCHAR_PROTOTYPE
 
   return ch;
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -207,12 +209,15 @@ int main(void)
 //  printf("%s",NMEA);
 //  WSWD_get_wind_infos(NMEA, &speed, &dir);
 //  printf("speed:%f, dir:%f\r\n", speed, dir);
+  httpd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    ethernetif_input(&gnetif);
+    sys_check_timeouts();
 #if !TEST
 		Manual_Control_poll(&manual_control);
 		Manual_Control_Localization(&manual_control);
