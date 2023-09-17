@@ -70,6 +70,10 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
+IO_analogSensor_t Abstandssensor = {0};
+IO_analogSensor_t Stromsensor = {0};
+
+char Rx_buffer[20];
 
 /* USER CODE END PV */
 
@@ -141,12 +145,12 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  IO_init_distance_sensor(&Abstandssensor, &hadc1);
+  IO_init_current_sensor(&Stromsensor, &hadc3);
+
   linear_guide = Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
   manual_control = Manual_Control_init(&linear_guide);
-  IO_analogSensor_t Abstandssensor = {0};
-  IO_analogSensor_t Stromsensor = {0};
-//  IO_analogSensor_t Windsensor_geschw = {0};
-//  IO_analogSensor_t Windsensor_richtung = {0};
+
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
 #if LED_TEST
@@ -160,45 +164,7 @@ int main(void)
 #if MOTOR_TEST
   motor_start_moving(&linear_guide.motor, motor_moving_state_rechtslauf);
 #endif
-#if ABSTAND_TEST
-  Abstandssensor.Sensor_type = Distance_Sensor;
-  Abstandssensor.ADC_Channel = ADC_CHANNEL_0;
-  Abstandssensor.hadc_ptr = &hadc1;
-  Abstandssensor.ADC_Rank = 1;
-  Abstandssensor.max_possible_value = 730;
-  Abstandssensor.min_possible_value = 30;
-  IO_Get_Measured_Value(&Abstandssensor);
-  printf("Abstand:%u\r\n", Abstandssensor.measured_value);
-#endif
-#if STROM_TEST
-  Stromsensor.Sensor_type = Current_Sensor;
-  Stromsensor.ADC_Channel = ADC_CHANNEL_8;
-  Stromsensor.hadc_ptr = &hadc3;
-  Stromsensor.ADC_Rank = 1;
-  Stromsensor.max_possible_value = 7250;
-  Stromsensor.min_possible_value = 0;
-  IO_Get_Measured_Value(&Stromsensor);
-  printf("Strom:%u\r\n", Stromsensor.measured_value);
-#endif
-// Wind Data should be aquired through NMEA telegram for more accurate values
-//#if WIND_TEST
-//  Windsensor_geschw.Sensor_type = Wind_Sensor_speed;
-//  Windsensor_geschw.ADC_Channel = ADC_CHANNEL_7;
-//  Windsensor_geschw.hadc_ptr = &hadc3;
-//  Windsensor_geschw.ADC_Rank = 2;
-//  Windsensor_geschw.max_possible_value = 7250;
-//  Windsensor_geschw.min_possible_value = -7250;
-//  IO_Get_Measured_Value(&Stromsensor);
-//  printf("Abstand:%u\r\n", Stromsensor.measured_value);
-//  Windsensor_richtung.Sensor_type = Wind_Sensor_direction;
-//  Windsensor_richtung.ADC_Channel = ADC_CHANNEL_5;
-//  Windsensor_richtung.hadc_ptr = &hadc3;
-//  Windsensor_richtung.ADC_Rank = 3;
-//  Windsensor_richtung.max_possible_value = 0;
-//  Windsensor_richtung.min_possible_value = 359;
-//  IO_Get_Measured_Value(&Windsensor_richtung);
-//  printf("Abstand:%u\r\n", Windsensor_richtung.measured_value);
-//#endif
+
 #if FRAM_TEST
   uint8_t test[4];
   memset(test, 0, sizeof(test));
@@ -208,34 +174,46 @@ int main(void)
   FRAM_read(0x0000, test, sizeof(test));
   printf("read from FRAM: %u\r\n", test);
 #endif
+
+#if WIND_TEST
   char NMEA[31];
   float speed = 0.0;
   float dir = 0.0;
-//  WSWD_receive_NMEA(NMEA);
-//  printf("%s",NMEA);
-//  WSWD_get_wind_infos(NMEA, &speed, &dir);
-//  printf("speed:%f, dir:%f\r\n", speed, dir);
+  WSWD_receive_NMEA(NMEA);
+  printf("%s",NMEA);
+  WSWD_get_wind_infos(NMEA, &speed, &dir);
+  printf("speed:%f, dir:%f\r\n", speed, dir);
+#endif
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-#if !TEST
-		Manual_Control_poll(&manual_control);
-		Manual_Control_Localization(&manual_control);
-#else
-		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-#endif
 
-//	  HAL_UART_Receive(&huart2, (uint8_t*)NMEA, 30, 1000);
+    while(linear_guide.operating_mode == LG_operating_mode_manual)
+    {
+      if(manual_control.lg_ptr->localization.is_triggered == True)
+      {
+        Manual_Control_Localization(&manual_control);
+      }
+      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      Manual_Control_poll(&manual_control);
+    }
 
-//	  memset(NMEA,0,30);
-//	  WSWD_receive_NMEA(NMEA);
-//	  WSWD_get_wind_infos(NMEA, &speed, &dir);
-//	  printf("speed:%f, dir:%f\r\n", speed, dir);
-//	  printf("%s",NMEA);
-//	  HAL_Delay(10000);
+    while(linear_guide.operating_mode == LG_operating_mode_automatic)
+    {
+      /*
+       * add tcp handling
+       */
+      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
+      {
+        Manual_Control_function_switch_operating_mode(&manual_control);
+      }
+    }
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -301,8 +279,6 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
-
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -326,25 +302,6 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 2;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -362,8 +319,6 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 0 */
 
   /* USER CODE END ADC2_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC2_Init 1 */
 
@@ -388,15 +343,6 @@ static void MX_ADC2_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_6;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -414,8 +360,6 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 0 */
 
   /* USER CODE END ADC3_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -440,33 +384,6 @@ static void MX_ADC3_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_7;
-  sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_5;
-  sConfig.Rank = 3;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
