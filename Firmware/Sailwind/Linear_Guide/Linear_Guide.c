@@ -19,7 +19,7 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
 {
 	Linear_Guide_t linear_guide = {
-			.operating_mode = LG_operating_mode_manual,
+			.operating_mode = HAL_GPIO_ReadPin(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin) == GPIO_PIN_SET ? LG_operating_mode_manual : LG_operating_mode_automatic,
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
 			.localization = Linear_Guide_read_Localization(),
 			.endswitches = Linear_Guide_Endswitches_init(),
