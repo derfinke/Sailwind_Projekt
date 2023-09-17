@@ -195,9 +195,12 @@ int main(void)
 
     while(linear_guide.operating_mode == LG_operating_mode_manual)
     {
-      Manual_Control_poll(&manual_control);
-      Manual_Control_Localization(&manual_control);
+      if(manual_control.lg_ptr->localization.is_triggered == True)
+      {
+        Manual_Control_Localization(&manual_control);
+      }
       Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      Manual_Control_poll(&manual_control);
     }
 
     while(linear_guide.operating_mode == LG_operating_mode_automatic)
@@ -210,7 +213,6 @@ int main(void)
         Manual_Control_function_switch_operating_mode(&manual_control);
       }
     }
-
 
     /* USER CODE END WHILE */
 
