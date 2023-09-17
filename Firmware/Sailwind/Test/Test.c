@@ -43,6 +43,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			break;
 		case 5:
 			Test_Motor(huart_ptr, mc_ptr);
+			break;
 		case 511:
 			Motor_start_rpm_measurement(motor_ptr);
 			break;
