@@ -205,6 +205,7 @@ int main(void)
       /*
        * add tcp handling
        */
+
       ethernetif_input(&gnetif);
       sys_check_timeouts();
       if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
