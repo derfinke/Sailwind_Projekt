@@ -12,7 +12,6 @@ static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, L
 
 static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr);
 static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr);
-static void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr);
 static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
@@ -198,7 +197,7 @@ static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr
  *   - on the other hand, in automatic mode the operating mode can always be switched to manual
  *   - if the operating mode could be changed, the corresponding LEDs are set and reset
  */
-static void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
+void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	LG_operating_mode_t new_operating_mode = lg_ptr->operating_mode;

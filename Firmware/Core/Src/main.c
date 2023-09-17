@@ -73,6 +73,8 @@ Manual_Control_t manual_control;
 IO_analogSensor_t Abstandssensor = {0};
 IO_analogSensor_t Stromsensor = {0};
 
+char Rx_buffer[20];
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -182,18 +184,33 @@ int main(void)
   WSWD_get_wind_infos(NMEA, &speed, &dir);
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-#if !TEST
-		Manual_Control_poll(&manual_control);
-		Manual_Control_Localization(&manual_control);
-#else
-		Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-#endif
+
+    while(linear_guide.operating_mode == LG_operating_mode_manual)
+    {
+      Manual_Control_poll(&manual_control);
+      Manual_Control_Localization(&manual_control);
+      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+    }
+
+    while(linear_guide.operating_mode == LG_operating_mode_automatic)
+    {
+      /*
+       * add tcp handling
+       */
+      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
+      {
+        Manual_Control_function_switch_operating_mode(&manual_control);
+      }
+    }
+
 
     /* USER CODE END WHILE */
 
