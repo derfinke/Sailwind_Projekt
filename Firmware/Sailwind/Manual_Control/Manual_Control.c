@@ -63,7 +63,6 @@ void Manual_Control_poll(Manual_Control_t *mc_ptr)
 	{
 		Manual_Control_function_localization(mc_ptr);
 	}
-	Linear_Guide_update_sail_adjustment_mode(mc_ptr->lg_ptr);
 }
 
 /* void Manual_Control_Localization(Manual_Control_t *mc_ptr)
@@ -90,6 +89,10 @@ void Manual_Control_poll(Manual_Control_t *mc_ptr)
 void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
+	if(lg_ptr->operating_mode == LG_operating_mode_automatic)
+	{
+		return;
+	}
 	Loc_state_t *state = &lg_ptr->localization.state;
 	switch(*state)
 	{
@@ -106,40 +109,34 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
 			{
 				printf("new state approach back\r\n");
-	      Linear_Guide_move(lg_ptr, Loc_movement_stop);
-	        *state = Loc_state_2_approach_back;
-	        lg_ptr->localization.pulse_count = 0;
-	        HAL_Delay(1000);
-	        Linear_Guide_move(lg_ptr, Loc_movement_backwards);
-	        printf("new state approach center\r\n");
+				Linear_Guide_move(lg_ptr, Loc_movement_stop);
+				*state = Loc_state_2_approach_back;
+				HAL_Delay(1000);
+				Linear_Guide_move(lg_ptr, Loc_movement_backwards);
 			}
 			break;
 		case Loc_state_2_approach_back:
 			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
 			{
-			  Linear_Guide_move(lg_ptr, Loc_movement_stop);
+				Linear_Guide_move(lg_ptr, Loc_movement_stop);
 				HAL_Delay(1000);
 				Manual_Control_set_endpos(mc_ptr);
 				printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
 				printf("endpos:%ld\r\n", lg_ptr->localization.end_pos_mm);
-				count = lg_ptr->localization.pulse_count/2;
-				printf("center:%ld\r\n", count);
 				*state = Loc_state_3_approach_center;
-        HAL_Delay(1000);
-        Linear_Guide_move(lg_ptr, Loc_movement_forward);
-        printf("new state set center\r\n");
+				Linear_Guide_move(lg_ptr, Loc_movement_forward);
+				printf("new state approach center\r\n");
 			}
 			break;
 		case Loc_state_3_approach_center:
-		  if(count == lg_ptr->localization.pulse_count)
-				{
-          Linear_Guide_move(lg_ptr, Loc_movement_stop);
-          printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
-          *state = Loc_state_4_set_center_pos;
-				}
+			if(lg_ptr->localization.pulse_count == 0)
+			{
+				Linear_Guide_move(lg_ptr, Loc_movement_stop);
+				printf("new state set center\r\n");
+				*state = Loc_state_4_set_center_pos;
+			}
 			break;
 		case Loc_state_4_set_center_pos:
-		  mc_ptr->lg_ptr->localization.current_pos_mm = Localization_pulse_count_to_distance(mc_ptr->lg_ptr->localization);
 			if (Manual_Control_set_center(mc_ptr))
 			{
 				*state = Loc_state_5_center_pos_set;
@@ -164,7 +161,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
  */
 static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
 {
-	if (Manual_Control_get_moving_permission(*mc_ptr))
+	if (!Manual_Control_get_moving_permission(*mc_ptr))
 	{
 		printf("no moving permission\r\n");
 		return;
@@ -245,7 +242,6 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
-			LED_switch(&lg_ptr->leds.center_pos_set, LED_OFF);
 			break;
 		case BUTTON_RELEASED:
 			lg_ptr->localization.is_triggered = True;
@@ -260,15 +256,11 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
 {
 	Linear_Guide_t lg = *mc.lg_ptr;
-  if(lg.operating_mode != LG_operating_mode_manual)
-  {
-    return True;
-  }
 	return
 			lg.operating_mode == LG_operating_mode_manual
 			&&
 			(
-	      lg.localization.state == Loc_state_3_approach_center
+				lg.localization.state >= Loc_state_4_set_center_pos
 				||
 				lg.localization.state == Loc_state_0_init
 			);
@@ -280,16 +272,16 @@ static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
 	boolean_t set_center_triggered = lg_ptr->localization.is_triggered;
 	if (set_center_triggered)
 	{
-	  printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
-	  printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
+		printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
+		printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
 		Localization_set_center(&mc_ptr->lg_ptr->localization);
-	  for(uint8_t i = 0; i < 5; i++)
-	    {
-	      LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
-	      HAL_Delay(200);
-	      LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_OFF);
-	      HAL_Delay(200);
-	    }
+		for(uint8_t i = 0; i < 5; i++)
+		{
+			LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
+			HAL_Delay(200);
+			LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_OFF);
+			HAL_Delay(200);
+		}
 		lg_ptr->localization.is_triggered = False;
 	}
 	return set_center_triggered;

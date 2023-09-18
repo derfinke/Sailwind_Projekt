@@ -44,16 +44,10 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 		case 5:
 			Test_Motor(huart_ptr, mc_ptr);
 			break;
-		case 511:
-			Motor_start_rpm_measurement(motor_ptr);
-			break;
-		case 512:
-			UART_transmit_ln_int(huart_ptr, "motor rpm: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
-			break;
-		case 52:
+		case 51:
 			UART_transmit_ln_int(huart_ptr, "motor error: %d", IO_digitalRead(&motor_ptr->OUT2_error));
 			break;
-		case 53:
+		case 52:
 			UART_transmit_ln_int(huart_ptr, "motor direction: %d", IO_digitalRead(&motor_ptr->OUT3_rot_dir));
 			break;
 		case 6:
@@ -160,7 +154,6 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 		Motor_set_rpm(motor_ptr, rpm_value, True);
 		HAL_Delay(2000);
 		UART_transmit_ln_int(huart_ptr, "rpm_set_point: %d", rpm_value);
-		UART_transmit_ln_int(huart_ptr, "rpm_measurement: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
 	}
 	UART_transmit_ln(huart_ptr, "switch button to stop motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));

@@ -48,12 +48,9 @@ void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t
 
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 {
-	if (Motor_callback_measure_rpm(&lg_ptr->motor))
+	if (Localization_callback_update_position(&lg_ptr->localization))
 	{
-		if (Localization_callback_update_position(&lg_ptr->localization))
-		{
-			Linear_Guide_update_sail_adjustment_mode(lg_ptr);
-		}
+		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
 	}
 }
 

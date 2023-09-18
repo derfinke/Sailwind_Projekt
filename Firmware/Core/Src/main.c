@@ -187,33 +187,14 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    while(linear_guide.operating_mode == LG_operating_mode_manual)
-    {
       ethernetif_input(&gnetif);
       sys_check_timeouts();
-      if(manual_control.lg_ptr->localization.is_triggered == True)
-      {
-        Manual_Control_Localization(&manual_control);
-      }
       Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
-    }
-
-    while(linear_guide.operating_mode == LG_operating_mode_automatic)
-    {
+      Manual_Control_Localization(&manual_control);
       /*
        * add tcp handling
        */
-
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
-      {
-        Manual_Control_function_switch_operating_mode(&manual_control);
-      }
-    }
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -812,16 +793,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  switch (manual_control.lg_ptr->localization.movement) {
-  case Loc_movement_backwards:
-    manual_control.lg_ptr->localization.pulse_count++;
-    break;
-  case Loc_movement_forward:
-    manual_control.lg_ptr->localization.pulse_count--;
-    break;
-  case Loc_movement_stop:
-    break;
-  }
+  Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 /* USER CODE END 4 */
 

@@ -34,27 +34,11 @@ typedef enum {
 
 typedef IO_digitalPin_t Motor_INs_t[MOTOR_IN_COUNT];
 
-typedef struct {
-	uint32_t IC_Val1;
-	uint32_t IC_Val2;
-	boolean_t Is_First_Captured;
-	uint16_t rpm_value;
-	TIM_HandleTypeDef *htim_ptr;
-	HAL_TIM_ActiveChannel active_channel;
-	uint32_t htim_channel;
-} Motor_RPM_Measurement_t;
-
-typedef enum {
-	Motor_RPM_state_wrong_channel,
-	Motor_RPM_state_first_pulse,
-	Motor_RPM_state_rpm_measured
-} Motor_RPM_state_t;
 
 typedef struct {
 	Motor_function_t current_function;
 	Motor_INs_t INs;
 	IO_analogActuator_t AIN_set_rpm;
-	Motor_RPM_Measurement_t OUT1_rpm_measurement;
 	IO_digitalPin_t OUT2_error;
 	IO_digitalPin_t OUT3_rot_dir;
 	uint16_t rpm_set_point;
@@ -66,11 +50,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_stop_moving(Motor_t *motor_ptr);
 void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
-void Motor_start_rpm_measurement(Motor_t *motor_ptr);
-Motor_RPM_state_t Motor_callback_measure_rpm(Motor_t *motor_ptr);
-void Motor_stop_rpm_measurement(Motor_t *motor_ptr);
 void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware);
-uint16_t Motor_get_rpm(Motor_t motor);
 boolean_t Motor_error(Motor_t *motor_ptr);
 void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance);
 

@@ -131,15 +131,6 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
   HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
 }
 
-/* static void convertToDAC(IO_analogActuator_t *actuator_ptr)
- *  Description:
- *   - convert the analog value to the corresponding digital value and save it to the actuator reference
- */
-static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr) {
-  actuator_ptr->dac_value = (uint16_t) (actuator_ptr->currentConvertedValue
-      / actuator_ptr->maxConvertedValue * DAC_RESOLOUTION);
-}
-
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor) {
   ADC_ChannelConfTypeDef sConfig = { 0 };
 
