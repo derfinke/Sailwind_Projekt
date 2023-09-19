@@ -8,77 +8,83 @@
 \begin{document}
 	\section{Testspezifikationen}
 	\subsection{FRAM}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				\texttt{FRAM\char`_init} & Write Enable Latch (WEL) setzen und Status Register auslesen & Status Register ist 2 & Funktional \\
+				1000 & \texttt{FRAM\char`_init} & Write Enable Latch (WEL) setzen und Status Register auslesen & Status Register ist 2 & Funktional \\
 			\hline
-				\texttt{FRAM\char`_test} & FRAM initialisieren und and Addresse \texttt{0x0000} "Test" schreiben und diese Adresse auslesen & Geschriebene Nachricht ist identisch mit gelesener Nachricht & Funktional\\
+				- &\texttt{FRAM\char`_test} & FRAM initialisieren und and Addresse \texttt{0x0000} "Test" schreiben und diese Adresse auslesen & Geschriebene Nachricht ist identisch mit gelesener Nachricht & Funktional\\
 			\hline
-				\texttt{Test\char`_FRAM} & Essentieller Teil des Localization structs mit Testwerten initialisieren, serialisieren und in FRAM schreiben. Anschließend wieder auslesen und in das struct Objekt zurück deserialisieren & - & - \\
+				- &\texttt{Test\char`_FRAM (bitte umbennen)} & Localization structs mit Testwerten initialisieren und auf dem FRAM schreiben. Anschließend wieder auslesen und in das struct zurückführen & struct wurde erneut mit den selben werten befüllt & Funktional \\
 			\hline
 		\end{tabular}
 	\subsection{LEDs}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				 \texttt{Test\char`_LED} & Alle Status LEDs werden über den Switch-Button erst an und danach ausgeschaltet & - & - \\
+				 - &\texttt{Test\char`_LED} & Alle Status LEDs werden über den Switch-Button erst an und danach ausgeschaltet & Alle LEDs haben sich korrekt verhalten(test prozedur sollte unabhängig von den buttons möglich sein) & Funktional \\
 			\hline
 		\end{tabular}
 		\subsection{Buttons/Switch}
-	\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+	\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 		\hline
-			\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+			\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 		\hline
-			 \texttt{Test\char`_Button} & Für jeden Button wird nacheinander eine steigende und fallende Flanke abgefragt, welche durch eine Kontroll-LED repräsentiert wird & - & - \\
+			 - &\texttt{Test\char`_Button} & Für jeden Button wird nacheinander eine steigende und fallende Flanke abgefragt, welche durch eine Kontroll-LED repräsentiert wird(Test\char`_LED muss vorher ausgeführt werden) & Alle Flanken wurden erkannt & Funktional \\
 		\hline
 	\end{tabular}
 	\subsection{Motor}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				\texttt{Test\char`_Motor} & Zunächst Fehlerstatus auslesen. Über den Switch-Button werden mehrere Schritte eingeleitet: - Links-/Rechtslauf mit Speed1 und anschließendem Auslesen der Richtung - Stufenweises Erhöhen der Drehzahl bis auf Speed2 und Auslesen der jeweils gemessenen Drehzahl & - & - \\
+				- &\texttt{Test\char`_Motor} & Zunächst Fehlerstatus auslesen. Über den Switch-Button werden mehrere Schritte eingeleitet:
+				- Links-/Rechtslauf mit Speed1 und anschließendem Auslesen der Richtung 
+				- Stufenweises Erhöhen der Drehzahl bis auf Speed2 und Auslesen der jeweils gemessenen Drehzahl & (Speed2 noch nicht eintrainiert ablauf sollte aufgeteilt werden) & Nicht funktional \\
 			\hline
 		\end{tabular}
 	\subsection{IFS204 (Endschalter)}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				 \texttt{Endswitch\char`_detected} & Auslesen der Endschalter Zustände & Ausgelesene Zustände entsprechen den Endschalter Zuständen & Funktional \\
+				 - &\texttt{Endswitch\char`_detected} & Auslesen der Endschalter Zustände & Ausgelesene Zustände entsprechen den Endschalter Zuständen & Funktional \\
 			\hline
-				\texttt{Test\char`_endswitch} & Der Motor fährt die Endschalter an, und ändert die Richtung, sobald diese aktiviert werden & - & - \\
+				- &\texttt{Test\char`_endswitch} & Der Motor fährt die Endschalter an, und ändert die Richtung, sobald diese aktiviert werden & Motor ändert Richtung bei aktivierten endschalter & Funktional \\
 			 \hline
 		\end{tabular}
 	\subsection{OGD580 (Abstandssensor)}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				\texttt{-} & Analoger Abstandswert wird ausgelesen und mit dem Angezeigten Wert des Displays verglichen & - & - \\
+				- &\texttt{-} & Analoger Abstandswert wird ausgelesen und mit dem Angezeigten Wert des Displays verglichen & Abstandswert auf dem display betrug 14,6cm ausgerechneter wert entsprach 15,4. Entspricht gemessener Abweichung & funktional \\
 			\hline
-				\texttt{-} & Linearführung wird um eine gewisse Distanz bewegt. Distanz sollte der Differenz aus End- und Startposition entsprechen & - & - \\
+				- &\texttt{-} & Linearführung wird um eine gewisse Distanz bewegt. Distanz sollte der Differenz aus End- und Startposition entsprechen & Messung der Pulse funktioniert noch nicht & Nicht funktional \\
 			\hline
 		\end{tabular}
 	\subsection{WSWD (Windsensor)}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				\texttt{-} & Abfragen der Seriennummer über RS485 und Überprüfung dieser & - & - \\
+				- &\texttt{-} & Abfragen der Seriennummer über RS485 und Überprüfung dieser & Seriennummer wird korrekt empfangen & funktional \\
+			\hline
+				- &\texttt{-} & Auslesen der Windrichtung über das analoge Signal & Windrichtung wird ausgegeben allerdings wird wert noch nicht richtig konvertiert & funktional \\
+			\hline
+				- &\texttt{-} & Auslesen der Windgeschwindigkeit über das analoge Signal & Windgeschwindigkeit wird aktuell nicht über das Stromsignal ausgegeben -> konfigurierung des Sensors & nicht funktional \\
 			\hline
 		\end{tabular}
 	\subsection{Stromsensor}
-		\begin{tabular}{|p{3.2cm}|p{5.5cm}|p{4cm}| p{1.6cm} |}
+		\begin{tabular}{|p{0.6cm}|p{3.2cm}|p{5.5cm}|p{3cm}|p{1.6cm}|}
 			\hline
-				\textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Ergebnis} & \textbf{Status} \\
+				\textbf{ID} & \textbf{Funktionsname} & \textbf{Beschreibung} & \textbf{Notizen} & \textbf{Status} \\
 			\hline
-				\texttt{-} & Auslesen des Stroms während der Motor nicht in Bewegung ist. Ausgelesene Spannung sollte der halben Versorgungsspannung des Sensors entsprechen (ca. 1.6V) & - & - \\
+				- &\texttt{-} & Auslesen des Stroms während der Motor nicht in Bewegung ist. Ausgelesene Spannung sollte der halben Versorgungsspannung des Sensors entsprechen (ca. 1.6V) & ADC Wert befindet sich bei ca. 2040 & Funktional \\
 			\hline
-				\texttt{-} & Motor wird über die Stromvorgabe angesteuert. Gemessener Strom sollte dem vorgegebenen Strom entsprechen. & - & - \\
+				- &\texttt{-} & Motor wird über die Stromvorgabe angesteuert. Gemessener Strom sollte dem vorgegebenen Strom entsprechen. & Motor benötigt bei maximaler drehzahl und derzeitiger Belastung nur max 1A. Test muss abgeändert werden & Nur eingeschränkt funktional \\
 			\hline
 		\end{tabular} 
 \end{document} 

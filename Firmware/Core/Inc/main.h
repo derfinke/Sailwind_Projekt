@@ -36,12 +36,15 @@ extern "C" {
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+extern SPI_HandleTypeDef hspi4;
+
+extern UART_HandleTypeDef huart3;
 
 /* USER CODE END ET */
 
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
-
+#define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
@@ -123,8 +126,6 @@ void Error_Handler(void);
 #define LED_Manuell_GPIO_Port GPIOD
 #define IN_1_Pin GPIO_PIN_6
 #define IN_1_GPIO_Port GPIOC
-#define OUT_1_Pin GPIO_PIN_9
-#define OUT_1_GPIO_Port GPIOC
 #define OUT_2_Pin GPIO_PIN_10
 #define OUT_2_GPIO_Port GPIOC
 #define OUT_3_Pin GPIO_PIN_11
