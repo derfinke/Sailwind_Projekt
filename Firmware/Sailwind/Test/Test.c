@@ -36,7 +36,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			Motor_set_function(motor_ptr, (Motor_function_t)(test_ID - 20));
 			break;
 		case 30000 ... 33000:
-			Motor_set_rpm(motor_ptr, test_ID - 30000, True);
+			Motor_set_rpm(motor_ptr, test_ID - 30000);
 			break;
 		case 4:
 			Test_endswitch(huart_ptr, mc_ptr);
@@ -134,7 +134,7 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 		UART_transmit_ln(huart_ptr, "Motor Error! -> Test failed");
 		return;
 	}
-	Motor_set_rpm(motor_ptr, MOTOR_RPM_SPEED_1, False);
+	motor_ptr->normal_rpm = MOTOR_RPM_SPEED_1;
 	UART_transmit_ln(huart_ptr, "switch button to start motor move clock wise with speed 1");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	Motor_start_moving(motor_ptr, Motor_function_cw_rotation);
@@ -151,7 +151,8 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	for (uint16_t rpm_value=MOTOR_RPM_SPEED_1; rpm_value <= MOTOR_RPM_SPEED_2; rpm_value+=15)
 	{
-		Motor_set_rpm(motor_ptr, rpm_value, True);
+		motor_ptr->normal_rpm = rpm_value;
+		Motor_start_moving(motor_ptr, Motor_function_cw_rotation);
 		HAL_Delay(2000);
 		UART_transmit_ln_int(huart_ptr, "rpm_set_point: %d", rpm_value);
 	}

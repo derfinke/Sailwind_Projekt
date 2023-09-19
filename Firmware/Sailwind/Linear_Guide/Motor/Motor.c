@@ -25,27 +25,60 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
 			.AIN_set_rpm = Motor_AIN_init(hdac_ptr),
 			.OUT2_error = IO_digital_Pin_init(OUT_2_GPIO_Port, OUT_2_Pin),
 			.OUT3_rot_dir = IO_digital_Pin_init(OUT_3_GPIO_Port, OUT_3_Pin),
-			.rpm_set_point = 1600 };
+			.rpm_set_point = 0,
+			.normal_rpm = MOTOR_NORMAL_SPEED,
+			.ramp_final_rpm = 0,
+			.ramp_activated = False
+	};
 	return motor;
 }
 /* void motor_start_moving(Motor_t *motor_ptr, motor_moving_state_t direction)
  *  Description:
  *   - write digital motor Inputs to start motor movement in desired direction (motor_moving_state_rechtslauf / ...linkslauf)
  */
-  void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
-    printf("motor start moving\r\n");
-    Motor_set_function(motor_ptr, direction);
-    Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point, True);
-  }
+void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
+	printf("motor start moving\r\n");
+	Motor_set_function(motor_ptr, direction);
+	motor_ptr->ramp_final_rpm = motor_ptr->normal_rpm;
+	motor_ptr->ramp_activated = True;
+}
 /* void motor_stop_moving(Motor_t *motor_ptr)
  *  Description:
  *   - write digital motor Inputs to stop the motor
  *   - save the new moving state to the motor reference
  */
-  void Motor_stop_moving(Motor_t *motor_ptr) {
-    printf("motor stop moving\r\n");
-    Motor_set_function(motor_ptr, Motor_function_stop);
-    IO_analogWrite(&motor_ptr->AIN_set_rpm, 0.0F);
+void Motor_stop_moving(Motor_t *motor_ptr) {
+	printf("motor stop moving\r\n");
+	motor_ptr->ramp_final_rpm = 0;
+	motor_ptr->ramp_activated = True;
+}
+
+void Motor_speed_ramp(Motor_t *motor_ptr)
+{
+	if (!motor_ptr->ramp_activated)
+	{
+		return;
+	}
+	if (motor_ptr->rpm_set_point == motor_ptr->ramp_final_rpm)
+	{
+		motor_ptr->ramp_activated = False;
+		return;
+	}
+	if ((HAL_GetTick()-motor_ptr->ramp_last_step_ms) < MOTOR_RAMP_STEP_MS)
+	{
+		return;
+	}
+	int8_t direction;
+	if (motor_ptr->rpm_set_point < motor_ptr->ramp_final_rpm)
+	{
+		direction = MOTOR_RAMP_SPEED_UP;
+	}
+	else
+	{
+		direction = MOTOR_RAMP_SLOW_DOWN;
+	}
+	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + direction*MOTOR_RAMP_STEP_RPM);
+	motor_ptr->ramp_last_step_ms = HAL_GetTick();
 }
 
 /* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)
@@ -76,19 +109,22 @@ void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function) {
 	}
 }
 
-/* void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware)
+/* void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
  *  Description:
  *   - set digital INs of the motor to configure its engine speed
  *   - send an analog value (converted from rpm - valaue) to the analog Input of the motor
  *   - or set default speeds
  */
-void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware) {
+void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
+{
     motor_ptr->rpm_set_point = rpm_value;
-    if (!write_to_Hardware) {
-      return;
-    }
     IO_analogWrite(&motor_ptr->AIN_set_rpm, (float) motor_ptr->rpm_set_point);
-    Motor_set_function(motor_ptr, Motor_function_velocity_setting);
+    Motor_function_t motor_function = Motor_function_velocity_setting;
+    if (rpm_value == 0)
+    {
+    	motor_function = Motor_function_stop;
+    }
+    Motor_set_function(motor_ptr, motor_function);
 }
 
 boolean_t Motor_error(Motor_t *motor_ptr) {
@@ -119,7 +155,7 @@ void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_
 	printf("Lernmodus aktiviert, wenn rote LED schnell blinkt -> Enter um fortzufahren...\n");
 	Motor_press_enter_to_continue();
 	printf("Motor auf Zieldrehzahl bringen...\n");
-	Motor_set_rpm(motor_ptr, rpm_value, True);
+	Motor_set_rpm(motor_ptr, rpm_value);
 	printf("wartet bis Zieldrehzahl erreicht wurde... -> Enter um fortzufahren\n");
 	Motor_press_enter_to_continue();
 	printf("Zieldrehzahl erreicht -> Setze motor_ptr speed %d auf %d rpm\n", speed-5, rpm_value);

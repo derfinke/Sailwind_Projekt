@@ -68,15 +68,23 @@ void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	lg_ptr->localization.movement = movement;
 }
 
+void Linear_Guide_speed_ramp(Linear_Guide_t *lg_ptr)
+{
+	Motor_speed_ramp(&lg_ptr->motor);
+}
+
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms)
 {
-	boolean_t write_to_hardware = lg_ptr->localization.movement != Loc_movement_stop;
-	Motor_set_rpm(&lg_ptr->motor, Linear_Guide_speed_mms_to_rpm(speed_mms), write_to_hardware);
+	lg_ptr->motor.normal_rpm = Linear_Guide_speed_mms_to_rpm(speed_mms);
+	if (lg_ptr->localization.movement != Loc_movement_stop && lg_ptr->motor.ramp_activated)
+	{
+		lg_ptr->motor.ramp_final_rpm = lg_ptr->motor.normal_rpm;
+	}
 }
 
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr)
 {
-	return Linear_Guide_rpm_to_speed_mms(Motor_get_rpm(lg_ptr->motor));
+	return Linear_Guide_rpm_to_speed_mms(lg_ptr->motor.rpm_set_point);
 }
 
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)

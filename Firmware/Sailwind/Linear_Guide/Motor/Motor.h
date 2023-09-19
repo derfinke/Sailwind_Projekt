@@ -19,6 +19,11 @@
 #define MOTOR_RPM_SPEED_2 150
 #define MOTOR_DIRECTION_CCW GPIO_PIN_SET
 #define MOTOR_DIRECTION_CW GPIO_PIN_RESET
+#define MOTOR_NORMAL_SPEED 1600
+#define MOTOR_RAMP_STEP_MS 20
+#define MOTOR_RAMP_STEP_RPM 5
+#define MOTOR_RAMP_SPEED_UP 1
+#define MOTOR_RAMP_SLOW_DOWN -1
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -41,7 +46,11 @@ typedef struct {
 	IO_analogActuator_t AIN_set_rpm;
 	IO_digitalPin_t OUT2_error;
 	IO_digitalPin_t OUT3_rot_dir;
+	uint16_t normal_rpm;
 	uint16_t rpm_set_point;
+	uint16_t ramp_final_rpm;
+	uint32_t ramp_last_step_ms;
+	boolean_t ramp_activated;
 } Motor_t;
 
 
@@ -49,8 +58,9 @@ typedef struct {
 Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_stop_moving(Motor_t *motor_ptr);
+void Motor_speed_ramp(Motor_t *motor_ptr);
 void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
-void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value, boolean_t write_to_Hardware);
+void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
 boolean_t Motor_error(Motor_t *motor_ptr);
 void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance);
 
