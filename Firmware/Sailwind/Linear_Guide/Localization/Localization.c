@@ -7,6 +7,9 @@
 
 #include "Localization.h"
 
+/* defines ------------------------------------------------------------*/
+#define LOC_SERIAL_FORMAT_SPEC "%hhu,%ld,%ld,%ld" //SPEC = "State, Pulse_count, End_pos, Center_pos"
+
 /* private function prototypes -----------------------------------------------*/
 static void Localization_update_current_position(Localization_t *loc_ptr);
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);

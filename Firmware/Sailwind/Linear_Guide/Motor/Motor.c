@@ -7,6 +7,15 @@
 
 #include "Motor.h"
 
+/* defines ------------------------------------------------------------*/
+#define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
+#define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
+#define MOTOR_NORMAL_SPEED 1600
+#define MOTOR_RAMP_STEP_MS 20
+#define MOTOR_RAMP_STEP_RPM 5
+#define MOTOR_RAMP_SPEED_UP 1
+#define MOTOR_RAMP_SLOW_DOWN -1
+
 /* private function prototypes -----------------------------------------------*/
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
 static void Motor_press_enter_to_continue();

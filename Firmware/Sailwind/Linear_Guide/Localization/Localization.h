@@ -12,7 +12,6 @@
 #include <stdio.h>
 
 /* defines ------------------------------------------------------------*/
-#define LOC_SERIAL_FORMAT_SPEC "%hhu,%ld,%ld,%ld" //SPEC = "State, Pulse_count, End_pos, Center_pos"
 #define LOC_SERIAL_SIZE 19 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC) = 1+1+5+1+5+1+5 = 19
 
 /* typedefs -----------------------------------------------------------*/

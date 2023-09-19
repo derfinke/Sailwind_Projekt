@@ -7,6 +7,13 @@
 
 #include "Manual_Control.h"
 
+
+/* defines -------------------------------------------------------------------*/
+#define MANUAL_CONTROL_COUNT 4
+#define MANUAL_CONTROL_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
+#define MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
+#define MANUAL_CONTROL_LOCALIZE_RESET_MS 3000
+
 /* private function prototypes -----------------------------------------------*/
 static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement);
 
@@ -18,6 +25,8 @@ static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
 int32_t count = 0;
+
+
 /* API function definitions -----------------------------------------------*/
 
 Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)

@@ -12,11 +12,7 @@
 #include "Motor.h"
 #include "Endswitch.h"
 #include "Localization.h"
-#include "FRAM.h"
 
-/* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_MM_PER_ROTATION 5.62
-#define LG_DISTANCE_MM_PER_PULSE ((LG_DISTANCE_MM_PER_ROTATION/12.0)*2)
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {

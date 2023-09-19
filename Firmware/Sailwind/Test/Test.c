@@ -6,7 +6,13 @@
  */
 
 #include "Test.h"
+#include <stdlib.h>
+#include "UART.h"
 
+/* defines -------------------------------------------------------------------*/
+#define TEST_ID_SIZE 5
+
+/* private function prototypes -----------------------------------------------*/
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr);
 static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
@@ -14,6 +20,7 @@ static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_FRAM(UART_HandleTypeDef *huart_ptr);
 
+/* API function definitions -----------------------------------------------*/
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
 	if (UART_receive(huart_ptr, Rx_buffer, TEST_ID_SIZE))
@@ -23,6 +30,7 @@ void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Contr
 	}
 }
 
+/* private function definitions -----------------------------------------------*/
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr)
 {
 	Motor_t *motor_ptr = &mc_ptr->lg_ptr->motor;

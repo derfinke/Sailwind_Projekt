@@ -5,11 +5,10 @@
  */
 
 #include <stdio.h>
-#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
 #include "WSWD.h"
-#include "UART.h"
 #include "main.h"
-#include "stdlib.h"
 
 #define WSWD_ID                         "00"
 #define SIZE_OF_WSWD_ID                 2U

@@ -11,11 +11,6 @@
 #include "Button.h"
 #include "Linear_Guide.h"
 
-/* defines -------------------------------------------------------------------*/
-#define MANUAL_CONTROL_COUNT 4
-#define MANUAL_CONTROL_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
-#define MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
-#define MANUAL_CONTROL_LOCALIZE_RESET_MS 3000
 
 /* typedefs ------------------------------------------------------------------*/
 

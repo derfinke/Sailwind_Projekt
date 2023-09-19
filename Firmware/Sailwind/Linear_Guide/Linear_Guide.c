@@ -6,6 +6,12 @@
  */
 
 #include "Linear_Guide.h"
+#include "FRAM.h"
+
+
+/* defines ------------------------------------------------------------*/
+#define LG_DISTANCE_MM_PER_ROTATION 5.62
+#define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
 
 /* private function prototypes -----------------------------------------------*/
 static LG_LEDs_t Linear_Guide_LEDs_init();

@@ -8,9 +8,10 @@
 #define IO_IO_H_
 
 #include "stm32f4xx_hal.h"
-#include <stdio.h>
-#include "main.h"
 #include "boolean.h"
+#include "main.h"
+#include <stdio.h>
+
 
 /* typedefs -----------------------------------------------------------*/
 

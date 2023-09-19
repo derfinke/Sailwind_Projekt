@@ -11,19 +11,13 @@
 #include "IO.h"
 
 /* defines ------------------------------------------------------------*/
-#define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
-#define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
-#define MOTOR_PULSE_PER_ROTATION 12
-#define MOTOR_IN_COUNT 4
+#define MOTOR_PULSE_PER_ROTATION 12 //public
 #define MOTOR_RPM_SPEED_1 75
 #define MOTOR_RPM_SPEED_2 150
 #define MOTOR_DIRECTION_CCW GPIO_PIN_SET
 #define MOTOR_DIRECTION_CW GPIO_PIN_RESET
-#define MOTOR_NORMAL_SPEED 1600
-#define MOTOR_RAMP_STEP_MS 20
-#define MOTOR_RAMP_STEP_RPM 5
-#define MOTOR_RAMP_SPEED_UP 1
-#define MOTOR_RAMP_SLOW_DOWN -1
+#define MOTOR_IN_COUNT 4
+
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {

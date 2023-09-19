@@ -20,7 +20,6 @@
 #define NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR     44
 
 /* private function prototypes -----------------------------------------------*/
-static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
