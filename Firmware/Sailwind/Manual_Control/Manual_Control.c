@@ -242,9 +242,14 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
+			mc_ptr->buttons.last_localize_press_ms = HAL_GetTick();
 			break;
 		case BUTTON_RELEASED:
 			lg_ptr->localization.is_triggered = True;
+			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MANUAL_CONTROL_LOCALIZE_RESET_MS)
+			{
+				lg_ptr->localization.state = Loc_state_0_init;
+			}
 			break;
 	}
 }
