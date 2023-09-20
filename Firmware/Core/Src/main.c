@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "lwip.h"
+//#include "lwip.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -26,7 +26,7 @@
 #include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
-#include "httpd.h"
+//#include "httpd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,9 +36,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ABSTAND_TEST 1
-#define STROM_TEST 1
-#define WIND_TEST 1
+#define ABSTAND_TEST 0
+#define STROM_TEST 0
+#define WIND_TEST 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,7 +67,7 @@ Manual_Control_t manual_control;
 IO_analogSensor_t Abstandssensor = {0};
 IO_analogSensor_t Stromsensor = {0};
 
-extern struct netif gnetif;
+//extern struct netif gnetif;
 
 char Rx_buffer[20];
 
@@ -138,7 +138,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
@@ -180,16 +180,16 @@ int main(void)
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
 
-  httpd_init();
+  //httpd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      //ethernetif_input(&gnetif);
+      //sys_check_timeouts();
+      //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
       Manual_Control_Localization(&manual_control);
       Linear_Guide_speed_ramp(&linear_guide);

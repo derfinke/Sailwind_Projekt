@@ -56,7 +56,8 @@ IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin,
 }
 
 IO_digitalPin_t IO_digital_Pin_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
-  IO_digitalPin_t digitalPin = { .GPIOx = GPIOx, .GPIO_Pin = GPIO_Pin, };
+  IO_digitalPin_t digitalPin = { .GPIOx = GPIOx, .GPIO_Pin = GPIO_Pin};
+  digitalPin.state = IO_digitalRead(&digitalPin);
   return digitalPin;
 }
 

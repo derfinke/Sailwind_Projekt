@@ -58,8 +58,7 @@ void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
  */
 void Motor_stop_moving(Motor_t *motor_ptr) {
 	printf("motor stop moving\r\n");
-	motor_ptr->ramp_final_rpm = 0;
-	motor_ptr->ramp_activated = True;
+	Motor_set_rpm(motor_ptr, 0);
 }
 
 void Motor_speed_ramp(Motor_t *motor_ptr)
@@ -77,16 +76,7 @@ void Motor_speed_ramp(Motor_t *motor_ptr)
 	{
 		return;
 	}
-	int8_t direction;
-	if (motor_ptr->rpm_set_point < motor_ptr->ramp_final_rpm)
-	{
-		direction = MOTOR_RAMP_SPEED_UP;
-	}
-	else
-	{
-		direction = MOTOR_RAMP_SLOW_DOWN;
-	}
-	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + direction*MOTOR_RAMP_STEP_RPM);
+	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + MOTOR_RAMP_STEP_RPM);
 	motor_ptr->ramp_last_step_ms = HAL_GetTick();
 }
 

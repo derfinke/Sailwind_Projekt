@@ -21,6 +21,7 @@ static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_p
 static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr);
 static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 
+static void Manual_Control_reset_localization(Manual_Control_t *mc_ptr);
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
@@ -42,6 +43,8 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 			.buttons = buttons,
 			.lg_ptr = lg_ptr
 	};
+	lg_ptr->operating_mode = buttons.switch_mode.state ? LG_operating_mode_automatic : LG_operating_mode_manual;
+	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
 
 	return manual_control;
 }
@@ -138,7 +141,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			}
 			break;
 		case Loc_state_3_approach_center:
-			if(lg_ptr->localization.pulse_count == 0)
+			if(lg_ptr->localization.current_pos_mm == 0)
 			{
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
 				printf("new state set center\r\n");
@@ -217,6 +220,7 @@ void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 			}
 			printf("set to automatic\r\n");
 			new_operating_mode = LG_operating_mode_automatic;
+			Linear_Guide_safe_Localization(lg_ptr->localization);
 			break;
 		case MANUAL_CONTROL_BUTTON_SWITCH_MANUAL:
 			printf("set to manual\r\n");
@@ -257,10 +261,18 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 			lg_ptr->localization.is_triggered = True;
 			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MANUAL_CONTROL_LOCALIZE_RESET_MS)
 			{
-				lg_ptr->localization.state = Loc_state_0_init;
+				Manual_Control_reset_localization(mc_ptr);
 			}
 			break;
 	}
+}
+
+static void Manual_Control_reset_localization(Manual_Control_t *mc_ptr)
+{
+	Localization_t *loc_ptr = &mc_ptr->lg_ptr->localization;
+	loc_ptr->state = Loc_state_0_init;
+	loc_ptr->pulse_count = 0;
+	loc_ptr->is_localized = False;
 }
 
 /* static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
