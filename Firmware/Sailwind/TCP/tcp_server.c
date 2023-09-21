@@ -8,6 +8,7 @@
 #include <string.h>
 #include "lwip.h"
 #include "cJSON.h"
+#include "REST.h"
 
 enum tcp_server_states
 {
@@ -33,7 +34,7 @@ static err_t tcp_server_poll(void *arg, struct tcp_pcb *tpcb);
 static err_t tcp_server_sent(void *arg, struct tcp_pcb *tpcb, u16_t len);
 static void tcp_server_send(struct tcp_pcb *tpcb, struct tcp_server_struct *es);
 static void tcp_server_connection_close(struct tcp_pcb *tpcb, struct tcp_server_struct *es);
-static void tcp_rest_handler(char *payload);
+
 
 void tcp_server_init(void)
 {
@@ -46,8 +47,8 @@ void tcp_server_init(void)
 
   /* 2. bind _pcb to port 7 ( protocol) */
   ip_addr_t myIPADDR;
-  IP_ADDR4(&myIPADDR, 192, 168, 0, 111);
-  err = tcp_bind(tpcb, &myIPADDR, 7);
+  IP_ADDR4(&myIPADDR, 192, 168, 0, 123);
+  err = tcp_bind(tpcb, &myIPADDR, 300);
 
   if (err == ERR_OK)
   {
@@ -206,32 +207,32 @@ static err_t tcp_server_recv(void *arg, struct tcp_pcb *tpcb, struct pbuf *p, er
 
 static void tcp_server_handle (struct tcp_pcb *tpcb, struct tcp_server_struct *es)
 {
-  struct tcp_server_struct *esTx;
+//  struct tcp_server_struct *esTx;
 
   /* get the Remote IP */
-  ip4_addr_t inIP = tpcb->remote_ip;
-  uint16_t inPort = tpcb->remote_port;
+//  ip4_addr_t inIP = tpcb->remote_ip;
+//  uint16_t inPort = tpcb->remote_port;
 
   /* Extract the IP */
-  char *remIP = ipaddr_ntoa(&inIP);
+//  char *remIP = ipaddr_ntoa(&inIP);
 
-  esTx->state = es->state;
-  esTx->pcb = es->pcb;
-  esTx->p = es->p;
+//  esTx->state = es->state;
+//  esTx->pcb = es->pcb;
+//  esTx->p = es->p;
 
-  char buf[100];
-  memset (buf, '\0', 100);
-  strncpy(buf, (char *)es->p->payload, es->p->tot_len);
-  strcat (buf, "+ Hello from TCP SERVER\n");
+  char buf[300];
+//  memset (buf, '\0', 100);
+//  strncpy(buf, (char *)es->p->payload, es->p->tot_len);
+//  strcat (buf, "+ Hello from TCP SERVER\n");
+  REST_request_handler((char *)es->p->payload, buf);
 
+  es->p->payload = (void *)buf;
+  es->p->tot_len = (es->p->tot_len - es->p->len) + strlen (buf);
+  es->p->len = strlen (buf);
 
-  esTx->p->payload = (void *)buf;
-  esTx->p->tot_len = (es->p->tot_len - es->p->len) + strlen (buf);
-  esTx->p->len = strlen (buf);
+  tcp_server_send(tpcb, es);
 
-  tcp_server_send(tpcb, esTx);
-
-  pbuf_free(es->p);
+//  pbuf_free(es->p);
 
 }
 
@@ -412,23 +413,4 @@ static void tcp_server_connection_close(struct tcp_pcb *tpcb, struct tcp_server_
 
   /* close tcp connection */
   tcp_close(tpcb);
-}
-
-static void tcp_rest_handler(char *payload)
-{
-  char http_request[4];
-  memcpy(http_request, payload, 4U);
-
-  if(strcmp(http_request, "GET") == 0)
-  {
-
-  }
-  else if(strcmp(http_request, "PUT") ==   0)
-  {
-
-  }
-  else
-  {
-    //do nothing
-  }
 }

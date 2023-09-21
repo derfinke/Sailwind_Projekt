@@ -9,6 +9,6 @@
 #define REST_REST_H_
 
 
-void REST_request_handler(char* payload);
+void REST_request_handler(char *payload, char *buffer);
 
 #endif /* REST_REST_H_ */
