@@ -68,7 +68,6 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 	if (Localization_callback_update_position(&lg_ptr->localization))
 	{
 		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
-		Linear_Guide_safe_Localization(lg_ptr->localization);
 	}
 }
 
@@ -112,6 +111,10 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
 
 void Linear_Guide_safe_Localization(Localization_t loc)
 {
+	if (!loc.is_localized)
+	{
+		return;
+	}
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	Localization_serialize(loc, FRAM_buffer);
 	FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE);
