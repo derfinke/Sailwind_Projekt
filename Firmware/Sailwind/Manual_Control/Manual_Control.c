@@ -25,7 +25,6 @@ static void Manual_Control_reset_localization(Manual_Control_t *mc_ptr);
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
-int32_t count = 0;
 
 
 /* API function definitions -----------------------------------------------*/

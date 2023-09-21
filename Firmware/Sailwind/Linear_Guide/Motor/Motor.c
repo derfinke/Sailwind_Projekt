@@ -47,6 +47,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uin
  */
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
 	printf("motor start moving\r\n");
+	motor_ptr->rpm_set_point = 0;
 	Motor_set_function(motor_ptr, direction);
 	motor_ptr->ramp_final_rpm = motor_ptr->normal_rpm;
 	motor_ptr->ramp_activated = True;
