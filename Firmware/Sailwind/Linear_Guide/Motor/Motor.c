@@ -12,7 +12,7 @@
 #define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
 #define MOTOR_NORMAL_SPEED 1600
 #define MOTOR_RAMP_STEP_MS 20
-#define MOTOR_RAMP_STEP_RPM 5
+#define MOTOR_RAMP_STEP_RPM 15
 #define MOTOR_RAMP_SPEED_UP 1
 #define MOTOR_RAMP_SLOW_DOWN -1
 
@@ -68,8 +68,9 @@ void Motor_speed_ramp(Motor_t *motor_ptr)
 	{
 		return;
 	}
-	if (motor_ptr->rpm_set_point == motor_ptr->ramp_final_rpm)
+	if (motor_ptr->rpm_set_point >= motor_ptr->ramp_final_rpm)
 	{
+		Motor_set_rpm(motor_ptr, motor_ptr->ramp_final_rpm);
 		motor_ptr->ramp_activated = False;
 		return;
 	}
