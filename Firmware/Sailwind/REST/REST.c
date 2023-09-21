@@ -53,19 +53,85 @@ typedef enum {
   HTTP_Bad_Request
 } http_responses_t;
 
+/**
+ * @brief  Handles HTTP GET requests
+ * @param  payload: pointer to received payload
+ * @param  buffer: pointer to http response buffer
+ * @retval none
+ */
 static void REST_get_request(char *payload, char *buffer);
+
+/**
+ * @brief  Handles HTTP PUT requests
+ * @param  payload: pointer to received payload
+ * @param  buffer: pointer to http response buffer
+ * @retval none
+ */
 static void REST_put_request(char *payload, char *buffer);
+
+/**
+ * @brief  Build HTTP header with given
+ * @param  payload: pointer to received payload
+ * @param  buffer: pointer to http response buffer
+ * @retval none
+ */
 static void REST_create_HTTP_header(char *buffer, http_responses_t response,
                                     uint32_t size_of_anwser);
+
+/**
+ * @brief  Build the /data json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
 static void REST_create_data_json(cJSON *response);
+
+/**
+ * @brief  Build the /data/status json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
 static void REST_create_status_json(cJSON *response);
-static void REST_create_sensors_json(cJSON *response);
-static void REST_create_wind_json(cJSON *response);
-static void REST_create_sail_pos_json(cJSON *response);
+
+/**
+ * @brief  Build the /data/sensors json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
 static void REST_create_sensors_json(cJSON *response);
 
+/**
+ * @brief  Build the /data/sensors/wind json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
+static void REST_create_wind_json(cJSON *response);
+
+/**
+ * @brief  Build the /data/adjustment json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
+static void REST_create_sail_pos_json(cJSON *response);
+
+/**
+ * @brief  check if the received error json is valid
+ * @param  error_json: pointer to received JSON
+ * @retval none
+ */
 static uint8_t REST_check_error_json(cJSON *error_json);
+
+/**
+ * @brief  check if the received sailstate json is valid
+ * @param  sailstate_json: pointer to received JSON
+ * @retval none
+ */
 static uint8_t REST_check_sailstate_json(cJSON *sailstate_json);
+
+/**
+ * @brief  check if the received operating_mode json is valid
+ * @param  mode_json: pointer to received JSON
+ * @retval none
+ */
 static uint8_t REST_check_mode_json(cJSON *mode_json);
 
 void REST_request_handler(char *payload, char *buffer) {
@@ -78,11 +144,11 @@ void REST_request_handler(char *payload, char *buffer) {
   if (strcmp(http_request, GET_REQUEST) == 0) {
     REST_get_request(payload, buffer);
 
-  /* check for PUT request */
+    /* check for PUT request */
   } else if (strcmp(http_request, PUT_REQUEST) == 0) {
     REST_put_request(payload, buffer);
 
-  /* if not GET or PUT return HTTP status code 501 */
+    /* if not GET or PUT return HTTP status code 501 */
   } else {
     REST_create_HTTP_header(buffer, HTTP_Not_Implemented, 0);
   }
@@ -101,7 +167,7 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/status */
+    /* check for path /data/status */
   } else if (strncmp(payload + URL_OFFSET, PATH_STATUS, strlen(PATH_STATUS))
       == 0) {
 
@@ -109,7 +175,7 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/adjustment */
+    /* check for path /data/adjustment */
   } else if (strncmp(payload + URL_OFFSET, PATH_SAIL_STATE,
                      strlen(PATH_SAIL_STATE)) == 0) {
 
@@ -127,7 +193,7 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/sensors */
+    /* check for path /data/sensors */
   } else if (strncmp(payload + URL_OFFSET, PATH_SENSORS, strlen(PATH_SENSORS))
       == 0) {
 
@@ -135,7 +201,7 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/sensors/current */
+    /* check for path /data/sensors/current */
   } else if (strncmp(payload + URL_OFFSET, PATH_CURRENT_SENSOR,
                      strlen(PATH_CURRENT_SENSOR)) == 0) {
 
@@ -143,7 +209,7 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/sensors/wind */
+    /* check for path /data/sensors/wind */
   } else if (strncmp(payload + URL_OFFSET, PATH_WIND_SENSOR,
                      strlen(PATH_WIND_SENSOR)) == 0) {
 
@@ -151,15 +217,13 @@ static void REST_get_request(char *payload, char *buffer) {
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
-  /* check for path /data/status/operating_mode */
-  } else if(strncmp(payload + URL_OFFSET, PATH_MODE,
-                    strlen(PATH_MODE)) == 0) {
+    /* check for path /data/status/operating_mode */
+  } else if (strncmp(payload + URL_OFFSET, PATH_MODE, strlen(PATH_MODE)) == 0) {
 
     cJSON_AddNumberToObject(response, KEY_MODE, 0);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
-  }
-  else {
+  } else {
     REST_create_HTTP_header(buffer, HTTP_Not_Found, 0);
   }
 
@@ -322,7 +386,7 @@ static uint8_t REST_check_error_json(cJSON *error_json) {
 
 static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
   cJSON *sail_pos = cJSON_GetObjectItemCaseSensitive(sailstate_json,
-                                                     KEY_SAIL_POS);
+  KEY_SAIL_POS);
   cJSON *pitch = cJSON_GetObjectItemCaseSensitive(sailstate_json, KEY_PITCH);
   cJSON *roll = cJSON_GetObjectItemCaseSensitive(sailstate_json, KEY_ROLL);
 
@@ -359,7 +423,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
 
 static uint8_t REST_check_mode_json(cJSON *mode_json) {
   cJSON *operating_mode = cJSON_GetObjectItemCaseSensitive(mode_json,
-                                                           KEY_MODE);
+  KEY_MODE);
   /* Check for number of keys */
   if (!(cJSON_GetArraySize(operating_mode) < 2)) {
     return 1;
