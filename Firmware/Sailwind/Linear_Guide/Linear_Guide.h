@@ -12,11 +12,7 @@
 #include "Motor.h"
 #include "Endswitch.h"
 #include "Localization.h"
-#include "FRAM.h"
 
-/* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_MM_PER_ROTATION 5.62
-#define LG_DISTANCE_MM_PER_PULSE ((LG_DISTANCE_MM_PER_ROTATION/12.0)*2)
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -55,9 +51,11 @@ typedef struct {
 
 /* API function prototypes -----------------------------------------------*/
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
+LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
 void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr);
 void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
+void Linear_Guide_speed_ramp(Linear_Guide_t *lg_ptr);
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);

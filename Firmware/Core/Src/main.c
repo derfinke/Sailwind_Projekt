@@ -28,6 +28,7 @@
 #include "Test.h"
 #include "httpd.h"
 #include "tcp_server.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -37,9 +38,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ABSTAND_TEST 1
-#define STROM_TEST 1
-#define WIND_TEST 1
+#define ABSTAND_TEST 0
+#define STROM_TEST 0
+#define WIND_TEST 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,8 +68,6 @@ Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
 IO_analogSensor_t Abstandssensor = {0};
 IO_analogSensor_t Stromsensor = {0};
-
-extern struct netif gnetif;
 
 char Rx_buffer[20];
 
@@ -139,7 +138,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
@@ -180,41 +179,24 @@ int main(void)
   WSWD_get_wind_infos(NMEA, &speed, &dir);
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
+
   tcp_server_init();
   httpd_init();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    while(linear_guide.operating_mode == LG_operating_mode_manual)
-    {
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      if(manual_control.lg_ptr->localization.is_triggered == True)
-      {
-        Manual_Control_Localization(&manual_control);
-      }
-      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      MX_LWIP_Process();
+      //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
-    }
-
-    while(linear_guide.operating_mode == LG_operating_mode_automatic)
-    {
+      Manual_Control_Localization(&manual_control);
+      Linear_Guide_speed_ramp(&linear_guide);
       /*
        * add tcp handling
        */
-
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
-      {
-        Manual_Control_function_switch_operating_mode(&manual_control);
-      }
-    }
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -280,8 +262,6 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
-
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -305,25 +285,6 @@ static void MX_ADC1_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 2;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -341,8 +302,6 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 0 */
 
   /* USER CODE END ADC2_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC2_Init 1 */
 
@@ -367,15 +326,6 @@ static void MX_ADC2_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_6;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -393,8 +343,6 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 0 */
 
   /* USER CODE END ADC3_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -415,34 +363,6 @@ static void MX_ADC3_Init(void)
   hadc3.Init.DMAContinuousRequests = DISABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_7;
-  sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_5;
-  sConfig.Rank = 3;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -813,16 +733,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  switch (manual_control.lg_ptr->localization.movement) {
-  case Loc_movement_backwards:
-    manual_control.lg_ptr->localization.pulse_count++;
-    break;
-  case Loc_movement_forward:
-    manual_control.lg_ptr->localization.pulse_count--;
-    break;
-  case Loc_movement_stop:
-    break;
-  }
+  Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 /* USER CODE END 4 */
 

@@ -6,7 +6,13 @@
  */
 
 #include "Test.h"
+#include <stdlib.h>
+#include "UART.h"
 
+/* defines -------------------------------------------------------------------*/
+#define TEST_ID_SIZE 5
+
+/* private function prototypes -----------------------------------------------*/
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr);
 static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
@@ -14,6 +20,7 @@ static void Test_Button(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr);
 static void Test_FRAM(UART_HandleTypeDef *huart_ptr);
 
+/* API function definitions -----------------------------------------------*/
 void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Control_t *mc_ptr)
 {
 	if (UART_receive(huart_ptr, Rx_buffer, TEST_ID_SIZE))
@@ -23,6 +30,7 @@ void Test_uart_poll(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, Manual_Contr
 	}
 }
 
+/* private function definitions -----------------------------------------------*/
 static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID, Manual_Control_t *mc_ptr)
 {
 	Motor_t *motor_ptr = &mc_ptr->lg_ptr->motor;
@@ -36,7 +44,7 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 			Motor_set_function(motor_ptr, (Motor_function_t)(test_ID - 20));
 			break;
 		case 30000 ... 33000:
-			Motor_set_rpm(motor_ptr, test_ID - 30000, True);
+			Motor_set_rpm(motor_ptr, test_ID - 30000);
 			break;
 		case 4:
 			Test_endswitch(huart_ptr, mc_ptr);
@@ -44,16 +52,10 @@ static void Test_switch_test_ID(UART_HandleTypeDef *huart_ptr, uint16_t test_ID,
 		case 5:
 			Test_Motor(huart_ptr, mc_ptr);
 			break;
-		case 511:
-			Motor_start_rpm_measurement(motor_ptr);
-			break;
-		case 512:
-			UART_transmit_ln_int(huart_ptr, "motor rpm: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
-			break;
-		case 52:
+		case 51:
 			UART_transmit_ln_int(huart_ptr, "motor error: %d", IO_digitalRead(&motor_ptr->OUT2_error));
 			break;
-		case 53:
+		case 52:
 			UART_transmit_ln_int(huart_ptr, "motor direction: %d", IO_digitalRead(&motor_ptr->OUT3_rot_dir));
 			break;
 		case 6:
@@ -140,7 +142,7 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 		UART_transmit_ln(huart_ptr, "Motor Error! -> Test failed");
 		return;
 	}
-	Motor_set_rpm(motor_ptr, MOTOR_RPM_SPEED_1, False);
+	motor_ptr->normal_rpm = MOTOR_RPM_SPEED_1;
 	UART_transmit_ln(huart_ptr, "switch button to start motor move clock wise with speed 1");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	Motor_start_moving(motor_ptr, Motor_function_cw_rotation);
@@ -157,10 +159,10 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 	for (uint16_t rpm_value=MOTOR_RPM_SPEED_1; rpm_value <= MOTOR_RPM_SPEED_2; rpm_value+=15)
 	{
-		Motor_set_rpm(motor_ptr, rpm_value, True);
+		motor_ptr->normal_rpm = rpm_value;
+		Motor_start_moving(motor_ptr, Motor_function_cw_rotation);
 		HAL_Delay(2000);
 		UART_transmit_ln_int(huart_ptr, "rpm_set_point: %d", rpm_value);
-		UART_transmit_ln_int(huart_ptr, "rpm_measurement: %d", motor_ptr->OUT1_rpm_measurement.rpm_value);
 	}
 	UART_transmit_ln(huart_ptr, "switch button to stop motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));

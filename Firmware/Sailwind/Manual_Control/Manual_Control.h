@@ -11,10 +11,6 @@
 #include "Button.h"
 #include "Linear_Guide.h"
 
-/* defines -------------------------------------------------------------------*/
-#define MANUAL_CONTROL_COUNT 4
-#define MANUAL_CONTROL_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
-#define MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
 
 /* typedefs ------------------------------------------------------------------*/
 
@@ -23,6 +19,7 @@ typedef struct {
 	Button_t move_backwards;
 	Button_t move_forward;
 	Button_t localize;
+	uint32_t last_localize_press_ms;
 } MC_buttons_t;
 
 typedef struct {

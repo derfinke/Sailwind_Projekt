@@ -12,7 +12,6 @@
 
 /* typedefs ------------------------------------------------------------------*/
 typedef IO_digitalPin_t Button_t;
-typedef GPIO_PinState Button_state_t;
 
 /* defines -------------------------------------------------------------------*/
 #define BUTTON_PRESSED GPIO_PIN_RESET
