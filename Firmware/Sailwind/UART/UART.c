@@ -6,9 +6,17 @@
  */
 
 #include "UART.h"
+#include <stdio.h>
+#include <string.h>
 
+/* defines -------------------------------------------------------------------*/
+#define UART_RX_TIME_OUT 1
+#define UART_TX_TIME_OUT 10
+
+/* private function prototypes -----------------------------------------------*/
 static int int_len(int32_t value);
 
+/* API function definitions -----------------------------------------------*/
 boolean_t UART_receive(UART_HandleTypeDef *huart_ptr, char *Rx_buffer, uint16_t size)
 {
 	if (!(__HAL_UART_GET_FLAG(huart_ptr, UART_FLAG_RXNE) == SET))
@@ -42,6 +50,7 @@ void UART_transmit_ln_float(UART_HandleTypeDef *huart_ptr, char *f_string, float
 	UART_transmit_ln(huart_ptr, Tx_buffer);
 }
 
+/* private function definitions -----------------------------------------------*/
 static int int_len(int32_t value)
 {
   int len = !value;

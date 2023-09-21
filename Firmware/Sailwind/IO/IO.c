@@ -20,7 +20,6 @@
 #define NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR     44
 
 /* private function prototypes -----------------------------------------------*/
-static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
@@ -57,7 +56,8 @@ IO_digitalPin_t IO_digital_Out_Pin_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin,
 }
 
 IO_digitalPin_t IO_digital_Pin_init(GPIO_TypeDef *GPIOx, uint16_t GPIO_Pin) {
-  IO_digitalPin_t digitalPin = { .GPIOx = GPIOx, .GPIO_Pin = GPIO_Pin, };
+  IO_digitalPin_t digitalPin = { .GPIOx = GPIOx, .GPIO_Pin = GPIO_Pin};
+  digitalPin.state = IO_digitalRead(&digitalPin);
   return digitalPin;
 }
 
@@ -121,23 +121,11 @@ boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr) {
  *   - convert analog to digital value and write it to the dac channel specified in the actuator reference
  */
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
-//  actuator_ptr->currentConvertedValue =
-//      value <= actuator_ptr->limitConvertedValue ?
-//          value : actuator_ptr->limitConvertedValue;
+//  actuator_ptr->currentConvertedValue = value <= actuator_ptr->limitConvertedValue ? value : actuator_ptr->limitConvertedValue;
 //  IO_convertToDAC(actuator_ptr);
   HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel,
-  DAC_ALIGN_12B_R,
-                   (uint16_t) value);
+  DAC_ALIGN_12B_R, (uint16_t) value);
   HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
-}
-
-/* static void convertToDAC(IO_analogActuator_t *actuator_ptr)
- *  Description:
- *   - convert the analog value to the corresponding digital value and save it to the actuator reference
- */
-static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr) {
-  actuator_ptr->dac_value = (uint16_t) (actuator_ptr->currentConvertedValue
-      / actuator_ptr->maxConvertedValue * DAC_RESOLOUTION);
 }
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor) {

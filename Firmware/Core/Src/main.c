@@ -18,7 +18,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "lwip.h"
+//#include "lwip.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -26,7 +26,7 @@
 #include "WSWD.h"
 #include "Manual_Control.h"
 #include "Test.h"
-#include "httpd.h"
+//#include "httpd.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -36,9 +36,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define ABSTAND_TEST 1
-#define STROM_TEST 1
-#define WIND_TEST 1
+#define ABSTAND_TEST 0
+#define STROM_TEST 0
+#define WIND_TEST 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,7 +67,7 @@ Manual_Control_t manual_control;
 IO_analogSensor_t Abstandssensor = {0};
 IO_analogSensor_t Stromsensor = {0};
 
-extern struct netif gnetif;
+//extern struct netif gnetif;
 
 char Rx_buffer[20];
 
@@ -138,7 +138,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
@@ -180,40 +180,22 @@ int main(void)
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
 
-  httpd_init();
+  //httpd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-
-    while(linear_guide.operating_mode == LG_operating_mode_manual)
-    {
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      if(manual_control.lg_ptr->localization.is_triggered == True)
-      {
-        Manual_Control_Localization(&manual_control);
-      }
-      Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+      //ethernetif_input(&gnetif);
+      //sys_check_timeouts();
+      //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
-    }
-
-    while(linear_guide.operating_mode == LG_operating_mode_automatic)
-    {
+      Manual_Control_Localization(&manual_control);
+      Linear_Guide_speed_ramp(&linear_guide);
       /*
        * add tcp handling
        */
-
-      ethernetif_input(&gnetif);
-      sys_check_timeouts();
-      if (Button_state_changed(&manual_control.buttons.switch_mode) == True)
-      {
-        Manual_Control_function_switch_operating_mode(&manual_control);
-      }
-    }
-
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -812,16 +794,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  switch (manual_control.lg_ptr->localization.movement) {
-  case Loc_movement_backwards:
-    manual_control.lg_ptr->localization.pulse_count++;
-    break;
-  case Loc_movement_forward:
-    manual_control.lg_ptr->localization.pulse_count--;
-    break;
-  case Loc_movement_stop:
-    break;
-  }
+  Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 /* USER CODE END 4 */
 

@@ -7,6 +7,9 @@
 
 #include "Localization.h"
 
+/* defines ------------------------------------------------------------*/
+#define LOC_SERIAL_FORMAT_SPEC "%d,%d,%d,%d" //SPEC = "State, Pulse_count, End_pos, Center_pos"
+
 /* private function prototypes -----------------------------------------------*/
 static void Localization_update_current_position(Localization_t *loc_ptr);
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
@@ -37,8 +40,8 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
  */
 void Localization_set_endpos(Localization_t *loc_ptr)
 {
-  loc_ptr->end_pos_mm = Localization_pulse_count_to_distance(*loc_ptr);
-	loc_ptr->current_pos_mm = 0U;
+	loc_ptr->end_pos_mm = Localization_pulse_count_to_distance(*loc_ptr)/2;
+	loc_ptr->current_pos_mm = loc_ptr->end_pos_mm;
 }
 
 /* void Localization_set_center(Localization_t *loc_ptr)
@@ -87,7 +90,7 @@ void Localization_update_current_position(Localization_t *loc_ptr)
 
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
 {
-	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (uint8_t) loc.state, loc.pulse_count, loc.end_pos_mm, loc.center_pos_mm);
+	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (int)loc.state, (int)loc.pulse_count, (int)loc.end_pos_mm, (int)loc.center_pos_mm);
 }
 
 /* private function definitions -----------------------------------------------*/
@@ -103,7 +106,7 @@ int32_t Localization_pulse_count_to_distance(Localization_t loc)
 
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
 {
-	if (!sscanf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (uint8_t *) &loc_ptr->state, &loc_ptr->pulse_count, &loc_ptr->end_pos_mm, &loc_ptr->center_pos_mm))
+	if (!sscanf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (int *)&loc_ptr->state, (int *)&loc_ptr->pulse_count, (int *)&loc_ptr->end_pos_mm, (int *)&loc_ptr->center_pos_mm))
 	{
 		return False;
 	}
