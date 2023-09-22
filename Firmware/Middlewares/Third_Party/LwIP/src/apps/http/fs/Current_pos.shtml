@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<style>
+		head {margin:0;}
+		ul {
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #333;
+		}
+	  
+		li {
+		  float: left;
+		}
+	  
+		li a {
+		  display: block;
+		  color: white;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		}
+	  
+		li a:hover:not(.active) {
+		  background-color: #111;
+		}
+	  
+		.active {
+		  background-color: #04AA6D;
+		}
+		body {
+		  height:50%;
+		  width:100%;
+		  margin:0;
+	    }
+	  
+        table {
+            border-collapse: collapse;
+            border: 4px solid #111;;
+            letter-spacing: 1px;
+            width:30%;
+		    margin-left:auto;
+		    margin-right:auto;
+        }
+
+        td, th {
+            border: 2px solid #111;;
+            padding: 10px 20px;
+        }
+
+         td {
+            text-align: center;
+        }
+
+        h1 {
+		    width:5%;
+		    margin-left:auto;
+		    margin-right:auto;
+	    }
+	</style>
+	<head>
+        <title>Position</title>
+	</head>
+	<body>
+        <ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="Login.html">Login</a></li>
+			<li><a href="Sensor_values.shtml">Sensor Values</a></li>
+			<li><a href="Current_pos.shtml" class="active">Current Sail Position</a></li>
+			<li><a href="Settings.html">Settings</a></li>
+		</ul>
+        <h1>Position</h1>
+        <table>
+          <tr>
+            <th><h3>Mode</h3></th>
+            <td><h3><!--Current Consumption-->(0 roll | 1 pitch)</h3></td>
+          </tr>
+          <tr>
+            <th><h3>Pitch</h3></th>
+            <td><h3><!--Current Consumption-->%</h3></td>
+          </tr>
+          <tr>
+            <th><h3>Roll</h3></th>
+            <td><h3><!--Current Consumption-->%</h3></td>
+          </tr>
+        </table>
+</body>
+</html>

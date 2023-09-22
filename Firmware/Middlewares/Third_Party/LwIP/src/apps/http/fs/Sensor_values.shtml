@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+	<style>
+		head {margin:0;}
+		ul {
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #333;
+		}
+	  
+		li {
+		  float: left;
+		}
+	  
+		li a {
+		  display: block;
+		  color: white;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		}
+	  
+		li a:hover:not(.active) {
+		  background-color: #111;
+		}
+	  
+		.active {
+		  background-color: #04AA6D;
+		}
+		body {
+		    height:50%;
+		    width:100%;
+	        margin:0;
+	    }
+	  
+	    h1 {
+		    width:5%;
+		    margin-left:auto;
+		    margin-right:auto;
+	    }
+        table {
+            border-collapse: collapse;
+            border: 4px solid #111;;
+            letter-spacing: 1px;
+            width:30%;
+		    margin-left:auto;
+		    margin-right:auto;
+        }
+
+        td, th {
+            border: 2px solid #111;;
+            padding: 10px 20px;
+        }
+
+         td {
+            text-align: center;
+        }
+
+    caption {
+      padding: 50px;
+    }
+	</style>
+	<head>
+        <title>Sensors</title>
+	</head>
+	<body>
+        <ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="Login.html">Login</a></li>
+			<li><a href="Sensor_values.shtml" class="active">Sensor Values</a></li>
+			<li><a href="Current_pos.shtml">Current Sail Position</a></li>
+			<li><a href="Settings.html">Settings</a></li>S
+		</ul>
+        <h1>Sensors</h1>
+        <table>
+          <tr>
+            <th><h3>Current Consumption</h3></th>
+            <td><h3><!--Current Consumption-->mA</h3></td>
+          </tr>
+          <tr>
+            <th><h3>Wind Speed</h3></th>
+            <td><h3><!--Current Consumption-->m/s</h3></td>
+          </tr>
+          <tr>
+            <th><h3>Wind Direction</h3></th>
+            <td><h3><!--Current Consumption-->&#176;</h3></td>
+          </tr>
+        </table>
+    </body>
+</html>
