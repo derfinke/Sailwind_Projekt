@@ -97,18 +97,18 @@ void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	lg_ptr->localization.movement = movement;
 }
 
-void Linear_Guide_set_desired_pos(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
+void Linear_Guide_set_desired_roll_pitch_percentage(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
-	switch(adjustment_mode)
-	{
-		case LG_sail_adjustment_mode_rollung:
-			loc_ptr->desired_pos_mm = (int32_t) ((loc_ptr->end_pos_mm + loc_ptr->center_pos_mm) * percentage / 100.0F) - loc_ptr->end_pos_mm;
-			break;
-		case LG_sail_adjustment_mode_trimmung:
-			loc_ptr->desired_pos_mm = (int32_t) ((loc_ptr->end_pos_mm - loc_ptr->center_pos_mm) * percentage / 100.0F) + loc_ptr->center_pos_mm;
-			break;
-	}
+	uint8_t sign = adjustment_mode == LG_sail_adjustment_mode_rollung ? 1 : -1;
+	loc_ptr->desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
+}
+
+int8_t Linear_Guide_get_current_roll_pitch_percentage(Linear_Guide_t lg)
+{
+	Localization_t loc = lg.localization;
+	uint8_t sign = lg.sail_adjustment_mode == LG_sail_adjustment_mode_rollung ? 1 : -1;
+	return (int8_t) ((sign * (loc.center_pos_mm - loc.current_pos_mm)) / (float) (loc.end_pos_mm + sign * loc.center_pos_mm) * 100);
 }
 
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms)

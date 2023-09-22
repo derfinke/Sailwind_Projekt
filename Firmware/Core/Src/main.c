@@ -193,7 +193,7 @@ int main(void)
       //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
       Manual_Control_Localization(&manual_control);
-      Linear_Guide_speed_ramp(&linear_guide);
+      Linear_Guide_update(&linear_guide);
       /*
        * add tcp handling
        */

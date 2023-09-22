@@ -56,6 +56,8 @@ void Linear_Guide_update(Linear_Guide_t *lg_ptr);
 void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr);
 void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
+void Linear_Guide_set_desired_roll_pitch_percentage(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode);
+int8_t Linear_Guide_get_current_roll_pitch_percentage(Linear_Guide_t lg);
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
