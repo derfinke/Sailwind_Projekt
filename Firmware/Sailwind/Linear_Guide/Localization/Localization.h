@@ -40,6 +40,7 @@ typedef struct {
 	int32_t center_pos_mm;
 	int32_t current_pos_mm;
 	int32_t pulse_count;
+	int32_t desired_pos_mm;
 } Localization_t;
 
 /* API function prototypes ---------------------------------------------------*/
