@@ -41,8 +41,8 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 			.error = LED_init(LED_Stoerung_GPIO_Port, LED_Stoerung_Pin, LED_OFF),
 			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, op_mode == LG_operating_mode_manual),
 			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, op_mode == LG_operating_mode_automatic),
-			.rollung = LED_init(LED_Rollen_GPIO_Port, LED_Rollen_Pin, LED_OFF),
-      .trimmung = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF),
+			.roll = LED_init(LED_Rollen_GPIO_Port, LED_Rollen_Pin, LED_OFF),
+      .trim = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF),
       .center_pos_set = LED_init(LED_Kalibrieren_Speichern_GPIO_Port, LED_Kalibrieren_Speichern_Pin, LED_OFF)
 	};
 	return lg_leds;
@@ -97,17 +97,17 @@ void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	lg_ptr->localization.movement = movement;
 }
 
-void Linear_Guide_set_desired_roll_pitch_percentage(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
+void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
-	uint8_t sign = adjustment_mode == LG_sail_adjustment_mode_rollung ? 1 : -1;
+	uint8_t sign = adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
 	loc_ptr->desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
 }
 
-int8_t Linear_Guide_get_current_roll_pitch_percentage(Linear_Guide_t lg)
+int8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
 {
 	Localization_t loc = lg.localization;
-	uint8_t sign = lg.sail_adjustment_mode == LG_sail_adjustment_mode_rollung ? 1 : -1;
+	uint8_t sign = lg.sail_adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
 	return (int8_t) ((sign * (loc.center_pos_mm - loc.current_pos_mm)) / (float) (loc.end_pos_mm + sign * loc.center_pos_mm) * 100);
 }
 
@@ -162,9 +162,9 @@ static LG_Endswitches_t Linear_Guide_Endswitches_init()
 
 static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
-  int32_t current_pos = lg_ptr->localization.current_pos_mm;
-  int32_t center_pos = lg_ptr->localization.center_pos_mm;
-	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_rollung : LG_sail_adjustment_mode_trimmung;
+	int32_t current_pos = lg_ptr->localization.current_pos_mm;
+	int32_t center_pos = lg_ptr->localization.center_pos_mm;
+	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_roll : LG_sail_adjustment_mode_trim;
 	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr);
 }
 
@@ -219,18 +219,18 @@ static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
  */
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
-	LED_State_t rollung, trimmung;
+	LED_State_t roll, trim;
 	switch(lg_ptr->sail_adjustment_mode)
 	{
-		case LG_sail_adjustment_mode_rollung:
-			rollung = LED_ON, trimmung = LED_OFF;
+		case LG_sail_adjustment_mode_roll:
+			roll = LED_ON, trim = LED_OFF;
 			break;
-		case LG_sail_adjustment_mode_trimmung:
-			rollung = LED_OFF, trimmung = LED_ON;
+		case LG_sail_adjustment_mode_trim:
+			roll = LED_OFF, trim = LED_ON;
 			break;
 	}
-	LED_switch(&lg_ptr->leds.rollung, rollung);
-	LED_switch(&lg_ptr->leds.trimmung, trimmung);
+	LED_switch(&lg_ptr->leds.roll, roll);
+	LED_switch(&lg_ptr->leds.trim, trim);
 }
 
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value)
