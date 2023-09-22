@@ -11,8 +11,8 @@
 #define LOC_SERIAL_FORMAT_SPEC "%d,%d,%d,%d" //SPEC = "State, Pulse_count, End_pos, Center_pos"
 
 /* private function prototypes -----------------------------------------------*/
-static void Localization_update_current_position(Localization_t *loc_ptr);
 static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
+static int32_t Localization_pulse_count_to_distance(Localization_t loc);
 
 /* API function definitions -----------------------------------------------*/
 Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE])
@@ -28,7 +28,7 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 	};
 	if (Localization_deserialize(&localization, serial_buffer))
 	{
-		Localization_update_current_position(&localization);
+		Localization_update_position(&localization);
 	}
 	return localization;
 }
@@ -54,12 +54,8 @@ void Localization_set_center(Localization_t *loc_ptr)
 	loc_ptr->is_localized = True;
 }
 
-boolean_t Localization_callback_update_position(Localization_t *loc_ptr)
+void Localization_callback_pulse_count(Localization_t *loc_ptr)
 {
-	if (loc_ptr->state < Loc_state_2_approach_back)
-	{
-		return loc_ptr->is_localized;
-	}
 	switch(loc_ptr->movement)
 	{
 		case Loc_movement_backwards:
@@ -68,24 +64,28 @@ boolean_t Localization_callback_update_position(Localization_t *loc_ptr)
 			loc_ptr->pulse_count--; break;
 		case Loc_movement_stop:
 			break;
-		}
-	if (loc_ptr->state < Loc_state_3_approach_center)
-	{
-		return loc_ptr->is_localized;
 	}
-	Localization_update_current_position(loc_ptr);
-	return loc_ptr->is_localized;
 }
 
-/* void Localization_update_current_position(Localization_t *loc_ptr)
+/* void Localization_update_position(Localization_t *loc_ptr)
  *  Description:
  *   - convert the pulse count of the motor to a distance and center it
  *   - save the result to the localization reference
  */
-void Localization_update_current_position(Localization_t *loc_ptr)
+boolean_t Localization_update_position(Localization_t *loc_ptr)
 {
+	if (loc_ptr->state < Loc_state_3_approach_center)
+	{
+		return False;
+	}
 	int32_t absolute_distance = Localization_pulse_count_to_distance(*loc_ptr);
-	loc_ptr->current_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
+	int32_t new_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
+	if (new_pos_mm != loc_ptr->current_pos_mm)
+	{
+		return False;
+	}
+	loc_ptr->current_pos_mm = new_pos_mm;
+	return True;
 }
 
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
@@ -99,7 +99,7 @@ void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SI
  *  Description:
  *   - convert measured pulse count of the motor to a distance in mm, using distance per pulse parameter of the Linear guide
  */
-int32_t Localization_pulse_count_to_distance(Localization_t loc)
+static int32_t Localization_pulse_count_to_distance(Localization_t loc)
 {
 	return (int32_t) (loc.pulse_count * loc.distance_per_pulse);
 }

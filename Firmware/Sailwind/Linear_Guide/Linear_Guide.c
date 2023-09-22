@@ -51,6 +51,10 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 void Linear_Guide_update(Linear_Guide_t *lg_ptr)
 {
 	Linear_Guide_update_movement(lg_ptr);
+	if (Localization_update_position(&lg_ptr->localization))
+	{
+		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
+	}
 }
 
 /* void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
@@ -73,10 +77,7 @@ void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t
 
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 {
-	if (Localization_callback_update_position(&lg_ptr->localization))
-	{
-		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
-	}
+	Localization_callback_pulse_count(&lg_ptr->localization);
 }
 
 void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
@@ -162,6 +163,10 @@ static LG_Endswitches_t Linear_Guide_Endswitches_init()
 
 static void Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
+	if (!lg_ptr->localization.is_localized)
+	{
+		return;
+	}
 	int32_t current_pos = lg_ptr->localization.current_pos_mm;
 	int32_t center_pos = lg_ptr->localization.center_pos_mm;
 	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_roll : LG_sail_adjustment_mode_trim;
