@@ -117,7 +117,10 @@ void Linear_Guide_safe_Localization(Localization_t loc)
 	}
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	Localization_serialize(loc, FRAM_buffer);
-	FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE);
+	if(FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE) != HAL_OK)
+	{
+	  printf("Saving Position failed!\r\n");
+	}
 }
 
 Localization_t Linear_Guide_read_Localization()
