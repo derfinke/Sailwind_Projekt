@@ -63,29 +63,41 @@
     }
 	</style>
 	<head>
-        <title>Sensors</title>
+        <title>Status</title>
 	</head>
 	<body>
         <ul>
 			<li><a href="index.html">Home</a></li>
 			<li><a href="Login.html">Login</a></li>
-			<li><a href="Sensor_values.shtml" class="active">Sensor Values</a></li>
+			<li><a href="Sensor_values.shtml" class="active">Status</a></li>
 			<li><a href="Current_pos.shtml">Current Sail Position</a></li>
-			<li><a href="Settings.html">Settings</a></li>S
+			<li><a href="Settings.html">Settings</a></li>
 		</ul>
-        <h1>Sensors</h1>
+        <h1>Status</h1>
         <table>
           <tr>
             <th><h3>Current Consumption</h3></th>
-            <td><h3><!--Current Consumption-->mA</h3></td>
+            <td><h3><!--#current-->mA</h3></td>
           </tr>
           <tr>
             <th><h3>Wind Speed</h3></th>
-            <td><h3><!--Current Consumption-->m/s</h3></td>
+            <td><h3><!--#windspd-->m/s</h3></td>
           </tr>
           <tr>
             <th><h3>Wind Direction</h3></th>
-            <td><h3><!--Current Consumption-->&#176;</h3></td>
+            <td><h3><!--#winddir-->&#176;</h3></td>
+          </tr>
+		  <tr>
+            <th><h3>Distance Motor</h3></th>
+            <td><h3><!--#dism-->mm</h3></td>
+          </tr>
+		  <tr>
+            <th><h3>Distance Sensor</h3></th>
+            <td><h3><!--#diss-->mm</h3></td>
+          </tr>
+		  <tr>
+            <th><h3>Operating Mode</h3></th>
+            <td><h3><!--#opmod--></h3></td>
           </tr>
         </table>
     </body>

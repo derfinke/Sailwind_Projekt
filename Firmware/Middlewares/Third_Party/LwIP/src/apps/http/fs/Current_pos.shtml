@@ -66,7 +66,7 @@
         <ul>
 			<li><a href="index.html">Home</a></li>
 			<li><a href="Login.html">Login</a></li>
-			<li><a href="Sensor_values.shtml">Sensor Values</a></li>
+			<li><a href="Sensor_values.shtml">Status</a></li>
 			<li><a href="Current_pos.shtml" class="active">Current Sail Position</a></li>
 			<li><a href="Settings.html">Settings</a></li>
 		</ul>
@@ -74,15 +74,15 @@
         <table>
           <tr>
             <th><h3>Mode</h3></th>
-            <td><h3><!--Current Consumption-->(0 roll | 1 pitch)</h3></td>
+            <td><h3><!--#mode--></h3></td>
           </tr>
           <tr>
             <th><h3>Pitch</h3></th>
-            <td><h3><!--Current Consumption-->%</h3></td>
+            <td><h3><!--#pitch-->%</h3></td>
           </tr>
           <tr>
             <th><h3>Roll</h3></th>
-            <td><h3><!--Current Consumption-->%</h3></td>
+            <td><h3><!--#roll-->%</h3></td>
           </tr>
         </table>
 </body>
