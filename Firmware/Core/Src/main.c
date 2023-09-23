@@ -28,6 +28,7 @@
 #include "Test.h"
 #include "httpd.h"
 #include "tcp_server.h"
+#include "http_ssi.h"
 
 /* USER CODE END Includes */
 
@@ -138,7 +139,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  //MX_LWIP_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
@@ -181,7 +182,7 @@ int main(void)
 #endif
 
   tcp_server_init();
-  httpd_init();
+  http_server_init();
 
   /* USER CODE END 2 */
 
