@@ -12,7 +12,6 @@
 #include "main.h"
 #include <stdio.h>
 
-
 /* typedefs -----------------------------------------------------------*/
 
 typedef enum {
@@ -89,8 +88,7 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
  * @param hadc1:ptr to hadc1 instance
  * @retval none
  */
-void IO_init_distance_sensor(IO_analogSensor_t *distance_sensor,
-                             ADC_HandleTypeDef *hadc1);
+void IO_init_distance_sensor(ADC_HandleTypeDef *hadc1);
 
 /**
  * @brief initialize adc of current sensor
@@ -98,8 +96,7 @@ void IO_init_distance_sensor(IO_analogSensor_t *distance_sensor,
  * @param hadc3:ptr to hadc3 instance
  * @retval none
  */
-void IO_init_current_sensor(IO_analogSensor_t *current_sensor,
-                            ADC_HandleTypeDef *hadc3);
+void IO_init_current_sensor(ADC_HandleTypeDef *hadc3);
 
 /**
  * @brief initialize adcs of wind sensor
@@ -118,5 +115,9 @@ void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
  * @retval none
  */
 void IO_Get_Measured_Value(IO_analogSensor_t *Sensor);
+
+void IO_get_distance_sensor(IO_analogSensor_t *current_sensor_ptr);
+
+void IO_get_current_sensor(IO_analogSensor_t *current_sensor_ptr);
 
 #endif /* IO_IO_H_ */
