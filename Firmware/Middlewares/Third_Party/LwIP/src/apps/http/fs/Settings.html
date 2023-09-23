@@ -40,6 +40,11 @@
 		margin-left:auto;
 		margin-right:auto;
 	  }
+	  form {
+ 	 	width:5%;
+  		margin-left:auto;
+  		margin-right:auto;
+	  }	
 	</style>
 	<head>
         <title>Settings</title>
@@ -52,8 +57,23 @@
 			<li><a href="Current_pos.shtml">Current Sail Position</a></li>
 			<li><a href="Settings.html "class="active">Settings</a></li>
 		</ul>
-		<h1 style="color:#111;">
-			Sailwind Linearf&uuml;hrung
-		</h1>
-</body>
+		<form action="/Settings.cgi">
+			<h1 style="color:#111;">
+			  Settings
+			</h1>
+			<h3>Assign New IP:</h3>
+			<p>
+			  <input type="text" id="username" placeholder="192.168.000.123" style="height: 35px"/>
+			</p>
+			<p>
+				<input type="submit" value="submit" name="submit_button" style="width:60px;height:30px;">
+			</p>
+		</form>
+		<form id="form_restart">
+			<h3>Restart:</h3>
+			<p>
+				<input type="submit" value="restart" name="restart_button" style="width:60px;height:30px;">
+			</p>
+		</form>
+	</body>
 </html>
