@@ -1,15 +1,7 @@
 /*
- * http_ssi.c
- *
- *  Created on: Sep 23, 2023
- *      Author: nicof
- */
-
-/*
- * http_ssi.c
- *
- *  Created on: 11-Oct-2021
- *      Author: controllerstech
+ * \file http_ssi.c
+ * @date 18 Jun 2023
+ * @brief ssi related functions
  */
 
 #include "http_ssi.h"
