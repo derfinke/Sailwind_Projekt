@@ -96,8 +96,8 @@ void Error_Handler(void);
 #define RMII_RXD1_GPIO_Port GPIOC
 #define Kraftmessung_Pin GPIO_PIN_0
 #define Kraftmessung_GPIO_Port GPIOB
-#define Button_Zurueck_Pin GPIO_PIN_1
-#define Button_Zurueck_GPIO_Port GPIOB
+#define Button_Forward_Pin GPIO_PIN_1
+#define Button_Forward_GPIO_Port GPIOB
 #define LED_Automatik_Pin GPIO_PIN_2
 #define LED_Automatik_GPIO_Port GPIOB
 #define Betriebsmodus_2_Nur_Prototyp_Pin GPIO_PIN_12
@@ -147,8 +147,8 @@ void Error_Handler(void);
 #define RMII_TX_EN_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
-#define Button_Vorfahren_Pin GPIO_PIN_4
-#define Button_Vorfahren_GPIO_Port GPIOB
+#define Button_Backwards_Pin GPIO_PIN_4
+#define Button_Backwards_GPIO_Port GPIOB
 #define LED_PWR_Pin GPIO_PIN_6
 #define LED_PWR_GPIO_Port GPIOB
 #define Endschalter_Vorne_Pin GPIO_PIN_8

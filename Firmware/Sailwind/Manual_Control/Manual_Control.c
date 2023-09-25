@@ -42,8 +42,8 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 {
 	MC_buttons_t buttons = {
 			.switch_mode = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
-			.move_backwards = Button_init(Button_Zurueck_GPIO_Port, Button_Zurueck_Pin),
-			.move_forward = Button_init(Button_Vorfahren_GPIO_Port, Button_Vorfahren_Pin),
+			.move_backwards = Button_init(Button_Backwards_GPIO_Port, Button_Backwards_Pin),
+			.move_forward = Button_init(Button_Forward_GPIO_Port, Button_Forward_Pin),
 			.localize = Button_init(Kalibrierung_GPIO_Port, Kalibrierung_Pin),
 	};
 
