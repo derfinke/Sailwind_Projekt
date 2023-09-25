@@ -13,6 +13,7 @@
 #include "IO.h"
 #include "WSWD.h"
 #include "Linear_Guide.h"
+#include "FRAM.h"
 
 #define NUM_SSI_TAGS 9
 #define UINT_TAGS 4
@@ -180,12 +181,15 @@ const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
           error_flag = 0;
           return "/Settings.shtml";
         }
-        //call flash write
+        //Define FRAM segments first
+#if 0
+        FRAM_write(IP_address, 0x0100, sizeof(IP_address));
+#endif
         error_flag = 2;
       }
     }
   }
-  return "/index.html";
+  return "/Settings.shtml";
 }
 
 const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
@@ -197,7 +201,7 @@ const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
     printf("requesting restart\r\n");
   }
 
-  return "/Settings.shtml";
+  return "/index.html";
 }
 
 const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
@@ -207,9 +211,9 @@ const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "automatic") == 0) {
-        //set operating mode to manual
+        Linear_Guide_set_operating_mode(linear_guide, LG_operating_mode_automatic);
       } else if (strcmp(name, "manual") == 0) {
-        //set operating mode to automatic
+        Linear_Guide_set_operating_mode(linear_guide, LG_operating_mode_manual);
       }
     }
   }
@@ -224,11 +228,41 @@ const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "left") == 0) {
-        //move to the right
+        if(linear_guide->localization.movement == Loc_movement_forward)
+        {
+          Linear_Guide_move(linear_guide, Loc_movement_stop);
+        }
+        else if(linear_guide->localization.movement == Loc_movement_backwards)
+        {
+          Linear_Guide_move(linear_guide, Loc_movement_stop);
+          Linear_Guide_move(linear_guide, Loc_movement_backwards);
+        }
+        else{
+          Linear_Guide_move(linear_guide, Loc_movement_forward);
+        }
       } else if (strcmp(name, "right") == 0) {
-        //move to the left
+        if(linear_guide->localization.movement == Loc_movement_forward)
+        {
+          Linear_Guide_move(linear_guide, Loc_movement_stop);
+          Linear_Guide_move(linear_guide, Loc_movement_forward);
+        }
+        else if(linear_guide->localization.movement == Loc_movement_backwards)
+        {
+          Linear_Guide_move(linear_guide, Loc_movement_stop);
+        }
+        else{
+          Linear_Guide_move(linear_guide, Loc_movement_backwards);
+        }
       } else if (strcmp(name, "confirm") == 0) {
-        //save position
+        if((linear_guide->localization.movement != Loc_movement_backwards) || (linear_guide->localization.movement != Loc_movement_forward))
+        {
+          Linear_Guide_safe_Localization(linear_guide->localization);
+        }
+        else
+        {
+          /* should respond with error feedback*/
+          printf("linear guide is still moving\r\n");
+        }
       }
     }
   }
