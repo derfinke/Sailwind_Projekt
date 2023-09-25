@@ -40,8 +40,8 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 			.error = LED_init(LED_Stoerung_GPIO_Port, LED_Stoerung_Pin, LED_OFF),
 			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, op_mode == LG_operating_mode_manual),
 			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, op_mode == LG_operating_mode_automatic),
-			.roll = LED_init(LED_Rollen_GPIO_Port, LED_Rollen_Pin, LED_OFF),
-      .trim = LED_init(LED_Trimmen_GPIO_Port, LED_Trimmen_Pin, LED_OFF),
+			.roll = LED_init(LED_Roll_GPIO_Port, LED_Roll_Pin, LED_OFF),
+      .trim = LED_init(LED_Trim_GPIO_Port, LED_Trim_Pin, LED_OFF),
       .center_pos_set = LED_init(LED_Kalibrieren_Speichern_GPIO_Port, LED_Kalibrieren_Speichern_Pin, LED_OFF)
 	};
 	return lg_leds;

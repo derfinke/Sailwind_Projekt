@@ -108,8 +108,8 @@ void Error_Handler(void);
 #define Ext_Relais_1_GPIO_Port GPIOE
 #define Ext_Relais_2_Pin GPIO_PIN_10
 #define Ext_Relais_2_GPIO_Port GPIOB
-#define LED_Trimmen_Pin GPIO_PIN_11
-#define LED_Trimmen_GPIO_Port GPIOB
+#define LED_Roll_Pin GPIO_PIN_11
+#define LED_Roll_GPIO_Port GPIOB
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
 #define Endschalter_Hinten_Pin GPIO_PIN_15
@@ -155,8 +155,8 @@ void Error_Handler(void);
 #define Endschalter_Vorne_GPIO_Port GPIOB
 #define IN_0_Pin GPIO_PIN_9
 #define IN_0_GPIO_Port GPIOB
-#define LED_Rollen_Pin GPIO_PIN_0
-#define LED_Rollen_GPIO_Port GPIOE
+#define LED_Trim_Pin GPIO_PIN_0
+#define LED_Trim_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 
