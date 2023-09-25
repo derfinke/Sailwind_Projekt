@@ -131,6 +131,7 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 				printf("new state approach back\r\n");
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
 				*state = Loc_state_2_approach_back;
+				lg_ptr->localization.pulse_count = 0;
 				HAL_Delay(1000);
 				Linear_Guide_move(lg_ptr, Loc_movement_backwards);
 			}

@@ -138,7 +138,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  //MX_LWIP_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
