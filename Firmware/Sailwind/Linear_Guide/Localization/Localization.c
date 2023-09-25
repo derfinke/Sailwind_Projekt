@@ -9,9 +9,11 @@
 
 /* defines ------------------------------------------------------------*/
 #define LOC_SERIAL_FORMAT_SPEC "%d,%d,%d,%d" //SPEC = "State, Pulse_count, End_pos, Center_pos"
+#define LOC_DESERIALIZATION_FAILED -1
+#define LOC_DESERIALIZATION_OK 0
 
 /* private function prototypes -----------------------------------------------*/
-static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
+static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
 static int32_t Localization_pulse_count_to_distance(Localization_t loc);
 
 /* API function definitions -----------------------------------------------*/
@@ -26,7 +28,7 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 			.pulse_count = 0,
 			.distance_per_pulse = distance_per_pulse
 	};
-	if (Localization_deserialize(&localization, serial_buffer))
+	if (Localization_deserialize(&localization, serial_buffer) == LOC_DESERIALIZATION_OK)
 	{
 		Localization_update_position(&localization);
 	}
@@ -72,20 +74,20 @@ void Localization_callback_pulse_count(Localization_t *loc_ptr)
  *   - convert the pulse count of the motor to a distance and center it
  *   - save the result to the localization reference
  */
-boolean_t Localization_update_position(Localization_t *loc_ptr)
+int8_t Localization_update_position(Localization_t *loc_ptr)
 {
 	if (loc_ptr->state < Loc_state_3_approach_center)
 	{
-		return False;
+		return LOC_NOT_LOCALIZED;
 	}
 	int32_t absolute_distance = Localization_pulse_count_to_distance(*loc_ptr);
 	int32_t new_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
-	if (new_pos_mm != loc_ptr->current_pos_mm)
+	if (new_pos_mm == loc_ptr->current_pos_mm)
 	{
-		return False;
+		return LOC_POSITION_RETAINED;
 	}
 	loc_ptr->current_pos_mm = new_pos_mm;
-	return True;
+	return LOC_POSITION_UPDATED;
 }
 
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
@@ -104,15 +106,15 @@ static int32_t Localization_pulse_count_to_distance(Localization_t loc)
 	return (int32_t) (loc.pulse_count * loc.distance_per_pulse);
 }
 
-static boolean_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
+static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
 {
 	if (!sscanf(serial_buffer, LOC_SERIAL_FORMAT_SPEC, (int *)&loc_ptr->state, (int *)&loc_ptr->pulse_count, (int *)&loc_ptr->end_pos_mm, (int *)&loc_ptr->center_pos_mm))
 	{
-		return False;
+		return LOC_DESERIALIZATION_FAILED;
 	}
 	if (loc_ptr->state == Loc_state_5_center_pos_set)
 	{
 		loc_ptr->is_localized = True;
 	}
-	return True;
+	return LOC_DESERIALIZATION_OK;
 }

@@ -32,7 +32,6 @@ typedef struct {
 /* API function prototypes ---------------------------------------------------*/
 Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr);
 void Manual_Control_poll(Manual_Control_t *mc_ptr);
-void Manual_Control_Localization(Manual_Control_t *mc_ptr);
-void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr);
+int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr);
 
 #endif /* MANUAL_CONTROL_MANUAL_CONTROL_H_ */

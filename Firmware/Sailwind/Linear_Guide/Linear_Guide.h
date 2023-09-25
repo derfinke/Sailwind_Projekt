@@ -13,6 +13,12 @@
 #include "Endswitch.h"
 #include "Localization.h"
 
+#define LG_MOVEMENT_CHANGED 0
+#define LG_MOVEMENT_RETAINED 1
+#define LG_LOCALIZATION_SAFED 0
+#define LG_NOT_LOCALIZED 1
+#define LG_ADJUSTMENT_MODE_UPDATED 0
+
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -55,13 +61,13 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
 void Linear_Guide_update(Linear_Guide_t *lg_ptr);
 void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr);
-void Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
-void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, int8_t percentage, LG_sail_adjustment_mode_t adjustment_mode);
-int8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg);
+int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
+void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode);
+uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg);
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
 uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
-void Linear_Guide_safe_Localization(Localization_t loc);
+int8_t Linear_Guide_safe_Localization(Localization_t loc);
 Localization_t Linear_Guide_read_Localization();
 
 

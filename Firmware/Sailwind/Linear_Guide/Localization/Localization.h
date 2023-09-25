@@ -13,6 +13,9 @@
 
 /* defines ------------------------------------------------------------*/
 #define LOC_SERIAL_SIZE 19 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC) = 1+1+5+1+5+1+5 = 19
+#define LOC_NOT_LOCALIZED 1
+#define LOC_POSITION_RETAINED 2
+#define LOC_POSITION_UPDATED 0
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -48,7 +51,7 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
 void Localization_callback_pulse_count(Localization_t *loc_ptr);
-boolean_t Localization_update_position(Localization_t *loc_ptr);
+int8_t Localization_update_position(Localization_t *loc_ptr);
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);
 
 #endif /* LOCALIZATION_LOCALIZATION_H_ */

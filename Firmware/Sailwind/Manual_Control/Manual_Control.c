@@ -9,21 +9,30 @@
 
 
 /* defines -------------------------------------------------------------------*/
-#define MANUAL_CONTROL_COUNT 4
-#define MANUAL_CONTROL_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
-#define MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
-#define MANUAL_CONTROL_LOCALIZE_RESET_MS 3000
+#define MC_COUNT 4
+#define MC_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
+#define MC_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
+#define MC_LOCALIZE_RESET_MS 3000
+#define MC_OPERATING_MODE_SWITCH_DENIED 1
+#define MC_OPERATING_MODE_SWITCH_OK 0
+#define MC_LOCALIZATION_DENIED 1
+#define MC_LOCALIZATION_OK 0
+#define MC_MOVE_DENIED 1
+#define MC_MOVE_OK 0
+#define MC_SET_CENTER_OK 0
+#define MC_SET_CENTER_NOT_TRIGGERED 1
 
 /* private function prototypes -----------------------------------------------*/
-static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement);
+static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement);
 
-static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr);
-static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr);
-static void Manual_Control_function_localization(Manual_Control_t *mc_ptr);
+static int8_t Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr);
+static int8_t Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr);
+static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr);
+static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr);
 
 static void Manual_Control_reset_localization(Manual_Control_t *mc_ptr);
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
-static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
+static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
 
 
@@ -97,12 +106,12 @@ void Manual_Control_poll(Manual_Control_t *mc_ptr)
  *   - state 4 waits for second button press to confirm or update the center pos
  *   		-> Localization process finished: ready for automatic mode
  */
-void Manual_Control_Localization(Manual_Control_t *mc_ptr)
+int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	if(lg_ptr->operating_mode == LG_operating_mode_automatic)
 	{
-		return;
+		return MC_LOCALIZATION_DENIED;
 	}
 	Loc_state_t *state = &lg_ptr->localization.state;
 	switch(*state)
@@ -148,7 +157,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			}
 			break;
 		case Loc_state_4_set_center_pos:
-			if (Manual_Control_set_center(mc_ptr))
+			if (Manual_Control_set_center(mc_ptr) == MC_SET_CENTER_OK)
 			{
 				*state = Loc_state_5_center_pos_set;
 			}
@@ -159,6 +168,7 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
 		default:
 			break;
 	}
+	return MC_LOCALIZATION_OK;
 }
 
 /* private function definitions -----------------------------------------------*/
@@ -170,12 +180,12 @@ void Manual_Control_Localization(Manual_Control_t *mc_ptr)
  *   - if the button is pressed, a function is called to start the motor in the given direction
  *   - if it is released, the motor is commanded to stop
  */
-static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
+static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
 {
 	if (!Manual_Control_get_moving_permission(*mc_ptr))
 	{
 		printf("no moving permission\r\n");
-		return;
+		return MC_MOVE_DENIED;
 	}
 	switch (btn.state)
 	{
@@ -186,16 +196,17 @@ static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, L
 			Linear_Guide_move(mc_ptr->lg_ptr, Loc_movement_stop);
 			break;
 	}
+	return MC_MOVE_OK;
 }
 
-static void Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr)
+static int8_t Manual_Control_function_move_backwards_toggle(Manual_Control_t *mc_ptr)
 {
-	Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_backwards, Loc_movement_backwards);
+	return Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_backwards, Loc_movement_backwards);
 }
 
-static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr)
+static int8_t Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr)
 {
-	Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_forward, Loc_movement_forward);
+	return Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_forward, Loc_movement_forward);
 }
 
 /* static void MC_event_switch_operating_mode(Manual_Control_t *mc_ptr)
@@ -205,23 +216,23 @@ static void Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_ptr
  *   - on the other hand, in automatic mode the operating mode can always be switched to manual
  *   - if the operating mode could be changed, the corresponding LEDs are set and reset
  */
-void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
+static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	LG_operating_mode_t new_operating_mode = lg_ptr->operating_mode;
 	switch (mc_ptr->buttons.switch_mode.state)
 	{
-		case MANUAL_CONTROL_BUTTON_SWITCH_AUTOMATIC:
+		case MC_BUTTON_SWITCH_AUTOMATIC:
 			if (!lg_ptr->localization.is_localized)
 			{
 				printf("not calibrated yet\r\n");
-				return;
+				return MC_OPERATING_MODE_SWITCH_DENIED;
 			}
 			printf("set to automatic\r\n");
 			new_operating_mode = LG_operating_mode_automatic;
 			Linear_Guide_safe_Localization(lg_ptr->localization);
 			break;
-		case MANUAL_CONTROL_BUTTON_SWITCH_MANUAL:
+		case MC_BUTTON_SWITCH_MANUAL:
 			printf("set to manual\r\n");
 			new_operating_mode = LG_operating_mode_manual;
 			break;
@@ -231,7 +242,7 @@ void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 		printf("operating mode changed\r\n");
 		Linear_Guide_set_operating_mode(lg_ptr, new_operating_mode);
 	}
-
+	return MC_OPERATING_MODE_SWITCH_OK;
 }
 
 /* static void MC_event_localization(Manual_Control_t *mc_ptr)
@@ -244,12 +255,12 @@ void Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
  *   - if necessary, the position can be adjusted manually with the moving buttons before pressing the button
  *   - further presses can be made afterwards to adjust the center position again
  */
-static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
+static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
 	if (lg_ptr->operating_mode != LG_operating_mode_manual)
 	{
-		return;
+		return MC_LOCALIZATION_DENIED;
 	}
 	switch (mc_ptr->buttons.localize.state)
 	{
@@ -258,12 +269,13 @@ static void Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 			break;
 		case BUTTON_RELEASED:
 			lg_ptr->localization.is_triggered = True;
-			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MANUAL_CONTROL_LOCALIZE_RESET_MS)
+			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MC_LOCALIZE_RESET_MS)
 			{
 				Manual_Control_reset_localization(mc_ptr);
 			}
 			break;
 	}
+	return MC_LOCALIZATION_OK;
 }
 
 static void Manual_Control_reset_localization(Manual_Control_t *mc_ptr)
@@ -291,25 +303,25 @@ static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
 			);
 }
 
-static boolean_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
+static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
-	boolean_t set_center_triggered = lg_ptr->localization.is_triggered;
-	if (set_center_triggered)
+	if (!lg_ptr->localization.is_triggered)
 	{
-		printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
-		printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
-		Localization_set_center(&mc_ptr->lg_ptr->localization);
-		for(uint8_t i = 0; i < 5; i++)
-		{
-			LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
-			HAL_Delay(200);
-			LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_OFF);
-			HAL_Delay(200);
-		}
-		lg_ptr->localization.is_triggered = False;
+		return MC_SET_CENTER_NOT_TRIGGERED;
 	}
-	return set_center_triggered;
+	printf("pulses:%ld\r\n", lg_ptr->localization.pulse_count);
+	printf("center set at: %ld mm!\r\n", lg_ptr->localization.current_pos_mm);
+	Localization_set_center(&mc_ptr->lg_ptr->localization);
+	for(uint8_t i = 0; i < 5; i++)
+	{
+		LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);
+		HAL_Delay(200);
+		LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_OFF);
+		HAL_Delay(200);
+	}
+	lg_ptr->localization.is_triggered = False;
+	return MC_SET_CENTER_OK;
 }
 
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)
