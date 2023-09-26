@@ -138,7 +138,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  //MX_LWIP_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&Abstandssensor, &hadc1);
   IO_init_current_sensor(&Stromsensor, &hadc3);
@@ -193,7 +193,7 @@ int main(void)
       //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
       Manual_Control_Localization(&manual_control);
-      Linear_Guide_speed_ramp(&linear_guide);
+      Linear_Guide_update(&linear_guide);
       /*
        * add tcp handling
        */
@@ -262,6 +262,8 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
+  ADC_ChannelConfTypeDef sConfig = {0};
+
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -284,7 +286,6 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
-
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -302,6 +303,8 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 0 */
 
   /* USER CODE END ADC2_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC2_Init 1 */
 
@@ -343,6 +346,8 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 0 */
 
   /* USER CODE END ADC3_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -394,15 +399,6 @@ static void MX_DAC_Init(void)
   */
   hdac.Instance = DAC;
   if (HAL_DAC_Init(&hdac) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** DAC channel OUT1 config
-  */
-  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
-  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
-  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -619,10 +615,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Trimmen_Pin|IN_0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|IN_0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Rollen_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Trim_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOD, LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
@@ -656,21 +652,21 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Button_Zurueck_Pin Button_Vorfahren_Pin */
-  GPIO_InitStruct.Pin = Button_Zurueck_Pin|Button_Vorfahren_Pin;
+  /*Configure GPIO pins : Button_Forward_Pin Button_Backwards_Pin */
+  GPIO_InitStruct.Pin = Button_Forward_Pin|Button_Backwards_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Trimmen_Pin LED_PWR_Pin */
-  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Trimmen_Pin|LED_PWR_Pin;
+  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Roll_Pin LED_PWR_Pin */
+  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|LED_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Rollen_Pin */
-  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Rollen_Pin;
+  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Trim_Pin */
+  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Trim_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
