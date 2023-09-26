@@ -1,8 +1,7 @@
-/*
- * Linear_Guide.c
- *
- *  Created on: 18.06.2023
- *      Author: Bene
+/**
+ * \file Linear_Guide.c
+ * @date 18 Jun 2023
+ * @brief Interaction of all physical components of the linear guide system controlled both in manual and automatic mode
  */
 
 #include "Linear_Guide.h"
@@ -14,13 +13,48 @@
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
 
 /* private function prototypes -----------------------------------------------*/
-LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
+
+/**
+ * @brief initialise the two endswitches of the linear guide
+ * @param none
+ * @retval lg_endswitches: struct object with the endswitches as members
+ */
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
+/**
+ * @brief update the operating mode LEDs when mode has changed
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
 static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr);
+/**
+ * @brief update the sailadjustment mode LEDs, when mode has changed
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
+/**
+ * @brief update sailadjustment mode, if current position crossed the center position
+ * @param lg_ptr: linear_guide reference
+ * @retval update_status
+ */
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
+/**
+ * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
 static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr);
+/**
+ * @brief convert given rpm value of the motor to movement speed of the linear guide in mm/s
+ * @param rpm_value
+ * @retval speed_mms
+ */
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
+/**
+ * @brief convert given movement speed of the linear guide in mm/s to rpm value of the motor
+ * @param speed_mms
+ * @retval rpm_value
+ */
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
 /* API function definitions --------------------------------------------------*/
