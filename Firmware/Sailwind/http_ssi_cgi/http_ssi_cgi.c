@@ -15,12 +15,12 @@
 #include "Linear_Guide.h"
 #include "FRAM.h"
 
-#define NUM_SSI_TAGS 9
+#define NUM_SSI_TAGS 10
 #define UINT_TAGS 4
 
-static IO_analogSensor_t *current_sensor;
-static IO_analogSensor_t *distance_sensor;
-static Linear_Guide_t *linear_guide;
+static IO_analogSensor_t *ssi_current_sensor = {0};
+static IO_analogSensor_t *ssi_distance_sensor = {0};
+static Linear_Guide_t *ssi_linear_guide = {0};
 static uint8_t error_flag = 0;
 
 char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
@@ -53,18 +53,18 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 
   switch (iIndex) {
     case 0:
-      IO_Get_Measured_Value(current_sensor);
-      uint16_t current = current_sensor->measured_value;
+      IO_Get_Measured_Value(ssi_current_sensor);
+      uint16_t current = ssi_current_sensor->measured_value;
 
       (void) snprintf(pcInsert, iInsertLen, "%u", current);
       break;
     case 1:
-      motor_pos = linear_guide->localization.current_pos_mm;
+      motor_pos = ssi_linear_guide->localization.current_pos_mm;
       (void) snprintf(pcInsert, iInsertLen, "%ld", motor_pos);
       break;
     case 2:
-      IO_Get_Measured_Value(distance_sensor);
-      uint16_t distance = distance_sensor->measured_value;
+      IO_Get_Measured_Value(ssi_distance_sensor);
+      uint16_t distance = ssi_distance_sensor->measured_value;
 
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
@@ -85,7 +85,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       (void) snprintf(pcInsert, iInsertLen, "%.1f", Wind_dir);
       break;
     case (UINT_TAGS + 3):
-      sail_pos = linear_guide->operating_mode;
+      sail_pos = ssi_linear_guide->operating_mode;
       switch (sail_pos) {
         case 0:
           (void) snprintf(pcInsert, iInsertLen, "%s", "roll");
@@ -99,7 +99,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       }
       break;
     case (UINT_TAGS + 4):
-      op_mode = linear_guide->operating_mode;
+      op_mode = ssi_linear_guide->operating_mode;
       switch (op_mode) {
         case 0:
           (void) snprintf(pcInsert, iInsertLen, "%s", "manual");
@@ -211,9 +211,9 @@ const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "automatic") == 0) {
-        Linear_Guide_set_operating_mode(linear_guide, LG_operating_mode_automatic);
+        Linear_Guide_set_operating_mode(ssi_linear_guide, LG_operating_mode_automatic);
       } else if (strcmp(name, "manual") == 0) {
-        Linear_Guide_set_operating_mode(linear_guide, LG_operating_mode_manual);
+        Linear_Guide_set_operating_mode(ssi_linear_guide, LG_operating_mode_manual);
       }
     }
   }
@@ -228,35 +228,35 @@ const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "left") == 0) {
-        if(linear_guide->localization.movement == Loc_movement_forward)
+        if(ssi_linear_guide->localization.movement == Loc_movement_forward)
         {
-          Linear_Guide_move(linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
         }
-        else if(linear_guide->localization.movement == Loc_movement_backwards)
+        else if(ssi_linear_guide->localization.movement == Loc_movement_backwards)
         {
-          Linear_Guide_move(linear_guide, Loc_movement_stop);
-          Linear_Guide_move(linear_guide, Loc_movement_backwards);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
         }
         else{
-          Linear_Guide_move(linear_guide, Loc_movement_forward);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
         }
       } else if (strcmp(name, "right") == 0) {
-        if(linear_guide->localization.movement == Loc_movement_forward)
+        if(ssi_linear_guide->localization.movement == Loc_movement_forward)
         {
-          Linear_Guide_move(linear_guide, Loc_movement_stop);
-          Linear_Guide_move(linear_guide, Loc_movement_forward);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
         }
-        else if(linear_guide->localization.movement == Loc_movement_backwards)
+        else if(ssi_linear_guide->localization.movement == Loc_movement_backwards)
         {
-          Linear_Guide_move(linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
         }
         else{
-          Linear_Guide_move(linear_guide, Loc_movement_backwards);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
         }
       } else if (strcmp(name, "confirm") == 0) {
-        if((linear_guide->localization.movement != Loc_movement_backwards) || (linear_guide->localization.movement != Loc_movement_forward))
+        if((ssi_linear_guide->localization.movement != Loc_movement_backwards) || (ssi_linear_guide->localization.movement != Loc_movement_forward))
         {
-          Linear_Guide_safe_Localization(linear_guide->localization);
+          Linear_Guide_safe_Localization(ssi_linear_guide->localization);
         }
         else
         {
@@ -278,8 +278,8 @@ void http_server_init(void) {
   CGI_FORMS[2] = MODE_CGI;
   CGI_FORMS[3] = CONTROL_CGI;
   http_set_cgi_handlers(CGI_FORMS, 4);
-  IO_get_distance_sensor(distance_sensor);
-  IO_get_current_sensor(current_sensor);
-  LG_get_Linear_Guide(linear_guide);
+  ssi_current_sensor = IO_get_current_sensor();
+  ssi_distance_sensor = IO_get_distance_sensor();
+  ssi_linear_guide = LG_get_Linear_Guide();
 }
 

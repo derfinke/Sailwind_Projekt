@@ -19,8 +19,8 @@
 #define NUM_OF_ADC_SAMPLES_DISTANCE_SENSOR            48
 #define NUM_OF_DISPERESED_SAMPLES_DISTANCE_SENSOR     44
 
-static IO_analogSensor_t distance_sensor = { 0 };
-static IO_analogSensor_t current_sensor = { 0 };
+static IO_analogSensor_t IO_distance_sensor = { 0 };
+static IO_analogSensor_t IO_current_sensor = { 0 };
 /* private function prototypes -----------------------------------------------*/
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
@@ -232,27 +232,27 @@ static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples)
 }
 
 void IO_init_distance_sensor(ADC_HandleTypeDef *hadc1) {
-  distance_sensor.Sensor_type = Distance_Sensor;
-  distance_sensor.ADC_Channel = ADC_CHANNEL_0;
-  distance_sensor.hadc_ptr = hadc1;
-  distance_sensor.ADC_Rank = 1;
-  distance_sensor.max_possible_value = 730;
-  distance_sensor.min_possible_value = 30;
-  IO_Get_Measured_Value(&distance_sensor);
+  IO_distance_sensor.Sensor_type = Distance_Sensor;
+  IO_distance_sensor.ADC_Channel = ADC_CHANNEL_0;
+  IO_distance_sensor.hadc_ptr = hadc1;
+  IO_distance_sensor.ADC_Rank = 1;
+  IO_distance_sensor.max_possible_value = 730;
+  IO_distance_sensor.min_possible_value = 30;
+  IO_Get_Measured_Value(&IO_distance_sensor);
   printf("distance sensor init done\r\n");
-  printf("init distance: %umm\r\n", distance_sensor.measured_value);
+  printf("init distance: %umm\r\n", IO_distance_sensor.measured_value);
 }
 
 void IO_init_current_sensor(ADC_HandleTypeDef *hadc3) {
-  current_sensor.Sensor_type = Current_Sensor;
-  current_sensor.ADC_Channel = ADC_CHANNEL_8;
-  current_sensor.hadc_ptr = hadc3;
-  current_sensor.ADC_Rank = 1;
-  current_sensor.max_possible_value = 7250;
-  current_sensor.min_possible_value = 0;
-  IO_Get_Measured_Value(&current_sensor);
+  IO_current_sensor.Sensor_type = Current_Sensor;
+  IO_current_sensor.ADC_Channel = ADC_CHANNEL_8;
+  IO_current_sensor.hadc_ptr = hadc3;
+  IO_current_sensor.ADC_Rank = 1;
+  IO_current_sensor.max_possible_value = 7250;
+  IO_current_sensor.min_possible_value = 0;
+  IO_Get_Measured_Value(&IO_current_sensor);
   printf("current sensor init done\r\n");
-  printf("init current: %umA\r\n", current_sensor.measured_value);
+  printf("init current: %umA\r\n", IO_current_sensor.measured_value);
 }
 
 void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
@@ -278,12 +278,12 @@ void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
          wind_sensor_direction->measured_value);
 }
 
-void IO_get_distance_sensor(IO_analogSensor_t *distance_sensor_ptr)
+IO_analogSensor_t *IO_get_distance_sensor(void)
 {
-  distance_sensor_ptr = &distance_sensor;
+  return &IO_distance_sensor;
 }
 
-void IO_get_current_sensor(IO_analogSensor_t *current_sensor_ptr)
+IO_analogSensor_t *IO_get_current_sensor(void)
 {
-  current_sensor_ptr = &current_sensor;
+  return &IO_current_sensor;
 }

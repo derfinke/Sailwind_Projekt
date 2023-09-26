@@ -66,8 +66,8 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-Linear_Guide_t linear_guide;
-Manual_Control_t manual_control;
+static Linear_Guide_t *linear_guide = {0};
+static Manual_Control_t manual_control;
 
 
 char Rx_buffer[20];
@@ -145,9 +145,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
   IO_init_current_sensor(&hadc3);
-  Linear_Guide_t *linear_guide = {0};
-  Linear_Guide_init(&hdac, &htim3, TIM_CHANNEL_4, HAL_TIM_ACTIVE_CHANNEL_4);
-  LG_get_Linear_Guide(linear_guide);
+  Linear_Guide_init(&hdac);
+  linear_guide = LG_get_Linear_Guide();
   manual_control = Manual_Control_init(linear_guide);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
@@ -197,7 +196,7 @@ int main(void)
       //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
       Manual_Control_poll(&manual_control);
       Manual_Control_Localization(&manual_control);
-      Linear_Guide_update(&linear_guide);
+      Linear_Guide_update(linear_guide);
       /*
        * add tcp handling
        */
@@ -395,8 +394,19 @@ static void MX_DAC_Init(void)
 
   /** DAC Initialization
   */
+
+
   hdac.Instance = DAC;
   if (HAL_DAC_Init(&hdac) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** DAC channel OUT1 config
+  */
+  sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
+  sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
+  if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
     Error_Handler();
   }
@@ -772,7 +782,7 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  Linear_Guide_callback_motor_pulse_capture(&linear_guide);
+  Linear_Guide_callback_motor_pulse_capture(linear_guide);
 }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)

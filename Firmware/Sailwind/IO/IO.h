@@ -116,8 +116,8 @@ void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
  */
 void IO_Get_Measured_Value(IO_analogSensor_t *Sensor);
 
-void IO_get_distance_sensor(IO_analogSensor_t *current_sensor_ptr);
+IO_analogSensor_t *IO_get_distance_sensor(void);
 
-void IO_get_current_sensor(IO_analogSensor_t *current_sensor_ptr);
+IO_analogSensor_t *IO_get_current_sensor(void);
 
 #endif /* IO_IO_H_ */
