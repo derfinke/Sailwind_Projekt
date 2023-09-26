@@ -108,7 +108,7 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float
 {
   char Windspeed_buffer[6];
   char Winddirection_buffer[5];
-  if(received_NMEA_telegramm[24] == 'A')
+  if(received_NMEA_telegramm[25] == 'A')
   {
     memcpy(Winddirection_buffer, &received_NMEA_telegramm[7], 5);
     memcpy(Windspeed_buffer, &received_NMEA_telegramm[15], 6);
@@ -123,15 +123,15 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float
 
 void WSWD_get_windspeed_unit(char* received_NMEA_telegramm, char unit)
 {
-  unit = received_NMEA_telegramm[22];
+  unit = received_NMEA_telegramm[23];
 }
 
 void WSWD_get_wind_speed(char* received_NMEA_telegramm, float *Windspeed)
 {
   char Windspeed_buffer[6];
-  if(received_NMEA_telegramm[24] == 'A')
+  if(received_NMEA_telegramm[25] == 'A')
   {
-    memcpy(Windspeed_buffer, &received_NMEA_telegramm[15], 6);
+    memcpy(Windspeed_buffer, &received_NMEA_telegramm[16], 6);
     *Windspeed = (float)atof(Windspeed_buffer);
   }
   else
@@ -145,7 +145,7 @@ void WSWD_get_wind_dir(char* received_NMEA_telegramm, float *Winddirection)
   char Winddirection_buffer[5];
   if(received_NMEA_telegramm[24] == 'A')
   {
-    memcpy(Winddirection_buffer, &received_NMEA_telegramm[7], 5);
+    memcpy(Winddirection_buffer, &received_NMEA_telegramm[8], 5);
     *Winddirection = (float)atof(Winddirection_buffer);
   }
   else

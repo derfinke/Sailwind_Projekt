@@ -93,7 +93,6 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       (void) snprintf(pcInsert, iInsertLen, "%.2f", Wind_speed);
       break;
     case (UINT_TAGS + 2):
-      WSWD_receive_NMEA(NMEA_telegram);
       WSWD_get_wind_dir(NMEA_telegram, &Wind_dir);
       (void) snprintf(pcInsert, iInsertLen, "%.1f", Wind_dir);
       break;
