@@ -21,7 +21,7 @@
 static IO_analogSensor_t *ssi_current_sensor = {0};
 static IO_analogSensor_t *ssi_distance_sensor = {0};
 static Linear_Guide_t *ssi_linear_guide = {0};
-static uint8_t error_flag = 0;
+static uint8_t error_flag = 1;
 
 char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
     "winddir", "mode", "opmod", "error" };
@@ -65,14 +65,27 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
     case 2:
       IO_Get_Measured_Value(ssi_distance_sensor);
       uint16_t distance = ssi_distance_sensor->measured_value;
-
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
     case 3:
-      (void) snprintf(pcInsert, iInsertLen, "currently unavailable");
+      if(ssi_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_trim)
+      {
+        uint8_t roll_percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide);
+        (void) snprintf(pcInsert, iInsertLen, "%u", roll_percentage);
+      }
+      else{
+        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
+      }
       break;
     case 4:
-      (void) snprintf(pcInsert, iInsertLen, "currently unavailable");
+      if(ssi_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
+      {
+        uint8_t pitch_percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide);
+        (void) snprintf(pcInsert, iInsertLen, "%u", pitch_percentage);
+      }
+      else{
+        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
+      }
       break;
     case (UINT_TAGS + 1):
       WSWD_receive_NMEA(NMEA_telegram);
@@ -228,30 +241,20 @@ const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "left") == 0) {
-        if(ssi_linear_guide->localization.movement == Loc_movement_forward)
+        if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
           Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
-        }
-        else if(ssi_linear_guide->localization.movement == Loc_movement_backwards)
-        {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
         }
       } else if (strcmp(name, "right") == 0) {
-        if(ssi_linear_guide->localization.movement == Loc_movement_forward)
-        {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
-        }
-        else if(ssi_linear_guide->localization.movement == Loc_movement_backwards)
+        if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
           Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
         }
       } else if (strcmp(name, "confirm") == 0) {
         if((ssi_linear_guide->localization.movement != Loc_movement_backwards) || (ssi_linear_guide->localization.movement != Loc_movement_forward))
