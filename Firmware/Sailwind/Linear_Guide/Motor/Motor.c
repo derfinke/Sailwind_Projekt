@@ -62,24 +62,25 @@ void Motor_stop_moving(Motor_t *motor_ptr) {
 	Motor_set_rpm(motor_ptr, 0);
 }
 
-void Motor_speed_ramp(Motor_t *motor_ptr)
+int8_t Motor_speed_ramp(Motor_t *motor_ptr)
 {
 	if (!motor_ptr->ramp_activated)
 	{
-		return;
+		return MOTOR_RAMP_INACTIVE;
 	}
 	if (motor_ptr->rpm_set_point >= motor_ptr->ramp_final_rpm)
 	{
 		Motor_set_rpm(motor_ptr, motor_ptr->ramp_final_rpm);
 		motor_ptr->ramp_activated = False;
-		return;
+		return MOTOR_RAMP_DONE;
 	}
 	if ((HAL_GetTick()-motor_ptr->ramp_last_step_ms) < MOTOR_RAMP_STEP_MS)
 	{
-		return;
+		return MOTOR_RAMP_WAIT;
 	}
 	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + MOTOR_RAMP_STEP_RPM);
 	motor_ptr->ramp_last_step_ms = HAL_GetTick();
+	return MOTOR_RAMP_NEXT_STEP;
 }
 
 /* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)

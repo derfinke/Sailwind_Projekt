@@ -97,8 +97,8 @@ void Error_Handler(void);
 #define RMII_RXD1_GPIO_Port GPIOC
 #define Kraftmessung_Pin GPIO_PIN_0
 #define Kraftmessung_GPIO_Port GPIOB
-#define Button_Zurueck_Pin GPIO_PIN_1
-#define Button_Zurueck_GPIO_Port GPIOB
+#define Button_Forward_Pin GPIO_PIN_1
+#define Button_Forward_GPIO_Port GPIOB
 #define LED_Automatik_Pin GPIO_PIN_2
 #define LED_Automatik_GPIO_Port GPIOB
 #define Betriebsmodus_2_Nur_Prototyp_Pin GPIO_PIN_12
@@ -109,8 +109,8 @@ void Error_Handler(void);
 #define Ext_Relais_1_GPIO_Port GPIOE
 #define Ext_Relais_2_Pin GPIO_PIN_10
 #define Ext_Relais_2_GPIO_Port GPIOB
-#define LED_Trimmen_Pin GPIO_PIN_11
-#define LED_Trimmen_GPIO_Port GPIOB
+#define LED_Roll_Pin GPIO_PIN_11
+#define LED_Roll_GPIO_Port GPIOB
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
 #define Endschalter_Hinten_Pin GPIO_PIN_15
@@ -148,16 +148,16 @@ void Error_Handler(void);
 #define RMII_TX_EN_GPIO_Port GPIOG
 #define RMII_TXD0_Pin GPIO_PIN_13
 #define RMII_TXD0_GPIO_Port GPIOG
-#define Button_Vorfahren_Pin GPIO_PIN_4
-#define Button_Vorfahren_GPIO_Port GPIOB
+#define Button_Backwards_Pin GPIO_PIN_4
+#define Button_Backwards_GPIO_Port GPIOB
 #define LED_PWR_Pin GPIO_PIN_6
 #define LED_PWR_GPIO_Port GPIOB
 #define Endschalter_Vorne_Pin GPIO_PIN_8
 #define Endschalter_Vorne_GPIO_Port GPIOB
 #define IN_0_Pin GPIO_PIN_9
 #define IN_0_GPIO_Port GPIOB
-#define LED_Rollen_Pin GPIO_PIN_0
-#define LED_Rollen_GPIO_Port GPIOE
+#define LED_Trim_Pin GPIO_PIN_0
+#define LED_Trim_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 

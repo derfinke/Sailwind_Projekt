@@ -49,8 +49,7 @@ uint8_t FRAM_write(uint8_t *pStructToSave, const uint16_t startAddress,
 
   if (FRAM_read_status_register() != WEL_SET) {
     printf("WEL not set!\r\n");
-    HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
-    return FRAM_ERROR;
+    FRAM_write_enable();
   }
   HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_RESET);
   spiStatus = HAL_SPI_Transmit(&hspi4, &command, 1U, SPI_HAL_TIMEOUT);
