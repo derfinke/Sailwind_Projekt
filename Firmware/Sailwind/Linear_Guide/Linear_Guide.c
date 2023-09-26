@@ -123,13 +123,13 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	{
 		case Loc_movement_stop:
 			Motor_stop_moving(&lg_ptr->motor); break;
-			Linear_Guide_safe_Localization(lg_ptr->localization);
 		case Loc_movement_backwards:
 			Motor_start_moving(&lg_ptr->motor, Motor_function_cw_rotation); break;
 		case Loc_movement_forward:
 			Motor_start_moving(&lg_ptr->motor, Motor_function_ccw_rotation); break;
 	}
 	lg_ptr->localization.movement = movement;
+	Linear_Guide_safe_Localization(lg_ptr->localization);
 	return LG_MOVEMENT_CHANGED;
 }
 
