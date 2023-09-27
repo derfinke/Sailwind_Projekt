@@ -12,7 +12,6 @@
 
 /* private function prototypes -----------------------------------------------*/
 static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
-static void Localization_recover(Localization_t *loc_ptr);
 static int32_t Localization_pulse_count_to_distance(Localization_t loc);
 
 /* API function definitions -----------------------------------------------*/
@@ -27,16 +26,17 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 			.pulse_count = 0,
 			.distance_per_pulse = distance_per_pulse
 	};
-	localization.recovery_state = Localization_deserialize(&localization, serial_buffer);
-	Localization_recover(&localization);
+	int8_t recovery_state = Localization_deserialize(&localization, serial_buffer);
+	Localization_recover(&localization, recovery_state, False);
 	return localization;
 }
 
-void Localization_reset(Localization_t *loc_ptr)
+void Localization_reset(Localization_t *loc_ptr, boolean_t direct_trigger)
 {
 	loc_ptr->state = Loc_state_0_init;
 	loc_ptr->recovery_state = LOC_RECOVERY_RESET;
 	loc_ptr->is_localized = False;
+	loc_ptr->is_triggered = direct_trigger;
 }
 /* void Localization_set_endpos(Localization_t *loc_ptr)
  *  Description:
@@ -127,15 +127,17 @@ static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buff
 	return LOC_RECOVERY_COMPLETE;
 }
 
-static void Localization_recover(Localization_t *loc_ptr)
+void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger)
 {
-	switch(loc_ptr->recovery_state)
+	loc_ptr->recovery_state = recovery_state;
+	switch(recovery_state)
 	{
 		case LOC_RECOVERY_RESET:
-			Localization_reset(loc_ptr);
+			Localization_reset(loc_ptr, direct_trigger);
 			break;
 		case LOC_RECOVERY_PARTIAL:
 			loc_ptr->state = Loc_state_0_init;
+			loc_ptr->is_triggered = direct_trigger;
 			break;
 		case LOC_RECOVERY_COMPLETE:
 			loc_ptr->is_localized = True;

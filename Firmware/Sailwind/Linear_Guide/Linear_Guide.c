@@ -40,27 +40,45 @@ static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr);
  */
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 /**
+ * @brief update error LED
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
+static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr);
+/**
  * @brief update sailadjustment mode, if current position crossed the center position
  * @param lg_ptr: linear_guide reference
  * @retval update_status
  */
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
 /**
- * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
+ * @brief update speed ramp and movement depending on desired position
  * @param lg_ptr: linear_guide reference
  * @retval none
  */
 static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr);
 /**
+ * @brief handle all detectable errors
+ * @param lg_ptr: linear_guide reference
+ * @retval update_status
+ */
+static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr);
+/**
  * @brief check, if distance sensor and calculated distance from pulse signal match within a defined tolerance
  * @param lg_ptr: linear_guide reference
- * @retval none
+ * @retval fault_check_status
  */
 static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr);
 /**
- * @brief convert the measured value of the distance sensor to the linear guide relative distance
+ * @brief check, if motor sends out an error signal
  * @param lg_ptr: linear_guide reference
  * @retval fault_check_status
+ */
+static int8_t Linear_guide_check_motor_fault(Linear_Guide_t *lg_ptr);
+/**
+ * @brief convert the measured value of the distance sensor to the linear guide relative distance
+ * @param lg_ptr: linear_guide reference
+ * @retval relative_distance
  */
 static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr);
 /**
@@ -101,13 +119,19 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 	return lg_leds;
 }
 
-void Linear_Guide_update(Linear_Guide_t *lg_ptr)
+int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr)
 {
+	int8_t update_status = Linear_Guide_error_handler(lg_ptr);
+	if (update_status == LG_UPDATE_EMERGENCY_SHUTDOWN);
+	{
+		return update_status;
+	}
 	Linear_Guide_update_movement(lg_ptr);
 	if (Localization_update_position(&lg_ptr->localization) == LOC_POSITION_UPDATED)
 	{
 		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
 	}
+	return update_status;
 }
 
 /* void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
@@ -257,6 +281,30 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 	Motor_speed_ramp(&lg_ptr->motor);
 }
 
+static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
+{
+	int8_t update_status = LG_UPDATE_NORMAL;
+	LG_error_state_t new_error_state = LG_error_state_0_normal;
+	if (Linear_Guide_check_distance_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
+	{
+		new_error_state = LG_error_state_1_distance_fault;
+		Linear_Guide_set_operating_mode(lg_ptr, LG_operating_mode_manual);
+		Localization_recover(&lg_ptr->localization, LOC_RECOVERY_PARTIAL, True);
+	}
+	if (Linear_guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
+	{
+		new_error_state = LG_error_state_2_motor_fault;
+		Linear_Guide_move(lg_ptr, Loc_movement_stop);
+		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
+	}
+	if (new_error_state != lg_ptr->error_state)
+	{
+		lg_ptr->error_state = new_error_state;
+		Linear_Guide_LED_set_error(lg_ptr);
+	}
+	return update_status;
+}
+
 static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 {
 	if (!lg_ptr->localization.is_localized)
@@ -267,7 +315,15 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	int32_t measured_value = Linear_Guide_parse_distance_sensor_value(lg_ptr);
 	if (abs(measured_value - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
 	{
-		lg_ptr->error_state = LG_error_state_1_distance_fault;
+		return LG_FAULT_CHECK_POSITIVE;
+	}
+	return LG_FAULT_CHECK_NEGATIVE;
+}
+
+static int8_t Linear_guide_check_motor_fault(Linear_Guide_t *lg_ptr)
+{
+	if (Motor_error(&lg_ptr->motor) == True)
+	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}
 	return LG_FAULT_CHECK_NEGATIVE;
@@ -313,6 +369,20 @@ static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 	}
 	LED_switch(&lg_ptr->leds.roll, roll);
 	LED_switch(&lg_ptr->leds.trim, trim);
+}
+
+static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr)
+{
+	LED_State_t new_state;
+	if (lg_ptr->error_state == LG_error_state_0_normal)
+	{
+		new_state = LED_OFF;
+	}
+	else
+	{
+		new_state = LED_ON;
+	}
+	LED_switch(&lg_ptr->leds.error, new_state);
 }
 
 static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr)

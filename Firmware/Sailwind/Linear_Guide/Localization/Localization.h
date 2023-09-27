@@ -52,7 +52,8 @@ typedef struct {
 
 /* API function prototypes ---------------------------------------------------*/
 Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE]);
-void Localization_reset(Localization_t *loc_ptr);
+void Localization_reset(Localization_t *loc_ptr, boolean_t direct_trigger);
+void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger);
 void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
 void Localization_callback_pulse_count(Localization_t *loc_ptr);

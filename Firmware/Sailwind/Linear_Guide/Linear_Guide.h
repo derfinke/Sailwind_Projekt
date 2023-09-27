@@ -17,12 +17,15 @@
 #define LG_LOCALIZATION_SAFED 0
 #define LG_NOT_LOCALIZED 1
 #define LG_ADJUSTMENT_MODE_UPDATED 0
+#define LG_UPDATE_NORMAL 0
+#define LG_UPDATE_EMERGENCY_SHUTDOWN -1
 
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
 	LG_error_state_0_normal,
-	LG_error_state_1_distance_fault
+	LG_error_state_1_distance_fault,
+	LG_error_state_2_motor_fault,
 } LG_error_state_t;
 typedef enum {
 	LG_operating_mode_manual,
@@ -76,9 +79,9 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
 /**
  * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
  * @param lg_ptr: linear_guide reference
- * @retval none
+ * @retval update_status
  */
-void Linear_Guide_update(Linear_Guide_t *lg_ptr);
+int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr);
 /**
  * @brief switch operating mode to manual or automatic
  * @param lg_ptr: linear_guide reference

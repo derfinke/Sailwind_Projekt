@@ -188,10 +188,13 @@ int main(void)
   while (1)
   {
       MX_LWIP_Process();
-      //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-      Manual_Control_poll(&manual_control);
-      Manual_Control_Localization(&manual_control);
-      Linear_Guide_update(&linear_guide);
+      if (Linear_Guide_update(&linear_guide) == LG_UPDATE_NORMAL)
+      {
+    	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+    	  Manual_Control_poll(&manual_control);
+    	  Manual_Control_Localization(&manual_control);
+      }
+
       /*
        * add tcp handling
        */

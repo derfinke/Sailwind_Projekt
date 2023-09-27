@@ -287,7 +287,7 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 			lg_ptr->localization.is_triggered = True;
 			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MC_LOCALIZE_RESET_MS)
 			{
-				Localization_reset(&lg_ptr->localization);
+				Localization_reset(&lg_ptr->localization, True);
 			}
 			break;
 	}
