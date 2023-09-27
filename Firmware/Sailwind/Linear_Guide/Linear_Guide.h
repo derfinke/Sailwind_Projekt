@@ -21,6 +21,10 @@
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
+	LG_error_state_0_normal,
+	LG_error_state_1_distance_fault
+} LG_error_state_t;
+typedef enum {
 	LG_operating_mode_manual,
 	LG_operating_mode_automatic
 } LG_operating_mode_t;
@@ -45,6 +49,7 @@ typedef struct {
 } LG_Endswitches_t;
 
 typedef struct {
+	LG_error_state_t error_state;
 	LG_operating_mode_t operating_mode;
 	LG_sail_adjustment_mode_t sail_adjustment_mode;
 	Motor_t motor;
@@ -61,7 +66,7 @@ typedef struct {
  * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
  * @retval linear_guide_struct
  */
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
+Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, ADC_HandleTypeDef *hadc_distance_ptr);
 /**
  * @brief initialise all status LEDs
  * @param op_mode: depending on the value, either the manual or automatic LED is switched on

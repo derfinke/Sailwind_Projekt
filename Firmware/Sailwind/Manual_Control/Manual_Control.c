@@ -33,6 +33,12 @@ static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
+/**
+ * @brief measure and set minimum absolute distance value from sensor
+ * @param mc_ptr: manual_control reference
+ * @retval none
+ */
+static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr);
 
 
 /* API function definitions -----------------------------------------------*/
@@ -128,6 +134,7 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
 			{
 				printf("new state approach back\r\n");
+				Manual_Control_set_startpos(mc_ptr);
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
 				*state = Loc_state_2_approach_back;
 				lg_ptr->localization.pulse_count = 0;
@@ -328,5 +335,12 @@ static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)
 {
 	Localization_set_endpos(&mc_ptr->lg_ptr->localization);
+}
+
+static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr)
+{
+	IO_analogSensor_t *ds_ptr = &mc_ptr->lg_ptr->distance_sensor;
+	IO_Get_Measured_Value(ds_ptr);
+	ds_ptr->min_possible_value = ds_ptr->measured_value;
 }
 

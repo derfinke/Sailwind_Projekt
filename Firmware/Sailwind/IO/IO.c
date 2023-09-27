@@ -237,9 +237,9 @@ IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1, uint16_t min
 			.max_possible_value = max_val,
 			.min_possible_value = min_val
 	};
-	IO_Get_Measured_Value(distance_sensor);
+	IO_Get_Measured_Value(&distance_sensor);
 	printf("distance sensor init done\r\n");
-	printf("init distance: %umm\r\n", distance_sensor->measured_value);
+	printf("init distance: %umm\r\n", distance_sensor.measured_value);
 	return distance_sensor;
 }
 

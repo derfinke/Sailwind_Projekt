@@ -6,6 +6,7 @@
 
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include <stdlib.h>
 
 
 /* defines ------------------------------------------------------------*/
@@ -13,6 +14,7 @@
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
 #define LG_DISTANCE_MIN_MM 30
 #define LG_DISTANCE_MAX_MM 730
+#define LG_DISTANCE_FAULT_TOLERANCE_MM 3
 
 /* private function prototypes -----------------------------------------------*/
 
@@ -47,6 +49,18 @@ static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
  */
 static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr);
 /**
+ * @brief check, if distance sensor and calculated distance from pulse signal match within a defined tolerance
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
+static void Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr);
+/**
+ * @brief convert the measured value of the distance sensor to the linear guide relative distance
+ * @param lg_ptr: linear_guide reference
+ * @retval relative_distance
+ */
+static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr);
+/**
  * @brief convert given rpm value of the motor to movement speed of the linear guide in mm/s
  * @param rpm_value
  * @retval speed_mms
@@ -63,11 +77,10 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, ADC_HandleTypeDef *hadc_distance_ptr)
 {
 	Linear_Guide_t linear_guide = {
-			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
+			.motor = Motor_init(hdac_ptr),
 			.localization = Linear_Guide_read_Localization(),
 			.endswitches = Linear_Guide_Endswitches_init(),
 			.distance_sensor = IO_init_distance_sensor(hadc_distance_ptr, LG_DISTANCE_MIN_MM, LG_DISTANCE_MAX_MM),
-
 	};
 	return linear_guide;
 }
@@ -241,6 +254,16 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 	Motor_speed_ramp(&lg_ptr->motor);
 }
 
+static void Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
+{
+	IO_Get_Measured_Value(&lg_ptr->distance_sensor);
+	int32_t measured_value = Linear_Guide_parse_distance_sensor_value(lg_ptr);
+	if (abs(measured_value - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
+	{
+		lg_ptr->error_state = LG_error_state_1_distance_fault;
+	}
+}
+
 /* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
  * 	Description:
  * 	 - depending on parameter "operating_mode" (IO_operating_mode_manual / ..._automatic)
@@ -283,6 +306,12 @@ static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 	LED_switch(&lg_ptr->leds.trim, trim);
 }
 
+static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr)
+{
+	IO_analogSensor_t ds = lg_ptr->distance_sensor;
+	return (int32_t) (ds.measured_value - ds.min_possible_value - lg_ptr->localization.end_pos_mm);
+}
+
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value)
 {
 	return (uint16_t) (LG_DISTANCE_MM_PER_ROTATION * rpm_value / 60.0F);
@@ -292,6 +321,7 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms)
 {
 	return (uint16_t) (speed_mms / (float) LG_DISTANCE_MM_PER_ROTATION * 60);
 }
+
 /* Timer Callback implementation for rpm measurement --------------------------*/
 
 /* void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
