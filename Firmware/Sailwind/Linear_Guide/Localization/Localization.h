@@ -12,7 +12,7 @@
 #include <stdio.h>
 
 /* defines ------------------------------------------------------------*/
-#define LOC_SERIAL_SIZE 21 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC,M) = 1+1+5+1+5+1+5+1+1 = 21
+#define LOC_SERIAL_SIZE 27 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC,M,SSSSS) = 1+1+5+1+5+1+5+1+1+1+5 = 27
 #define LOC_NOT_LOCALIZED 1
 #define LOC_POSITION_RETAINED 2
 #define LOC_POSITION_UPDATED 0
@@ -43,8 +43,10 @@ typedef struct {
 	boolean_t is_triggered;
 	float distance_per_pulse;
 	int32_t end_pos_mm;
+	int32_t start_pos_abs_mm;
 	int32_t center_pos_mm;
 	int32_t current_pos_mm;
+	int32_t current_measured_pos_mm;
 	int32_t pulse_count;
 	int32_t desired_pos_mm;
 	int8_t recovery_state;
@@ -56,6 +58,8 @@ void Localization_reset(Localization_t *loc_ptr, boolean_t direct_trigger);
 void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger);
 void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
+void Localization_set_startpos_abs(Localization_t *loc_ptr, uint16_t measured_value);
+void Localization_parse_distance_sensor_value(Localization_t *loc_ptr, uint16_t measured_value);
 void Localization_callback_pulse_count(Localization_t *loc_ptr);
 int8_t Localization_update_position(Localization_t *loc_ptr);
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);

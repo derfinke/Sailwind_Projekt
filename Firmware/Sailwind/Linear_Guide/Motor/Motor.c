@@ -130,7 +130,7 @@ void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 }
 
 boolean_t Motor_error(Motor_t *motor_ptr) {
-	if (IO_digitalRead(&motor_ptr->OUT2_error)) {
+	if (IO_digitalRead(&motor_ptr->OUT2_error) == GPIO_PIN_RESET) {
 		Motor_stop_moving(motor_ptr);
 		return True;
 	}

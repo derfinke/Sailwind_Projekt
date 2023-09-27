@@ -10,11 +10,11 @@
 
 
 /* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_MM_PER_ROTATION 5.62
+#define LG_DISTANCE_MM_PER_ROTATION 1.12
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
 #define LG_DISTANCE_MIN_MM 30
 #define LG_DISTANCE_MAX_MM 730
-#define LG_DISTANCE_FAULT_TOLERANCE_MM 3
+#define LG_DISTANCE_FAULT_TOLERANCE_MM 10
 #define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
@@ -82,12 +82,6 @@ static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr);
  * @retval fault_check_status
  */
 static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr);
-/**
- * @brief convert the measured value of the distance sensor to the linear guide relative distance
- * @param lg_ptr: linear_guide reference
- * @retval relative_distance
- */
-static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr);
 /**
  * @brief convert given rpm value of the motor to movement speed of the linear guide in mm/s
  * @param rpm_value
@@ -328,8 +322,10 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 		return LG_FAULT_CHECK_SKIPPED;
 	}
 	IO_Get_Measured_Value(&lg_ptr->distance_sensor);
-	int32_t measured_value = Linear_Guide_parse_distance_sensor_value(lg_ptr);
-	if (abs(measured_value - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
+	uint16_t measured_value = lg_ptr->distance_sensor.measured_value;
+	Localization_parse_distance_sensor_value(&lg_ptr->localization, measured_value);
+	Localization_update_position(&lg_ptr->localization);
+	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
 	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}
@@ -408,12 +404,6 @@ static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr)
 		new_state = LED_ON;
 	}
 	LED_switch(&lg_ptr->leds.error, new_state);
-}
-
-static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr)
-{
-	IO_analogSensor_t ds = lg_ptr->distance_sensor;
-	return (int32_t) (ds.measured_value - ds.min_possible_value - lg_ptr->localization.end_pos_mm);
 }
 
 static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value)

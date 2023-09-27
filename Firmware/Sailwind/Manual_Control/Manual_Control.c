@@ -33,6 +33,7 @@ static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc
 static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
+static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state);
 /**
  * @brief measure and set minimum absolute distance value from sensor
  * @param mc_ptr: manual_control reference
@@ -56,7 +57,7 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 			.buttons = buttons,
 			.lg_ptr = lg_ptr
 	};
-	lg_ptr->operating_mode = buttons.switch_mode.state ? LG_operating_mode_automatic : LG_operating_mode_manual;
+	lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
 	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
 
 	return manual_control;
@@ -341,6 +342,10 @@ static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr)
 {
 	IO_analogSensor_t *ds_ptr = &mc_ptr->lg_ptr->distance_sensor;
 	IO_Get_Measured_Value(ds_ptr);
-	ds_ptr->min_possible_value = ds_ptr->measured_value;
+	Localization_set_startpos_abs(&mc_ptr->lg_ptr->localization, ds_ptr->measured_value);
 }
 
+static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state)
+{
+	return btn_state == MC_BUTTON_SWITCH_AUTOMATIC ? LG_operating_mode_automatic : LG_operating_mode_manual;
+}
