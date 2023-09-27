@@ -15,6 +15,9 @@
 #define LG_DISTANCE_MIN_MM 30
 #define LG_DISTANCE_MAX_MM 730
 #define LG_DISTANCE_FAULT_TOLERANCE_MM 3
+#define LG_FAULT_CHECK_POSITIVE -1
+#define LG_FAULT_CHECK_NEGATIVE 0
+#define LG_FAULT_CHECK_SKIPPED 1
 
 /* private function prototypes -----------------------------------------------*/
 
@@ -53,11 +56,11 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr);
  * @param lg_ptr: linear_guide reference
  * @retval none
  */
-static void Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr);
+static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr);
 /**
  * @brief convert the measured value of the distance sensor to the linear guide relative distance
  * @param lg_ptr: linear_guide reference
- * @retval relative_distance
+ * @retval fault_check_status
  */
 static int32_t Linear_Guide_parse_distance_sensor_value(Linear_Guide_t *lg_ptr);
 /**
@@ -254,14 +257,20 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 	Motor_speed_ramp(&lg_ptr->motor);
 }
 
-static void Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
+static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 {
+	if (!lg_ptr->localization.is_localized)
+	{
+		return LG_FAULT_CHECK_SKIPPED;
+	}
 	IO_Get_Measured_Value(&lg_ptr->distance_sensor);
 	int32_t measured_value = Linear_Guide_parse_distance_sensor_value(lg_ptr);
 	if (abs(measured_value - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
 	{
 		lg_ptr->error_state = LG_error_state_1_distance_fault;
+		return LG_FAULT_CHECK_POSITIVE;
 	}
+	return LG_FAULT_CHECK_NEGATIVE;
 }
 
 /* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
