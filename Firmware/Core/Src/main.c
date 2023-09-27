@@ -136,7 +136,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  //MX_LWIP_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
 
   linear_guide = Linear_Guide_init(&hdac, &hadc1, &hadc3);
@@ -261,6 +261,8 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
+  ADC_ChannelConfTypeDef sConfig = {0};
+
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -283,6 +285,26 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_0;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 2;
+  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -300,6 +322,8 @@ static void MX_ADC2_Init(void)
   /* USER CODE BEGIN ADC2_Init 0 */
 
   /* USER CODE END ADC2_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC2_Init 1 */
 
@@ -324,6 +348,15 @@ static void MX_ADC2_Init(void)
     Error_Handler();
   }
 
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -341,6 +374,8 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 0 */
 
   /* USER CODE END ADC3_Init 0 */
+
+  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -361,6 +396,34 @@ static void MX_ADC3_Init(void)
   hadc3.Init.DMAContinuousRequests = DISABLE;
   hadc3.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc3) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_8;
+  sConfig.Rank = 1;
+  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Rank = 2;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
+  */
+  sConfig.Channel = ADC_CHANNEL_5;
+  sConfig.Rank = 3;
+  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
@@ -397,12 +460,12 @@ static void MX_DAC_Init(void)
   }
 
   /** DAC channel OUT1 config
-   */
+  */
   sConfig.DAC_Trigger = DAC_TRIGGER_NONE;
   sConfig.DAC_OutputBuffer = DAC_OUTPUTBUFFER_ENABLE;
   if (HAL_DAC_ConfigChannel(&hdac, &sConfig, DAC_CHANNEL_1) != HAL_OK)
   {
-	  Error_Handler();
+    Error_Handler();
   }
   /* USER CODE BEGIN DAC_Init 2 */
 
@@ -617,13 +680,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|IN_0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_set_center_Pin|IN_0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Trim_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Roll_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
+  HAL_GPIO_WritePin(GPIOD, LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
                           |Windsensor_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -660,15 +723,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Roll_Pin LED_PWR_Pin */
-  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|LED_PWR_Pin;
+  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_set_center_Pin LED_PWR_Pin */
+  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_set_center_Pin|LED_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Trim_Pin */
-  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Trim_Pin;
+  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Roll_Pin */
+  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Roll_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -680,8 +743,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
-  GPIO_InitStruct.Pin = LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
+  /*Configure GPIO pins : LED_Trim_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
+  GPIO_InitStruct.Pin = LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

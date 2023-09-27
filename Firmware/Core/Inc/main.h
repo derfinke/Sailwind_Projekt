@@ -108,8 +108,8 @@ void Error_Handler(void);
 #define Ext_Relais_1_GPIO_Port GPIOE
 #define Ext_Relais_2_Pin GPIO_PIN_10
 #define Ext_Relais_2_GPIO_Port GPIOB
-#define LED_Roll_Pin GPIO_PIN_11
-#define LED_Roll_GPIO_Port GPIOB
+#define LED_set_center_Pin GPIO_PIN_11
+#define LED_set_center_GPIO_Port GPIOB
 #define RMII_TXD1_Pin GPIO_PIN_13
 #define RMII_TXD1_GPIO_Port GPIOB
 #define Endschalter_Hinten_Pin GPIO_PIN_15
@@ -118,8 +118,8 @@ void Error_Handler(void);
 #define STLK_RX_GPIO_Port GPIOD
 #define STLK_TX_Pin GPIO_PIN_9
 #define STLK_TX_GPIO_Port GPIOD
-#define LED_Kalibrieren_Speichern_Pin GPIO_PIN_11
-#define LED_Kalibrieren_Speichern_GPIO_Port GPIOD
+#define LED_Trim_Pin GPIO_PIN_11
+#define LED_Trim_GPIO_Port GPIOD
 #define LED_Stoerung_Pin GPIO_PIN_12
 #define LED_Stoerung_GPIO_Port GPIOD
 #define LED_Manuell_Pin GPIO_PIN_13
@@ -155,8 +155,8 @@ void Error_Handler(void);
 #define Endschalter_Vorne_GPIO_Port GPIOB
 #define IN_0_Pin GPIO_PIN_9
 #define IN_0_GPIO_Port GPIOB
-#define LED_Trim_Pin GPIO_PIN_0
-#define LED_Trim_GPIO_Port GPIOE
+#define LED_Roll_Pin GPIO_PIN_0
+#define LED_Roll_GPIO_Port GPIOE
 
 /* USER CODE BEGIN Private defines */
 
