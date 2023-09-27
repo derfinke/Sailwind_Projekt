@@ -11,6 +11,8 @@
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_MM_PER_ROTATION 5.62
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
+#define LG_DISTANCE_MIN_MM 30
+#define LG_DISTANCE_MAX_MM 730
 
 /* private function prototypes -----------------------------------------------*/
 
@@ -58,12 +60,14 @@ static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
 /* API function definitions --------------------------------------------------*/
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
+Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, ADC_HandleTypeDef *hadc_distance_ptr)
 {
 	Linear_Guide_t linear_guide = {
 			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
 			.localization = Linear_Guide_read_Localization(),
 			.endswitches = Linear_Guide_Endswitches_init(),
+			.distance_sensor = IO_init_distance_sensor(hadc_distance_ptr, LG_DISTANCE_MIN_MM, LG_DISTANCE_MAX_MM),
+
 	};
 	return linear_guide;
 }

@@ -228,17 +228,19 @@ static void IO_Sort_ADC_Values(uint16_t *ADC_values, uint8_t num_of_adc_samples)
   }
 }
 
-void IO_init_distance_sensor(IO_analogSensor_t *distance_sensor,
-                             ADC_HandleTypeDef *hadc1) {
-  distance_sensor->Sensor_type = Distance_Sensor;
-  distance_sensor->ADC_Channel = ADC_CHANNEL_0;
-  distance_sensor->hadc_ptr = hadc1;
-  distance_sensor->ADC_Rank = 1;
-  distance_sensor->max_possible_value = 730;
-  distance_sensor->min_possible_value = 30;
-  IO_Get_Measured_Value(distance_sensor);
-  printf("distance sensor init done\r\n");
-  printf("init distance: %umm\r\n", distance_sensor->measured_value);
+IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1, uint16_t min_val, uint16_t max_val) {
+	IO_analogSensor_t distance_sensor = {
+			.Sensor_type = Distance_Sensor,
+			.ADC_Channel = ADC_CHANNEL_0,
+			.hadc_ptr = hadc1,
+			.ADC_Rank = 1,
+			.max_possible_value = max_val,
+			.min_possible_value = min_val
+	};
+	IO_Get_Measured_Value(distance_sensor);
+	printf("distance sensor init done\r\n");
+	printf("init distance: %umm\r\n", distance_sensor->measured_value);
+	return distance_sensor;
 }
 
 void IO_init_current_sensor(IO_analogSensor_t *current_sensor,

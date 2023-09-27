@@ -22,7 +22,7 @@ static void Motor_press_enter_to_continue();
 
 
 /* API function definitions -----------------------------------------------*/
-Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel) {
+Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr) {
 	Motor_t motor = {
 			.current_function = Motor_function_stop,
 			.INs = {

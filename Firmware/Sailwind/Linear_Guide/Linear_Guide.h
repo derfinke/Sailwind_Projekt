@@ -51,6 +51,7 @@ typedef struct {
 	Localization_t localization;
 	LG_Endswitches_t endswitches;
 	LG_LEDs_t leds;
+	IO_analogSensor_t distance_sensor;
 } Linear_Guide_t;
 
 

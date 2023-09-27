@@ -85,12 +85,14 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
 
 /**
  * @brief initialize adc of distance sensor
- * @param distance_sensor:ptr to distance sensor instance
  * @param hadc1:ptr to hadc1 instance
- * @retval none
+ * @param min_val: minimum possible value in mm
+ * @param max_val: maximum possible value in mm
+ * @retval distance_sensor
  */
-void IO_init_distance_sensor(IO_analogSensor_t *distance_sensor,
-                             ADC_HandleTypeDef *hadc1);
+IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1,
+										  uint16_t min_val,
+										  uint16_t max_val);
 
 /**
  * @brief initialize adc of current sensor
