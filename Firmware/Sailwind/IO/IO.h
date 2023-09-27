@@ -96,12 +96,10 @@ IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1,
 
 /**
  * @brief initialize adc of current sensor
- * @param current_sensor:ptr to distance sensor instance
  * @param hadc3:ptr to hadc3 instance
- * @retval none
+ * @retval current_sensor
  */
-void IO_init_current_sensor(IO_analogSensor_t *current_sensor,
-                            ADC_HandleTypeDef *hadc3);
+IO_analogSensor_t IO_init_current_sensor(ADC_HandleTypeDef *hadc3);
 
 /**
  * @brief initialize adcs of wind sensor

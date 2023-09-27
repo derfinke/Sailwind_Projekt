@@ -243,17 +243,20 @@ IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1, uint16_t min
 	return distance_sensor;
 }
 
-void IO_init_current_sensor(IO_analogSensor_t *current_sensor,
-                            ADC_HandleTypeDef *hadc3) {
-  current_sensor->Sensor_type = Current_Sensor;
-  current_sensor->ADC_Channel = ADC_CHANNEL_8;
-  current_sensor->hadc_ptr = hadc3;
-  current_sensor->ADC_Rank = 1;
-  current_sensor->max_possible_value = 7250;
-  current_sensor->min_possible_value = 0;
-  IO_Get_Measured_Value(current_sensor);
-  printf("current sensor init done\r\n");
-  printf("init current: %umA\r\n", current_sensor->measured_value);
+IO_analogSensor_t IO_init_current_sensor(ADC_HandleTypeDef *hadc3) {
+	IO_analogSensor_t current_sensor = {
+			.Sensor_type = Current_Sensor,
+			.ADC_Channel = ADC_CHANNEL_8,
+			.hadc_ptr = hadc3,
+			.ADC_Rank = 1,
+			.max_possible_value = 7250,
+			.min_possible_value = 0,
+	};
+
+	IO_Get_Measured_Value(&current_sensor);
+	printf("current sensor init done\r\n");
+	printf("init current: %umA\r\n", current_sensor.measured_value);
+	return current_sensor;
 }
 
 void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,

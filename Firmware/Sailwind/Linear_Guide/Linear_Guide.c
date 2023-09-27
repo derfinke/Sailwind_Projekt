@@ -15,6 +15,7 @@
 #define LG_DISTANCE_MIN_MM 30
 #define LG_DISTANCE_MAX_MM 730
 #define LG_DISTANCE_FAULT_TOLERANCE_MM 3
+#define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
 #define LG_FAULT_CHECK_SKIPPED 1
@@ -74,7 +75,13 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr);
  * @param lg_ptr: linear_guide reference
  * @retval fault_check_status
  */
-static int8_t Linear_guide_check_motor_fault(Linear_Guide_t *lg_ptr);
+static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr);
+/**
+ * @brief check, if motor current value [mA] is within a defined tolerance
+ * @param lg_ptr: linear_guide reference
+ * @retval fault_check_status
+ */
+static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr);
 /**
  * @brief convert the measured value of the distance sensor to the linear guide relative distance
  * @param lg_ptr: linear_guide reference
@@ -95,13 +102,16 @@ static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
 /* API function definitions --------------------------------------------------*/
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, ADC_HandleTypeDef *hadc_distance_ptr)
+Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_speed_ptr, ADC_HandleTypeDef *hadc_distance_ptr, ADC_HandleTypeDef *hadc_current_ptr)
 {
 	Linear_Guide_t linear_guide = {
-			.motor = Motor_init(hdac_ptr),
+			.error_state = LG_error_state_0_normal,
+			.operating_mode = LG_operating_mode_manual,
+			.motor = Motor_init(hdac_speed_ptr),
 			.localization = Linear_Guide_read_Localization(),
 			.endswitches = Linear_Guide_Endswitches_init(),
 			.distance_sensor = IO_init_distance_sensor(hadc_distance_ptr, LG_DISTANCE_MIN_MM, LG_DISTANCE_MAX_MM),
+			.current_sensor = IO_init_current_sensor(hadc_current_ptr)
 	};
 	return linear_guide;
 }
@@ -122,7 +132,7 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr)
 {
 	int8_t update_status = Linear_Guide_error_handler(lg_ptr);
-	if (update_status == LG_UPDATE_EMERGENCY_SHUTDOWN);
+	if (update_status == LG_UPDATE_EMERGENCY_SHUTDOWN)
 	{
 		return update_status;
 	}
@@ -291,9 +301,15 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 		Linear_Guide_set_operating_mode(lg_ptr, LG_operating_mode_manual);
 		Localization_recover(&lg_ptr->localization, LOC_RECOVERY_PARTIAL, True);
 	}
-	if (Linear_guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
+	if (Linear_Guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_2_motor_fault;
+		Linear_Guide_move(lg_ptr, Loc_movement_stop);
+		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
+	}
+	if (Linear_Guide_check_current_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
+	{
+		new_error_state = LG_error_state_3_current_fault;
 		Linear_Guide_move(lg_ptr, Loc_movement_stop);
 		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
 	}
@@ -320,7 +336,7 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	return LG_FAULT_CHECK_NEGATIVE;
 }
 
-static int8_t Linear_guide_check_motor_fault(Linear_Guide_t *lg_ptr)
+static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr)
 {
 	if (Motor_error(&lg_ptr->motor) == True)
 	{
@@ -329,6 +345,15 @@ static int8_t Linear_guide_check_motor_fault(Linear_Guide_t *lg_ptr)
 	return LG_FAULT_CHECK_NEGATIVE;
 }
 
+static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr)
+{
+	IO_Get_Measured_Value(&lg_ptr->current_sensor);
+	if (lg_ptr->current_sensor.measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
+	{
+		return LG_FAULT_CHECK_POSITIVE;
+	}
+	return LG_FAULT_CHECK_NEGATIVE;
+}
 /* static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
  * 	Description:
  * 	 - depending on parameter "operating_mode" (IO_operating_mode_manual / ..._automatic)

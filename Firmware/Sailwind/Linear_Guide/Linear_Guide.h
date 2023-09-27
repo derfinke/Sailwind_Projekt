@@ -26,6 +26,7 @@ typedef enum {
 	LG_error_state_0_normal,
 	LG_error_state_1_distance_fault,
 	LG_error_state_2_motor_fault,
+	LG_error_state_3_current_fault
 } LG_error_state_t;
 typedef enum {
 	LG_operating_mode_manual,
@@ -60,16 +61,19 @@ typedef struct {
 	LG_Endswitches_t endswitches;
 	LG_LEDs_t leds;
 	IO_analogSensor_t distance_sensor;
+	IO_analogSensor_t current_sensor;
 } Linear_Guide_t;
 
 
 /* API function prototypes -----------------------------------------------*/
 /**
  * @brief initialise the linear_guide object
- * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
+ * @param hdac_speed_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
+ * @param hadc_distance_ptr: adc handle object passed to distance sensor member
+ * @param hadc_current_ptr: adc handle object passed to current sensor member
  * @retval linear_guide_struct
  */
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, ADC_HandleTypeDef *hadc_distance_ptr);
+Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_speed_ptr, ADC_HandleTypeDef *hadc_distance_ptr, ADC_HandleTypeDef *hadc_current_ptr);
 /**
  * @brief initialise all status LEDs
  * @param op_mode: depending on the value, either the manual or automatic LED is switched on

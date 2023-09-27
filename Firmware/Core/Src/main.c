@@ -66,7 +66,6 @@ UART_HandleTypeDef huart3;
 /* USER CODE BEGIN PV */
 Linear_Guide_t linear_guide;
 Manual_Control_t manual_control;
-IO_analogSensor_t Stromsensor = {0};
 
 char Rx_buffer[20];
 
@@ -139,9 +138,8 @@ int main(void)
   MX_TIM3_Init();
   MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
-  IO_init_current_sensor(&Stromsensor, &hadc3);
 
-  linear_guide = Linear_Guide_init(&hdac, &hadc1);
+  linear_guide = Linear_Guide_init(&hdac, &hadc1, &hadc3);
   manual_control = Manual_Control_init(&linear_guide);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
