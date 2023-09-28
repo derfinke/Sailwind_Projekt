@@ -103,7 +103,7 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 {
   LG_linear_guide.error_state = LG_error_state_0_normal;
 	LG_linear_guide.operating_mode = LG_operating_mode_manual;
-	LG_linear_guide.motor = Motor_init(hdac_speed_ptr);
+	LG_linear_guide.motor = Motor_init(hdac_ptr);
 	LG_linear_guide.localization = Linear_Guide_read_Localization();
 	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 }
@@ -342,7 +342,7 @@ static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr)
 
 static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr)
 {
-  IO_analogSensor_t *cs_ptr = IO_get_current_sensor()
+	IO_analogSensor_t *cs_ptr = IO_get_current_sensor();
 	IO_Get_Measured_Value(cs_ptr);
 	if (cs_ptr->measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
 	{

@@ -193,7 +193,7 @@ int main(void)
   while (1)
   {
       MX_LWIP_Process();
-      if (Linear_Guide_update(&linear_guide) == LG_UPDATE_NORMAL)
+      if (Linear_Guide_update(linear_guide) == LG_UPDATE_NORMAL)
       {
     	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
     	  Manual_Control_poll(&manual_control);
@@ -286,26 +286,6 @@ static void MX_ADC1_Init(void)
   hadc1.Init.DMAContinuousRequests = DISABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_0;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_144CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 2;
-  sConfig.SamplingTime = ADC_SAMPLETIME_15CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();
   }
