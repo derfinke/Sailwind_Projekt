@@ -60,20 +60,16 @@ typedef struct {
 	Localization_t localization;
 	LG_Endswitches_t endswitches;
 	LG_LEDs_t leds;
-	IO_analogSensor_t distance_sensor;
-	IO_analogSensor_t current_sensor;
 } Linear_Guide_t;
 
 
 /* API function prototypes -----------------------------------------------*/
 /**
  * @brief initialise the linear_guide object
- * @param hdac_speed_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
- * @param hadc_distance_ptr: adc handle object passed to distance sensor member
- * @param hadc_current_ptr: adc handle object passed to current sensor member
- * @retval linear_guide_struct
+ * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
+ * @retval none
  */
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_speed_ptr, ADC_HandleTypeDef *hadc_distance_ptr, ADC_HandleTypeDef *hadc_current_ptr);
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr);
 /**
  * @brief initialise all status LEDs
  * @param op_mode: depending on the value, either the manual or automatic LED is switched on
@@ -151,5 +147,5 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc);
  */
 Localization_t Linear_Guide_read_Localization();
 
-
+Linear_Guide_t *LG_get_Linear_Guide(void);
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */

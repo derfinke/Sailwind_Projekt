@@ -17,6 +17,7 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include <http_ssi_cgi.h>
 #include "main.h"
 #include "lwip.h"
 
@@ -57,6 +58,7 @@ DAC_HandleTypeDef hdac;
 
 SPI_HandleTypeDef hspi4;
 
+TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
@@ -64,8 +66,9 @@ UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
-Linear_Guide_t linear_guide;
-Manual_Control_t manual_control;
+
+static Linear_Guide_t *linear_guide = {0};
+static Manual_Control_t manual_control;
 
 char Rx_buffer[20];
 
@@ -83,6 +86,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -137,10 +141,13 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM3_Init();
   MX_LWIP_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
-
-  linear_guide = Linear_Guide_init(&hdac, &hadc1, &hadc3);
-  manual_control = Manual_Control_init(&linear_guide);
+  IO_init_distance_sensor(&hadc1);
+  IO_init_current_sensor(&hadc3);
+  Linear_Guide_init(&hdac);
+  linear_guide = LG_get_Linear_Guide();
+  manual_control = Manual_Control_init(linear_guide);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
@@ -176,8 +183,8 @@ int main(void)
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
 
-  //tcp_server_init();
-  //httpd_init();
+  tcp_server_init();
+  http_server_init();
 
   /* USER CODE END 2 */
 
@@ -185,14 +192,13 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      //MX_LWIP_Process();
+      MX_LWIP_Process();
       if (Linear_Guide_update(&linear_guide) == LG_UPDATE_NORMAL)
       {
     	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
     	  Manual_Control_poll(&manual_control);
     	  Manual_Control_Localization(&manual_control);
       }
-
       /*
        * add tcp handling
        */
@@ -261,8 +267,6 @@ static void MX_ADC1_Init(void)
 
   /* USER CODE END ADC1_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
-
   /* USER CODE BEGIN ADC1_Init 1 */
 
   /* USER CODE END ADC1_Init 1 */
@@ -323,8 +327,6 @@ static void MX_ADC2_Init(void)
 
   /* USER CODE END ADC2_Init 0 */
 
-  ADC_ChannelConfTypeDef sConfig = {0};
-
   /* USER CODE BEGIN ADC2_Init 1 */
 
   /* USER CODE END ADC2_Init 1 */
@@ -347,16 +349,6 @@ static void MX_ADC2_Init(void)
   {
     Error_Handler();
   }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_6;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_3CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc2, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -374,8 +366,6 @@ static void MX_ADC3_Init(void)
   /* USER CODE BEGIN ADC3_Init 0 */
 
   /* USER CODE END ADC3_Init 0 */
-
-  ADC_ChannelConfTypeDef sConfig = {0};
 
   /* USER CODE BEGIN ADC3_Init 1 */
 
@@ -400,33 +390,6 @@ static void MX_ADC3_Init(void)
     Error_Handler();
   }
 
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_8;
-  sConfig.Rank = 1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_480CYCLES;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_7;
-  sConfig.Rank = 2;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-
-  /** Configure for the selected ADC regular channel its corresponding rank in the sequencer and its sample time.
-  */
-  sConfig.Channel = ADC_CHANNEL_5;
-  sConfig.Rank = 3;
-  if (HAL_ADC_ConfigChannel(&hadc3, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
   /* USER CODE BEGIN ADC3_Init 2 */
 
   /* USER CODE END ADC3_Init 2 */
@@ -453,6 +416,8 @@ static void MX_DAC_Init(void)
 
   /** DAC Initialization
   */
+
+
   hdac.Instance = DAC;
   if (HAL_DAC_Init(&hdac) != HAL_OK)
   {
@@ -508,6 +473,51 @@ static void MX_SPI4_Init(void)
   /* USER CODE BEGIN SPI4_Init 2 */
 
   /* USER CODE END SPI4_Init 2 */
+
+}
+
+/**
+  * @brief TIM2 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM2_Init(void)
+{
+
+  /* USER CODE BEGIN TIM2_Init 0 */
+
+  /* USER CODE END TIM2_Init 0 */
+
+  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
+  TIM_MasterConfigTypeDef sMasterConfig = {0};
+
+  /* USER CODE BEGIN TIM2_Init 1 */
+
+  /* USER CODE END TIM2_Init 1 */
+  htim2.Instance = TIM2;
+  htim2.Init.Prescaler = 2999;
+  htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim2.Init.Period = 10000;
+  htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim2, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim2, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM2_Init 2 */
+
+  /* USER CODE END TIM2_Init 2 */
 
 }
 
@@ -794,7 +804,19 @@ static void MX_GPIO_Init(void)
 
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
-  Linear_Guide_callback_motor_pulse_capture(&linear_guide);
+  Linear_Guide_callback_motor_pulse_capture(linear_guide);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+  // Check which version of the timer triggered this callback and toggle LED
+  if (htim == &htim2 )
+  {
+    printf("executing reset\r\n");
+    HAL_TIM_Base_Stop(&htim2);
+    HAL_TIM_Base_Stop_IT(&htim2);
+    HAL_NVIC_SystemReset();
+  }
 }
 /* USER CODE END 4 */
 

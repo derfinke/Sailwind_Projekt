@@ -1,9 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head><title>Sailwind Control</title></head>
-<body bgcolor="white" text="black">
-	<h1>Sailwind Control</h1>
-	<p>coming soon...</p>
+	<style>
+		head {margin:0;}
+		ul {
+		  list-style-type: none;
+		  margin: 0;
+		  padding: 0;
+		  overflow: hidden;
+		  background-color: #333;
+		}
+	  
+		li {
+		  float: left;
+		}
+	  
+		li a {
+		  display: block;
+		  color: white;
+		  text-align: center;
+		  padding: 14px 16px;
+		  text-decoration: none;
+		}
+	  
+		li a:hover:not(.active) {
+		  background-color: #111;
+		}
+	  
+		.active {
+		  background-color: #04AA6D;
+		}
+		body {
+		  text-align: center;
+		  margin:0;
+	   }
+	  	form{
+  		margin-left:auto;
+  		margin-right:auto;
+	  	}
+	</style>
+	<head>
+		<title>Home</title>
+	</head>
+	<body>
+		<ul>
+			<li><a href="index.html" class="active">Home</a></li>
+			<li><a href="Login.html">Login</a></li>
+			<li><a href="Sensor_values.shtml">Status</a></li>
+			<li><a href="Current_pos.shtml">Current Sail Position</a></li>
+			<li><a href="Settings.shtml">Settings</a></li>
+		</ul>
+		<h1 style="color:#111;">
+			Sailwind Linear guideway
+		</h1>
+        <form action="/form_control.cgi">
+			<p>
+				<label for="move"><h3><u>Adjust Position</u></h3></label>
+				<input type="submit" id="move" value="left" name="move" style="width:60px;height:40px;font-size:20px;">
+				<input type="submit" id="move" value="right" name="move" style="width:60px;height:40px;font-size:20px;">
+				<input type="submit" id="move" value="confirm" name="move" style="width:100px;height:40px;font-size:20px;">
+			</p>
+		</form>
+		<h3>Note: operating mode must be set to manual</h3>
 </body>
 </html>
-

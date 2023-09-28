@@ -7,6 +7,7 @@
 #include "Linear_Guide.h"
 #include "FRAM.h"
 #include <stdlib.h>
+#include "FRAM_memory_mapping.h"
 
 
 /* defines ------------------------------------------------------------*/
@@ -22,6 +23,7 @@
 
 /* private function prototypes -----------------------------------------------*/
 
+static Linear_Guide_t LG_linear_guide = {0};
 /**
  * @brief initialise the two endswitches of the linear guide
  * @param none
@@ -95,19 +97,15 @@ static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
  */
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
+
 /* API function definitions --------------------------------------------------*/
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_speed_ptr, ADC_HandleTypeDef *hadc_distance_ptr, ADC_HandleTypeDef *hadc_current_ptr)
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 {
-	Linear_Guide_t linear_guide = {
-			.error_state = LG_error_state_0_normal,
-			.operating_mode = LG_operating_mode_manual,
-			.motor = Motor_init(hdac_speed_ptr),
-			.localization = Linear_Guide_read_Localization(),
-			.endswitches = Linear_Guide_Endswitches_init(),
-			.distance_sensor = IO_init_distance_sensor(hadc_distance_ptr, LG_DISTANCE_MIN_MM, LG_DISTANCE_MAX_MM),
-			.current_sensor = IO_init_current_sensor(hadc_current_ptr)
-	};
-	return linear_guide;
+  LG_linear_guide.error_state = LG_error_state_0_normal;
+	LG_linear_guide.operating_mode = LG_operating_mode_manual;
+	LG_linear_guide.motor = Motor_init(hdac_speed_ptr);
+	LG_linear_guide.localization = Linear_Guide_read_Localization();
+	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 }
 
 LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
@@ -222,7 +220,7 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 	}
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	Localization_serialize(loc, FRAM_buffer);
-	if(FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE) != HAL_OK)
+	if(FRAM_write((uint8_t *)FRAM_buffer, LINEAR_GUIDE_INFOS, LOC_SERIAL_SIZE) != HAL_OK)
 	{
 	  printf("Saving Position failed!\r\n");
     return -1;
@@ -234,7 +232,7 @@ Localization_t Linear_Guide_read_Localization()
 {
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	FRAM_init();
-	FRAM_read(0x0000, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
+	FRAM_read(LINEAR_GUIDE_INFOS, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
 	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
 }
 
@@ -321,8 +319,9 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	{
 		return LG_FAULT_CHECK_SKIPPED;
 	}
-	IO_Get_Measured_Value(&lg_ptr->distance_sensor);
-	uint16_t measured_value = lg_ptr->distance_sensor.measured_value;
+  IO_analogSensor_t *ds_ptr = IO_get_distance_sensor();
+	IO_Get_Measured_Value(ds_ptr);
+	uint16_t measured_value = ds_ptr->measured_value;
 	Localization_parse_distance_sensor_value(&lg_ptr->localization, measured_value);
 	Localization_update_position(&lg_ptr->localization);
 	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
@@ -343,8 +342,9 @@ static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr)
 
 static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr)
 {
-	IO_Get_Measured_Value(&lg_ptr->current_sensor);
-	if (lg_ptr->current_sensor.measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
+  IO_analogSensor_t *cs_ptr = IO_get_current_sensor()
+	IO_Get_Measured_Value(cs_ptr);
+	if (cs_ptr->measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
 	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}
@@ -430,3 +430,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 */
+
+Linear_Guide_t *LG_get_Linear_Guide(void)
+{
+  return &LG_linear_guide;
+}

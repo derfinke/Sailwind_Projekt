@@ -48,5 +48,7 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float
 void WSWD_get_windspeed_unit(char* received_NMEA_telegramm, char unit);
 
 uint8_t WSWD_receive_NMEA(char* receive_buffer);
+void WSWD_get_wind_speed(char* received_NMEA_telegramm, float *Windspeed);
+void WSWD_get_wind_dir(char* received_NMEA_telegramm, float *Winddirection);
 
 #endif /* WSWD_WSWD_H_ */

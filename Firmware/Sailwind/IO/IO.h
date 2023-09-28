@@ -12,7 +12,6 @@
 #include "main.h"
 #include <stdio.h>
 
-
 /* typedefs -----------------------------------------------------------*/
 
 typedef enum {
@@ -86,20 +85,16 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
 /**
  * @brief initialize adc of distance sensor
  * @param hadc1:ptr to hadc1 instance
- * @param min_val: minimum possible value in mm
- * @param max_val: maximum possible value in mm
- * @retval distance_sensor
+ * @retval none
  */
-IO_analogSensor_t IO_init_distance_sensor(ADC_HandleTypeDef *hadc1,
-										  uint16_t min_val,
-										  uint16_t max_val);
+void IO_init_distance_sensor(ADC_HandleTypeDef *hadc1);
 
 /**
  * @brief initialize adc of current sensor
  * @param hadc3:ptr to hadc3 instance
- * @retval current_sensor
+ * @retval none
  */
-IO_analogSensor_t IO_init_current_sensor(ADC_HandleTypeDef *hadc3);
+void IO_init_current_sensor(ADC_HandleTypeDef *hadc3);
 
 /**
  * @brief initialize adcs of wind sensor
@@ -118,5 +113,9 @@ void IO_init_wind_sensor(IO_analogSensor_t *wind_sensor_speed,
  * @retval none
  */
 void IO_Get_Measured_Value(IO_analogSensor_t *Sensor);
+
+IO_analogSensor_t *IO_get_distance_sensor(void);
+
+IO_analogSensor_t *IO_get_current_sensor(void);
 
 #endif /* IO_IO_H_ */
