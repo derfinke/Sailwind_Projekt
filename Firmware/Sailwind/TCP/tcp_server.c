@@ -117,6 +117,7 @@ void tcp_server_init(void) {
   if (err == ERR_OK) {
     /* 3. start tcp listening for _pcb */
     tpcb = tcp_listen(tpcb);
+    REST_init();
 
     /* 4. initialize LwIP tcp_accept callback function */
     tcp_accept(tpcb, tcp_server_accept);

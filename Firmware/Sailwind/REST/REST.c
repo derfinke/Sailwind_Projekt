@@ -8,6 +8,9 @@
 #include <stdio.h>
 #include "string.h"
 #include "cJSON.h"
+#include "Linear_Guide.h"
+#include "WSWD.h"
+#include "IO.h"
 
 #define GET_REQUEST           "GET"
 #define PUT_REQUEST           "PUT"
@@ -52,6 +55,9 @@ typedef enum {
   HTTP_Not_Found,
   HTTP_Bad_Request
 } http_responses_t;
+
+static Linear_Guide_t* REST_linear_guide = {0};
+static IO_analogSensor_t *REST_current_sensor = {0};
 
 /**
  * @brief  Handles HTTP GET requests
@@ -107,12 +113,18 @@ static void REST_create_sensors_json(cJSON *response);
 static void REST_create_wind_json(cJSON *response);
 
 /**
- * @brief  Build the /data/adjustment json
+ * @brief  Build the sail_pos part of the status json
  * @param  response: pointer to HTTP response JSON
  * @retval none
  */
 static void REST_create_sail_pos_json(cJSON *response);
 
+/**
+ * @brief  Build the /data/adjustment json
+ * @param  response: pointer to HTTP response JSON
+ * @retval none
+ */
+static void REST_create_adjustment(cJSON *response);
 /**
  * @brief  check if the received error json is valid
  * @param  error_json: pointer to received JSON
@@ -133,6 +145,12 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json);
  * @retval none
  */
 static uint8_t REST_check_mode_json(cJSON *mode_json);
+
+void REST_init(void)
+{
+  REST_linear_guide = LG_get_Linear_Guide();
+  REST_current_sensor = IO_get_current_sensor();
+}
 
 void REST_request_handler(char *payload, char *buffer) {
 
@@ -179,17 +197,7 @@ static void REST_get_request(char *payload, char *buffer) {
   } else if (strncmp(payload + URL_OFFSET, PATH_SAIL_STATE,
                      strlen(PATH_SAIL_STATE)) == 0) {
 
-    cJSON_AddNumberToObject(response, KEY_SAIL_POS, 0);
-#if 0
-    if(rollung)
-    {
-      cJSON_AddNumberToObject(response, KEY_ROLL, 0);
-    }
-    else
-    {
-      cJSON_AddNumberToObject(response, KEY_PITCH, 0);
-    }
-#endif
+    REST_create_adjustment(response);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
@@ -261,7 +269,7 @@ static void REST_put_request(char *payload, char *buffer) {
                        strlen(PATH_SAIL_STATE)) == 0) {
 
       if (REST_check_sailstate_json(request) != 1) {
-        //TODO: update sailposition/move to given position
+
         REST_create_HTTP_header(buffer, HTTP_OK, 0);
       } else {
 
@@ -273,7 +281,6 @@ static void REST_put_request(char *payload, char *buffer) {
         == 0) {
       if (REST_check_mode_json(request) != 1) {
 
-        //TODO: update operating mode
         REST_create_HTTP_header(buffer, HTTP_OK, 0);
       } else {
 
@@ -320,36 +327,44 @@ static void REST_create_HTTP_header(char *buffer, http_responses_t response,
 
 static void REST_create_status_json(cJSON *response) {
   cJSON_AddNumberToObject(response, KEY_ERROR, 0);
-  cJSON_AddNumberToObject(response, KEY_MODE, 0);
-  cJSON_AddNumberToObject(response, KEY_LOCALIZED, 0);
+  cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
+  cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 }
 
 static void REST_create_data_json(cJSON *response) {
   cJSON_AddNumberToObject(response, KEY_ERROR, 0);
-  cJSON_AddNumberToObject(response, KEY_MODE, 0);
-  cJSON_AddNumberToObject(response, KEY_LOCALIZED, 0);
+  cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
+  cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 
   REST_create_sail_pos_json(response);
 
   REST_create_wind_json(response);
 
-  cJSON_AddNumberToObject(response, KEY_CURRENT, 0);
+  IO_Get_Measured_Value(REST_current_sensor);
+  cJSON_AddNumberToObject(response, KEY_CURRENT, REST_current_sensor->measured_value);
 }
 
 static void REST_create_sensors_json(cJSON *response) {
   REST_create_wind_json(response);
-  cJSON_AddNumberToObject(response, KEY_CURRENT, 0);
+  IO_Get_Measured_Value(REST_current_sensor);
+  cJSON_AddNumberToObject(response, KEY_CURRENT, REST_current_sensor->measured_value);
 }
 
 static void REST_create_wind_json(cJSON *response) {
   cJSON *wind;
   cJSON *wind_members;
+  char NMEA_telegram[30];
+  float wind_speed;
+  float wind_dir;
 
   wind = cJSON_AddArrayToObject(response, KEY_WIND);
   wind_members = cJSON_CreateObject();
 
-  cJSON_AddNumberToObject(wind_members, KEY_SPEED, 0);
-  cJSON_AddNumberToObject(wind_members, KEY_DIR, 0);
+  WSWD_receive_NMEA(NMEA_telegram);
+  WSWD_get_wind_infos(NMEA_telegram, &wind_speed, &wind_dir);
+
+  cJSON_AddNumberToObject(wind_members, KEY_SPEED, wind_speed);
+  cJSON_AddNumberToObject(wind_members, KEY_DIR, wind_dir);
   cJSON_AddItemToArray(wind, wind_members);
 }
 
@@ -360,10 +375,34 @@ static void REST_create_sail_pos_json(cJSON *response) {
   sail_state = cJSON_AddArrayToObject(response, KEY_SAIL_STATE);
   sail_members = cJSON_CreateObject();
 
-  cJSON_AddNumberToObject(sail_members, KEY_SAIL_POS, 0);
-  cJSON_AddNumberToObject(sail_members, KEY_ROLL, 0);
-  cJSON_AddNumberToObject(sail_members, KEY_PITCH, 0);
+  cJSON_AddNumberToObject(sail_members, KEY_SAIL_POS, REST_linear_guide->sail_adjustment_mode);
+  if(REST_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
+  {
+    cJSON_AddNumberToObject(sail_members, KEY_PITCH, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
+    cJSON_AddNumberToObject(sail_members, KEY_ROLL, 0);
+  }
+  else
+  {
+    cJSON_AddNumberToObject(sail_members, KEY_ROLL, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
+    cJSON_AddNumberToObject(sail_members, KEY_PITCH, 0);
+  }
+
   cJSON_AddItemToArray(sail_state, sail_members);
+}
+
+static void REST_create_adjustment(cJSON *response)
+{
+  cJSON_AddNumberToObject(response, KEY_SAIL_POS, REST_linear_guide->sail_adjustment_mode);
+  if(REST_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
+  {
+    cJSON_AddNumberToObject(response, KEY_PITCH, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
+    cJSON_AddNumberToObject(response, KEY_ROLL, 0);
+  }
+  else
+  {
+    cJSON_AddNumberToObject(response, KEY_ROLL, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
+    cJSON_AddNumberToObject(response, KEY_PITCH, 0);
+  }
 }
 
 static uint8_t REST_check_error_json(cJSON *error_json) {
@@ -403,6 +442,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
     /* Check for roll value range */
     if (roll->valueint >= 0 && roll->valueint <= 100) {
       /* Format is valid */
+      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, pitch->valueint, LG_sail_adjustment_mode_roll);
       return 0;
     }
     return 1;
@@ -412,6 +452,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
     /* Check for pitch value range */
     if (pitch->valueint >= 0 && pitch->valueint <= 100) {
       /* Format is valid */
+      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, pitch->valueint, LG_sail_adjustment_mode_trim);
       return 0;
     }
 
@@ -437,5 +478,6 @@ static uint8_t REST_check_mode_json(cJSON *mode_json) {
     return 1;
   }
   /* Format is valid */
+  Linear_Guide_set_operating_mode(REST_linear_guide, operating_mode->valueint);
   return 0;
 }
