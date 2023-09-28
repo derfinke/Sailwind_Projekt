@@ -6,6 +6,7 @@
 
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 
 
 /* defines ------------------------------------------------------------*/
@@ -173,7 +174,7 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 	}
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	Localization_serialize(loc, FRAM_buffer);
-	if(FRAM_write((uint8_t *)FRAM_buffer, 0x0000, LOC_SERIAL_SIZE) != HAL_OK)
+	if(FRAM_write((uint8_t *)FRAM_buffer, LINEAR_GUIDE_INFOS, LOC_SERIAL_SIZE) != HAL_OK)
 	{
 	  printf("Saving Position failed!\r\n");
     return -1;
@@ -185,7 +186,7 @@ Localization_t Linear_Guide_read_Localization()
 {
 	char FRAM_buffer[LOC_SERIAL_SIZE];
 	FRAM_init();
-	FRAM_read(0x0000, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
+	FRAM_read(LINEAR_GUIDE_INFOS, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
 	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
 }
 
