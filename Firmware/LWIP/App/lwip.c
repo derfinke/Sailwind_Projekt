@@ -22,6 +22,8 @@
 #include "lwip.h"
 #include "lwip/init.h"
 #include "lwip/netif.h"
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 #if defined ( __CC_ARM )  /* MDK ARM Compiler */
 #include "lwip/sio.h"
 #endif /* MDK ARM Compiler */
@@ -73,14 +75,37 @@ void MX_LWIP_Init(void)
   GATEWAY_ADDRESS[2] = 0;
   GATEWAY_ADDRESS[3] = 1;
 
+  uint8_t read_IP[4];
 /* USER CODE BEGIN IP_ADDRESSES */
 /* USER CODE END IP_ADDRESSES */
 
   /* Initilialize the LwIP stack without RTOS */
   lwip_init();
 
+  FRAM_read(USED_IP_ADDRESS, read_IP, 4);
+
+  if((read_IP[0] == 0xFF) || (read_IP[0] == 0x00))
+  {
+    IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[1] == 0xFF) || (read_IP[1] != 0x00))
+  {
+    IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[2] != 0xFF) || (read_IP[2] == 0x00))
+  {
+    IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[3] == 0xFF) || (read_IP[3] == 0x00))
+  {
+    IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else
+  {
+    IP_ADDR4(&ipaddr, read_IP[0], read_IP[1], read_IP[2], read_IP[3]);
+  }
+
   /* IP addresses initialization without DHCP (IPv4) */
-  IP4_ADDR(&ipaddr, IP_ADDRESS[0], IP_ADDRESS[1], IP_ADDRESS[2], IP_ADDRESS[3]);
   IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1] , NETMASK_ADDRESS[2], NETMASK_ADDRESS[3]);
   IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2], GATEWAY_ADDRESS[3]);
 

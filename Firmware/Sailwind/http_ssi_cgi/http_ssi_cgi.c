@@ -14,6 +14,7 @@
 #include "WSWD.h"
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 
 #define NUM_SSI_TAGS 10
 #define UINT_TAGS 4
@@ -215,23 +216,21 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
         IP_address[1] = atoi(second_octet);
         IP_address[2] = atoi(third_octet);
         IP_address[3] = atoi(fourth_octet);
-        if (IP_address[0] > 255) {
+        if (IP_address[0] >= 255 || IP_address[0] <= 0) {
           error_flag = 0;
           return "/Settings.shtml";
-        } else if (IP_address[1] > 255) {
+        } else if (IP_address[1] >= 255 || IP_address[1] <= 0) {
           error_flag = 0;
           return "/Settings.shtml";
-        } else if (IP_address[2] > 255) {
+        } else if (IP_address[2] >= 255 || IP_address[2] <= 0) {
           error_flag = 0;
           return "/Settings.shtml";
-        } else if (IP_address[3] > 255) {
+        } else if (IP_address[3] >= 255 || IP_address[3] <= 0) {
           error_flag = 0;
           return "/Settings.shtml";
         }
         //Define FRAM segments first
-#if 0
-        FRAM_write(IP_address, 0x0100, sizeof(IP_address));
-#endif
+        FRAM_write((uint8_t*)IP_address, USED_IP_ADDRESS, sizeof(IP_address));
         error_flag = 2;
       }
     }
