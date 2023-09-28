@@ -341,7 +341,7 @@ static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)
 
 static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr)
 {
-	IO_analogSensor_t *ds_ptr = &mc_ptr->lg_ptr->distance_sensor;
+	IO_analogSensor_t *ds_ptr = IO_get_distance_sensor();
 	IO_Get_Measured_Value(ds_ptr);
 	Localization_set_startpos_abs(&mc_ptr->lg_ptr->localization, ds_ptr->measured_value);
 }
