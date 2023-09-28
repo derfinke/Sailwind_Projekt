@@ -27,13 +27,48 @@ char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
     "winddir", "mode", "opmod", "error" };
 char const **TAGS = TAGCHAR;
 
-const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
+/**
+ * @brief Handles the CGI IP form
+ * @param iIndex: Index which cgi handler was called
+ * @param iNumParams: Number of parameters in form
+ * @param pcParam: Parameter name
+ * @param pcValue: Value of Parameter
+ * @retval form: pointer to form
+ */
+static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
                           char *pcValue[]);
-const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
+
+/**
+ * @brief Handles the CGI restart form
+ * @param iIndex: Index which cgi handler was called
+ * @param iNumParams: Number of parameters in form
+ * @param pcParam: Parameter name
+ * @param pcValue: Value of Parameter
+ * @retval form: pointer to form
+ */
+static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
                                char *pcValue[]);
-const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
+
+/**
+ * @brief Handles the CGI mode switch form
+ * @param iIndex: Index which cgi handler was called
+ * @param iNumParams: Number of parameters in form
+ * @param pcParam: Parameter name
+ * @param pcValue: Value of Parameter
+ * @retval form: pointer to form
+ */
+static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
                             char *pcValue[]);
-const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
+
+/**
+ * @brief Handles the CGI control form
+ * @param iIndex: Index which cgi handler was called
+ * @param iNumParams: Number of parameters in form
+ * @param pcParam: Parameter name
+ * @param pcValue: Value of Parameter
+ * @retval form: pointer to form
+ */
+static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
                                char *pcValue[]);
 char name[30];
 tCGI CGI_FORMS[4];
@@ -148,7 +183,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 
 /************************ CGI HANDLER ***************************/
 
-const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
+static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
                           char *pcValue[]) {
   char first_octet[3];
   char second_octet[3];
@@ -204,7 +239,7 @@ const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/Settings.shtml";
 }
 
-const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
+static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
                                char *pcValue[]) {
   if (iIndex == 1) {
     __HAL_TIM_CLEAR_FLAG(&htim2, TIM_IT_UPDATE);
@@ -216,7 +251,7 @@ const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/index.html";
 }
 
-const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
+static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
                             char *pcValue[]) {
   if (iIndex == 2) {
     if (strcmp(pcParam[0], "operating_mode") == 0) {
@@ -233,7 +268,7 @@ const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/Settings.shtml";
 }
 
-const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
+static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
                                char *pcValue[]) {
   if (iIndex == 3) {
     if (strcmp(pcParam[0], "move") == 0) {
