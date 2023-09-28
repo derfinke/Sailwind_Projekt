@@ -14,6 +14,7 @@
 
 /* private function prototypes -----------------------------------------------*/
 
+static Linear_Guide_t LG_linear_guide = {0};
 /**
  * @brief initialise the two endswitches of the linear guide
  * @param none
@@ -57,15 +58,13 @@ static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
  */
 static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 
+
 /* API function definitions --------------------------------------------------*/
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel)
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 {
-	Linear_Guide_t linear_guide = {
-			.motor = Motor_init(hdac_ptr, htim_ptr, htim_channel, htim_active_channel),
-			.localization = Linear_Guide_read_Localization(),
-			.endswitches = Linear_Guide_Endswitches_init(),
-	};
-	return linear_guide;
+  LG_linear_guide.motor = Motor_init(hdac_ptr);
+  LG_linear_guide.localization = Linear_Guide_read_Localization();
+  LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 }
 
 LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
@@ -302,3 +301,8 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
 	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
 }
 */
+
+Linear_Guide_t *LG_get_Linear_Guide(void)
+{
+  return &LG_linear_guide;
+}

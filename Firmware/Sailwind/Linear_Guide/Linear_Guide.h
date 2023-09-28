@@ -60,7 +60,7 @@ typedef struct {
  * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
  * @retval linear_guide_struct
  */
-Linear_Guide_t Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr);
 /**
  * @brief initialise all status LEDs
  * @param op_mode: depending on the value, either the manual or automatic LED is switched on
@@ -138,5 +138,5 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc);
  */
 Localization_t Linear_Guide_read_Localization();
 
-
+Linear_Guide_t *LG_get_Linear_Guide(void);
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */

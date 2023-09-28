@@ -39,6 +39,7 @@ extern "C" {
 extern SPI_HandleTypeDef hspi4;
 extern UART_HandleTypeDef huart3;
 extern UART_HandleTypeDef huart2;
+extern TIM_HandleTypeDef htim2;
 
 /* USER CODE END ET */
 

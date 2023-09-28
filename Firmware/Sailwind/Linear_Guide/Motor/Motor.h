@@ -53,7 +53,7 @@ typedef struct {
 
 
 /* API function prototypes -----------------------------------------------*/
-Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_ptr, uint32_t htim_channel, HAL_TIM_ActiveChannel htim_active_channel);
+Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr);
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_stop_moving(Motor_t *motor_ptr);
 int8_t Motor_speed_ramp(Motor_t *motor_ptr);

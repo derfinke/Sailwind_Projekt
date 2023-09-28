@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<style>
+  head {margin:0;}
+  ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+  }
+
+  li {
+    float: left;
+  }
+
+  li a {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+  }
+
+  li a:hover:not(.active) {
+    background-color: #111;
+  }
+
+  .active {
+    background-color: #04AA6D;
+  }
+  body {
+    height:50%;
+    width:100%;
+    margin:0;
+}
+
+form {
+  width:5%;
+  margin-left:auto;
+  margin-right:auto;
+}
+</style>
+<head>
+  <title>Login</title>
+</head>
+<body>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="Login.html" class="active">Login</a></li>
+    <li><a href="Sensor_values.shtml">Status</a></li>
+    <li><a href="Current_pos.shtml">Current Sail Position</a></li>
+    <li><a href="Settings.shtml">Settings</a></li>
+  </ul>
+<form id="form_login">
+  <h1 style="color:#111;">
+    Login
+  </h1>
+  <p>
+    <input type="text" id="username" placeholder="username" style="height: 35px"/>
+  </p>
+  <p>
+    <input type="password" id="password" placeholder="password" style="height: 35px"/>
+  </p>
+  <p>
+    <button id="submitbutton" type="button">Login</button>
+  </p>
+</form>
+</body>
+</html>
