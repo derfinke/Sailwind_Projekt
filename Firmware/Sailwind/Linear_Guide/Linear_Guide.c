@@ -21,6 +21,9 @@
 #define LG_FAULT_CHECK_NEGATIVE 0
 #define LG_FAULT_CHECK_SKIPPED 1
 
+
+static IO_analogSensor_t *LG_distance_sensor_ptr = {0};
+static IO_analogSensor_t *LG_current_sensor_ptr = {0};
 /* private function prototypes -----------------------------------------------*/
 
 static Linear_Guide_t LG_linear_guide = {0};
@@ -85,6 +88,12 @@ static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr);
  */
 static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr);
 /**
+ * @brief check, if wind_speed_fault error was set by controllino
+ * @param lg_ptr: linear_guide reference
+ * @retval fault_check_status
+ */
+static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr);
+/**
  * @brief convert given rpm value of the motor to movement speed of the linear guide in mm/s
  * @param rpm_value
  * @retval speed_mms
@@ -101,11 +110,13 @@ static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
 /* API function definitions --------------------------------------------------*/
 void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 {
-  LG_linear_guide.error_state = LG_error_state_0_normal;
+	LG_linear_guide.error_state = LG_error_state_0_normal;
 	LG_linear_guide.operating_mode = LG_operating_mode_manual;
 	LG_linear_guide.motor = Motor_init(hdac_ptr);
 	LG_linear_guide.localization = Linear_Guide_read_Localization();
 	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
+	LG_distance_sensor_ptr = IO_get_distance_sensor();
+	LG_current_sensor_ptr = IO_get_current_sensor();
 }
 
 LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
@@ -222,8 +233,8 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 	Localization_serialize(loc, FRAM_buffer);
 	if(FRAM_write((uint8_t *)FRAM_buffer, LINEAR_GUIDE_INFOS, LOC_SERIAL_SIZE) != HAL_OK)
 	{
-	  printf("Saving Position failed!\r\n");
-    return -1;
+		printf("Saving Position failed!\r\n");
+		return LG_LOCALIZATION_FAILED;
 	}
   return LG_LOCALIZATION_SAFED;
 }
@@ -264,19 +275,28 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 {
 	if (lg_ptr->operating_mode == LG_operating_mode_automatic)
 	{
-		Loc_movement_t movement;
+		Loc_movement_t movement = Loc_movement_stop;
 		Localization_t *loc_ptr = &lg_ptr->localization;
 		if (loc_ptr->desired_pos_mm > loc_ptr->current_pos_mm)
 		{
-			movement = Loc_movement_backwards;
+			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
+			{
+				Localization_set_endpos(loc_ptr);
+			}
+			else {
+				movement = Loc_movement_backwards;
+			}
 		}
 		else if (loc_ptr->desired_pos_mm < loc_ptr->current_pos_mm)
 		{
-			movement = Loc_movement_forward;
-		}
-		else
-		{
-			movement = Loc_movement_stop;
+			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
+			{
+				IO_Get_Measured_Value(LG_distance_sensor_ptr);
+				Localization_set_startpos_abs(loc_ptr, LG_distance_sensor_ptr->measured_value);
+			}
+			else {
+				movement = Loc_movement_forward;
+			}
 		}
 		Linear_Guide_move(lg_ptr, movement);
 	}
@@ -290,26 +310,30 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (Linear_Guide_check_distance_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_1_distance_fault;
-		Linear_Guide_set_operating_mode(lg_ptr, LG_operating_mode_manual);
-		Localization_recover(&lg_ptr->localization, LOC_RECOVERY_PARTIAL, True);
+		Localization_adapt_to_sensor(&lg_ptr->localization);
+	}
+	if (Linear_Guide_check_wind_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
+	{
+		new_error_state = LG_error_state_2_wind_speed_fault;
+		Linear_Guide_set_desired_roll_trim_percentage(lg_ptr, 100, LG_sail_adjustment_mode_roll);
 	}
 	if (Linear_Guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
-		new_error_state = LG_error_state_2_motor_fault;
-		Linear_Guide_move(lg_ptr, Loc_movement_stop);
-		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
+		new_error_state = LG_error_state_3_motor_fault;
 	}
 	if (Linear_Guide_check_current_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
-		new_error_state = LG_error_state_3_current_fault;
-		Linear_Guide_move(lg_ptr, Loc_movement_stop);
-		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
+		new_error_state = LG_error_state_4_current_fault;
 	}
-	if (new_error_state != lg_ptr->error_state)
+
+	if (new_error_state >= LG_error_state_3_motor_fault)
 	{
-		lg_ptr->error_state = new_error_state;
-		Linear_Guide_LED_set_error(lg_ptr);
+		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
+		Linear_Guide_move(lg_ptr, Loc_movement_stop);
 	}
+	lg_ptr->error_state = new_error_state;
+	Linear_Guide_LED_set_error(lg_ptr);
+
 	return update_status;
 }
 
@@ -319,9 +343,8 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	{
 		return LG_FAULT_CHECK_SKIPPED;
 	}
-  IO_analogSensor_t *ds_ptr = IO_get_distance_sensor();
-	IO_Get_Measured_Value(ds_ptr);
-	uint16_t measured_value = ds_ptr->measured_value;
+	IO_Get_Measured_Value(LG_distance_sensor_ptr);
+	uint16_t measured_value = LG_distance_sensor_ptr->measured_value;
 	Localization_parse_distance_sensor_value(&lg_ptr->localization, measured_value);
 	Localization_update_position(&lg_ptr->localization);
 	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
@@ -342,9 +365,17 @@ static int8_t Linear_Guide_check_motor_fault(Linear_Guide_t *lg_ptr)
 
 static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr)
 {
-	IO_analogSensor_t *cs_ptr = IO_get_current_sensor();
-	IO_Get_Measured_Value(cs_ptr);
-	if (cs_ptr->measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
+	IO_Get_Measured_Value(LG_current_sensor_ptr);
+	if (LG_current_sensor_ptr->measured_value > LG_CURRENT_FAULT_TOLERANCE_MA)
+	{
+		return LG_FAULT_CHECK_POSITIVE;
+	}
+	return LG_FAULT_CHECK_NEGATIVE;
+}
+
+static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr)
+{
+	if (lg_ptr->error_state == LG_error_state_2_wind_speed_fault)
 	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}

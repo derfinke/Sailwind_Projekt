@@ -22,6 +22,8 @@
 #define MC_SET_CENTER_OK 0
 #define MC_SET_CENTER_NOT_TRIGGERED 1
 
+static IO_analogSensor_t *MC_distance_sensor_ptr = {0};
+
 /* private function prototypes -----------------------------------------------*/
 static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement);
 
@@ -59,7 +61,7 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 	};
 	lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
 	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
-
+	MC_distance_sensor_ptr = IO_get_distance_sensor();
 	return manual_control;
 }
 
@@ -137,8 +139,6 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 				printf("new state approach back\r\n");
 				Manual_Control_set_startpos(mc_ptr);
 				Linear_Guide_move(lg_ptr, Loc_movement_stop);
-				*state = Loc_state_2_approach_back;
-				lg_ptr->localization.pulse_count = 0;
 				if (lg_ptr->localization.recovery_state == LOC_RECOVERY_PARTIAL)
 				{
 					*state = Loc_state_5_center_pos_set;
@@ -146,6 +146,7 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 				}
 				else
 				{
+					*state = Loc_state_2_approach_back;
 					HAL_Delay(1000);
 					Linear_Guide_move(lg_ptr, Loc_movement_backwards);
 				}
@@ -341,9 +342,8 @@ static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr)
 
 static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr)
 {
-	IO_analogSensor_t *ds_ptr = IO_get_distance_sensor();
-	IO_Get_Measured_Value(ds_ptr);
-	Localization_set_startpos_abs(&mc_ptr->lg_ptr->localization, ds_ptr->measured_value);
+	IO_Get_Measured_Value(MC_distance_sensor_ptr);
+	Localization_set_startpos_abs(&mc_ptr->lg_ptr->localization, MC_distance_sensor_ptr->measured_value);
 }
 
 static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state)

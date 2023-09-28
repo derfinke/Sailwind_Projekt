@@ -63,6 +63,7 @@ void Localization_set_center(Localization_t *loc_ptr)
 void Localization_set_startpos_abs(Localization_t *loc_ptr, uint16_t measured_value)
 {
 	loc_ptr->start_pos_abs_mm = (int32_t) measured_value;
+	loc_ptr->pulse_count = 0;
 }
 
 void Localization_parse_distance_sensor_value(Localization_t *loc_ptr, uint16_t measured_value)
@@ -107,6 +108,12 @@ int8_t Localization_update_position(Localization_t *loc_ptr)
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
 {
 	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPECMS, (int)loc.state, (int)loc.pulse_count, (int)loc.end_pos_mm, (int)loc.center_pos_mm, (int)loc.movement, (int)loc.start_pos_abs_mm);
+}
+
+void Localization_adapt_to_sensor(Localization_t *loc_ptr)
+{
+	loc_ptr->pulse_count = (int32_t) (loc_ptr->current_measured_pos_mm * 2 / loc_ptr->distance_per_pulse);
+	loc_ptr->current_pos_mm = loc_ptr->current_measured_pos_mm;
 }
 
 /* private function definitions -----------------------------------------------*/

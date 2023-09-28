@@ -60,6 +60,7 @@ void Localization_set_endpos(Localization_t *loc_ptr);
 void Localization_set_center(Localization_t *loc_ptr);
 void Localization_set_startpos_abs(Localization_t *loc_ptr, uint16_t measured_value);
 void Localization_parse_distance_sensor_value(Localization_t *loc_ptr, uint16_t measured_value);
+void Localization_adapt_to_sensor(Localization_t *loc_ptr);
 void Localization_callback_pulse_count(Localization_t *loc_ptr);
 int8_t Localization_update_position(Localization_t *loc_ptr);
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);

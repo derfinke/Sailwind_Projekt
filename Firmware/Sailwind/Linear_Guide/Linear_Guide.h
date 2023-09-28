@@ -15,6 +15,7 @@
 #define LG_MOVEMENT_CHANGED 0
 #define LG_MOVEMENT_RETAINED 1
 #define LG_LOCALIZATION_SAFED 0
+#define LG_LOCALIZATION_FAILED -1
 #define LG_NOT_LOCALIZED 1
 #define LG_ADJUSTMENT_MODE_UPDATED 0
 #define LG_UPDATE_NORMAL 0
@@ -25,8 +26,9 @@
 typedef enum {
 	LG_error_state_0_normal,
 	LG_error_state_1_distance_fault,
-	LG_error_state_2_motor_fault,
-	LG_error_state_3_current_fault
+	LG_error_state_3_motor_fault,
+	LG_error_state_4_current_fault,
+	LG_error_state_2_wind_speed_fault
 } LG_error_state_t;
 typedef enum {
 	LG_operating_mode_manual,
