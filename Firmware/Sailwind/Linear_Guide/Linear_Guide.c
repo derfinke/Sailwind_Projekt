@@ -13,9 +13,7 @@
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_MM_PER_ROTATION 1.12
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
-#define LG_DISTANCE_MIN_MM 30
-#define LG_DISTANCE_MAX_MM 730
-#define LG_DISTANCE_FAULT_TOLERANCE_MM 10
+#define LG_DISTANCE_FAULT_TOLERANCE_MM 8
 #define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
@@ -279,24 +277,22 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		Localization_t *loc_ptr = &lg_ptr->localization;
 		if (loc_ptr->desired_pos_mm > loc_ptr->current_pos_mm)
 		{
-			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
-			{
-				Localization_set_endpos(loc_ptr);
-			}
-			else {
-				movement = Loc_movement_backwards;
-			}
+			movement = Loc_movement_backwards;
 		}
 		else if (loc_ptr->desired_pos_mm < loc_ptr->current_pos_mm)
 		{
-			if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
-			{
-				IO_Get_Measured_Value(LG_distance_sensor_ptr);
-				Localization_set_startpos_abs(loc_ptr, LG_distance_sensor_ptr->measured_value);
-			}
-			else {
-				movement = Loc_movement_forward;
-			}
+			movement = Loc_movement_forward;
+		}
+		if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
+		{
+			IO_Get_Measured_Value(LG_distance_sensor_ptr);
+			Localization_set_startpos_abs(loc_ptr, LG_distance_sensor_ptr->measured_value);
+			movement = Loc_movement_stop;
+		}
+		else if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
+		{
+			Localization_set_endpos(loc_ptr);
+			movement = Loc_movement_stop;
 		}
 		Linear_Guide_move(lg_ptr, movement);
 	}

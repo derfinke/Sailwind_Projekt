@@ -140,7 +140,7 @@ int main(void)
   MX_SPI4_Init();
   MX_USART1_UART_Init();
   MX_TIM3_Init();
-  MX_LWIP_Init();
+  //MX_LWIP_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
@@ -183,8 +183,8 @@ int main(void)
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
 
-  tcp_server_init();
-  http_server_init();
+  //tcp_server_init();
+  //http_server_init();
 
   /* USER CODE END 2 */
 
@@ -192,7 +192,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      MX_LWIP_Process();
+      //MX_LWIP_Process();
       if (Linear_Guide_update(linear_guide) == LG_UPDATE_NORMAL)
       {
     	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);

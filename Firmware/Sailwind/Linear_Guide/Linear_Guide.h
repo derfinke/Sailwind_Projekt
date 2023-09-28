@@ -26,9 +26,9 @@
 typedef enum {
 	LG_error_state_0_normal,
 	LG_error_state_1_distance_fault,
+	LG_error_state_2_wind_speed_fault,
 	LG_error_state_3_motor_fault,
 	LG_error_state_4_current_fault,
-	LG_error_state_2_wind_speed_fault
 } LG_error_state_t;
 typedef enum {
 	LG_operating_mode_manual,

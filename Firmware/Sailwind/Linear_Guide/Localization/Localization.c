@@ -112,7 +112,7 @@ void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SI
 
 void Localization_adapt_to_sensor(Localization_t *loc_ptr)
 {
-	loc_ptr->pulse_count = (int32_t) (loc_ptr->current_measured_pos_mm * 2 / loc_ptr->distance_per_pulse);
+	loc_ptr->pulse_count = (int32_t) ((loc_ptr->current_measured_pos_mm + loc_ptr->end_pos_mm) / loc_ptr->distance_per_pulse);
 	loc_ptr->current_pos_mm = loc_ptr->current_measured_pos_mm;
 }
 
@@ -160,6 +160,7 @@ void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolea
 			break;
 		case LOC_RECOVERY_COMPLETE:
 			loc_ptr->is_localized = True;
+			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
 			Localization_update_position(loc_ptr);
 			break;
 	}
