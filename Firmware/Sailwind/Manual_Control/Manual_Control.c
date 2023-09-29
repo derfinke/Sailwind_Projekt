@@ -255,7 +255,6 @@ static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc
 			printf("set to automatic\r\n");
 			new_operating_mode = LG_operating_mode_automatic;
 			Linear_Guide_safe_Localization(lg_ptr->localization);
-			Linear_Guide_set_desired_roll_trim_percentage(lg_ptr, 50, LG_sail_adjustment_mode_roll);
 			break;
 		case MC_BUTTON_SWITCH_MANUAL:
 			printf("set to manual\r\n");
