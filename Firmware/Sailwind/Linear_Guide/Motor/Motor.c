@@ -6,6 +6,7 @@
  */
 
 #include "Motor.h"
+#include <stdlib.h>
 
 /* defines ------------------------------------------------------------*/
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
@@ -13,8 +14,6 @@
 #define MOTOR_NORMAL_SPEED 1600
 #define MOTOR_RAMP_STEP_MS 13
 #define MOTOR_RAMP_STEP_RPM 10
-#define MOTOR_RAMP_SPEED_UP 1
-#define MOTOR_RAMP_SLOW_DOWN -1
 
 /* private function prototypes -----------------------------------------------*/
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
@@ -59,7 +58,8 @@ void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
  */
 void Motor_stop_moving(Motor_t *motor_ptr) {
 	printf("motor stop moving\r\n");
-	Motor_set_rpm(motor_ptr, 0);
+	motor_ptr->ramp_final_rpm = 0;
+	motor_ptr->ramp_activated = True;
 }
 
 int8_t Motor_speed_ramp(Motor_t *motor_ptr)
@@ -68,17 +68,22 @@ int8_t Motor_speed_ramp(Motor_t *motor_ptr)
 	{
 		return MOTOR_RAMP_INACTIVE;
 	}
-	if (motor_ptr->rpm_set_point >= motor_ptr->ramp_final_rpm)
+	if (abs(motor_ptr->rpm_set_point - motor_ptr->ramp_final_rpm) < MOTOR_RAMP_STEP_RPM)
 	{
 		Motor_set_rpm(motor_ptr, motor_ptr->ramp_final_rpm);
 		motor_ptr->ramp_activated = False;
-		return MOTOR_RAMP_DONE;
+		if (motor_ptr->rpm_set_point == 0)
+		{
+			return MOTOR_RAMP_STOPPED;
+		}
+		return MOTOR_RAMP_NORMAL_SPEED;
 	}
 	if ((HAL_GetTick()-motor_ptr->ramp_last_step_ms) < MOTOR_RAMP_STEP_MS)
 	{
 		return MOTOR_RAMP_WAIT;
 	}
-	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + MOTOR_RAMP_STEP_RPM);
+	int8_t sign = motor_ptr->ramp_final_rpm == 0 ? -1 : 1;
+	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + sign * MOTOR_RAMP_STEP_RPM);
 	motor_ptr->ramp_last_step_ms = HAL_GetTick();
 	return MOTOR_RAMP_NEXT_STEP;
 }

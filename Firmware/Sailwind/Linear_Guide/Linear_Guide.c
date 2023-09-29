@@ -172,7 +172,10 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 		case Loc_movement_forward:
 			Motor_start_moving(&lg_ptr->motor, Motor_function_ccw_rotation); break;
 	}
-	lg_ptr->localization.movement = movement;
+	if (movement != Loc_movement_stop)
+	{
+		lg_ptr->localization.movement = movement;
+	}
 	Linear_Guide_safe_Localization(lg_ptr->localization);
 	return LG_MOVEMENT_CHANGED;
 }
@@ -256,10 +259,10 @@ static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 
 static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 {
+	Localization_t *loc_ptr = &lg_ptr->localization;
 	if (lg_ptr->operating_mode == LG_operating_mode_automatic)
 	{
 		Loc_movement_t movement = Loc_movement_stop;
-		Localization_t *loc_ptr = &lg_ptr->localization;
 		if (loc_ptr->desired_pos_mm > loc_ptr->current_pos_mm)
 		{
 			movement = Loc_movement_backwards;
@@ -281,7 +284,10 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		}
 		Linear_Guide_move(lg_ptr, movement);
 	}
-	Motor_speed_ramp(&lg_ptr->motor);
+	if (Motor_speed_ramp(&lg_ptr->motor) == MOTOR_RAMP_STOPPED)
+	{
+		loc_ptr->movement = Loc_movement_stop;
+	}
 }
 
 static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)

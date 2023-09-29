@@ -18,9 +18,10 @@
 #define MOTOR_DIRECTION_CW GPIO_PIN_RESET
 #define MOTOR_IN_COUNT 4
 #define MOTOR_RAMP_INACTIVE 1
-#define MOTOR_RAMP_DONE 2
-#define MOTOR_RAMP_WAIT 3
-#define MOTOR_RAMP_NEXT_STEP 4
+#define MOTOR_RAMP_WAIT 2
+#define MOTOR_RAMP_NEXT_STEP 3
+#define MOTOR_RAMP_NORMAL_SPEED 4
+#define MOTOR_RAMP_STOPPED 5
 
 
 /* typedefs -----------------------------------------------------------*/
