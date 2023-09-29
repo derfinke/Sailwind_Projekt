@@ -162,6 +162,7 @@ void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolea
 			loc_ptr->is_localized = True;
 			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
 			Localization_update_position(loc_ptr);
+			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
 			break;
 	}
 }

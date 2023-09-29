@@ -305,7 +305,10 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 			HAL_TIM_Base_Start_IT(mc_ptr->htim_ptr);
 			break;
 		case BUTTON_RELEASED:
-			lg_ptr->localization.is_triggered = True;
+			if (mc_ptr->longpress_time_s < MC_LONG_PRESS_TIME_S)
+			{
+				lg_ptr->localization.is_triggered = True;
+			}
 			mc_ptr->longpress_time_s = 0;
 			HAL_TIM_Base_Stop_IT(mc_ptr->htim_ptr);
 			break;
