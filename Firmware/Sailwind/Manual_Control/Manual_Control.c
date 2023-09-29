@@ -21,6 +21,7 @@
 #define MC_MOVE_OK 0
 #define MC_SET_CENTER_OK 0
 #define MC_SET_CENTER_NOT_TRIGGERED 1
+#define MC_LONG_PRESS_TIME_S 3
 
 static IO_analogSensor_t *MC_distance_sensor_ptr = {0};
 
@@ -46,7 +47,7 @@ static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
-Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
+Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *htim_ptr)
 {
 	MC_buttons_t buttons = {
 			.switch_mode = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
@@ -57,7 +58,9 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr)
 
 	Manual_Control_t manual_control = {
 			.buttons = buttons,
-			.lg_ptr = lg_ptr
+			.lg_ptr = lg_ptr,
+			.longpress_time_s = 0,
+			.htim_ptr = htim_ptr
 	};
 	lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
 	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
@@ -191,6 +194,16 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 	return MC_LOCALIZATION_OK;
 }
 
+void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr)
+{
+	mc_ptr->longpress_time_s++;
+	if (mc_ptr->longpress_time_s >= MC_LONG_PRESS_TIME_S)
+	{
+		Localization_reset(&mc_ptr->lg_ptr->localization, True);
+		HAL_TIM_Base_Stop_IT(mc_ptr->htim_ptr);
+	}
+}
+
 /* private function definitions -----------------------------------------------*/
 
 /* static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
@@ -289,14 +302,12 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
-			mc_ptr->buttons.last_localize_press_ms = HAL_GetTick();
+			HAL_TIM_Base_Start_IT(mc_ptr->htim_ptr);
 			break;
 		case BUTTON_RELEASED:
 			lg_ptr->localization.is_triggered = True;
-			if ((HAL_GetTick() - mc_ptr->buttons.last_localize_press_ms) >= MC_LOCALIZE_RESET_MS)
-			{
-				Localization_reset(&lg_ptr->localization, True);
-			}
+			mc_ptr->longpress_time_s = 0;
+			HAL_TIM_Base_Stop_IT(mc_ptr->htim_ptr);
 			break;
 	}
 	return MC_LOCALIZATION_OK;
