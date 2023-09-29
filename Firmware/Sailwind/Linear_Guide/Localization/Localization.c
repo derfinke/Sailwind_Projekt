@@ -12,7 +12,7 @@
 
 /* private function prototypes -----------------------------------------------*/
 static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
-static int32_t Localization_pulse_count_to_distance(Localization_t loc);
+static int16_t Localization_pulse_count_to_distance(Localization_t loc);
 
 /* API function definitions -----------------------------------------------*/
 Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE])
@@ -62,7 +62,7 @@ void Localization_set_center(Localization_t *loc_ptr)
 
 void Localization_set_startpos_abs(Localization_t *loc_ptr, uint16_t measured_value)
 {
-	loc_ptr->start_pos_abs_mm = (int32_t) measured_value;
+	loc_ptr->start_pos_abs_mm = measured_value;
 	loc_ptr->pulse_count = 0;
 }
 
@@ -95,8 +95,8 @@ int8_t Localization_update_position(Localization_t *loc_ptr)
 	{
 		return LOC_NOT_LOCALIZED;
 	}
-	int32_t absolute_distance = Localization_pulse_count_to_distance(*loc_ptr);
-	int32_t new_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
+	uint16_t absolute_distance = Localization_pulse_count_to_distance(*loc_ptr);
+	int16_t new_pos_mm = absolute_distance - loc_ptr->end_pos_mm;
 	if (new_pos_mm == loc_ptr->current_pos_mm)
 	{
 		return LOC_POSITION_RETAINED;
@@ -112,7 +112,7 @@ void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SI
 
 void Localization_adapt_to_sensor(Localization_t *loc_ptr)
 {
-	loc_ptr->pulse_count = (int32_t) ((loc_ptr->current_measured_pos_mm + loc_ptr->end_pos_mm) / loc_ptr->distance_per_pulse);
+	loc_ptr->pulse_count = (int16_t) ((loc_ptr->current_measured_pos_mm + loc_ptr->end_pos_mm) / loc_ptr->distance_per_pulse);
 	loc_ptr->current_pos_mm = loc_ptr->current_measured_pos_mm;
 }
 
@@ -122,9 +122,9 @@ void Localization_adapt_to_sensor(Localization_t *loc_ptr)
  *  Description:
  *   - convert measured pulse count of the motor to a distance in mm, using distance per pulse parameter of the Linear guide
  */
-static int32_t Localization_pulse_count_to_distance(Localization_t loc)
+static int16_t Localization_pulse_count_to_distance(Localization_t loc)
 {
-	return (int32_t) (loc.pulse_count * loc.distance_per_pulse);
+	return (int16_t) (loc.pulse_count * loc.distance_per_pulse);
 }
 
 static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])

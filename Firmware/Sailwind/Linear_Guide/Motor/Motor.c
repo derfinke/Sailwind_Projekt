@@ -12,8 +12,6 @@
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
 #define MOTOR_RPM_NOMINAL 3000.0F// nominal speed
 #define MOTOR_NORMAL_SPEED 1600
-#define MOTOR_RAMP_STEP_MS 13
-#define MOTOR_RAMP_STEP_RPM 10
 
 /* private function prototypes -----------------------------------------------*/
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
@@ -56,10 +54,17 @@ void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
  *   - write digital motor Inputs to stop the motor
  *   - save the new moving state to the motor reference
  */
-void Motor_stop_moving(Motor_t *motor_ptr) {
+void Motor_stop_moving(Motor_t *motor_ptr, boolean_t immediate) {
 	printf("motor stop moving\r\n");
-	motor_ptr->ramp_final_rpm = 0;
-	motor_ptr->ramp_activated = True;
+	if (immediate)
+	{
+		Motor_set_rpm(motor_ptr, 0);
+	}
+	else
+	{
+		motor_ptr->ramp_final_rpm = 0;
+		motor_ptr->ramp_activated = True;
+	}
 }
 
 int8_t Motor_speed_ramp(Motor_t *motor_ptr)
@@ -136,7 +141,6 @@ void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value)
 
 boolean_t Motor_error(Motor_t *motor_ptr) {
 	if (IO_digitalRead(&motor_ptr->OUT2_error) == GPIO_PIN_RESET) {
-		Motor_stop_moving(motor_ptr);
 		return True;
 	}
 	return False;

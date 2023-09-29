@@ -42,13 +42,14 @@ typedef struct {
 	boolean_t is_localized;
 	boolean_t is_triggered;
 	float distance_per_pulse;
-	int32_t end_pos_mm;
-	int32_t start_pos_abs_mm;
-	int32_t center_pos_mm;
-	int32_t current_pos_mm;
-	int32_t current_measured_pos_mm;
-	int32_t pulse_count;
-	int32_t desired_pos_mm;
+	uint16_t end_pos_mm;
+	uint16_t start_pos_abs_mm;
+	int16_t center_pos_mm;
+	int16_t current_pos_mm;
+	int16_t current_measured_pos_mm;
+	int16_t pulse_count;
+	int16_t desired_pos_mm;
+	uint16_t brake_path_mm;
 	int8_t recovery_state;
 } Localization_t;
 

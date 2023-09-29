@@ -11,13 +11,14 @@
 
 
 /* defines ------------------------------------------------------------*/
-#define LG_DISTANCE_MM_PER_ROTATION 1.12
+#define LG_DISTANCE_MM_PER_ROTATION 1.12F
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
-#define LG_DISTANCE_FAULT_TOLERANCE_MM 8
+#define LG_DISTANCE_FAULT_TOLERANCE_MM 10
 #define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
 #define LG_FAULT_CHECK_SKIPPED 1
+#define LG_BRAKE_PATH_OFFSET_REL 1.25F
 
 
 static IO_analogSensor_t *LG_distance_sensor_ptr = {0};
@@ -91,7 +92,12 @@ static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr);
  * @retval fault_check_status
  */
 static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr);
-
+/**
+ * @brief calculate brake path for current normal speed and safe it in localization member
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
+static void Linear_Guide_calculate_break_path(Linear_Guide_t *lg_ptr);
 
 
 /* API function definitions --------------------------------------------------*/
@@ -104,6 +110,7 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 	LG_distance_sensor_ptr = IO_get_distance_sensor();
 	LG_current_sensor_ptr = IO_get_current_sensor();
+	Linear_Guide_calculate_break_path(&LG_linear_guide);
 }
 
 LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
@@ -157,7 +164,7 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 	Localization_callback_pulse_count(&lg_ptr->localization);
 }
 
-int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
+int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolean_t immediate)
 {
 	if (movement == lg_ptr->localization.movement)
 	{
@@ -166,13 +173,13 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	switch(movement)
 	{
 		case Loc_movement_stop:
-			Motor_stop_moving(&lg_ptr->motor); break;
+			Motor_stop_moving(&lg_ptr->motor, immediate); break;
 		case Loc_movement_backwards:
 			Motor_start_moving(&lg_ptr->motor, Motor_function_cw_rotation); break;
 		case Loc_movement_forward:
 			Motor_start_moving(&lg_ptr->motor, Motor_function_ccw_rotation); break;
 	}
-	if (movement != Loc_movement_stop)
+	if (movement != Loc_movement_stop || immediate)
 	{
 		lg_ptr->localization.movement = movement;
 	}
@@ -202,6 +209,7 @@ void Linear_Guide_change_speed_rpm(Linear_Guide_t *lg_ptr, uint16_t speed_rpm)
 		lg_ptr->motor.ramp_final_rpm = lg_ptr->motor.normal_rpm;
 		lg_ptr->motor.ramp_activated = True;
 	}
+	Linear_Guide_calculate_break_path(lg_ptr);
 }
 
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
@@ -260,14 +268,15 @@ static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
-	if (lg_ptr->operating_mode == LG_operating_mode_automatic)
+	if (loc_ptr->state >= Loc_state_3_approach_center)
 	{
+		boolean_t immediate = False;
 		Loc_movement_t movement = Loc_movement_stop;
-		if (loc_ptr->desired_pos_mm > loc_ptr->current_pos_mm)
+		if (loc_ptr->desired_pos_mm > (loc_ptr->current_pos_mm + loc_ptr->brake_path_mm))
 		{
 			movement = Loc_movement_backwards;
 		}
-		else if (loc_ptr->desired_pos_mm < loc_ptr->current_pos_mm)
+		else if (loc_ptr->desired_pos_mm < (loc_ptr->current_pos_mm - loc_ptr->brake_path_mm))
 		{
 			movement = Loc_movement_forward;
 		}
@@ -275,19 +284,36 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		{
 			IO_Get_Measured_Value(LG_distance_sensor_ptr);
 			Localization_set_startpos_abs(loc_ptr, LG_distance_sensor_ptr->measured_value);
+			immediate = True;
 			movement = Loc_movement_stop;
 		}
 		else if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
 		{
 			Localization_set_endpos(loc_ptr);
+			immediate = True;
 			movement = Loc_movement_stop;
 		}
-		Linear_Guide_move(lg_ptr, movement);
+		Linear_Guide_move(lg_ptr, movement, immediate);
 	}
-	if (Motor_speed_ramp(&lg_ptr->motor) == MOTOR_RAMP_STOPPED)
+	int8_t speed_ramp_status = Motor_speed_ramp(&lg_ptr->motor);
+	if (speed_ramp_status >= MOTOR_RAMP_NEXT_STEP)
 	{
-		loc_ptr->movement = Loc_movement_stop;
+		Linear_Guide_calculate_break_path(lg_ptr);
+		if (speed_ramp_status == MOTOR_RAMP_STOPPED)
+		{
+			loc_ptr->movement = Loc_movement_stop;
+			Linear_Guide_safe_Localization(*loc_ptr);
+		}
 	}
+}
+
+static void Linear_Guide_calculate_break_path(Linear_Guide_t *lg_ptr)
+{
+	float dv = MOTOR_RAMP_STEP_RPM / 60.0F * LG_DISTANCE_MM_PER_ROTATION;
+	float a = dv / (MOTOR_RAMP_STEP_MS / 1000.0F);
+	float v_current = lg_ptr->motor.rpm_set_point / 60.0F * LG_DISTANCE_MM_PER_ROTATION;
+	float tb = v_current / a;
+	lg_ptr->localization.brake_path_mm = (v_current * tb - 0.5 * a * tb * tb)*LG_BRAKE_PATH_OFFSET_REL;
 }
 
 static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
@@ -316,7 +342,7 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (new_error_state >= LG_error_state_3_motor_fault)
 	{
 		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
-		Linear_Guide_move(lg_ptr, Loc_movement_stop);
+		Linear_Guide_move(lg_ptr, Loc_movement_stop, True);
 	}
 	lg_ptr->error_state = new_error_state;
 	Linear_Guide_LED_set_error(lg_ptr);

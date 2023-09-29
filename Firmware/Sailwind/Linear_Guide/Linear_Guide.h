@@ -100,9 +100,10 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr);
 /**
  * @brief start / (stop) motor in given direction (activates motor speed ramp)
  * @param direction
+ * @param immediate: if immediate stop is required
  * @retval movement_status: (if movement has changed or not)
  */
-int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction);
+int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t direction, boolean_t immediate);
 /**
  * @brief converts the desired roll / trim percentage to a target position in mm and safes it to the linear_guide reference
  * @param lg_ptr: linear_guide reference

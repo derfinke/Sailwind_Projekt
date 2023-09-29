@@ -17,6 +17,8 @@
 #define MOTOR_DIRECTION_CCW GPIO_PIN_SET
 #define MOTOR_DIRECTION_CW GPIO_PIN_RESET
 #define MOTOR_IN_COUNT 4
+#define MOTOR_RAMP_STEP_MS 13
+#define MOTOR_RAMP_STEP_RPM 10
 #define MOTOR_RAMP_INACTIVE 1
 #define MOTOR_RAMP_WAIT 2
 #define MOTOR_RAMP_NEXT_STEP 3
@@ -56,7 +58,7 @@ typedef struct {
 /* API function prototypes -----------------------------------------------*/
 Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr);
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t function);
-void Motor_stop_moving(Motor_t *motor_ptr);
+void Motor_stop_moving(Motor_t *motor_ptr, boolean_t immediate);
 int8_t Motor_speed_ramp(Motor_t *motor_ptr);
 void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
