@@ -25,6 +25,8 @@ static IO_analogSensor_t IO_current_sensor = { 0 };
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor);
 
+static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr);
+
 /**
  * @brief Take adc values and remove lowest values. Takes an average of the left over values
  * @param num_of_adc_samples: number of taken adc values
@@ -123,12 +125,15 @@ boolean_t IO_digitalRead_rising_edge(IO_digitalPin_t *digital_IN_ptr) {
  *   - convert analog to digital value and write it to the dac channel specified in the actuator reference
  */
 void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value) {
-//  actuator_ptr->currentConvertedValue = value <= actuator_ptr->limitConvertedValue ? value : actuator_ptr->limitConvertedValue;
-//  IO_convertToDAC(actuator_ptr);
-  HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel,
-  DAC_ALIGN_12B_R,
-                   (uint16_t) value);
-  HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
+	actuator_ptr->currentConvertedValue = value <= actuator_ptr->limitConvertedValue ? value : actuator_ptr->limitConvertedValue;
+	IO_convertToDAC(actuator_ptr);
+	HAL_DAC_SetValue(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel, DAC_ALIGN_12B_R, (uint32_t) actuator_ptr->dac_value);
+	HAL_DAC_Start(actuator_ptr->hdac_ptr, actuator_ptr->hdac_channel);
+}
+
+static void IO_convertToDAC(IO_analogActuator_t *actuator_ptr)
+{
+	actuator_ptr->dac_value = (uint16_t) (actuator_ptr->currentConvertedValue * DAC_RESOLOUTION / actuator_ptr->maxConvertedValue);
 }
 
 static void IO_Select_ADC_CH(IO_analogSensor_t *Sensor) {

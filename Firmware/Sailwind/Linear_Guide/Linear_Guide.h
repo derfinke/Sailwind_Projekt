@@ -126,16 +126,10 @@ boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr);
 /**
  * @brief set normal speed of the motor (final value of speed ramp)
  * @param lg_ptr: linear_guide reference
- * @param speed_mms: pass speed value in mm/s
+ * @param speed_rpm: pass speed value in rpm
  * @retval none
  */
-void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms);
-/**
- * @brief return movement speed in mm/s converted from current motor rpm setpoint
- * @param lg_ptr: linear_guide reference
- * @retval speed_mms
- */
-uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr);
+void Linear_Guide_change_speed_rpm(Linear_Guide_t *lg_ptr, uint16_t speed_rpm);
 /**
  * @brief serialize and store essential localization values in FRAM
  * @param loc: Localization struct

@@ -91,18 +91,7 @@ static int8_t Linear_Guide_check_current_fault(Linear_Guide_t *lg_ptr);
  * @retval fault_check_status
  */
 static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr);
-/**
- * @brief convert given rpm value of the motor to movement speed of the linear guide in mm/s
- * @param rpm_value
- * @retval speed_mms
- */
-static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value);
-/**
- * @brief convert given movement speed of the linear guide in mm/s to rpm value of the motor
- * @param speed_mms
- * @retval rpm_value
- */
-static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms);
+
 
 
 /* API function definitions --------------------------------------------------*/
@@ -202,18 +191,14 @@ uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
 	return (uint8_t) ((sign * (loc.center_pos_mm - loc.current_pos_mm)) / (float) (loc.end_pos_mm + sign * loc.center_pos_mm) * 100);
 }
 
-void Linear_Guide_change_speed_mms(Linear_Guide_t *lg_ptr, uint16_t speed_mms)
+void Linear_Guide_change_speed_rpm(Linear_Guide_t *lg_ptr, uint16_t speed_rpm)
 {
-	lg_ptr->motor.normal_rpm = Linear_Guide_speed_mms_to_rpm(speed_mms);
-	if (lg_ptr->localization.movement != Loc_movement_stop && lg_ptr->motor.ramp_activated)
+	lg_ptr->motor.normal_rpm = speed_rpm;
+	if (lg_ptr->localization.movement != Loc_movement_stop)
 	{
 		lg_ptr->motor.ramp_final_rpm = lg_ptr->motor.normal_rpm;
+		lg_ptr->motor.ramp_activated = True;
 	}
-}
-
-uint16_t Linear_Guide_get_speed_mms(Linear_Guide_t *lg_ptr)
-{
-	return Linear_Guide_rpm_to_speed_mms(lg_ptr->motor.rpm_set_point);
 }
 
 boolean_t Linear_Guide_Endswitch_detected(Endswitch_t *endswitch_ptr)
@@ -431,16 +416,6 @@ static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr)
 		new_state = LED_ON;
 	}
 	LED_switch(&lg_ptr->leds.error, new_state);
-}
-
-static uint16_t Linear_Guide_rpm_to_speed_mms(uint16_t rpm_value)
-{
-	return (uint16_t) (LG_DISTANCE_MM_PER_ROTATION * rpm_value / 60.0F);
-}
-
-static uint16_t Linear_Guide_speed_mms_to_rpm(uint16_t speed_mms)
-{
-	return (uint16_t) (speed_mms / (float) LG_DISTANCE_MM_PER_ROTATION * 60);
 }
 
 /* Timer Callback implementation for rpm measurement --------------------------*/

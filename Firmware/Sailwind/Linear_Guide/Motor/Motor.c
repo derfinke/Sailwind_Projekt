@@ -9,10 +9,10 @@
 
 /* defines ------------------------------------------------------------*/
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
-#define MOTOR_RPM_LIMIT 700.0F// estimated normal speed for linear guide
+#define MOTOR_RPM_NOMINAL 3000.0F// nominal speed
 #define MOTOR_NORMAL_SPEED 1600
-#define MOTOR_RAMP_STEP_MS 20
-#define MOTOR_RAMP_STEP_RPM 15
+#define MOTOR_RAMP_STEP_MS 13
+#define MOTOR_RAMP_STEP_RPM 10
 #define MOTOR_RAMP_SPEED_UP 1
 #define MOTOR_RAMP_SLOW_DOWN -1
 
@@ -185,7 +185,7 @@ static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr)
 			.hdac_ptr = hdac_ptr,
 			.hdac_channel = DAC_CHANNEL_1,
 			.maxConvertedValue = MOTOR_RPM_MAX,
-			.limitConvertedValue = MOTOR_RPM_LIMIT,
+			.limitConvertedValue = MOTOR_RPM_NOMINAL,
 			.currentConvertedValue = 0.0F,
 			.dac_value = 0
 	};
