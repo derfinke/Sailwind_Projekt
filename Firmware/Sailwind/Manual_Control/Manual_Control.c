@@ -32,7 +32,6 @@ static int8_t Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_p
 static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr);
 static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr);
 
-static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc);
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
 static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state);
@@ -202,22 +201,18 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
  */
 static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
 {
-	if (!Manual_Control_get_moving_permission(*mc_ptr))
+	if (!Linear_Guide_get_moving_permission(*mc_ptr->lg_ptr))
 	{
 		printf("no moving permission\r\n");
 		return MC_MOVE_DENIED;
 	}
-	int8_t sign = movement == Loc_movement_backwards ? 1 : -1;
-	Localization_t *loc_ptr = &mc_ptr->lg_ptr->localization;
 	switch (btn.state)
 	{
 		case BUTTON_PRESSED:
-			Linear_Guide_move(mc_ptr->lg_ptr, movement, False);
-			loc_ptr->desired_pos_mm = sign * loc_ptr->end_pos_mm;
+			Linear_Guide_manual_move(mc_ptr->lg_ptr, movement);
 			break;
 		case BUTTON_RELEASED:
-			Linear_Guide_move(mc_ptr->lg_ptr, Loc_movement_stop, False);
-			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm + sign * loc_ptr->brake_path_mm;
+			Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
 			break;
 	}
 	return MC_MOVE_OK;
@@ -300,23 +295,6 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 			break;
 	}
 	return MC_LOCALIZATION_OK;
-}
-
-/* static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
- *  Description:
- *   - return True, if operating mode is manual and motor is not currently moving automatically due to localization process
- */
-static boolean_t Manual_Control_get_moving_permission(Manual_Control_t mc)
-{
-	Linear_Guide_t lg = *mc.lg_ptr;
-	return
-			lg.operating_mode == LG_operating_mode_manual
-			&&
-			(
-				lg.localization.state >= Loc_state_4_set_center_pos
-				||
-				lg.localization.state == Loc_state_0_init
-			);
 }
 
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr)

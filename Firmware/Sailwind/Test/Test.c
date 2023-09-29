@@ -77,13 +77,13 @@ static void Test_endswitch(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_p
 	UART_transmit_ln(huart_ptr, "switch operating mode button to start motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 
-	Linear_Guide_move(lg_ptr, Loc_movement_forward, False);
+	Linear_Guide_manual_move(lg_ptr, Loc_movement_forward);
 	while (!Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front));
 
-	Linear_Guide_move(lg_ptr, Loc_movement_backwards, False);
+	Linear_Guide_manual_move(lg_ptr, Loc_movement_backwards);
 	while (!Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back));
 
-	Linear_Guide_move(lg_ptr, Loc_movement_forward, False);
+	Linear_Guide_manual_move(lg_ptr, Loc_movement_forward);
 	UART_transmit_ln(huart_ptr, "switch operating mode button to stop motor");
 	while (!Button_state_changed(&mc_ptr->buttons.switch_mode));
 }

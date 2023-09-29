@@ -187,6 +187,38 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolea
 	return LG_MOVEMENT_CHANGED;
 }
 
+void Linear_Guide_manual_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
+{
+	if (!Linear_Guide_get_moving_permission(*lg_ptr))
+	{
+		return;
+	}
+	Localization_t *loc_ptr = &lg_ptr->localization;
+	if (movement == Loc_movement_stop)
+	{
+		int8_t sign = loc_ptr->movement == Loc_movement_backwards ? 1 : -1;
+		loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm + sign * loc_ptr->brake_path_mm;
+	}
+	else
+	{
+		int8_t sign = movement == Loc_movement_backwards ? 1 : -1;
+		loc_ptr->desired_pos_mm = sign * loc_ptr->end_pos_mm;
+	}
+	Linear_Guide_move(lg_ptr, movement, False);
+}
+
+boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg)
+{
+	return
+			lg.operating_mode == LG_operating_mode_manual
+			&&
+			(
+				lg.localization.state >= Loc_state_4_set_center_pos
+				||
+				lg.localization.state == Loc_state_0_init
+			);
+}
+
 void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
