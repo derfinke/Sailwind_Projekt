@@ -277,18 +277,18 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[
       if (strcmp(name, "left") == 0) {
         if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_stop);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
+          Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_backwards);
         }
       } else if (strcmp(name, "right") == 0) {
         if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_stop);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
+          Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_forward);
         }
       } else if (strcmp(name, "confirm") == 0) {
         if((ssi_linear_guide->localization.movement != Loc_movement_backwards) || (ssi_linear_guide->localization.movement != Loc_movement_forward))
