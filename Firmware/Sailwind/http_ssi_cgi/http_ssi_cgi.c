@@ -277,23 +277,23 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[
       if (strcmp(name, "left") == 0) {
         if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop, True);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards, True);
         }
       } else if (strcmp(name, "right") == 0) {
         if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
         {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop, True);
         }
         else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward);
+          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward, True);
         }
       } else if (strcmp(name, "confirm") == 0) {
         if((ssi_linear_guide->localization.movement != Loc_movement_backwards) || (ssi_linear_guide->localization.movement != Loc_movement_forward))
         {
-          Localization_set_center(ssi_linear_guide->localization);
+          Localization_set_center(&ssi_linear_guide->localization);
           /*TODO: add LED blinking*/
         }
         else
