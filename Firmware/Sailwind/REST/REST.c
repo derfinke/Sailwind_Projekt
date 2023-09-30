@@ -257,7 +257,6 @@ static void REST_put_request(char *payload, char *buffer) {
     if (strncmp(payload + URL_OFFSET, PATH_ERROR, strlen(PATH_ERROR)) == 0) {
 
       if (REST_check_error_json(request) != 1) {
-        //TODO: update error/execute emergency shutdown
         REST_create_HTTP_header(buffer, HTTP_OK, 0);
       } else {
 
@@ -326,13 +325,13 @@ static void REST_create_HTTP_header(char *buffer, http_responses_t response,
 }
 
 static void REST_create_status_json(cJSON *response) {
-  cJSON_AddNumberToObject(response, KEY_ERROR, 0);
+  cJSON_AddNumberToObject(response, KEY_ERROR, Linear_Guide_get_error());
   cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
   cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 }
 
 static void REST_create_data_json(cJSON *response) {
-  cJSON_AddNumberToObject(response, KEY_ERROR, 0);
+  cJSON_AddNumberToObject(response, KEY_ERROR, Linear_Guide_get_error());
   cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
   cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 
@@ -416,8 +415,28 @@ static uint8_t REST_check_error_json(cJSON *error_json) {
     return 1;
   }
   /* Check for error value */
-  if (!((error->valueint == 4) || (error->valueint == 0))) {
+  if (!((error->valueint >= 5) || (error->valueint == 0))) {
     return 1;
+  }
+  switch(error->valueint)
+  {
+    case 0:
+      Linear_Guide_set_error(LG_error_state_0_normal);
+      break;
+    case 1:
+      Linear_Guide_set_error(LG_error_state_1_distance_fault);
+      break;
+    case 2:
+      Linear_Guide_set_error(LG_error_state_2_wind_speed_fault);
+      break;
+    case 3:
+      Linear_Guide_set_error(LG_error_state_3_motor_fault);
+      break;
+    case 4:
+      Linear_Guide_set_error(LG_error_state_4_current_fault);
+      break;
+    default:
+      return 1;
   }
   /* Format is valid */
   return 0;
