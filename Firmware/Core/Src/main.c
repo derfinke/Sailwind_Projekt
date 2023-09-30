@@ -28,6 +28,7 @@
 #include "Test.h"
 #include "httpd.h"
 #include "tcp_server.h"
+#include "http_ssi_cgi.h"
 
 /* USER CODE END Includes */
 
@@ -58,7 +59,6 @@ DAC_HandleTypeDef hdac;
 SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim10;
 
 UART_HandleTypeDef huart1;
@@ -85,7 +85,6 @@ static void MX_DAC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
-static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
@@ -140,10 +139,9 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI4_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
-  MX_LWIP_Init();
   MX_TIM2_Init();
   MX_TIM10_Init();
+  MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
   IO_init_current_sensor(&hadc3);
@@ -185,8 +183,8 @@ int main(void)
   printf("speed:%f, dir:%f\r\n", speed, dir);
 #endif
 
-  //tcp_server_init();
-  //http_server_init();
+  tcp_server_init();
+  http_server_init();
 
   /* USER CODE END 2 */
 
@@ -194,7 +192,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-      //MX_LWIP_Process();
+      MX_LWIP_Process();
       if (Linear_Guide_update(linear_guide) == LG_UPDATE_NORMAL)
       {
     	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
@@ -500,51 +498,6 @@ static void MX_TIM2_Init(void)
   /* USER CODE BEGIN TIM2_Init 2 */
 
   /* USER CODE END TIM2_Init 2 */
-
-}
-
-/**
-  * @brief TIM3 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_TIM3_Init(void)
-{
-
-  /* USER CODE BEGIN TIM3_Init 0 */
-
-  /* USER CODE END TIM3_Init 0 */
-
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
-
-  /* USER CODE BEGIN TIM3_Init 1 */
-
-  /* USER CODE END TIM3_Init 1 */
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 84-1;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM3_Init 2 */
-
-  /* USER CODE END TIM3_Init 2 */
 
 }
 

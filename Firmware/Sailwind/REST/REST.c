@@ -442,7 +442,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
     /* Check for roll value range */
     if (roll->valueint >= 0 && roll->valueint <= 100) {
       /* Format is valid */
-      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, pitch->valueint, LG_sail_adjustment_mode_roll);
+      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, roll->valueint, LG_sail_adjustment_mode_roll);
       return 0;
     }
     return 1;
