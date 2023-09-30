@@ -84,7 +84,6 @@ void IO_analogWrite(IO_analogActuator_t *actuator_ptr, float value);
 
 /**
  * @brief initialize adc of distance sensor
- * @param distance_sensor:ptr to distance sensor instance
  * @param hadc1:ptr to hadc1 instance
  * @retval none
  */
@@ -92,7 +91,6 @@ void IO_init_distance_sensor(ADC_HandleTypeDef *hadc1);
 
 /**
  * @brief initialize adc of current sensor
- * @param current_sensor:ptr to distance sensor instance
  * @param hadc3:ptr to hadc3 instance
  * @retval none
  */
