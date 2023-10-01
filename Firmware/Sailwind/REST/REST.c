@@ -21,6 +21,7 @@
 #define PATH_SENSORS          "/data/sensors "
 #define PATH_CURRENT_SENSOR   "/data/sensors/current "
 #define PATH_WIND_SENSOR      "/data/sensors/wind "
+#define PATH_SETTINGS         "/data/settings "
 
 #define PATH_ERROR            "/data/status/error "
 #define PATH_MODE             "/data/status/operating_mode "
@@ -48,6 +49,8 @@
 #define KEY_DIR               "direction"
 #define KEY_CURRENT           "current"
 #define KEY_LOCALIZED         "localized"
+#define KEY_MAX_RPM           "max_rpm"
+#define KEY_MAX_DISTANCE      "max_distance_error"
 
 typedef enum {
   HTTP_OK,
@@ -146,6 +149,10 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json);
  */
 static uint8_t REST_check_mode_json(cJSON *mode_json);
 
+static uint8_t REST_check_settings_json(cJSON *settings_json);
+
+static void REST_create_settings_json(cJSON *response);
+
 void REST_init(void)
 {
   REST_linear_guide = LG_get_Linear_Guide();
@@ -226,9 +233,17 @@ static void REST_get_request(char *payload, char *buffer) {
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
     /* check for path /data/status/operating_mode */
-  } else if (strncmp(payload + URL_OFFSET, PATH_MODE, strlen(PATH_MODE)) == 0) {
+  } else if (strncmp(payload + URL_OFFSET, PATH_WIND_SENSOR,
+                    strlen(PATH_WIND_SENSOR)) == 0) {
 
-    cJSON_AddNumberToObject(response, KEY_MODE, 0);
+   REST_create_wind_json(response);
+   cJSON_PrintPreallocated(response, JSON_response, 200, 1);
+   REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+
+   /* check for path /data/status/operating_mode */
+ } else if (strncmp(payload + URL_OFFSET, PATH_SETTINGS, strlen(PATH_SETTINGS)) == 0) {
+
+    REST_create_settings_json(response);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
   } else {
@@ -279,6 +294,16 @@ static void REST_put_request(char *payload, char *buffer) {
     } else if (strncmp(payload + URL_OFFSET, PATH_MODE, strlen(PATH_MODE))
         == 0) {
       if (REST_check_mode_json(request) != 1) {
+
+        REST_create_HTTP_header(buffer, HTTP_OK, 0);
+      } else {
+
+        REST_create_HTTP_header(buffer, HTTP_Bad_Request, 0);
+      }
+
+    } else if (strncmp(payload + URL_OFFSET, PATH_SETTINGS, strlen(PATH_SETTINGS))
+        == 0) {
+      if (REST_check_settings_json(request) != 1) {
 
         REST_create_HTTP_header(buffer, HTTP_OK, 0);
       } else {
@@ -404,6 +429,12 @@ static void REST_create_adjustment(cJSON *response)
   }
 }
 
+static void REST_create_settings_json(cJSON *response)
+{
+  cJSON_AddNumberToObject(response, KEY_MAX_RPM, REST_linear_guide->motor.normal_rpm);
+  cJSON_AddNumberToObject(response, KEY_MAX_DISTANCE, REST_linear_guide->max_distance_fault);
+}
+
 static uint8_t REST_check_error_json(cJSON *error_json) {
   cJSON *error = cJSON_GetObjectItemCaseSensitive(error_json, KEY_ERROR);
   /* Check for number of keys */
@@ -498,5 +529,36 @@ static uint8_t REST_check_mode_json(cJSON *mode_json) {
   }
   /* Format is valid */
   Linear_Guide_set_operating_mode(REST_linear_guide, operating_mode->valueint);
+  return 0;
+}
+
+static uint8_t REST_check_settings_json(cJSON *settings_json)
+{
+
+  cJSON *max_rpm = cJSON_GetObjectItemCaseSensitive(settings_json,
+  KEY_MAX_RPM);
+  cJSON *max_distance_error = cJSON_GetObjectItemCaseSensitive(settings_json,
+  KEY_MAX_DISTANCE);
+  /* Check for number of keys */
+  if (!(cJSON_GetArraySize(settings_json) < 3)) {
+    return 1;
+  }
+  /* Check for operating_mode key */
+  if (!cJSON_IsNumber(max_rpm)) {
+    return 1;
+  }
+  if (!cJSON_IsNumber(max_distance_error)) {
+    return 1;
+  }
+  /* Check for operating_mode value */
+  if (!((max_rpm->valueint > 2000) || (max_rpm->valueint < 400))) {
+    return 1;
+  }
+  if (!((max_distance_error->valueint > 50) || (max_distance_error->valueint < 5))) {
+    return 1;
+  }
+  /* Format is valid */
+  REST_linear_guide->max_distance_fault = (uint8_t)max_distance_error->valueint;
+  REST_linear_guide->motor.normal_rpm = (uint16_t)max_rpm->valueint;
   return 0;
 }

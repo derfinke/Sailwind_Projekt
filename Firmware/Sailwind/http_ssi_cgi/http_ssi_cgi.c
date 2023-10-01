@@ -379,7 +379,7 @@ static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
 
       delta_to_be_set = strtoul(name, NULL, 0);
 
-      if((delta_to_be_set < 5) || (delta_to_be_set > 250))
+      if((delta_to_be_set < 5) || (delta_to_be_set > 50))
       {
         return "/Settings.shtml";
       }
