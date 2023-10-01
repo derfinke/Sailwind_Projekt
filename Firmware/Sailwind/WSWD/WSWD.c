@@ -144,7 +144,7 @@ void WSWD_get_wind_speed(char* received_NMEA_telegramm, float *Windspeed)
 void WSWD_get_wind_dir(char* received_NMEA_telegramm, float *Winddirection)
 {
   char Winddirection_buffer[5];
-  if(received_NMEA_telegramm[24] == 'A')
+  if(received_NMEA_telegramm[25] == 'A')
   {
     memcpy(Winddirection_buffer, &received_NMEA_telegramm[8], 5);
     *Winddirection = (float)atof(Winddirection_buffer);
