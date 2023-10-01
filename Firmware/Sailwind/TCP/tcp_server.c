@@ -10,10 +10,11 @@
 #include "cJSON.h"
 #include "REST.h"
 #include "stdint.h"
+#include "FRAM_memory_mapping.h"
+#include "FRAM.h"
 
 #define REST_API_PORT 2375
 
-static const uint32_t tcp_server_ip[4] = { 192, 168, 0, 123 };
 enum tcp_server_states {
   ES_NONE = 0,
   ES_ACCEPTED,
@@ -105,13 +106,35 @@ void tcp_server_init(void) {
   struct tcp_pcb *tpcb;
 
   tpcb = tcp_new();
-
+  uint8_t read_IP[4];
   err_t err;
 
-  /* 2. bind _pcb to port 7 ( protocol) */
+  /* 2. bind _pcb to port 2375 ( protocol) */
   ip_addr_t myIPADDR;
-  IP_ADDR4(&myIPADDR, tcp_server_ip[0], tcp_server_ip[1], tcp_server_ip[2],
-           tcp_server_ip[3]);
+
+  FRAM_read(USED_IP_ADDRESS, read_IP, 4);
+
+  if((read_IP[0] == 0xFF) || (read_IP[0] == 0x00))
+  {
+    IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[1] == 0xFF) || (read_IP[1] != 0x00))
+  {
+    IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[2] != 0xFF) || (read_IP[2] == 0x00))
+  {
+    IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else if((read_IP[3] == 0xFF) || (read_IP[3] == 0x00))
+  {
+    IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+  else
+  {
+    IP_ADDR4(&myIPADDR, read_IP[0], read_IP[1], read_IP[2], read_IP[3]);
+  }
+
   err = tcp_bind(tpcb, &myIPADDR, 2375);
 
   if (err == ERR_OK) {
