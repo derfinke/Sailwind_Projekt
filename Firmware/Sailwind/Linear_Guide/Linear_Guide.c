@@ -501,3 +501,13 @@ Linear_Guide_t *LG_get_Linear_Guide(void)
 {
   return &LG_linear_guide;
 }
+
+void Linear_Guide_set_error(LG_error_state_t error)
+{
+  LG_linear_guide.error_state = error;
+}
+
+LG_error_state_t Linear_Guide_get_error(void)
+{
+  return LG_linear_guide.error_state;
+}

@@ -157,4 +157,8 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc);
 Localization_t Linear_Guide_read_Localization();
 
 Linear_Guide_t *LG_get_Linear_Guide(void);
+
+LG_error_state_t Linear_Guide_get_error(void);
+
+void Linear_Guide_set_error(LG_error_state_t error);
 #endif /* LINEAR_GUIDE_LINEAR_GUIDE_H_ */

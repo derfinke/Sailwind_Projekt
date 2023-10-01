@@ -110,14 +110,15 @@ void WSWD_get_wind_infos(char* received_NMEA_telegramm, float *Windspeed,  float
   char Winddirection_buffer[5];
   if(received_NMEA_telegramm[25] == 'A')
   {
-    memcpy(Winddirection_buffer, &received_NMEA_telegramm[7], 5);
-    memcpy(Windspeed_buffer, &received_NMEA_telegramm[15], 6);
+    memcpy(Winddirection_buffer, &received_NMEA_telegramm[8], 5);
+    memcpy(Windspeed_buffer, &received_NMEA_telegramm[16], 6);
     *Winddirection = (float)atof(Winddirection_buffer);
     *Windspeed = (float)atof(Windspeed_buffer);
   }
   else
   {
     printf("error telegram invalid\r\n");
+    printf("%s\r\n", received_NMEA_telegramm);
   }
 }
 
@@ -143,7 +144,7 @@ void WSWD_get_wind_speed(char* received_NMEA_telegramm, float *Windspeed)
 void WSWD_get_wind_dir(char* received_NMEA_telegramm, float *Winddirection)
 {
   char Winddirection_buffer[5];
-  if(received_NMEA_telegramm[24] == 'A')
+  if(received_NMEA_telegramm[25] == 'A')
   {
     memcpy(Winddirection_buffer, &received_NMEA_telegramm[8], 5);
     *Winddirection = (float)atof(Winddirection_buffer);
@@ -151,5 +152,6 @@ void WSWD_get_wind_dir(char* received_NMEA_telegramm, float *Winddirection)
   else
   {
     printf("error telegram invalid\r\n");
+    printf("%s\r\n", received_NMEA_telegramm);
   }
 }
