@@ -70,12 +70,20 @@ static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
  */
 static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
                                char *pcValue[]);
+
+static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
+                            char *pcValue[]);
+
+static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
+                            char *pcValue[]);
 char name[30];
-tCGI CGI_FORMS[4];
+tCGI CGI_FORMS[6];
 const tCGI FORM_IP_CGI = {"/form_IP.cgi", CGIIP_Handler};
 const tCGI RESTART_CGI = {"/form_restart.cgi", CGIRestart_Handler};
 const tCGI MODE_CGI = {"/form_operating_mode.cgi", CGIMode_Handler};
 const tCGI CONTROL_CGI = {"/form_control.cgi", CGIControl_Handler};
+const tCGI RPM_CGI = {"/form_rpm.cgi", CGIrpm_Handler};
+const tCGI DELTA_CGI = {"/form_delta.cgi", CGIdelta_Handler};
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 
@@ -314,6 +322,70 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[
   return "/index.html";
 }
 
+static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
+                            char *pcValue[]) {
+  unsigned long rpm_to_be_set = 0;
+  if (iIndex == 4) {
+    if (strcmp(pcParam[0], "max_rpm") == 0) {
+      memset(name, '\0', 30);
+      strcpy(name, pcValue[0]);
+      if(strlen(name) > 4)
+      {
+        return "/Settings.shtml";
+      }
+      for(uint8_t i = 0; i < strlen(name); i++)
+      {
+        if(!isdigit((int)name[i]))
+        {
+          return "/Settings.shtml";
+        }
+      }
+
+      rpm_to_be_set = strtoul(name, NULL, 0);
+
+      if((rpm_to_be_set < 400) || (rpm_to_be_set > 2000))
+      {
+        return "/Settings.shtml";
+      }
+    }
+
+    ssi_linear_guide->motor.normal_rpm = (uint16_t)rpm_to_be_set;
+  }
+  return "/Settings.shtml";
+}
+
+static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
+                            char *pcValue[]) {
+  unsigned long delta_to_be_set = 0;
+  if (iIndex == 5) {
+    if (strcmp(pcParam[0], "max_delta") == 0) {
+      memset(name, '\0', 30);
+      strcpy(name, pcValue[0]);
+      if(strlen(name) > 3)
+      {
+        return "/Settings.shtml";
+      }
+      for(uint8_t i = 0; i < strlen(name); i++)
+      {
+        if(!isdigit((int)name[i]))
+        {
+          return "/Settings.shtml";
+        }
+      }
+
+      delta_to_be_set = strtoul(name, NULL, 0);
+
+      if((delta_to_be_set < 5) || (delta_to_be_set > 250))
+      {
+        return "/Settings.shtml";
+      }
+    }
+
+    ssi_linear_guide->max_distance_fault = (uint8_t)delta_to_be_set;
+  }
+  return "/Settings.shtml";
+}
+
 void http_server_init(void) {
   httpd_init();
   http_set_ssi_handler(ssi_handler, (char const**) TAGS, NUM_SSI_TAGS);
@@ -321,7 +393,9 @@ void http_server_init(void) {
   CGI_FORMS[1] = RESTART_CGI;
   CGI_FORMS[2] = MODE_CGI;
   CGI_FORMS[3] = CONTROL_CGI;
-  http_set_cgi_handlers(CGI_FORMS, 4);
+  CGI_FORMS[4] = RPM_CGI;
+  CGI_FORMS[5] = DELTA_CGI;
+  http_set_cgi_handlers(CGI_FORMS, 6);
   ssi_current_sensor = IO_get_current_sensor();
   ssi_distance_sensor = IO_get_distance_sensor();
   ssi_linear_guide = LG_get_Linear_Guide();
