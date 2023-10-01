@@ -14,6 +14,7 @@
 #include "WSWD.h"
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 
 #define NUM_SSI_TAGS 12
 #define UINT_TAGS 4
@@ -325,6 +326,7 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[
 static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
                             char *pcValue[]) {
   unsigned long rpm_to_be_set = 0;
+  uint16_t rpm_to_be_saved = 0;
   if (iIndex == 4) {
     if (strcmp(pcParam[0], "max_rpm") == 0) {
       memset(name, '\0', 30);
@@ -348,8 +350,9 @@ static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
         return "/Settings.shtml";
       }
     }
-
-    ssi_linear_guide->motor.normal_rpm = (uint16_t)rpm_to_be_set;
+    rpm_to_be_saved = (uint16_t)rpm_to_be_set;
+    ssi_linear_guide->motor.normal_rpm = rpm_to_be_saved;
+    FRAM_write((uint8_t*)&rpm_to_be_saved, FRAM_MAX_RPM, 2);
   }
   return "/Settings.shtml";
 }
@@ -357,6 +360,7 @@ static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
 static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
                             char *pcValue[]) {
   unsigned long delta_to_be_set = 0;
+  uint8_t delta_to_be_saved = 0;
   if (iIndex == 5) {
     if (strcmp(pcParam[0], "max_delta") == 0) {
       memset(name, '\0', 30);
@@ -380,8 +384,9 @@ static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
         return "/Settings.shtml";
       }
     }
-
-    ssi_linear_guide->max_distance_fault = (uint8_t)delta_to_be_set;
+    delta_to_be_saved = (uint8_t)delta_to_be_set;
+    ssi_linear_guide->max_distance_fault = delta_to_be_saved;
+    FRAM_write((uint8_t*)&delta_to_be_saved, FRAM_MAX_DELTA, 1);
   }
   return "/Settings.shtml";
 }
