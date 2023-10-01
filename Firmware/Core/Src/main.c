@@ -17,7 +17,6 @@
  */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
-#include <http_ssi_cgi.h>
 #include "main.h"
 #include "lwip.h"
 
@@ -29,6 +28,7 @@
 #include "Test.h"
 #include "httpd.h"
 #include "tcp_server.h"
+#include "http_ssi_cgi.h"
 
 /* USER CODE END Includes */
 
@@ -59,16 +59,16 @@ DAC_HandleTypeDef hdac;
 SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim2;
-TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim10;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
+
 static Linear_Guide_t *linear_guide = {0};
 static Manual_Control_t manual_control;
-
 
 char Rx_buffer[20];
 
@@ -85,8 +85,8 @@ static void MX_DAC_Init(void);
 static void MX_USART2_UART_Init(void);
 static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
-static void MX_TIM3_Init(void);
 static void MX_TIM2_Init(void);
+static void MX_TIM10_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -139,15 +139,15 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI4_Init();
   MX_USART1_UART_Init();
-  MX_TIM3_Init();
   MX_TIM2_Init();
+  MX_TIM10_Init();
   MX_LWIP_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
   IO_init_current_sensor(&hadc3);
   Linear_Guide_init(&hdac);
   linear_guide = LG_get_Linear_Guide();
-  manual_control = Manual_Control_init(linear_guide);
+  manual_control = Manual_Control_init(linear_guide, &htim10);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
@@ -193,10 +193,12 @@ int main(void)
   while (1)
   {
       MX_LWIP_Process();
-      //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
-      Manual_Control_poll(&manual_control);
-      Manual_Control_Localization(&manual_control);
-      Linear_Guide_update(linear_guide);
+      if (Linear_Guide_update(linear_guide) == LG_UPDATE_NORMAL)
+      {
+    	  //Test_uart_poll(&huart3, Rx_buffer, &manual_control);
+    	  Manual_Control_poll(&manual_control);
+    	  Manual_Control_Localization(&manual_control);
+      }
       /*
        * add tcp handling
        */
@@ -287,6 +289,7 @@ static void MX_ADC1_Init(void)
   {
     Error_Handler();
   }
+
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -327,6 +330,7 @@ static void MX_ADC2_Init(void)
   {
     Error_Handler();
   }
+
   /* USER CODE BEGIN ADC2_Init 2 */
 
   /* USER CODE END ADC2_Init 2 */
@@ -394,8 +398,6 @@ static void MX_DAC_Init(void)
 
   /** DAC Initialization
   */
-
-
   hdac.Instance = DAC;
   if (HAL_DAC_Init(&hdac) != HAL_OK)
   {
@@ -500,47 +502,33 @@ static void MX_TIM2_Init(void)
 }
 
 /**
-  * @brief TIM3 Initialization Function
+  * @brief TIM10 Initialization Function
   * @param None
   * @retval None
   */
-static void MX_TIM3_Init(void)
+static void MX_TIM10_Init(void)
 {
 
-  /* USER CODE BEGIN TIM3_Init 0 */
+  /* USER CODE BEGIN TIM10_Init 0 */
 
-  /* USER CODE END TIM3_Init 0 */
+  /* USER CODE END TIM10_Init 0 */
 
-  TIM_ClockConfigTypeDef sClockSourceConfig = {0};
-  TIM_MasterConfigTypeDef sMasterConfig = {0};
+  /* USER CODE BEGIN TIM10_Init 1 */
 
-  /* USER CODE BEGIN TIM3_Init 1 */
-
-  /* USER CODE END TIM3_Init 1 */
-  htim3.Instance = TIM3;
-  htim3.Init.Prescaler = 84-1;
-  htim3.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim3.Init.Period = 65535;
-  htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-  htim3.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-  if (HAL_TIM_Base_Init(&htim3) != HAL_OK)
+  /* USER CODE END TIM10_Init 1 */
+  htim10.Instance = TIM10;
+  htim10.Init.Prescaler = 10000;
+  htim10.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim10.Init.Period = 7000;
+  htim10.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim10.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim10) != HAL_OK)
   {
     Error_Handler();
   }
-  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
-  if (HAL_TIM_ConfigClockSource(&htim3, &sClockSourceConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
-  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
-  if (HAL_TIMEx_MasterConfigSynchronization(&htim3, &sMasterConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN TIM3_Init 2 */
+  /* USER CODE BEGIN TIM10_Init 2 */
 
-  /* USER CODE END TIM3_Init 2 */
+  /* USER CODE END TIM10_Init 2 */
 
 }
 
@@ -668,13 +656,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(SPI4_CS_GPIO_Port, SPI4_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|IN_0_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, LED_Automatik_Pin|Ext_Relais_2_Pin|LED_set_center_Pin|IN_0_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Trim_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Roll_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
+  HAL_GPIO_WritePin(GPIOD, LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
                           |Windsensor_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -711,15 +699,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_Roll_Pin LED_PWR_Pin */
-  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_Roll_Pin|LED_PWR_Pin;
+  /*Configure GPIO pins : LED_Automatik_Pin Ext_Relais_2_Pin LED_set_center_Pin LED_PWR_Pin */
+  GPIO_InitStruct.Pin = LED_Automatik_Pin|Ext_Relais_2_Pin|LED_set_center_Pin|LED_PWR_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Trim_Pin */
-  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Trim_Pin;
+  /*Configure GPIO pins : Ext_Relais_1_Pin LED_Roll_Pin */
+  GPIO_InitStruct.Pin = Ext_Relais_1_Pin|LED_Roll_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -731,8 +719,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Kalibrieren_Speichern_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
-  GPIO_InitStruct.Pin = LED_Kalibrieren_Speichern_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
+  /*Configure GPIO pins : LED_Trim_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
+  GPIO_InitStruct.Pin = LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -794,6 +782,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_TIM_Base_Stop(&htim2);
     HAL_TIM_Base_Stop_IT(&htim2);
     HAL_NVIC_SystemReset();
+  }
+  if (htim == manual_control.htim_ptr)
+  {
+	  Manual_Control_long_press_callback(&manual_control);
   }
 }
 /* USER CODE END 4 */

@@ -16,4 +16,11 @@
  */
 void REST_request_handler(char *payload, char *buffer);
 
+/**
+ * @brief  Gets required pointers to objects
+ * @param  none
+ * @retval none
+ */
+void REST_init(void);
+
 #endif /* REST_REST_H_ */
