@@ -14,4 +14,7 @@
 /*Memory Region where the used IP Address is saved*/
 #define USED_IP_ADDRESS     0x0100
 
+#define FRAM_MAX_RPM        0x0110
+#define FRAM_MAX_DELTA      0x0120
+
 #endif /* FRAM_MEMORY_MAPPING_H_ */

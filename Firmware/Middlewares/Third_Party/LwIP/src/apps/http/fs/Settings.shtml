@@ -81,5 +81,25 @@
 				<h3>current mode:<!--#opmod--></h3>
 			</p>
 		</form>
+		<form action="/form_rpm.cgi">
+			<p>
+				<label for="rpm"><h3><u>Set max rpm</u></h3></label>
+				<input type="text" id="rpm" name="max_rpm" placeholder="1600"style="height:35px;width:40px;font-size:15px;"> U/min.<br><br>
+				<input type="submit" value="set rpm" name="set_rpm_button" style="width:80px;height:30px;font-size:20px;">
+			</p>
+			<p>
+				<h3>current max rpm:<!--#maxrpm--></h3>
+			</p>
+		</form>
+		<form action="/form_delta.cgi">
+			<p>
+				<label for="delta"><h3><u>Set max accepted delta</u></h3></label>
+				<input type="text" id="delta" name="max_delta" placeholder="100"style="height:35px;width:30px;font-size:15px;"> mm<br><br>
+				<input type="submit" value="set delta" name="restart_button" style="width:90px;height:30px;font-size:20px;">
+			</p>
+			<p>
+				<h3>current max accepted:<!--#maxdel--></h3>
+			</p>
+		</form>
 	</body>
 </html>

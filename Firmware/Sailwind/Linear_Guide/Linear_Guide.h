@@ -62,6 +62,7 @@ typedef struct {
 	Localization_t localization;
 	LG_Endswitches_t endswitches;
 	LG_LEDs_t leds;
+	uint8_t max_distance_fault;
 } Linear_Guide_t;
 
 

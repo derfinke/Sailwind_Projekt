@@ -13,7 +13,7 @@
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_MM_PER_ROTATION 1.12F
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
-#define LG_DISTANCE_FAULT_TOLERANCE_MM 10
+#define LG_STANDARD_MAX_DISTANCE_DELTA_MM 10
 #define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
@@ -99,6 +99,12 @@ static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr);
  */
 static void Linear_Guide_calculate_break_path(Linear_Guide_t *lg_ptr);
 
+/**
+ * @brief readout saved max distance delta
+ * @param none
+ * @retval max distance delta in mm
+ */
+static uint8_t Linear_Guide_read_max_distance_delta(void);
 
 /* API function definitions --------------------------------------------------*/
 void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
@@ -110,6 +116,7 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 	LG_distance_sensor_ptr = IO_get_distance_sensor();
 	LG_current_sensor_ptr = IO_get_current_sensor();
+	LG_linear_guide.max_distance_fault = Linear_Guide_read_max_distance_delta();
 	Linear_Guide_calculate_break_path(&LG_linear_guide);
 }
 
@@ -392,7 +399,7 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	uint16_t measured_value = LG_distance_sensor_ptr->measured_value;
 	Localization_parse_distance_sensor_value(&lg_ptr->localization, measured_value);
 	Localization_update_position(&lg_ptr->localization);
-	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
+	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > (int)LG_linear_guide.max_distance_fault)
 	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}
@@ -510,4 +517,16 @@ void Linear_Guide_set_error(LG_error_state_t error)
 LG_error_state_t Linear_Guide_get_error(void)
 {
   return LG_linear_guide.error_state;
+}
+
+static uint8_t Linear_Guide_read_max_distance_delta(void)
+{
+  uint8_t max_delta = 0;
+  FRAM_read(FRAM_MAX_DELTA, &max_delta, 1U);
+  if((max_delta < 5) || (max_delta > 250))
+  {
+    return LG_STANDARD_MAX_DISTANCE_DELTA_MM;
+  }
+
+  return max_delta;
 }

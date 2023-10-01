@@ -7,6 +7,8 @@
 
 #include "Motor.h"
 #include <stdlib.h>
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 
 /* defines ------------------------------------------------------------*/
 #define MOTOR_RPM_MAX 4378.44F // corresponds to ANALOG_MAX (4096) and max output voltage of 10.7 V -> 4092 rpm corresponds to 10 V (BG 45 SI manual)
@@ -14,6 +16,7 @@
 #define MOTOR_NORMAL_SPEED 1600
 
 /* private function prototypes -----------------------------------------------*/
+static uint16_t Motor_read_max_speed(void);
 static IO_analogActuator_t Motor_AIN_init(DAC_HandleTypeDef *hdac_ptr);
 static void Motor_press_enter_to_continue();
 
@@ -32,7 +35,7 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr) {
 			.OUT2_error = IO_digital_Pin_init(OUT_2_GPIO_Port, OUT_2_Pin),
 			.OUT3_rot_dir = IO_digital_Pin_init(OUT_3_GPIO_Port, OUT_3_Pin),
 			.rpm_set_point = 0,
-			.normal_rpm = MOTOR_NORMAL_SPEED,
+			.normal_rpm = Motor_read_max_speed(),
 			.ramp_final_rpm = 0,
 			.ramp_activated = False
 	};
@@ -206,5 +209,19 @@ static void Motor_press_enter_to_continue()
 	getchar();
 }
 
+static uint16_t Motor_read_max_speed(void)
+{
+  uint8_t fram_max_speed[2] = {0};
+  uint16_t max_speed = 0;
 
+  FRAM_read(FRAM_MAX_RPM, fram_max_speed, 2U);
+  max_speed = ((uint16_t)fram_max_speed[0] << 8) | fram_max_speed[1];
+
+  if((max_speed < 400) || (max_speed > 2000))
+  {
+    return MOTOR_NORMAL_SPEED;
+  }
+
+  return max_speed;
+}
 

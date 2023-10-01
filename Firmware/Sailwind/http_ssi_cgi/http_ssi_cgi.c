@@ -15,7 +15,7 @@
 #include "Linear_Guide.h"
 #include "FRAM.h"
 
-#define NUM_SSI_TAGS 10
+#define NUM_SSI_TAGS 12
 #define UINT_TAGS 4
 
 static IO_analogSensor_t *ssi_current_sensor = {0};
@@ -24,7 +24,7 @@ static Linear_Guide_t *ssi_linear_guide = {0};
 static uint8_t error_flag = 1;
 
 char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
-    "winddir", "mode", "opmod", "error" };
+    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel" };
 char const **TAGS = TAGCHAR;
 
 /**
@@ -173,6 +173,12 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
             "%s",
             "<label><h3>Please enter a valid IP address in the specified format.</h3></label>");
       }
+      break;
+    case 10:
+      (void) snprintf(pcInsert, iInsertLen, "%u", ssi_linear_guide->motor.normal_rpm);
+      break;
+    case 11:
+      (void) snprintf(pcInsert, iInsertLen, "%u", ssi_linear_guide->max_distance_fault);
       break;
     default:
       (void) snprintf(pcInsert, iInsertLen, "Error: Unknown SSI Tag!");
