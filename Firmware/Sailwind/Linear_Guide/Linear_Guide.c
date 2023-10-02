@@ -358,7 +358,6 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (Linear_Guide_check_distance_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_1_distance_fault;
-		Localization_adapt_to_sensor(&lg_ptr->localization);
 	}
 	if (Linear_Guide_check_wind_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
