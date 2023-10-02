@@ -182,11 +182,6 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 			}
 			break;
 		case Loc_state_4_set_center_pos:
-			if (Manual_Control_set_center(mc_ptr) == MC_SET_CENTER_OK)
-			{
-				*state = Loc_state_5_center_pos_set;
-			}
-			break;
 		case Loc_state_5_center_pos_set:
 			Manual_Control_set_center(mc_ptr);
 			break;
@@ -317,13 +312,15 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
-	if (!lg_ptr->localization.is_triggered)
+	Localization_t *loc_ptr = &lg_ptr->localization;
+	if (!loc_ptr->is_triggered)
 	{
 		return MC_SET_CENTER_NOT_TRIGGERED;
 	}
-	printf("pulses:%d\r\n", lg_ptr->localization.pulse_count);
-	printf("center set at: %d mm!\r\n", lg_ptr->localization.current_pos_mm);
-	Localization_set_center(&mc_ptr->lg_ptr->localization);
+	printf("pulses:%d\r\n", loc_ptr->pulse_count);
+	printf("center set at: %d mm!\r\n", loc_ptr->current_pos_mm);
+	Localization_set_center(loc_ptr);
+	Linear_Guide_safe_Localization(*loc_ptr);
 	for(uint8_t i = 0; i < 5; i++)
 	{
 		LED_switch(&mc_ptr->lg_ptr->leds.center_pos_set, LED_ON);

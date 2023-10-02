@@ -12,14 +12,13 @@
 #include <stdio.h>
 
 /* defines ------------------------------------------------------------*/
-#define LOC_SERIAL_SIZE 27 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC,M,SSSSS) = 1+1+5+1+5+1+5+1+1+1+5 = 27
+#define LOC_SERIAL_SIZE 25 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC,SSSSS) = 1+1+5+1+5+1+5+1+5 = 25
 #define LOC_NOT_LOCALIZED 1
 #define LOC_POSITION_RETAINED 2
 #define LOC_POSITION_UPDATED 0
 #define LOC_RECOVERY_RESET -1
 #define LOC_RECOVERY_COMPLETE 0
 #define LOC_RECOVERY_PARTIAL 1
-#define LOC_DESIRED_POS_QUEUE_EMPTY 32000
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {

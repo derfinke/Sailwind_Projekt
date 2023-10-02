@@ -143,8 +143,9 @@ int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr)
 	Linear_Guide_update_movement(lg_ptr);
 	if (Localization_update_position(&lg_ptr->localization) == LOC_POSITION_UPDATED)
 	{
-		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
+		Linear_Guide_safe_Localization(lg_ptr->localization);
 	}
+	Linear_Guide_update_sail_adjustment_mode(lg_ptr);
 	return update_status;
 }
 
@@ -190,7 +191,6 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolea
 	{
 		lg_ptr->localization.movement = movement;
 	}
-	Linear_Guide_safe_Localization(lg_ptr->localization);
 	return LG_MOVEMENT_CHANGED;
 }
 
@@ -337,7 +337,6 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		{
 			loc_ptr->movement = Loc_movement_stop;
 			Localization_progress_queue(loc_ptr);
-			Linear_Guide_safe_Localization(*loc_ptr);
 		}
 	}
 }
