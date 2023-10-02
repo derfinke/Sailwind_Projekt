@@ -9,6 +9,8 @@
 #include "string.h"
 #include "cJSON.h"
 #include "Linear_Guide.h"
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 #include "WSWD.h"
 #include "IO.h"
 
@@ -220,7 +222,8 @@ static void REST_get_request(char *payload, char *buffer) {
   } else if (strncmp(payload + URL_OFFSET, PATH_CURRENT_SENSOR,
                      strlen(PATH_CURRENT_SENSOR)) == 0) {
 
-    cJSON_AddNumberToObject(response, KEY_CURRENT, 0);
+    IO_Get_Measured_Value(REST_current_sensor);
+    cJSON_AddNumberToObject(response, KEY_CURRENT, REST_current_sensor->measured_value);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
@@ -246,6 +249,13 @@ static void REST_get_request(char *payload, char *buffer) {
     REST_create_settings_json(response);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+  } else if (strncmp(payload + URL_OFFSET, PATH_MODE,
+                     strlen(PATH_MODE)) == 0) {
+
+    cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
+    cJSON_PrintPreallocated(response, JSON_response, 200, 1);
+    REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+
   } else {
     REST_create_HTTP_header(buffer, HTTP_Not_Found, 0);
   }
@@ -446,28 +456,16 @@ static uint8_t REST_check_error_json(cJSON *error_json) {
     return 1;
   }
   /* Check for error value */
-  if (!((error->valueint >= 5) || (error->valueint == 0))) {
+  if ((error->valueint != 2) || (error->valueint != 0)) {
     return 1;
   }
-  switch(error->valueint)
+  if(error->valueint == 2)
   {
-    case 0:
-      Linear_Guide_set_error(LG_error_state_0_normal);
-      break;
-    case 1:
-      Linear_Guide_set_error(LG_error_state_1_distance_fault);
-      break;
-    case 2:
-      Linear_Guide_set_error(LG_error_state_2_wind_speed_fault);
-      break;
-    case 3:
-      Linear_Guide_set_error(LG_error_state_3_motor_fault);
-      break;
-    case 4:
-      Linear_Guide_set_error(LG_error_state_4_current_fault);
-      break;
-    default:
-      return 1;
+    Linear_Guide_set_error(LG_error_state_2_wind_speed_fault);
+  }
+  else
+  {
+    Linear_Guide_set_error(LG_error_state_0_normal);
   }
   /* Format is valid */
   return 0;
@@ -551,14 +549,16 @@ static uint8_t REST_check_settings_json(cJSON *settings_json)
     return 1;
   }
   /* Check for operating_mode value */
-  if (!((max_rpm->valueint > 2000) || (max_rpm->valueint < 400))) {
+  if (((max_rpm->valueint > 2000) || (max_rpm->valueint < 400))) {
     return 1;
   }
-  if (!((max_distance_error->valueint > 50) || (max_distance_error->valueint < 5))) {
+  if (((max_distance_error->valueint > 50) || (max_distance_error->valueint < 5))) {
     return 1;
   }
   /* Format is valid */
   REST_linear_guide->max_distance_fault = (uint8_t)max_distance_error->valueint;
   REST_linear_guide->motor.normal_rpm = (uint16_t)max_rpm->valueint;
+  FRAM_write(&REST_linear_guide->max_distance_fault, FRAM_MAX_DELTA, 1U);
+  FRAM_write((uint8_t*)&REST_linear_guide->motor.normal_rpm, FRAM_MAX_RPM, sizeof(REST_linear_guide->motor.normal_rpm));
   return 0;
 }

@@ -522,7 +522,7 @@ LG_error_state_t Linear_Guide_get_error(void)
 static uint8_t Linear_Guide_read_max_distance_delta(void)
 {
   uint8_t max_delta = 0;
-  FRAM_read(FRAM_MAX_DELTA, &max_delta, 1U);
+  FRAM_read(FRAM_MAX_DELTA, (uint8_t*)&max_delta, 1U);
   if((max_delta < 5) || (max_delta > 50))
   {
     return LG_STANDARD_MAX_DISTANCE_DELTA_MM;

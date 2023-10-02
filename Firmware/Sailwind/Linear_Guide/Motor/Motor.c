@@ -215,7 +215,7 @@ static uint16_t Motor_read_max_speed(void)
   uint16_t max_speed = 0;
 
   FRAM_read(FRAM_MAX_RPM, fram_max_speed, 2U);
-  max_speed = ((uint16_t)fram_max_speed[0] << 8) | fram_max_speed[1];
+  max_speed = ((uint16_t)fram_max_speed[1] << 8) | fram_max_speed[0];
 
   if((max_speed < 400) || (max_speed > 2000))
   {

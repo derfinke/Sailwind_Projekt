@@ -6,6 +6,7 @@
  */
 
 #include "Manual_Control.h"
+#include "boolean.h"
 
 
 /* defines -------------------------------------------------------------------*/
@@ -60,7 +61,10 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *
 			.longpress_time_s = 0,
 			.htim_ptr = htim_ptr
 	};
-	lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
+	if(lg_ptr->localization.is_localized == True)
+	{
+	  lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
+	}
 	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
 	MC_distance_sensor_ptr = IO_get_distance_sensor();
 	return manual_control;
