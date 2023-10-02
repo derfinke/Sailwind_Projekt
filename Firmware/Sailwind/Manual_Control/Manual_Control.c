@@ -11,10 +11,6 @@
 
 /* defines -------------------------------------------------------------------*/
 #define MC_COUNT 4
-#define MC_BUTTON_SWITCH_MANUAL GPIO_PIN_RESET	//ToDo: check correctness
-#define MC_BUTTON_SWITCH_AUTOMATIC GPIO_PIN_SET	//ToDo: check correctness
-#define MC_OPERATING_MODE_SWITCH_DENIED 1
-#define MC_OPERATING_MODE_SWITCH_OK 0
 #define MC_LOCALIZATION_DENIED 1
 #define MC_LOCALIZATION_OK 0
 #define MC_MOVE_DENIED 1
@@ -35,7 +31,6 @@ static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc
 
 static int8_t Manual_Control_set_center(Manual_Control_t *mc_ptr);
 static void Manual_Control_set_endpos(Manual_Control_t *mc_ptr);
-static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state);
 /**
  * @brief measure and set minimum absolute distance value from sensor
  * @param mc_ptr: manual_control reference
@@ -61,11 +56,6 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *
 			.longpress_time_s = 0,
 			.htim_ptr = htim_ptr
 	};
-	if(lg_ptr->localization.is_localized == True)
-	{
-	  lg_ptr->operating_mode = Manual_Control_get_operating_mode_button_state(buttons.switch_mode.state);
-	}
-	lg_ptr->leds = Linear_Guide_LEDs_init(lg_ptr->operating_mode);
 	MC_distance_sensor_ptr = IO_get_distance_sensor();
 	return manual_control;
 }
@@ -239,52 +229,12 @@ static int8_t Manual_Control_function_move_forward_toggle(Manual_Control_t *mc_p
 	return Manual_Control_move_toggle(mc_ptr, mc_ptr->buttons.move_forward, Loc_movement_forward);
 }
 
-/* static void MC_event_switch_operating_mode(Manual_Control_t *mc_ptr)
- *  Description:
- *   - event to switch operating mode
- *   - switching the button to automatic only works, if the localization process is done
- *   - on the other hand, in automatic mode the operating mode can always be switched to manual
- *   - if the operating mode could be changed, the corresponding LEDs are set and reset
- */
 static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
-	LG_operating_mode_t new_operating_mode = lg_ptr->operating_mode;
-	switch (mc_ptr->buttons.switch_mode.state)
-	{
-		case MC_BUTTON_SWITCH_AUTOMATIC:
-			if (!lg_ptr->localization.is_localized)
-			{
-				printf("not calibrated yet\r\n");
-				return MC_OPERATING_MODE_SWITCH_DENIED;
-			}
-			printf("set to automatic\r\n");
-			new_operating_mode = LG_operating_mode_automatic;
-			Linear_Guide_safe_Localization(lg_ptr->localization);
-			break;
-		case MC_BUTTON_SWITCH_MANUAL:
-			printf("set to manual\r\n");
-			new_operating_mode = LG_operating_mode_manual;
-			break;
-	}
-	if (new_operating_mode != lg_ptr->operating_mode)
-	{
-		printf("operating mode changed\r\n");
-		Linear_Guide_set_operating_mode(lg_ptr, new_operating_mode);
-	}
-	return MC_OPERATING_MODE_SWITCH_OK;
+	return Linear_Guide_set_operating_mode(lg_ptr, !lg_ptr->operating_mode);
 }
 
-/* static void MC_event_localization(Manual_Control_t *mc_ptr)
- *  Description:
- *   - event for the localization button
- *   - only works in manual mode
- *   - if the button is pressed, the localization state machine is triggered in state 0 or state 4 by setting the is_triggered flag
- *   - 1. press starts the automatic localization process
- *   - 2. press can be made after the motor stopped at the calculated center to confirm and save the position of the linear guide
- *   - if necessary, the position can be adjusted manually with the moving buttons before pressing the button
- *   - further presses can be made afterwards to adjust the center position again
- */
 static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 {
 	Linear_Guide_t *lg_ptr = mc_ptr->lg_ptr;
@@ -341,9 +291,4 @@ static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr)
 {
 	IO_Get_Measured_Value(MC_distance_sensor_ptr);
 	Localization_set_startpos_abs(&mc_ptr->lg_ptr->localization, MC_distance_sensor_ptr->measured_value);
-}
-
-static LG_operating_mode_t Manual_Control_get_operating_mode_button_state(GPIO_PinState btn_state)
-{
-	return btn_state == MC_BUTTON_SWITCH_AUTOMATIC ? LG_operating_mode_automatic : LG_operating_mode_manual;
 }

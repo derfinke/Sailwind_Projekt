@@ -20,6 +20,8 @@
 #define LG_ADJUSTMENT_MODE_UPDATED 0
 #define LG_UPDATE_NORMAL 0
 #define LG_UPDATE_EMERGENCY_SHUTDOWN -1
+#define LG_SWITCH_OPERATING_MODE_DENIED -1
+#define LG_SWITCH_OPERATING_MODE_OK 0
 
 
 /* typedefs -----------------------------------------------------------*/
@@ -74,12 +76,6 @@ typedef struct {
  */
 void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr);
 /**
- * @brief initialise all status LEDs
- * @param op_mode: depending on the value, either the manual or automatic LED is switched on
- * @retval lg_leds: struct of all LEDs as members
- */
-LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
-/**
  * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
  * @param lg_ptr: linear_guide reference
  * @retval update_status
@@ -89,9 +85,9 @@ int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr);
  * @brief switch operating mode to manual or automatic
  * @param lg_ptr: linear_guide reference
  * @param operating_mode
- * @retval none
+ * @retval operating_mode_switch_status
  */
-void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
+int8_t Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 /**
  * @brief count up or down pulse count depending on the movement direction (to be called in external interrupt callback from motor pulse signal)
  * @param lg_ptr: linear_guide reference

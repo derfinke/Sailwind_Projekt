@@ -33,6 +33,12 @@ static Linear_Guide_t LG_linear_guide = {0};
  */
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
 /**
+ * @brief initialise all status LEDs
+ * @param op_mode: depending on the value, either the manual or automatic LED is switched on
+ * @retval lg_leds: struct of all LEDs as members
+ */
+static LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
+/**
  * @brief update the operating mode LEDs when mode has changed
  * @param lg_ptr: linear_guide reference
  * @retval none
@@ -118,6 +124,8 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 	LG_current_sensor_ptr = IO_get_current_sensor();
 	LG_linear_guide.max_distance_fault = Linear_Guide_read_max_distance_delta();
 	Linear_Guide_calculate_break_path(&LG_linear_guide);
+	Linear_Guide_set_operating_mode(&LG_linear_guide, LG_operating_mode_automatic);
+	LG_linear_guide.leds = Linear_Guide_LEDs_init(LG_linear_guide.operating_mode);
 }
 
 LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
@@ -149,22 +157,15 @@ int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr)
 	return update_status;
 }
 
-/* void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
- *  Description:
- *   - set operating mode depending on current state of the system
- *   - operating mode can always be switched to manual
- *   - operating mode can only be switched to automatic, if the linear guide is localized
- */
-void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+int8_t Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
 {
-	boolean_t set_automatic = operating_mode == LG_operating_mode_automatic;
-	boolean_t set_manual = operating_mode == LG_operating_mode_manual;
-	boolean_t is_localized = lg_ptr->localization.is_localized;
-	if ((set_automatic && is_localized) || set_manual)
+	if (!lg_ptr->localization.is_localized)
 	{
-		lg_ptr->operating_mode = operating_mode;
-		Linear_Guide_LED_set_operating_mode(lg_ptr);
+		return LG_SWITCH_OPERATING_MODE_DENIED;
 	}
+	lg_ptr->operating_mode = operating_mode;
+	Linear_Guide_LED_set_operating_mode(lg_ptr);
+	return LG_SWITCH_OPERATING_MODE_OK;
 }
 
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
