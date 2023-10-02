@@ -64,6 +64,7 @@ void Motor_set_function(Motor_t *motor_ptr, Motor_function_t function);
 void Motor_set_rpm(Motor_t *motor_ptr, uint16_t rpm_value);
 boolean_t Motor_error(Motor_t *motor_ptr);
 void Motor_teach_speed(Motor_t *motor_ptr, Motor_function_t speed, uint16_t rpm_value, uint32_t tolerance);
+boolean_t Motor_is_currently_braking(Motor_t motor);
 
 
 #endif /* MOTOR_MOTOR_H_ */

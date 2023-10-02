@@ -166,7 +166,7 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 
 int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolean_t immediate)
 {
-	if (movement == lg_ptr->localization.movement)
+	if (movement == lg_ptr->localization.movement && (movement == Loc_movement_stop || !Motor_is_currently_braking(lg_ptr->motor)))
 	{
 		return LG_MOVEMENT_RETAINED;
 	}
@@ -198,11 +198,13 @@ void Linear_Guide_manual_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	{
 		int8_t sign = loc_ptr->movement == Loc_movement_backwards ? 1 : -1;
 		loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm + sign * loc_ptr->brake_path_mm;
+		loc_ptr->desired_pos_queue = loc_ptr->current_pos_mm;
 	}
 	else
 	{
 		int8_t sign = movement == Loc_movement_backwards ? 1 : -1;
-		loc_ptr->desired_pos_mm = sign * loc_ptr->end_pos_mm;
+		int16_t desired_pos_mm = sign * loc_ptr->end_pos_mm;
+		Localization_set_desired_pos_queued(loc_ptr, desired_pos_mm);
 	}
 	Linear_Guide_move(lg_ptr, movement, False);
 }
@@ -223,7 +225,8 @@ void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
 	int8_t sign = adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
-	loc_ptr->desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
+	int16_t desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
+	Localization_set_desired_pos_queued(loc_ptr, desired_pos_mm);
 }
 
 uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
@@ -303,15 +306,7 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 	if (loc_ptr->state >= Loc_state_3_approach_center)
 	{
 		boolean_t immediate = False;
-		Loc_movement_t movement = Loc_movement_stop;
-		if (loc_ptr->desired_pos_mm > (loc_ptr->current_pos_mm + loc_ptr->brake_path_mm))
-		{
-			movement = Loc_movement_backwards;
-		}
-		else if (loc_ptr->desired_pos_mm < (loc_ptr->current_pos_mm - loc_ptr->brake_path_mm))
-		{
-			movement = Loc_movement_forward;
-		}
+		Loc_movement_t movement = Localization_get_next_movement(*loc_ptr, loc_ptr->desired_pos_mm);
 		if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
 		{
 			IO_Get_Measured_Value(LG_distance_sensor_ptr);
@@ -334,6 +329,7 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		if (speed_ramp_status == MOTOR_RAMP_STOPPED)
 		{
 			loc_ptr->movement = Loc_movement_stop;
+			Localization_progress_queue(loc_ptr);
 			Linear_Guide_safe_Localization(*loc_ptr);
 		}
 	}
