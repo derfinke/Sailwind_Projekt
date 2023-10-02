@@ -47,7 +47,6 @@ Motor_t Motor_init(DAC_HandleTypeDef *hdac_ptr) {
  */
 void Motor_start_moving(Motor_t *motor_ptr, Motor_function_t direction) {
 	printf("motor start moving\r\n");
-	motor_ptr->rpm_set_point = 0;
 	Motor_set_function(motor_ptr, direction);
 	motor_ptr->ramp_final_rpm = motor_ptr->normal_rpm;
 	motor_ptr->ramp_activated = True;
@@ -94,6 +93,11 @@ int8_t Motor_speed_ramp(Motor_t *motor_ptr)
 	Motor_set_rpm(motor_ptr, motor_ptr->rpm_set_point + sign * MOTOR_RAMP_STEP_RPM);
 	motor_ptr->ramp_last_step_ms = HAL_GetTick();
 	return MOTOR_RAMP_NEXT_STEP;
+}
+
+boolean_t Motor_is_currently_braking(Motor_t motor)
+{
+	return motor.ramp_activated && motor.ramp_final_rpm == 0;
 }
 
 /* void motor_set_function(Motor_t *motor_ptr, motor_function_t function)

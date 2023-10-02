@@ -13,6 +13,7 @@
 /* private function prototypes -----------------------------------------------*/
 static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
 static int16_t Localization_pulse_count_to_distance(Localization_t loc);
+static boolean_t Localization_target_on_the_way(Localization_t loc, int16_t desired_pos_mm);
 
 /* API function definitions -----------------------------------------------*/
 Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE])
@@ -24,7 +25,8 @@ Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LO
 			.state = Loc_state_0_init,
 			.center_pos_mm = 0,
 			.pulse_count = 0,
-			.distance_per_pulse = distance_per_pulse
+			.distance_per_pulse = distance_per_pulse,
+			.desired_pos_queue = LOC_DESIRED_POS_QUEUE_EMPTY
 	};
 	int8_t recovery_state = Localization_deserialize(&localization, serial_buffer);
 	Localization_recover(&localization, recovery_state, False);
@@ -105,6 +107,28 @@ int8_t Localization_update_position(Localization_t *loc_ptr)
 	return LOC_POSITION_UPDATED;
 }
 
+void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger)
+{
+	loc_ptr->recovery_state = recovery_state;
+	switch(recovery_state)
+	{
+		case LOC_RECOVERY_RESET:
+			Localization_reset(loc_ptr, direct_trigger);
+			break;
+		case LOC_RECOVERY_PARTIAL:
+			loc_ptr->state = Loc_state_0_init;
+			loc_ptr->is_triggered = direct_trigger;
+			loc_ptr->is_localized = False;
+			break;
+		case LOC_RECOVERY_COMPLETE:
+			loc_ptr->is_localized = True;
+			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
+			Localization_update_position(loc_ptr);
+			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
+			break;
+	}
+}
+
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
 {
 	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPECMS, (int)loc.state, (int)loc.pulse_count, (int)loc.end_pos_mm, (int)loc.center_pos_mm, (int)loc.movement, (int)loc.start_pos_abs_mm);
@@ -114,6 +138,41 @@ void Localization_adapt_to_sensor(Localization_t *loc_ptr)
 {
 	loc_ptr->pulse_count = (int16_t) ((loc_ptr->current_measured_pos_mm + loc_ptr->end_pos_mm) / loc_ptr->distance_per_pulse);
 	loc_ptr->current_pos_mm = loc_ptr->current_measured_pos_mm;
+}
+
+Loc_movement_t Localization_get_next_movement(Localization_t loc, int16_t desired_pos_mm)
+{
+	Loc_movement_t movement = Loc_movement_stop;
+	if (desired_pos_mm > (loc.current_pos_mm + loc.brake_path_mm))
+	{
+		movement = Loc_movement_backwards;
+	}
+	else if (desired_pos_mm < (loc.current_pos_mm - loc.brake_path_mm))
+	{
+		movement = Loc_movement_forward;
+	}
+	return movement;
+}
+
+void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm)
+{
+	if (Localization_target_on_the_way(*loc_ptr, desired_pos_mm))
+	{
+		loc_ptr->desired_pos_mm = desired_pos_mm;
+	}
+	else
+	{
+		loc_ptr->desired_pos_queue = desired_pos_mm;
+	}
+}
+
+void Localization_progress_queue(Localization_t *loc_ptr)
+{
+	if (loc_ptr->desired_pos_queue != LOC_DESIRED_POS_QUEUE_EMPTY)
+	{
+		loc_ptr->desired_pos_mm = loc_ptr->desired_pos_queue;
+		loc_ptr->desired_pos_queue = LOC_DESIRED_POS_QUEUE_EMPTY;
+	}
 }
 
 /* private function definitions -----------------------------------------------*/
@@ -145,24 +204,7 @@ static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buff
 	return LOC_RECOVERY_COMPLETE;
 }
 
-void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger)
+static boolean_t Localization_target_on_the_way(Localization_t loc, int16_t desired_pos_mm)
 {
-	loc_ptr->recovery_state = recovery_state;
-	switch(recovery_state)
-	{
-		case LOC_RECOVERY_RESET:
-			Localization_reset(loc_ptr, direct_trigger);
-			break;
-		case LOC_RECOVERY_PARTIAL:
-			loc_ptr->state = Loc_state_0_init;
-			loc_ptr->is_triggered = direct_trigger;
-			loc_ptr->is_localized = False;
-			break;
-		case LOC_RECOVERY_COMPLETE:
-			loc_ptr->is_localized = True;
-			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
-			Localization_update_position(loc_ptr);
-			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
-			break;
-	}
+	return loc.movement == Loc_movement_stop || loc.movement == Localization_get_next_movement(loc, desired_pos_mm);
 }
