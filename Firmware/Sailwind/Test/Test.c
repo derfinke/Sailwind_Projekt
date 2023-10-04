@@ -98,7 +98,7 @@ static void Test_LED(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 		LED_switch(&leds_ptr->automatic, state);
 		LED_switch(&leds_ptr->manual, state);
 		LED_switch(&leds_ptr->roll, state);
-		LED_switch(&leds_ptr->trim, state);
+		LED_switch(&leds_ptr->pitch, state);
 		LED_switch(&leds_ptr->center_pos_set, state);
 		LED_switch(&leds_ptr->error, state);
 	}

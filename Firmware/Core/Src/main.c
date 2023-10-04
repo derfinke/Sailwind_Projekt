@@ -696,7 +696,7 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOE, Ext_Relais_1_Pin|LED_Roll_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
+  HAL_GPIO_WritePin(GPIOD, LED_Pitch_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|IN_2_Pin
                           |Windsensor_EN_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
@@ -753,8 +753,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLDOWN;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : LED_Trim_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
-  GPIO_InitStruct.Pin = LED_Trim_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
+  /*Configure GPIO pins : LED_Pitch_Pin LED_Stoerung_Pin LED_Manuell_Pin Windsensor_EN_Pin */
+  GPIO_InitStruct.Pin = LED_Pitch_Pin|LED_Stoerung_Pin|LED_Manuell_Pin|Windsensor_EN_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;

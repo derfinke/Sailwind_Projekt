@@ -114,7 +114,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
     case 3:
-	  percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
+	  percentage = Linear_Guide_get_current_roll_pitch_percentage(*ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
 	  (void) snprintf(pcInsert, iInsertLen, "%u", percentage);
       break;
     case (UINT_TAGS + 1):
@@ -132,7 +132,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
         case LG_sail_adjustment_mode_roll:
           (void) snprintf(pcInsert, iInsertLen, "%s", "roll");
           break;
-        case LG_sail_adjustment_mode_trim:
+        case LG_sail_adjustment_mode_pitch:
           (void) snprintf(pcInsert, iInsertLen, "%s", "pitch");
           break;
         default:

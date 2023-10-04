@@ -395,8 +395,8 @@ static void REST_create_wind_json(cJSON *response) {
 
 static void REST_create_adjustment(cJSON *response)
 {
-	int8_t roll_trim_percentage = Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide);
-	cJSON_AddNumberToObject(response, KEY_SAIL_POS, roll_trim_percentage);
+	int8_t roll_pitch_percentage = Linear_Guide_get_current_roll_pitch_percentage(*REST_linear_guide);
+	cJSON_AddNumberToObject(response, KEY_SAIL_POS, roll_pitch_percentage);
 }
 
 static void REST_create_settings_json(cJSON *response)
@@ -445,7 +445,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
     /* Check for value range */
     if (-100 <= sail_pos->valueint && sail_pos->valueint <= 100) {
     	/* Format is valid */
-    	Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, sail_pos->valueint);
+    	Linear_Guide_set_desired_roll_pitch_percentage(REST_linear_guide, sail_pos->valueint);
     	return 0;
     }
     return 1;
