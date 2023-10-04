@@ -19,6 +19,7 @@
 #define LOC_RECOVERY_RESET -1
 #define LOC_RECOVERY_COMPLETE 0
 #define LOC_RECOVERY_PARTIAL 1
+#define LOC_DESIRED_POS_QUEUE_EMPTY 32000
 
 /* typedefs -----------------------------------------------------------*/
 typedef enum {
@@ -67,7 +68,7 @@ void Localization_callback_pulse_count(Localization_t *loc_ptr);
 int8_t Localization_update_position(Localization_t *loc_ptr);
 void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);
 Loc_movement_t Localization_get_next_movement(Localization_t loc, int16_t desired_pos_mm);
-void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm);
+void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm, Loc_movement_t new_movement);
 void Localization_progress_queue(Localization_t *loc_ptr);
 
 #endif /* LOCALIZATION_LOCALIZATION_H_ */

@@ -9,7 +9,6 @@
 
 /* defines ------------------------------------------------------------*/
 #define LOC_SERIAL_FORMAT_SPECS "%d,%d,%d,%d,%d" //SPECS = "State, Pulse_count, End_pos, Center_pos, start_pos"
-#define LOC_DESIRED_POS_QUEUE_EMPTY 32000
 
 /* private function prototypes -----------------------------------------------*/
 static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
@@ -124,9 +123,9 @@ void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolea
 			loc_ptr->is_localized = False;
 			break;
 		case LOC_RECOVERY_COMPLETE:
-			loc_ptr->is_localized = True;
-			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
 			Localization_update_position(loc_ptr);
+			loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm;
+			loc_ptr->is_localized = True;
 			break;
 	}
 }
@@ -156,11 +155,15 @@ Loc_movement_t Localization_get_next_movement(Localization_t loc, int16_t desire
 	return movement;
 }
 
-void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm)
+void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm, Loc_movement_t new_movement)
 {
 	if (Localization_target_on_the_way(*loc_ptr, desired_pos_mm))
 	{
 		loc_ptr->desired_pos_mm = desired_pos_mm;
+		if (new_movement == loc_ptr->movement)
+		{
+			loc_ptr->desired_pos_queue = LOC_DESIRED_POS_QUEUE_EMPTY;
+		}
 	}
 	else
 	{
