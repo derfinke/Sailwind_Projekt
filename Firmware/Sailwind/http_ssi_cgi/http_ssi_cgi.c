@@ -300,8 +300,7 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams,
           if ((ssi_linear_guide->localization.movement != Loc_movement_backwards)
               || (ssi_linear_guide->localization.movement
                   != Loc_movement_forward)) {
-            Localization_set_center(&ssi_linear_guide->localization);
-            /*TODO: add LED blinking*/
+            Linear_Guide_set_center(ssi_linear_guide);
           } else {
             /* should respond with error feedback*/
             printf("linear guide is still moving\r\n");

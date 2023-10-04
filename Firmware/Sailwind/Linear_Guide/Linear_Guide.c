@@ -19,6 +19,8 @@
 #define LG_FAULT_CHECK_NEGATIVE 0
 #define LG_FAULT_CHECK_SKIPPED 1
 #define LG_BRAKE_PATH_OFFSET_REL 1.25F
+#define LG_SET_CENTER_OK 0
+#define LG_SET_CENTER_NOT_TRIGGERED 1
 
 
 static IO_analogSensor_t *LG_distance_sensor_ptr = {0};
@@ -280,6 +282,28 @@ Localization_t Linear_Guide_read_Localization()
 	FRAM_init();
 	FRAM_read(LINEAR_GUIDE_INFOS, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
 	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
+}
+
+int8_t Linear_Guide_set_center(Linear_Guide_t *lg_ptr)
+{
+	Localization_t *loc_ptr = &lg_ptr->localization;
+	if (!loc_ptr->is_triggered)
+	{
+		return LG_SET_CENTER_NOT_TRIGGERED;
+	}
+	printf("pulses:%d\r\n", loc_ptr->pulse_count);
+	printf("center set at: %d mm!\r\n", loc_ptr->current_pos_mm);
+	Localization_set_center(loc_ptr);
+	Linear_Guide_safe_Localization(*loc_ptr);
+	LED_blink(&lg_ptr->leds.center_pos_set);
+	lg_ptr->localization.is_triggered = False;
+	return LG_SET_CENTER_OK;
+}
+
+void Linear_Guide_set_startpos(Linear_Guide_t *lg_ptr)
+{
+	IO_Get_Measured_Value(LG_distance_sensor_ptr);
+	Localization_set_startpos_abs(&lg_ptr->localization, LG_distance_sensor_ptr->measured_value);
 }
 
 /* private function definitions -----------------------------------------------*/

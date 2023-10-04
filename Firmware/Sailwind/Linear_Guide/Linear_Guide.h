@@ -152,6 +152,14 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc);
  */
 Localization_t Linear_Guide_read_Localization();
 
+int8_t Linear_Guide_set_center(Linear_Guide_t *lg_ptr);
+/**
+ * @brief measure and set minimum absolute distance value from sensor
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
+void Linear_Guide_set_startpos(Linear_Guide_t *lg_ptr);
+
 Linear_Guide_t *LG_get_Linear_Guide(void);
 
 LG_error_state_t Linear_Guide_get_error(void);

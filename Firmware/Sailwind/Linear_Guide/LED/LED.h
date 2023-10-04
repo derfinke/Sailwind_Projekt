@@ -22,5 +22,6 @@ typedef GPIO_PinState LED_State_t;
 LED_t LED_init(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, LED_State_t state);
 void LED_switch(LED_t *led_ptr, LED_State_t led_state);
 void LED_toggle(LED_t *led_ptr);
+void LED_blink(LED_t *led_ptr);
 
 #endif /* LED_LED_H_ */

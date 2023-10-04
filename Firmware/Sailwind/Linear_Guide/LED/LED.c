@@ -31,4 +31,13 @@ void LED_toggle(LED_t *led_ptr)
 	IO_digitalToggle(led_ptr);
 }
 
+void LED_blink(LED_t *led_ptr)
+{
+	for(uint8_t i = 0; i < 9; i++)
+	{
+		LED_toggle(led_ptr);
+		HAL_Delay(200);
+	}
+	LED_switch(led_ptr, LED_OFF);
+}
 
