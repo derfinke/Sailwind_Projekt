@@ -60,6 +60,7 @@ SPI_HandleTypeDef hspi4;
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim10;
+TIM_HandleTypeDef htim11;
 
 UART_HandleTypeDef huart1;
 UART_HandleTypeDef huart2;
@@ -87,6 +88,7 @@ static void MX_SPI4_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM10_Init(void);
+static void MX_TIM11_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
@@ -139,15 +141,16 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI4_Init();
   MX_USART1_UART_Init();
+  MX_LWIP_Init();
   MX_TIM2_Init();
   MX_TIM10_Init();
-  MX_LWIP_Init();
+  MX_TIM11_Init();
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
   IO_init_current_sensor(&hadc3);
   Linear_Guide_init(&hdac);
   linear_guide = LG_get_Linear_Guide();
-  manual_control = Manual_Control_init(linear_guide, &htim10);
+  manual_control = Manual_Control_init(linear_guide, &htim10, &htim11);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
@@ -533,6 +536,37 @@ static void MX_TIM10_Init(void)
 }
 
 /**
+  * @brief TIM11 Initialization Function
+  * @param None
+  * @retval None
+  */
+static void MX_TIM11_Init(void)
+{
+
+  /* USER CODE BEGIN TIM11_Init 0 */
+
+  /* USER CODE END TIM11_Init 0 */
+
+  /* USER CODE BEGIN TIM11_Init 1 */
+
+  /* USER CODE END TIM11_Init 1 */
+  htim11.Instance = TIM11;
+  htim11.Init.Prescaler = 10000;
+  htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim11.Init.Period = 7000;
+  htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim11.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+  if (HAL_TIM_Base_Init(&htim11) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  /* USER CODE BEGIN TIM11_Init 2 */
+
+  /* USER CODE END TIM11_Init 2 */
+
+}
+
+/**
   * @brief USART1 Initialization Function
   * @param None
   * @retval None
@@ -783,9 +817,9 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_TIM_Base_Stop_IT(&htim2);
     HAL_NVIC_SystemReset();
   }
-  if (htim == manual_control.htim_ptr)
+  if (htim == manual_control.htim_loc_reset_ptr || htim == manual_control.htim_ip_reset_ptr)
   {
-	  Manual_Control_long_press_callback(&manual_control);
+	  Manual_Control_long_press_callback(&manual_control, htim);
   }
 }
 /* USER CODE END 4 */

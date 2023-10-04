@@ -17,7 +17,8 @@
 #define MC_MOVE_OK 0
 #define MC_SET_CENTER_OK 0
 #define MC_SET_CENTER_NOT_TRIGGERED 1
-#define MC_LONG_PRESS_TIME_S 3
+#define MC_LONG_PRESS_TIME_S_LOC 3
+#define MC_LONG_PRESS_TIME_S_IP 10
 
 static IO_analogSensor_t *MC_distance_sensor_ptr = {0};
 
@@ -41,7 +42,7 @@ static void Manual_Control_set_startpos(Manual_Control_t *mc_ptr);
 
 /* API function definitions -----------------------------------------------*/
 
-Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *htim_ptr)
+Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *htim_loc_reset_ptr, TIM_HandleTypeDef *htim_ip_reset_ptr)
 {
 	MC_buttons_t buttons = {
 			.switch_mode = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
@@ -54,7 +55,8 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *
 			.buttons = buttons,
 			.lg_ptr = lg_ptr,
 			.longpress_time_s = 0,
-			.htim_ptr = htim_ptr
+			.htim_loc_reset_ptr = htim_loc_reset_ptr,
+			.htim_ip_reset_ptr = htim_ip_reset_ptr
 	};
 	MC_distance_sensor_ptr = IO_get_distance_sensor();
 	return manual_control;
@@ -181,13 +183,20 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 	return MC_LOCALIZATION_OK;
 }
 
-void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr)
+void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr, TIM_HandleTypeDef *htim_ptr)
 {
 	mc_ptr->longpress_time_s++;
-	if (mc_ptr->longpress_time_s >= MC_LONG_PRESS_TIME_S)
+	if (mc_ptr->longpress_time_s >= mc_ptr->longpress_time_s_max)
 	{
-		Localization_reset(&mc_ptr->lg_ptr->localization, True);
-		HAL_TIM_Base_Stop_IT(mc_ptr->htim_ptr);
+		if (htim_ptr == mc_ptr->htim_loc_reset_ptr)
+		{
+			Localization_reset(&mc_ptr->lg_ptr->localization, True);
+		}
+		else if (htim_ptr == mc_ptr->htim_ip_reset_ptr)
+		{
+			//TODO: reset_IP()
+		}
+		HAL_TIM_Base_Stop_IT(htim_ptr);
 	}
 }
 
@@ -210,10 +219,23 @@ static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn,
 	switch (btn.state)
 	{
 		case BUTTON_PRESSED:
-			Linear_Guide_manual_move(mc_ptr->lg_ptr, movement);
+			if (mc_ptr->buttons.move_backwards.state == BUTTON_PRESSED && mc_ptr->buttons.move_forward.state == BUTTON_PRESSED)
+			{
+				HAL_TIM_Base_Start_IT(mc_ptr->htim_ip_reset_ptr);
+				mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_IP;
+			}
+			else
+			{
+				Linear_Guide_manual_move(mc_ptr->lg_ptr, movement);
+			}
 			break;
 		case BUTTON_RELEASED:
-			Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
+			if (mc_ptr->longpress_time_s < MC_LONG_PRESS_TIME_S_IP)
+			{
+				Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
+			}
+			mc_ptr->longpress_time_s = 0;
+			HAL_TIM_Base_Stop_IT(mc_ptr->htim_ip_reset_ptr);
 			break;
 	}
 	return MC_MOVE_OK;
@@ -245,15 +267,16 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
-			HAL_TIM_Base_Start_IT(mc_ptr->htim_ptr);
+			HAL_TIM_Base_Start_IT(mc_ptr->htim_loc_reset_ptr);
+			mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_LOC;
 			break;
 		case BUTTON_RELEASED:
-			if (mc_ptr->longpress_time_s < MC_LONG_PRESS_TIME_S)
+			if (mc_ptr->longpress_time_s < MC_LONG_PRESS_TIME_S_LOC)
 			{
 				lg_ptr->localization.is_triggered = True;
 			}
 			mc_ptr->longpress_time_s = 0;
-			HAL_TIM_Base_Stop_IT(mc_ptr->htim_ptr);
+			HAL_TIM_Base_Stop_IT(mc_ptr->htim_loc_reset_ptr);
 			break;
 	}
 	return MC_LOCALIZATION_OK;
