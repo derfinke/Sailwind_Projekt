@@ -38,8 +38,8 @@ typedef enum {
 } LG_operating_mode_t;
 
 typedef enum {
-	LG_sail_adjustment_mode_roll,
-	LG_sail_adjustment_mode_trim
+	LG_sail_adjustment_mode_roll=-1,
+	LG_sail_adjustment_mode_trim=1
 } LG_sail_adjustment_mode_t;
 
 typedef struct {
@@ -116,17 +116,16 @@ boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg);
 /**
  * @brief converts the desired roll / trim percentage to a target position in mm and safes it to the linear_guide reference
  * @param lg_ptr: linear_guide reference
- * @param percentage: relative position in given area (roll or trim)
- * @param adjustment_mode: specifies area -> left or right side of the center depending on value (roll/trim)
+ * @param percentage: relative position in given area (roll/trim -> -/+ percentage)
  * @retval none
  */
-void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode);
+void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, int8_t percentage);
 /**
  * @brief returns the roll / trim percentage converted from the current position
  * @param lg: linear_guide
  * @retval roll_or_trim_percentage
  */
-uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg);
+int8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg);
 /**
  * @brief returns True, if the linear_guide has reached the given endswitch
  * @param endswitch_ptr: enswitch reference (front / back)

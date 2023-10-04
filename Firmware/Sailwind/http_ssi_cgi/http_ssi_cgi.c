@@ -16,15 +16,15 @@
 #include "FRAM.h"
 #include "FRAM_memory_mapping.h"
 
-#define NUM_SSI_TAGS 12
-#define UINT_TAGS 4
+#define NUM_SSI_TAGS 11
+#define UINT_TAGS 3
 
 static IO_analogSensor_t *ssi_current_sensor = { 0 };
 static IO_analogSensor_t *ssi_distance_sensor = { 0 };
 static Linear_Guide_t *ssi_linear_guide = { 0 };
 static uint8_t error_flag = 1;
 
-char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
+char const *TAGCHAR[] = { "current", "dism", "diss", "pos", "windspd",
     "winddir", "mode", "opmod", "error", "maxrpm", "maxdel" };
 char const **TAGS = TAGCHAR;
 
@@ -92,8 +92,9 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
   float Wind_speed;
   float Wind_dir;
   int32_t motor_pos;
-  uint8_t op_mode;
-  uint8_t sail_pos;
+  LG_operating_mode_t op_mode;
+  LG_sail_adjustment_mode_t sail_pos;
+  uint8_t percentage;
 
   switch (iIndex) {
     case 0:
@@ -108,28 +109,13 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       break;
     case 2:
       IO_Get_Measured_Value(ssi_distance_sensor);
-      uint16_t distance = ssi_distance_sensor->measured_value;
+      Localization_parse_distance_sensor_value(&ssi_linear_guide->localization, ssi_distance_sensor->measured_value);
+      uint16_t distance = ssi_linear_guide->localization.current_measured_pos_mm;
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
     case 3:
-      if (ssi_linear_guide->sail_adjustment_mode
-          != LG_sail_adjustment_mode_trim) {
-        uint8_t roll_percentage = Linear_Guide_get_current_roll_trim_percentage(
-            *ssi_linear_guide);
-        (void) snprintf(pcInsert, iInsertLen, "%u", roll_percentage);
-      } else {
-        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
-      }
-      break;
-    case 4:
-      if (ssi_linear_guide->sail_adjustment_mode
-          != LG_sail_adjustment_mode_roll) {
-        uint8_t pitch_percentage =
-            Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide);
-        (void) snprintf(pcInsert, iInsertLen, "%u", pitch_percentage);
-      } else {
-        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
-      }
+	  percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
+	  (void) snprintf(pcInsert, iInsertLen, "%u", percentage);
       break;
     case (UINT_TAGS + 1):
       WSWD_receive_NMEA(NMEA_telegram);
@@ -141,12 +127,12 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       (void) snprintf(pcInsert, iInsertLen, "%.1f", Wind_dir);
       break;
     case (UINT_TAGS + 3):
-      sail_pos = ssi_linear_guide->operating_mode;
+      sail_pos = ssi_linear_guide->sail_adjustment_mode;
       switch (sail_pos) {
-        case 0:
+        case LG_sail_adjustment_mode_roll:
           (void) snprintf(pcInsert, iInsertLen, "%s", "roll");
           break;
-        case 1:
+        case LG_sail_adjustment_mode_trim:
           (void) snprintf(pcInsert, iInsertLen, "%s", "pitch");
           break;
         default:
@@ -157,10 +143,10 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
     case (UINT_TAGS + 4):
       op_mode = ssi_linear_guide->operating_mode;
       switch (op_mode) {
-        case 0:
+        case LG_operating_mode_manual:
           (void) snprintf(pcInsert, iInsertLen, "%s", "manual");
           break;
-        case 1:
+        case LG_operating_mode_automatic:
           (void) snprintf(pcInsert, iInsertLen, "%s", "automatic");
           break;
         default:
@@ -168,7 +154,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
           break;
       }
       break;
-    case 9:
+    case 8:
       if (error_flag == 1) {
         (void) snprintf(pcInsert, iInsertLen, "%s", "<label hidden></label>");
       } else if (error_flag == 2) {
@@ -183,11 +169,11 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
             "<label><h3>Please enter a valid IP address in the specified format.</h3></label>");
       }
       break;
-    case 10:
+    case 9:
       (void) snprintf(pcInsert, iInsertLen, "%u",
                       ssi_linear_guide->motor.normal_rpm);
       break;
-    case 11:
+    case 10:
       (void) snprintf(pcInsert, iInsertLen, "%u",
                       ssi_linear_guide->max_distance_fault);
       break;

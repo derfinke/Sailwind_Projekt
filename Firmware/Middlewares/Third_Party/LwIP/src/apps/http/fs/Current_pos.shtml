@@ -77,12 +77,8 @@
             <td><h3><!--#mode--></h3></td>
           </tr>
           <tr>
-            <th><h3>Pitch</h3></th>
-            <td><h3><!--#pitch-->%</h3></td>
-          </tr>
-          <tr>
-            <th><h3>Roll</h3></th>
-            <td><h3><!--#roll-->%</h3></td>
+            <th><h3>Position</h3></th>
+            <td><h3><!--#pos-->%</h3></td>
           </tr>
         </table>
 </body>

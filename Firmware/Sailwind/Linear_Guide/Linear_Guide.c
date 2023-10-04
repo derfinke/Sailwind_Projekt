@@ -62,6 +62,8 @@ static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr);
  * @retval update_status
  */
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
+static int8_t Linear_Guide_get_adjustment_mode(LG_sail_adjustment_mode_t last_mode, int16_t distance_to_center);
+static uint16_t Linear_Guide_get_adjustment_range_mm(Linear_Guide_t lg, LG_sail_adjustment_mode_t adjustment_mode);
 /**
  * @brief update speed ramp and movement depending on desired position
  * @param lg_ptr: linear_guide reference
@@ -229,19 +231,21 @@ boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg)
 			);
 }
 
-void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
+void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, int8_t percentage)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
-	int8_t sign = adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
-	int16_t desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
+	LG_sail_adjustment_mode_t mode = Linear_Guide_get_adjustment_mode(lg_ptr->sail_adjustment_mode, percentage);
+	uint16_t range_mm = Linear_Guide_get_adjustment_range_mm(*lg_ptr, mode);
+	int16_t desired_pos_mm = (int32_t) (loc_ptr->center_pos_mm + mode * range_mm * (percentage / 100.0F));
 	Localization_set_desired_pos_queued(loc_ptr, desired_pos_mm);
 }
 
-uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
+int8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
 {
 	Localization_t loc = lg.localization;
-	int8_t sign = lg.sail_adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
-	return (uint8_t) ((sign * (loc.center_pos_mm - loc.current_pos_mm)) / (float) (loc.end_pos_mm + sign * loc.center_pos_mm) * 100);
+	LG_sail_adjustment_mode_t mode = lg.sail_adjustment_mode;
+	uint16_t range_mm = Linear_Guide_get_adjustment_range_mm(lg, mode);
+	return (int8_t) ((loc.current_pos_mm - loc.center_pos_mm) / (float) range_mm * 100);
 }
 
 void Linear_Guide_change_speed_rpm(Linear_Guide_t *lg_ptr, uint16_t speed_rpm)
@@ -295,6 +299,21 @@ static LG_Endswitches_t Linear_Guide_Endswitches_init()
 	return lg_endswitches;
 }
 
+static int8_t Linear_Guide_get_adjustment_mode(LG_sail_adjustment_mode_t last_mode, int16_t distance_to_center)
+{
+	if (distance_to_center == 0)
+	{
+		return last_mode;
+	}
+	return distance_to_center/abs(distance_to_center);
+}
+
+static uint16_t Linear_Guide_get_adjustment_range_mm(Linear_Guide_t lg, LG_sail_adjustment_mode_t adjustment_mode)
+{
+	Localization_t loc = lg.localization;
+	return loc.end_pos_mm - adjustment_mode * loc.center_pos_mm;
+}
+
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
 	if (!lg_ptr->localization.is_localized)
@@ -303,7 +322,7 @@ static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 	}
 	int32_t current_pos = lg_ptr->localization.current_pos_mm;
 	int32_t center_pos = lg_ptr->localization.center_pos_mm;
-	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_roll : LG_sail_adjustment_mode_trim;
+	lg_ptr->sail_adjustment_mode = Linear_Guide_get_adjustment_mode(lg_ptr->sail_adjustment_mode, current_pos - center_pos);
 	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr);
 	return LG_ADJUSTMENT_MODE_UPDATED;
 }
@@ -362,7 +381,7 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (Linear_Guide_check_wind_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_2_wind_speed_fault;
-		Linear_Guide_set_desired_roll_trim_percentage(lg_ptr, 100, LG_sail_adjustment_mode_roll);
+		Linear_Guide_set_desired_roll_trim_percentage(lg_ptr, 100 * LG_sail_adjustment_mode_roll);
 	}
 	if (Linear_Guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{

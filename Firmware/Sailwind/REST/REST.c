@@ -44,8 +44,6 @@
 #define KEY_MODE              "operating_mode"
 #define KEY_SAIL_POS          "sail_pos"
 #define KEY_SAIL_STATE        "sail_state"
-#define KEY_ROLL              "roll"
-#define KEY_PITCH             "pitch"
 #define KEY_WIND              "wind"
 #define KEY_SPEED             "speed"
 #define KEY_DIR               "direction"
@@ -53,9 +51,6 @@
 #define KEY_LOCALIZED         "localized"
 #define KEY_MAX_RPM           "max_rpm"
 #define KEY_MAX_DISTANCE      "max_distance_error"
-
-#define SAIL_POS_SIGN_PITCH 1
-#define SAIL_POS_SIGN_ROLL -1
 
 typedef enum {
   HTTP_OK,
@@ -119,13 +114,6 @@ static void REST_create_sensors_json(cJSON *response);
  * @retval none
  */
 static void REST_create_wind_json(cJSON *response);
-
-/**
- * @brief  Build the sail_pos part of the status json
- * @param  response: pointer to HTTP response JSON
- * @retval none
- */
-static void REST_create_sail_pos_json(cJSON *response);
 
 /**
  * @brief  Build the /data/adjustment json
@@ -373,7 +361,7 @@ static void REST_create_data_json(cJSON *response) {
   cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
   cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 
-  REST_create_sail_pos_json(response);
+  REST_create_adjustment(response);
 
   REST_create_wind_json(response);
 
@@ -405,24 +393,10 @@ static void REST_create_wind_json(cJSON *response) {
   cJSON_AddItemToArray(wind, wind_members);
 }
 
-static void REST_create_sail_pos_json(cJSON *response) {
-  cJSON *sail_state;
-  cJSON *sail_members;
-
-  sail_state = cJSON_AddArrayToObject(response, KEY_SAIL_STATE);
-  sail_members = cJSON_CreateObject();
-
-  int8_t sign = REST_linear_guide->sail_adjustment_mode == LG_sail_adjustment_mode_roll ? SAIL_POS_SIGN_ROLL : SAIL_POS_SIGN_PITCH;
-  int8_t roll_trim_percentage = sign * Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide);
-  cJSON_AddNumberToObject(sail_members, KEY_SAIL_POS, roll_trim_percentage);
-  cJSON_AddItemToArray(sail_state, sail_members);
-}
-
 static void REST_create_adjustment(cJSON *response)
 {
-	int8_t sign = REST_linear_guide->sail_adjustment_mode == LG_sail_adjustment_mode_roll ? SAIL_POS_SIGN_ROLL : SAIL_POS_SIGN_PITCH;
-	int8_t roll_trim_percentage = sign * Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide);
-	cJSON_AddNumberToObject(sail_members, KEY_SAIL_POS, roll_trim_percentage);
+	int8_t roll_trim_percentage = Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide);
+	cJSON_AddNumberToObject(response, KEY_SAIL_POS, roll_trim_percentage);
 }
 
 static void REST_create_settings_json(cJSON *response)
@@ -471,19 +445,7 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
     /* Check for value range */
     if (-100 <= sail_pos->valueint && sail_pos->valueint <= 100) {
     	/* Format is valid */
-    	LG_sail_adjustment_mode_t mode = REST_linear_guide->sail_adjustment_mode;
-    	uint8_t percentage = 0;
-    	if (sail_pos->valueint * SAIL_POS_SIGN_ROLL > 0)
-    	{
-    		mode = LG_sail_adjustment_mode_roll;
-    		percentage = sail_pos->valueint * SAIL_POS_SIGN_ROLL;
-    	}
-    	else if (sail_pos->valueint * SAIL_POS_SIGN_PITCH > 0)
-    	{
-    		mode = LG_sail_adjustment_mode_trim;
-    		percentage = sail_pos->valueint * SAIL_POS_SIGN_PITCH;
-    	}
-    	Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, percentage, LG_sail_adjustment_mode_roll);
+    	Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, sail_pos->valueint);
     	return 0;
     }
     return 1;
@@ -501,7 +463,7 @@ static uint8_t REST_check_mode_json(cJSON *mode_json) {
     return 1;
   }
   /* Check for operating_mode value */
-  if (!((operating_mode->valueint == 0) || (operating_mode->valueint == 1))) {
+  if (!((operating_mode->valueint == LG_operating_mode_manual) || (operating_mode->valueint == LG_operating_mode_automatic))) {
     return 1;
   }
   /* Format is valid */
