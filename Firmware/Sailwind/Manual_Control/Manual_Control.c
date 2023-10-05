@@ -192,15 +192,6 @@ void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr, TIM_HandleType
 
 }
 
-/* private function definitions -----------------------------------------------*/
-
-/* static void Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
- *  Description:
- *   - called within the two event to move either left or right depending on the parameter "direction"
- *   - manual moving is only possible, if operating mode is manual and if the calibration process is not running currently (so it cannot be interrupted)
- *   - if the button is pressed, a function is called to start the motor in the given direction
- *   - if it is released, the motor is commanded to stop
- */
 static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn, Loc_movement_t movement)
 {
 	if (!Linear_Guide_get_moving_permission(*mc_ptr->lg_ptr))
@@ -215,6 +206,7 @@ static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn,
 			{
 				HAL_TIM_Base_Start_IT(mc_ptr->htim_ip_reset_ptr);
 				mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_IP;
+				Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
 			}
 			else
 			{
