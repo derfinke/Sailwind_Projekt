@@ -28,7 +28,9 @@
 #include "ethernetif.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
+#include "boolean.h"
 /* USER CODE END 0 */
 /* Private function prototypes -----------------------------------------------*/
 static void ethernet_link_status_updated(struct netif *netif);
@@ -74,6 +76,16 @@ void MX_LWIP_Init(void)
   GATEWAY_ADDRESS[3] = 1;
 
 /* USER CODE BEGIN IP_ADDRESSES */
+  boolean_t set_default = True;
+  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *)&set_default, sizeof(set_default));
+  int new_ip_addr[5];
+  if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, (uint8_t *) new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
+  {
+	  for (uint8_t i = 0; i < 4; i++)
+	  {
+		  IP_ADDRESS[i] = new_ip_addr[i+1];
+	  }
+  }
 /* USER CODE END IP_ADDRESSES */
 
   /* Initilialize the LwIP stack without RTOS */
@@ -107,7 +119,6 @@ void MX_LWIP_Init(void)
   /* Create the Ethernet link handler thread */
 
 /* USER CODE BEGIN 3 */
-
 /* USER CODE END 3 */
 }
 

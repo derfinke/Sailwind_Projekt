@@ -148,9 +148,9 @@ int main(void)
   /* USER CODE BEGIN 2 */
   IO_init_distance_sensor(&hadc1);
   IO_init_current_sensor(&hadc3);
-  Linear_Guide_init(&hdac);
+  Linear_Guide_init(&hdac, &htim11);
   linear_guide = LG_get_Linear_Guide();
-  manual_control = Manual_Control_init(linear_guide, &htim10, &htim11);
+  manual_control = Manual_Control_init(linear_guide, &htim10);
 
   printf("Sailwind Firmware Ver. 1.0\r\n");
 
@@ -551,7 +551,7 @@ static void MX_TIM11_Init(void)
 
   /* USER CODE END TIM11_Init 1 */
   htim11.Instance = TIM11;
-  htim11.Init.Prescaler = 10000;
+  htim11.Init.Prescaler = 2000;
   htim11.Init.CounterMode = TIM_COUNTERMODE_UP;
   htim11.Init.Period = 7000;
   htim11.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -817,9 +817,13 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_TIM_Base_Stop_IT(&htim2);
     HAL_NVIC_SystemReset();
   }
-  if (htim == manual_control.htim_loc_reset_ptr || htim == manual_control.htim_ip_reset_ptr)
+  else if (htim == manual_control.htim_reset_ptr)
   {
-	  Manual_Control_long_press_callback(&manual_control, htim);
+	  Manual_Control_long_press_callback(&manual_control);
+  }
+  else if (htim == linear_guide->leds.htim_blink_ptr)
+  {
+	  LED_blink_callback(htim);
   }
 }
 /* USER CODE END 4 */

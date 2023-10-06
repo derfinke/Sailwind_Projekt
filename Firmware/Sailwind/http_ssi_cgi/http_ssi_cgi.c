@@ -209,19 +209,16 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
         error_flag = 0;
         return "/Settings.shtml";
       } else {
-        int IP_address[4];
+        int IP_address[5];
         strncpy(first_octet, name, 3);
         strncpy(second_octet, name + 4, 3);
         strncpy(third_octet, name + 8, 3);
         strncpy(fourth_octet, name + 12, 3);
-        IP_address[0] = atoi(first_octet);
-        IP_address[1] = atoi(second_octet);
-        IP_address[2] = atoi(third_octet);
-        IP_address[3] = atoi(fourth_octet);
-        if (IP_address[0] > 255) {
-          error_flag = 0;
-          return "/Settings.shtml";
-        } else if (IP_address[1] > 255) {
+        IP_address[1] = atoi(first_octet);
+        IP_address[2] = atoi(second_octet);
+        IP_address[3] = atoi(third_octet);
+        IP_address[4] = atoi(fourth_octet);
+        if (IP_address[1] > 255) {
           error_flag = 0;
           return "/Settings.shtml";
         } else if (IP_address[2] > 255) {
@@ -230,11 +227,15 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
         } else if (IP_address[3] > 255) {
           error_flag = 0;
           return "/Settings.shtml";
+        } else if (IP_address[4] > 255) {
+          error_flag = 0;
+          return "/Settings.shtml";
         }
-        //Define FRAM segments first
-#if 0
-        FRAM_write(IP_address, 0x0100, sizeof(IP_address));
-#endif
+
+        FRAM_write((uint8_t *)IP_address, FRAM_IP_ADDRESS, sizeof(IP_address));
+        boolean_t set_default = False;
+        FRAM_write((uint8_t *) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
+        LED_blink(&ssi_linear_guide->leds.power, LED_ON, ssi_linear_guide->leds.htim_blink_ptr);
         error_flag = 2;
       }
     }

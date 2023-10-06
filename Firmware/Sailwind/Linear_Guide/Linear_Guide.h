@@ -43,12 +43,14 @@ typedef enum {
 } LG_sail_adjustment_mode_t;
 
 typedef struct {
+	LED_t power;
 	LED_t error;
 	LED_t manual;
 	LED_t automatic;
 	LED_t roll;
 	LED_t pitch;
 	LED_t center_pos_set;
+	TIM_HandleTypeDef *htim_blink_ptr;
 } LG_LEDs_t;
 
 typedef struct {
@@ -74,7 +76,7 @@ typedef struct {
  * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
  * @retval none
  */
-void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr);
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_blink_ptr);
 /**
  * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
  * @param lg_ptr: linear_guide reference

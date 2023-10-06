@@ -7,6 +7,8 @@
 
 #include "Manual_Control.h"
 #include "boolean.h"
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 
 
 /* defines -------------------------------------------------------------------*/
@@ -30,7 +32,7 @@ static int8_t Manual_Control_function_switch_operating_mode(Manual_Control_t *mc
 
 /* API function definitions -----------------------------------------------*/
 
-Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *htim_loc_reset_ptr, TIM_HandleTypeDef *htim_ip_reset_ptr)
+Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *htim_reset_ptr)
 {
 	MC_buttons_t buttons = {
 			.switch_mode = Button_init(Switch_Betriebsmodus_GPIO_Port, Switch_Betriebsmodus_Pin),
@@ -43,8 +45,7 @@ Manual_Control_t Manual_Control_init(Linear_Guide_t *lg_ptr, TIM_HandleTypeDef *
 			.buttons = buttons,
 			.lg_ptr = lg_ptr,
 			.longpress_time_s = 0,
-			.htim_loc_reset_ptr = htim_loc_reset_ptr,
-			.htim_ip_reset_ptr = htim_ip_reset_ptr
+			.htim_reset_ptr = htim_reset_ptr,
 	};
 	return manual_control;
 }
@@ -173,22 +174,24 @@ int8_t Manual_Control_Localization(Manual_Control_t *mc_ptr)
 	return MC_LOCALIZATION_OK;
 }
 
-void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr, TIM_HandleTypeDef *htim_ptr)
+void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr)
 {
 	mc_ptr->longpress_time_s++;
 	if (mc_ptr->longpress_time_s < mc_ptr->longpress_time_s_max)
 	{
 		return;
 	}
-	if (htim_ptr == mc_ptr->htim_loc_reset_ptr)
+	if (mc_ptr->longpress_time_s_max == MC_LONG_PRESS_TIME_S_LOC)
 	{
 		Localization_reset(&mc_ptr->lg_ptr->localization, True);
 	}
-	else if (htim_ptr == mc_ptr->htim_ip_reset_ptr)
+	else if (mc_ptr->longpress_time_s_max == MC_LONG_PRESS_TIME_S_IP)
 	{
-		//TODO: reset_IP()
+		boolean_t set_default = True;
+		FRAM_write((uint8_t *) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
+		LED_blink(&mc_ptr->lg_ptr->leds.power, LED_ON, mc_ptr->lg_ptr->leds.htim_blink_ptr);
 	}
-	HAL_TIM_Base_Stop_IT(htim_ptr);
+	HAL_TIM_Base_Stop_IT(mc_ptr->htim_reset_ptr);
 
 }
 
@@ -204,9 +207,12 @@ static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn,
 		case BUTTON_PRESSED:
 			if (mc_ptr->buttons.move_backwards.state == BUTTON_PRESSED && mc_ptr->buttons.move_forward.state == BUTTON_PRESSED)
 			{
-				HAL_TIM_Base_Start_IT(mc_ptr->htim_ip_reset_ptr);
-				mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_IP;
-				Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
+				if (mc_ptr->longpress_time_s == 0)
+				{
+					mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_IP;
+					HAL_TIM_Base_Start_IT(mc_ptr->htim_reset_ptr);
+					Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
+				}
 			}
 			else
 			{
@@ -218,8 +224,11 @@ static int8_t Manual_Control_move_toggle(Manual_Control_t *mc_ptr, Button_t btn,
 			{
 				Linear_Guide_manual_move(mc_ptr->lg_ptr, Loc_movement_stop);
 			}
-			mc_ptr->longpress_time_s = 0;
-			HAL_TIM_Base_Stop_IT(mc_ptr->htim_ip_reset_ptr);
+			if (mc_ptr->longpress_time_s_max == MC_LONG_PRESS_TIME_S_IP)
+			{
+				mc_ptr->longpress_time_s = 0;
+				HAL_TIM_Base_Stop_IT(mc_ptr->htim_reset_ptr);
+			}
 			break;
 	}
 	return MC_MOVE_OK;
@@ -251,16 +260,23 @@ static int8_t Manual_Control_function_localization(Manual_Control_t *mc_ptr)
 	switch (mc_ptr->buttons.localize.state)
 	{
 		case BUTTON_PRESSED:
-			HAL_TIM_Base_Start_IT(mc_ptr->htim_loc_reset_ptr);
-			mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_LOC;
+			if (mc_ptr->longpress_time_s == 0)
+			{
+				mc_ptr->longpress_time_s_max = MC_LONG_PRESS_TIME_S_LOC;
+				HAL_TIM_Base_Start_IT(mc_ptr->htim_reset_ptr);
+			}
+
 			break;
 		case BUTTON_RELEASED:
 			if (mc_ptr->longpress_time_s < MC_LONG_PRESS_TIME_S_LOC)
 			{
 				lg_ptr->localization.is_triggered = True;
 			}
-			mc_ptr->longpress_time_s = 0;
-			HAL_TIM_Base_Stop_IT(mc_ptr->htim_loc_reset_ptr);
+			if (mc_ptr->longpress_time_s_max == MC_LONG_PRESS_TIME_S_LOC)
+			{
+				mc_ptr->longpress_time_s = 0;
+				HAL_TIM_Base_Stop_IT(mc_ptr->htim_reset_ptr);
+			}
 			break;
 	}
 	return MC_LOCALIZATION_OK;

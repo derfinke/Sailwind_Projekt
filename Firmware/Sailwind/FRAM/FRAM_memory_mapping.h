@@ -12,9 +12,11 @@
 #define LINEAR_GUIDE_INFOS  0x0000
 
 /*Memory Region where the used IP Address is saved*/
-#define USED_IP_ADDRESS     0x0100
+#define FRAM_IP_ADDRESS     0x0100
+#define FRAM_IP_SET_DEFAULT_FLAG	0x0180
 
-#define FRAM_MAX_RPM        0x0110
-#define FRAM_MAX_DELTA      0x0120
+/*Memory Region where linear_guide configurations are saved*/
+#define FRAM_MAX_RPM        0x0200
+#define FRAM_MAX_DELTA      0x0210
 
 #endif /* FRAM_MEMORY_MAPPING_H_ */

@@ -39,7 +39,7 @@ static LG_Endswitches_t Linear_Guide_Endswitches_init();
  * @param op_mode: depending on the value, either the manual or automatic LED is switched on
  * @retval lg_leds: struct of all LEDs as members
  */
-static LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
+static LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode, TIM_HandleTypeDef *htim_blink_ptr);
 /**
  * @brief update the operating mode LEDs when mode has changed
  * @param lg_ptr: linear_guide reference
@@ -118,7 +118,7 @@ static void Linear_Guide_calculate_break_path(Linear_Guide_t *lg_ptr);
 static uint8_t Linear_Guide_read_max_distance_delta(void);
 
 /* API function definitions --------------------------------------------------*/
-void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_blink_ptr)
 {
 	LG_linear_guide.error_state = LG_error_state_0_normal;
 	LG_linear_guide.operating_mode = LG_operating_mode_manual;
@@ -130,18 +130,20 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 	LG_linear_guide.max_distance_fault = Linear_Guide_read_max_distance_delta();
 	Linear_Guide_calculate_break_path(&LG_linear_guide);
 	Linear_Guide_set_operating_mode(&LG_linear_guide, LG_operating_mode_automatic);
-	LG_linear_guide.leds = Linear_Guide_LEDs_init(LG_linear_guide.operating_mode);
+	LG_linear_guide.leds = Linear_Guide_LEDs_init(LG_linear_guide.operating_mode, htim_blink_ptr);
 }
 
-LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
+LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode, TIM_HandleTypeDef *htim_blink_ptr)
 {
 	LG_LEDs_t lg_leds = {
+			.power = LED_init(LED_PWR_GPIO_Port, LED_PWR_Pin, LED_ON),
 			.error = LED_init(LED_Stoerung_GPIO_Port, LED_Stoerung_Pin, LED_OFF),
 			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, op_mode == LG_operating_mode_manual),
 			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, op_mode == LG_operating_mode_automatic),
 			.roll = LED_init(LED_Roll_GPIO_Port, LED_Roll_Pin, LED_OFF),
 			.pitch = LED_init(LED_Pitch_GPIO_Port, LED_Pitch_Pin, LED_OFF),
-			.center_pos_set = LED_init(LED_set_center_GPIO_Port, LED_set_center_Pin, LED_OFF)
+			.center_pos_set = LED_init(LED_set_center_GPIO_Port, LED_set_center_Pin, LED_OFF),
+			.htim_blink_ptr = htim_blink_ptr
 	};
 	return lg_leds;
 }
@@ -207,7 +209,10 @@ void Linear_Guide_manual_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	{
 		int8_t sign = loc_ptr->movement == Loc_movement_backwards ? 1 : -1;
 		loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm + sign * loc_ptr->brake_path_mm;
-		loc_ptr->desired_pos_queue = loc_ptr->current_pos_mm;
+		if (abs(loc_ptr->current_pos_mm) != loc_ptr->end_pos_mm)
+		{
+			loc_ptr->desired_pos_queue = loc_ptr->current_pos_mm;
+		}
 	}
 	else
 	{
@@ -295,7 +300,7 @@ int8_t Linear_Guide_set_center(Linear_Guide_t *lg_ptr)
 	printf("center set at: %d mm!\r\n", loc_ptr->current_pos_mm);
 	Localization_set_center(loc_ptr);
 	Linear_Guide_safe_Localization(*loc_ptr);
-	LED_blink(&lg_ptr->leds.center_pos_set);
+	LED_blink(&lg_ptr->leds.center_pos_set, LED_OFF, lg_ptr->leds.htim_blink_ptr);
 	lg_ptr->localization.is_triggered = False;
 	return LG_SET_CENTER_OK;
 }
@@ -371,6 +376,7 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr, int8_t update_s
 		if (immediate)
 		{
 			movement = Loc_movement_stop;
+			loc_ptr->desired_pos_queue = LOC_DESIRED_POS_QUEUE_EMPTY;
 		}
 		Linear_Guide_move(lg_ptr, movement, immediate);
 	}
