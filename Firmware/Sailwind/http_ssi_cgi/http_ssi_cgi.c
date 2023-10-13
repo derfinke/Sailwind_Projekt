@@ -16,16 +16,17 @@
 #include "FRAM.h"
 #include "FRAM_memory_mapping.h"
 
-#define NUM_SSI_TAGS 11
+#define NUM_SSI_TAGS 12
 #define UINT_TAGS 3
 
 static IO_analogSensor_t *ssi_current_sensor = { 0 };
 static IO_analogSensor_t *ssi_distance_sensor = { 0 };
 static Linear_Guide_t *ssi_linear_guide = { 0 };
 static uint8_t error_flag = 1;
+static uint8_t dhcp = 0;
 
 char const *TAGCHAR[] = { "current", "dism", "diss", "pos", "windspd",
-    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel" };
+    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel", "dhcp"};
 char const **TAGS = TAGCHAR;
 
 /**
@@ -176,6 +177,25 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
     case 10:
       (void) snprintf(pcInsert, iInsertLen, "%u",
                       ssi_linear_guide->max_distance_fault);
+      break;
+    case 11:
+      FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp));
+      if(dhcp == 1)
+      {
+        (void) snprintf(
+                    pcInsert,
+                    iInsertLen,
+                    "%s",
+                    "<input type=\"checkbox\" checked=\"true\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+      }
+      else
+      {
+        (void) snprintf(
+                    pcInsert,
+                    iInsertLen,
+                    "%s",
+                    "<input type=\"checkbox\" checked=\"false\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+      }
       break;
     default:
       (void) snprintf(pcInsert, iInsertLen, "Error: Unknown SSI Tag!");
@@ -388,5 +408,18 @@ void http_server_init(void) {
   ssi_current_sensor = IO_get_current_sensor();
   ssi_distance_sensor = IO_get_distance_sensor();
   ssi_linear_guide = LG_get_Linear_Guide();
+
 }
 
+void http_ssi_cgi_read_dhcp_state(void)
+{
+  if(FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp)) != HAL_OK)
+  {
+    printf("DHCP state could not be determined\r\n");
+  }
+  if(dhcp != 0 || dhcp != 1)
+  {
+    dhcp = 0;
+    printf("DHCP state is invalid. Setting to disabled\r\n");
+  }
+}

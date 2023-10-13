@@ -101,7 +101,7 @@
 				<h3>current max accepted:<!--#maxdel--></h3>
 			</p>
 		</form>
-		<form action="/form_dhcp.cgi">
+		<form action="/form_dhcp.cgi"  >
 			<p>
 				<label for="dhcp"><h3><u>Enable DHCP</u></h3></label>
 				<input type="checkbox" name="dhcp" value="true" style="height:35px;width:30px;font-size:15px;"><br><br>

@@ -77,31 +77,43 @@ void MX_LWIP_Init(void)
 
 /* USER CODE BEGIN IP_ADDRESSES */
   boolean_t set_default = True;
-  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *)&set_default, sizeof(set_default));
   uint8_t new_ip_addr[4];
-  if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
+  uint8_t dhcp_enabled;
+  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *)&set_default, sizeof(set_default));
+  FRAM_read(FRAM_DHCP_ENABLED, &dhcp_enabled, sizeof(dhcp_enabled));
+  if(dhcp_enabled == 1)
   {
-    if((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00))
+    if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
     {
-      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-    }
-    else if((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00))
-    {
-      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-    }
-    else if((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00))
-    {
-      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-    }
-    else if((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00))
-    {
-      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-    }
-    else
-    {
-      IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2], new_ip_addr[3]);
+      if((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00))
+      {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      }
+      else if((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00))
+      {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      }
+      else if((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00))
+      {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      }
+      else if((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00))
+      {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      }
+      else
+      {
+        IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2], new_ip_addr[3]);
+      }
     }
   }
+  else
+  {
+    ipaddr.addr = 0;
+    netmask.addr = 0;
+    gw.addr = 0;
+  }
+
 /* USER CODE END IP_ADDRESSES */
 
   /* Initilialize the LwIP stack without RTOS */
@@ -131,7 +143,49 @@ void MX_LWIP_Init(void)
   /* Set the link callback function, this function is called on change of link status*/
   netif_set_link_callback(&gnetif, ethernet_link_status_updated);
 
+  if(dhcp_enabled != 1)
+  {
+    dhcp_start(&gnetif);
+  }
   /* Create the Ethernet link handler thread */
+
+/* USER CODE BEGIN 3 */
+/* USER CODE END 3 */
+}
+void MX_LWIP_Init(void)
+{
+  /* Initilialize the LwIP stack without RTOS */
+  lwip_init();
+
+  /* IP addresses initialization with DHCP (IPv4) */
+  ipaddr.addr = 0;
+  netmask.addr = 0;
+  gw.addr = 0;
+
+  /* add the network interface (IPv4/IPv6) without RTOS */
+  netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &ethernet_input);
+
+  /* Registers the default network interface */
+  netif_set_default(&gnetif);
+
+  if (netif_is_link_up(&gnetif))
+  {
+    /* When the netif is fully configured this function must be called */
+    netif_set_up(&gnetif);
+  }
+  else
+  {
+    /* When the netif link is down this function must be called */
+    netif_set_down(&gnetif);
+  }
+
+  /* Set the link callback function, this function is called on change of link status*/
+  netif_set_link_callback(&gnetif, ethernet_link_status_updated);
+
+  /* Create the Ethernet link handler thread */
+
+  /* Start DHCP negotiation for a network interface (IPv4) */
+  dhcp_start(&gnetif);
 
 /* USER CODE BEGIN 3 */
 /* USER CODE END 3 */
