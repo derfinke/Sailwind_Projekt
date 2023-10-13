@@ -78,13 +78,29 @@ void MX_LWIP_Init(void)
 /* USER CODE BEGIN IP_ADDRESSES */
   boolean_t set_default = True;
   FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *)&set_default, sizeof(set_default));
-  int new_ip_addr[5];
-  if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, (uint8_t *) new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
+  uint8_t new_ip_addr[4];
+  if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
   {
-	  for (uint8_t i = 0; i < 4; i++)
-	  {
-		  IP_ADDRESS[i] = new_ip_addr[i+1];
-	  }
+    if((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00))
+    {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00))
+    {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00))
+    {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00))
+    {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else
+    {
+      IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2], new_ip_addr[3]);
+    }
   }
 /* USER CODE END IP_ADDRESSES */
 
@@ -92,7 +108,6 @@ void MX_LWIP_Init(void)
   lwip_init();
 
   /* IP addresses initialization without DHCP (IPv4) */
-  IP4_ADDR(&ipaddr, IP_ADDRESS[0], IP_ADDRESS[1], IP_ADDRESS[2], IP_ADDRESS[3]);
   IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1] , NETMASK_ADDRESS[2], NETMASK_ADDRESS[3]);
   IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2], GATEWAY_ADDRESS[3]);
 
