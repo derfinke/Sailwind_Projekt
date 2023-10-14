@@ -167,7 +167,7 @@ void MX_LWIP_Init(void) {
   FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t*) &set_default,
             sizeof(set_default));
   FRAM_read(FRAM_DHCP_ENABLED, &dhcp_enabled, sizeof(dhcp_enabled));
-  if (dhcp_enabled == 1) {
+  if (dhcp_enabled == 0) {
     if (set_default
         == False&& FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK) {
       if ((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00)) {

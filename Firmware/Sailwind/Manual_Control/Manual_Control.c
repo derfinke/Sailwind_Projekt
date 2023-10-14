@@ -187,8 +187,10 @@ void Manual_Control_long_press_callback(Manual_Control_t *mc_ptr)
 	}
 	else if (mc_ptr->longpress_time_s_max == MC_LONG_PRESS_TIME_S_IP)
 	{
+	  uint8_t dhcp = 0;
 		boolean_t set_default = True;
 		FRAM_write((uint8_t *) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
+		FRAM_write(&dhcp, FRAM_DHCP_ENABLED, sizeof(dhcp));
 		LED_blink(&mc_ptr->lg_ptr->leds.power, LED_ON, mc_ptr->lg_ptr->leds.htim_blink_ptr);
 	}
 	HAL_TIM_Base_Stop_IT(mc_ptr->htim_reset_ptr);

@@ -198,7 +198,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
             pcInsert,
             iInsertLen,
             "%s",
-            "<input type=\"checkbox\" checked=\"false\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+            "<input type=\"checkbox\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
       }
       break;
     default:
