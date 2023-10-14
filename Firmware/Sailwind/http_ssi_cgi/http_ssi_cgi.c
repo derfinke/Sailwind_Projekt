@@ -14,6 +14,8 @@
 #include "WSWD.h"
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include "lwip.h"
+#include "tcp_server.h"
 #include "FRAM_memory_mapping.h"
 
 #define NUM_SSI_TAGS 12
@@ -24,11 +26,11 @@ static IO_analogSensor_t *ssi_distance_sensor = { 0 };
 static Linear_Guide_t *ssi_linear_guide = { 0 };
 static uint8_t error_flag = 1;
 static uint8_t dhcp = 0;
-
 char const *TAGCHAR[] = { "current", "dism", "diss", "pos", "windspd",
-    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel", "dhcp"};
+    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel", "dhcp" };
 char const **TAGS = TAGCHAR;
 
+static void http_ssi_cgi_read_dhcp_state(void);
 /**
  * @brief Handles the CGI IP form
  * @param iIndex: Index which cgi handler was called
@@ -78,15 +80,19 @@ static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
 
 static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
                                     char *pcValue[]);
+
+static const char* CGIdhcp_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                   char *pcValue[]);
 char name[30];
 static char NMEA_telegram[30];
-tCGI CGI_FORMS[6];
+tCGI CGI_FORMS[7];
 const tCGI FORM_IP_CGI = { "/form_IP.cgi", CGIIP_Handler };
 const tCGI RESTART_CGI = { "/form_restart.cgi", CGIRestart_Handler };
 const tCGI MODE_CGI = { "/form_operating_mode.cgi", CGIMode_Handler };
 const tCGI CONTROL_CGI = { "/form_control.cgi", CGIControl_Handler };
 const tCGI RPM_CGI = { "/form_rpm.cgi", CGIrpm_Handler };
 const tCGI DELTA_CGI = { "/form_delta.cgi", CGIdelta_Handler };
+const tCGI DHCP_CGI = { "/form_dhcp.cgi", CGIdhcp_Handler };
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 
@@ -110,13 +116,15 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       break;
     case 2:
       IO_Get_Measured_Value(ssi_distance_sensor);
-      Localization_parse_distance_sensor_value(&ssi_linear_guide->localization, ssi_distance_sensor->measured_value);
+      Localization_parse_distance_sensor_value(
+          &ssi_linear_guide->localization, ssi_distance_sensor->measured_value);
       uint16_t distance = ssi_linear_guide->localization.current_measured_pos_mm;
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
     case 3:
-	  percentage = Linear_Guide_get_current_roll_pitch_percentage(*ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
-	  (void) snprintf(pcInsert, iInsertLen, "%u", percentage);
+      percentage = Linear_Guide_get_current_roll_pitch_percentage(
+          *ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
+      (void) snprintf(pcInsert, iInsertLen, "%u", percentage);
       break;
     case (UINT_TAGS + 1):
       WSWD_receive_NMEA(NMEA_telegram);
@@ -179,22 +187,18 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
                       ssi_linear_guide->max_distance_fault);
       break;
     case 11:
-      FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp));
-      if(dhcp == 1)
-      {
+      if (dhcp == 1) {
         (void) snprintf(
-                    pcInsert,
-                    iInsertLen,
-                    "%s",
-                    "<input type=\"checkbox\" checked=\"true\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
-      }
-      else
-      {
+            pcInsert,
+            iInsertLen,
+            "%s",
+            "<input type=\"checkbox\" checked=\"true\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+      } else {
         (void) snprintf(
-                    pcInsert,
-                    iInsertLen,
-                    "%s",
-                    "<input type=\"checkbox\" checked=\"false\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+            pcInsert,
+            iInsertLen,
+            "%s",
+            "<input type=\"checkbox\" checked=\"false\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
       }
       break;
     default:
@@ -252,10 +256,12 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
           return "/Settings.shtml";
         }
 
-        FRAM_write((uint8_t *)IP_address, FRAM_IP_ADDRESS, sizeof(IP_address));
+        FRAM_write((uint8_t*) IP_address, FRAM_IP_ADDRESS, sizeof(IP_address));
         boolean_t set_default = False;
-        FRAM_write((uint8_t *) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
-        LED_blink(&ssi_linear_guide->leds.power, LED_ON, ssi_linear_guide->leds.htim_blink_ptr);
+        FRAM_write((uint8_t*) &set_default, FRAM_IP_SET_DEFAULT_FLAG,
+                   sizeof(set_default));
+        LED_blink(&ssi_linear_guide->leds.power, LED_ON,
+                  ssi_linear_guide->leds.htim_blink_ptr);
         error_flag = 2;
       }
     }
@@ -395,7 +401,28 @@ static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/Settings.shtml";
 }
 
-void http_server_init(void) {
+static const char* CGIdhcp_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                   char *pcValue[]) {
+
+  if (iIndex == 6) {
+    if (strcmp(pcParam[0], "dhcp") == 0) {
+      MX_LWIP_enable_dhcp();
+      tcp_server_init();
+      dhcp = 1;
+      FRAM_write(&dhcp, FRAM_DHCP_ENABLED, sizeof(dhcp));
+    }
+    else
+    {
+      MX_LWIP_enable_static_ip();
+      tcp_server_init();
+      dhcp = 0;
+      FRAM_write(&dhcp, FRAM_DHCP_ENABLED, sizeof(dhcp));
+    }
+  }
+  return "/Settings.shtml";
+}
+
+void http_server_init() {
   httpd_init();
   http_set_ssi_handler(ssi_handler, (char const**) TAGS, NUM_SSI_TAGS);
   CGI_FORMS[0] = FORM_IP_CGI;
@@ -404,22 +431,21 @@ void http_server_init(void) {
   CGI_FORMS[3] = CONTROL_CGI;
   CGI_FORMS[4] = RPM_CGI;
   CGI_FORMS[5] = DELTA_CGI;
-  http_set_cgi_handlers(CGI_FORMS, 6);
+  CGI_FORMS[6] = DHCP_CGI;
+  http_set_cgi_handlers(CGI_FORMS, 7);
   ssi_current_sensor = IO_get_current_sensor();
   ssi_distance_sensor = IO_get_distance_sensor();
   ssi_linear_guide = LG_get_Linear_Guide();
-
+  http_ssi_cgi_read_dhcp_state();
 }
 
-void http_ssi_cgi_read_dhcp_state(void)
-{
-  if(FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp)) != HAL_OK)
-  {
+static void http_ssi_cgi_read_dhcp_state(void) {
+  if (FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp)) != HAL_OK) {
     printf("DHCP state could not be determined\r\n");
   }
-  if(dhcp != 0 || dhcp != 1)
-  {
+  if (dhcp != 0 || dhcp != 1) {
     dhcp = 0;
     printf("DHCP state is invalid. Setting to disabled\r\n");
   }
 }
+

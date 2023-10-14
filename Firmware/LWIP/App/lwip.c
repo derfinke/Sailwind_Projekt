@@ -1,21 +1,21 @@
 /* USER CODE BEGIN Header */
 /**
  ******************************************************************************
-  * File Name          : LWIP.c
-  * Description        : This file provides initialization code for LWIP
-  *                      middleWare.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2023 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
+ * File Name          : LWIP.c
+ * Description        : This file provides initialization code for LWIP
+ *                      middleWare.
+ ******************************************************************************
+ * @attention
+ *
+ * Copyright (c) 2023 STMicroelectronics.
+ * All rights reserved.
+ *
+ * This software is licensed under terms that can be found in the LICENSE file
+ * in the root directory of this software component.
+ * If no LICENSE file comes with this software, it is provided AS-IS.
+ *
+ ******************************************************************************
+ */
 /* USER CODE END Header */
 
 /* Includes ------------------------------------------------------------------*/
@@ -57,10 +57,95 @@ uint8_t GATEWAY_ADDRESS[4];
 /* USER CODE END 2 */
 
 /**
-  * LwIP initialization function
-  */
-void MX_LWIP_Init(void)
-{
+ * LwIP initialization function
+ */
+void MX_LWIP_enable_dhcp(void) {
+  struct ip4_addr xIpAddr, xNetMask, xGateway;
+  IP4_ADDR(&xIpAddr, 0, 0, 0, 0);
+  IP4_ADDR(&xNetMask, 0, 0, 0, 0);
+  IP4_ADDR(&xGateway, 0, 0, 0, 0);
+  // Bring the current interface down
+  netif_set_down(&gnetif);
+  // Set the IP addresses to "0.0.0.0" so the DHCP server can send a reply.
+  // Otherwise the previous static IP might be out of the network class of the DHCP server
+  netif_set_addr(&gnetif, &xIpAddr, &xNetMask, &xGateway);
+
+  // Start DHCP negotiation
+
+  dhcp_start(&gnetif);
+}
+
+void MX_LWIP_enable_static_ip(void) {
+  boolean_t set_default = True;
+  uint8_t new_ip_addr[4];
+  NETMASK_ADDRESS[0] = 255;
+  NETMASK_ADDRESS[1] = 255;
+  NETMASK_ADDRESS[2] = 255;
+  NETMASK_ADDRESS[3] = 0;
+  GATEWAY_ADDRESS[0] = 192;
+  GATEWAY_ADDRESS[1] = 168;
+  GATEWAY_ADDRESS[2] = 0;
+  GATEWAY_ADDRESS[3] = 1;
+
+  // Check, if the network connection is up and DHCP is activated
+  // Release the DHCP lease (it already calls netif_set_down() function)
+  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t*) &set_default,
+            sizeof(set_default));
+  if (set_default
+          == False&& FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK) {
+    if ((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00)) {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+               STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    } else if ((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00)) {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+               STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    } else if ((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00)) {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+               STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    } else if ((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00)) {
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+               STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    } else {
+      IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2],
+               new_ip_addr[3]);
+    }
+  }
+  else{
+    IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+             STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    set_default = False;
+    new_ip_addr[0] = STANDARD_IP_FIRST_OCTET;
+    new_ip_addr[1] = STANDARD_IP_SECOND_OCTET;
+    new_ip_addr[2] = STANDARD_IP_THIRD_OCTET;
+    new_ip_addr[3] = STANDARD_IP_FOURTH_OCTET;
+    FRAM_write((uint8_t*) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
+    FRAM_write(new_ip_addr, FRAM_IP_ADDRESS, sizeof(new_ip_addr));
+  }
+
+    dhcp_release(&gnetif);
+
+    // Stop the dhcp service
+
+    dhcp_stop(&gnetif);
+
+    netif_set_down( &gnetif );
+
+    IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1], NETMASK_ADDRESS[2],
+             NETMASK_ADDRESS[3]);
+    IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2],
+             GATEWAY_ADDRESS[3]);
+    // Set the new ip address
+
+    netif_set_addr(&gnetif, &ipaddr, &netmask, &gw);
+
+    // Bring the interface up again
+
+    netif_set_up(&gnetif);
+
+
+
+}
+void MX_LWIP_Init(void) {
   /* IP addresses initialization */
   IP_ADDRESS[0] = 192;
   IP_ADDRESS[1] = 168;
@@ -75,67 +160,73 @@ void MX_LWIP_Init(void)
   GATEWAY_ADDRESS[2] = 0;
   GATEWAY_ADDRESS[3] = 1;
 
-/* USER CODE BEGIN IP_ADDRESSES */
+  /* USER CODE BEGIN IP_ADDRESSES */
   boolean_t set_default = True;
   uint8_t new_ip_addr[4];
   uint8_t dhcp_enabled;
-  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *)&set_default, sizeof(set_default));
+  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t*) &set_default,
+            sizeof(set_default));
   FRAM_read(FRAM_DHCP_ENABLED, &dhcp_enabled, sizeof(dhcp_enabled));
-  if(dhcp_enabled == 1)
-  {
-    if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK)
-    {
-      if((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00))
-      {
-        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-      }
-      else if((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00))
-      {
-        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-      }
-      else if((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00))
-      {
-        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-      }
-      else if((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00))
-      {
-        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
-      }
-      else
-      {
-        IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2], new_ip_addr[3]);
+  if (dhcp_enabled == 1) {
+    if (set_default
+        == False&& FRAM_read(FRAM_IP_ADDRESS, new_ip_addr, sizeof(new_ip_addr)) == FRAM_OK) {
+      if ((new_ip_addr[0] == 0xFF) || (new_ip_addr[0] == 0x00)) {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+                 STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      } else if ((new_ip_addr[1] == 0xFF) || (new_ip_addr[1] != 0x00)) {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+                 STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      } else if ((new_ip_addr[2] != 0xFF) || (new_ip_addr[2] == 0x00)) {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+                 STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      } else if ((new_ip_addr[3] == 0xFF) || (new_ip_addr[3] == 0x00)) {
+        IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+                 STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      } else {
+
+        IP_ADDR4(&ipaddr, new_ip_addr[0], new_ip_addr[1], new_ip_addr[2],
+                 new_ip_addr[3]);
       }
     }
-  }
-  else
-  {
+    else{
+      IP_ADDR4(&ipaddr, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET,
+               STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+      set_default = False;
+      new_ip_addr[0] = STANDARD_IP_FIRST_OCTET;
+      new_ip_addr[1] = STANDARD_IP_SECOND_OCTET;
+      new_ip_addr[2] = STANDARD_IP_THIRD_OCTET;
+      new_ip_addr[3] = STANDARD_IP_FOURTH_OCTET;
+      FRAM_write((uint8_t*) &set_default, FRAM_IP_SET_DEFAULT_FLAG, sizeof(set_default));
+      FRAM_write(new_ip_addr, FRAM_IP_ADDRESS, sizeof(new_ip_addr));
+    }
+  } else {
     ipaddr.addr = 0;
     netmask.addr = 0;
     gw.addr = 0;
   }
 
-/* USER CODE END IP_ADDRESSES */
+  /* USER CODE END IP_ADDRESSES */
 
   /* Initilialize the LwIP stack without RTOS */
   lwip_init();
 
   /* IP addresses initialization without DHCP (IPv4) */
-  IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1] , NETMASK_ADDRESS[2], NETMASK_ADDRESS[3]);
-  IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2], GATEWAY_ADDRESS[3]);
+  IP4_ADDR(&netmask, NETMASK_ADDRESS[0], NETMASK_ADDRESS[1], NETMASK_ADDRESS[2],
+           NETMASK_ADDRESS[3]);
+  IP4_ADDR(&gw, GATEWAY_ADDRESS[0], GATEWAY_ADDRESS[1], GATEWAY_ADDRESS[2],
+           GATEWAY_ADDRESS[3]);
 
   /* add the network interface (IPv4/IPv6) without RTOS */
-  netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init, &ethernet_input);
+  netif_add(&gnetif, &ipaddr, &netmask, &gw, NULL, &ethernetif_init,
+            &ethernet_input);
 
   /* Registers the default network interface */
   netif_set_default(&gnetif);
 
-  if (netif_is_link_up(&gnetif))
-  {
+  if (netif_is_link_up(&gnetif)) {
     /* When the netif is fully configured this function must be called */
     netif_set_up(&gnetif);
-  }
-  else
-  {
+  } else {
     /* When the netif link is down this function must be called */
     netif_set_down(&gnetif);
   }
@@ -143,14 +234,13 @@ void MX_LWIP_Init(void)
   /* Set the link callback function, this function is called on change of link status*/
   netif_set_link_callback(&gnetif, ethernet_link_status_updated);
 
-  if(dhcp_enabled != 1)
-  {
+  if (dhcp_enabled != 1) {
     dhcp_start(&gnetif);
   }
   /* Create the Ethernet link handler thread */
 
-/* USER CODE BEGIN 3 */
-/* USER CODE END 3 */
+  /* USER CODE BEGIN 3 */
+  /* USER CODE END 3 */
 }
 
 #ifdef USE_OBSOLETE_USER_CODE_SECTION_4
@@ -161,23 +251,21 @@ void MX_LWIP_Init(void)
 #endif
 
 /**
-  * @brief  Ethernet Link periodic check
-  * @param  netif
-  * @retval None
-  */
-static void Ethernet_Link_Periodic_Handle(struct netif *netif)
-{
-/* USER CODE BEGIN 4_4_1 */
-/* USER CODE END 4_4_1 */
+ * @brief  Ethernet Link periodic check
+ * @param  netif
+ * @retval None
+ */
+static void Ethernet_Link_Periodic_Handle(struct netif *netif) {
+  /* USER CODE BEGIN 4_4_1 */
+  /* USER CODE END 4_4_1 */
 
   /* Ethernet Link every 100ms */
-  if (HAL_GetTick() - EthernetLinkTimer >= 100)
-  {
+  if (HAL_GetTick() - EthernetLinkTimer >= 100) {
     EthernetLinkTimer = HAL_GetTick();
     ethernet_link_check_state(netif);
   }
-/* USER CODE BEGIN 4_4 */
-/* USER CODE END 4_4 */
+  /* USER CODE BEGIN 4_4 */
+  /* USER CODE END 4_4 */
 }
 
 /**
@@ -191,39 +279,35 @@ static void Ethernet_Link_Periodic_Handle(struct netif *netif)
  * Handle timeouts if LWIP_TIMERS is set and without RTOS
  * Handle the llink status if LWIP_NETIF_LINK_CALLBACK is set and without RTOS
  */
-void MX_LWIP_Process(void)
-{
-/* USER CODE BEGIN 4_1 */
-/* USER CODE END 4_1 */
+void MX_LWIP_Process(void) {
+  /* USER CODE BEGIN 4_1 */
+  /* USER CODE END 4_1 */
   ethernetif_input(&gnetif);
 
-/* USER CODE BEGIN 4_2 */
-/* USER CODE END 4_2 */
+  /* USER CODE BEGIN 4_2 */
+  /* USER CODE END 4_2 */
   /* Handle timeouts */
   sys_check_timeouts();
 
   Ethernet_Link_Periodic_Handle(&gnetif);
 
-/* USER CODE BEGIN 4_3 */
-/* USER CODE END 4_3 */
+  /* USER CODE BEGIN 4_3 */
+  /* USER CODE END 4_3 */
 }
 
 /**
-  * @brief  Notify the User about the network interface config status
-  * @param  netif: the network interface
-  * @retval None
-  */
-static void ethernet_link_status_updated(struct netif *netif)
-{
-  if (netif_is_up(netif))
+ * @brief  Notify the User about the network interface config status
+ * @param  netif: the network interface
+ * @retval None
+ */
+static void ethernet_link_status_updated(struct netif *netif) {
+  if (netif_is_up(netif)) {
+    /* USER CODE BEGIN 5 */
+    /* USER CODE END 5 */
+  } else /* netif is down */
   {
-/* USER CODE BEGIN 5 */
-/* USER CODE END 5 */
-  }
-  else /* netif is down */
-  {
-/* USER CODE BEGIN 6 */
-/* USER CODE END 6 */
+    /* USER CODE BEGIN 6 */
+    /* USER CODE END 6 */
   }
 }
 
