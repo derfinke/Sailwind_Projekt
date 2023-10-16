@@ -271,9 +271,9 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 	{
 		return LG_NOT_LOCALIZED;
 	}
-	char FRAM_buffer[LOC_SERIAL_SIZE];
+	uint8_t FRAM_buffer[sizeof(Loc_safe_data_t)];
 	Localization_serialize(loc, FRAM_buffer);
-	if(FRAM_write((uint8_t *)FRAM_buffer, LINEAR_GUIDE_INFOS, LOC_SERIAL_SIZE) != HAL_OK)
+	if(FRAM_write(FRAM_buffer, LINEAR_GUIDE_INFOS, sizeof(Loc_safe_data_t)) != HAL_OK)
 	{
 		printf("Saving Position failed!\r\n");
 		return LG_LOCALIZATION_FAILED;
@@ -283,9 +283,9 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 
 Localization_t Linear_Guide_read_Localization()
 {
-	char FRAM_buffer[LOC_SERIAL_SIZE];
+	uint8_t FRAM_buffer[sizeof(Loc_safe_data_t)];
 	FRAM_init();
-	FRAM_read(LINEAR_GUIDE_INFOS, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
+	FRAM_read(LINEAR_GUIDE_INFOS, FRAM_buffer, sizeof(Loc_safe_data_t));
 	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
 }
 

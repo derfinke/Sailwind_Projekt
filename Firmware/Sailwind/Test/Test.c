@@ -171,7 +171,7 @@ static void Test_Motor(UART_HandleTypeDef *huart_ptr, Manual_Control_t *mc_ptr)
 
 static void Test_FRAM(UART_HandleTypeDef *huart_ptr)
 {
-	char serial_buffer[LOC_SERIAL_SIZE];
+	uint8_t serial_buffer[sizeof(Loc_safe_data_t)];
 	Localization_t test_loc = {
 			.state = Loc_state_5_center_pos_set,
 			.pulse_count = -1234,
@@ -182,7 +182,7 @@ static void Test_FRAM(UART_HandleTypeDef *huart_ptr)
 
 	UART_transmit_ln(huart_ptr, "save Localization:");
 	Localization_serialize(loc, serial_buffer);
-	UART_transmit_ln(huart_ptr, serial_buffer);
+	UART_transmit_ln(huart_ptr, (char *) serial_buffer);
 	Linear_Guide_safe_Localization(loc);
 
 	HAL_Delay(5);
@@ -190,7 +190,7 @@ static void Test_FRAM(UART_HandleTypeDef *huart_ptr)
 	UART_transmit_ln(huart_ptr, "read Localization:");
 	loc = Linear_Guide_read_Localization();
 	Localization_serialize(loc, serial_buffer);
-	UART_transmit_ln(huart_ptr, serial_buffer);
+	UART_transmit_ln(huart_ptr, (char *) serial_buffer);
 
 	if (test_loc.state == loc.state &&
 		test_loc.pulse_count == loc.pulse_count &&

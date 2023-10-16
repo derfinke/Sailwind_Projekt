@@ -6,17 +6,18 @@
  */
 
 #include "Localization.h"
+#include <stdlib.h>
+#include <string.h>
 
 /* defines ------------------------------------------------------------*/
-#define LOC_SERIAL_FORMAT_SPECS "%d,%d,%d,%d,%d" //SPECS = "State, Pulse_count, End_pos, Center_pos, start_pos"
 
 /* private function prototypes -----------------------------------------------*/
-static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE]);
+static int8_t Localization_deserialize(Localization_t *loc_ptr, uint8_t serial_buffer[sizeof(Loc_safe_data_t)]);
 static int16_t Localization_pulse_count_to_distance(Localization_t loc);
 static boolean_t Localization_target_on_the_way(Localization_t loc, int16_t desired_pos_mm);
 
 /* API function definitions -----------------------------------------------*/
-Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE])
+Localization_t Localization_init(float distance_per_pulse, uint8_t serial_buffer[sizeof(Loc_safe_data_t)])
 {
 	Localization_t localization = {
 			.is_localized = False,
@@ -130,9 +131,16 @@ void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolea
 	}
 }
 
-void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE])
+void Localization_serialize(Localization_t loc, uint8_t buffer[sizeof(Loc_safe_data_t)])
 {
-	sprintf(serial_buffer, LOC_SERIAL_FORMAT_SPECS, (int)loc.state, (int)loc.pulse_count, (int)loc.end_pos_mm, (int)loc.center_pos_mm, (int)loc.start_pos_abs_mm);
+	Loc_safe_data_t *safe_data_ptr = (Loc_safe_data_t *) malloc(sizeof(Loc_safe_data_t));
+	safe_data_ptr->state = loc.state;
+	safe_data_ptr->pulse_count = loc.pulse_count;
+	safe_data_ptr->end_pos_mm = loc.end_pos_mm;
+	safe_data_ptr->center_pos_mm = loc.center_pos_mm;
+	safe_data_ptr->start_pos_abs_mm = loc.start_pos_abs_mm;
+	memcpy(buffer, safe_data_ptr, sizeof(Loc_safe_data_t));
+	free(safe_data_ptr);
 }
 
 void Localization_adapt_to_sensor(Localization_t *loc_ptr)
@@ -191,12 +199,16 @@ static int16_t Localization_pulse_count_to_distance(Localization_t loc)
 	return (int16_t) (loc.pulse_count * loc.distance_per_pulse);
 }
 
-static int8_t Localization_deserialize(Localization_t *loc_ptr, char serial_buffer[LOC_SERIAL_SIZE])
+static int8_t Localization_deserialize(Localization_t *loc_ptr, uint8_t serial_buffer[sizeof(Loc_safe_data_t)])
 {
-	if (!sscanf(serial_buffer, LOC_SERIAL_FORMAT_SPECS, (int *)&loc_ptr->state, (int *)&loc_ptr->pulse_count, (int *)&loc_ptr->end_pos_mm, (int *)&loc_ptr->center_pos_mm, (int *)&loc_ptr->start_pos_abs_mm))
-	{
-		return LOC_RECOVERY_RESET;
-	}
+	Loc_safe_data_t *safe_data_ptr = (Loc_safe_data_t *) malloc(sizeof(Loc_safe_data_t));
+	memcpy(safe_data_ptr, serial_buffer, sizeof(Loc_safe_data_t));
+	loc_ptr->state = safe_data_ptr->state;
+	loc_ptr->pulse_count = safe_data_ptr->pulse_count;
+	loc_ptr->end_pos_mm = safe_data_ptr->end_pos_mm;
+	loc_ptr->center_pos_mm = safe_data_ptr->center_pos_mm;
+	loc_ptr->start_pos_abs_mm = safe_data_ptr->start_pos_abs_mm;
+	free(safe_data_ptr);
 	if (loc_ptr->state != Loc_state_5_center_pos_set)
 	{
 		return LOC_RECOVERY_RESET;

@@ -12,7 +12,6 @@
 #include <stdio.h>
 
 /* defines ------------------------------------------------------------*/
-#define LOC_SERIAL_SIZE 25 //strlen of serial string: strlen(S,PPPPP,EEEEE,CCCCC,SSSSS) = 1+1+5+1+5+1+5+1+5 = 25
 #define LOC_NOT_LOCALIZED 1
 #define LOC_POSITION_RETAINED 2
 #define LOC_POSITION_UPDATED 0
@@ -55,8 +54,16 @@ typedef struct {
 	int8_t recovery_state;
 } Localization_t;
 
+typedef struct {
+	Loc_state_t state;
+	int16_t pulse_count;
+	uint16_t end_pos_mm;
+	int16_t center_pos_mm;
+	uint16_t start_pos_abs_mm;
+} Loc_safe_data_t;
+
 /* API function prototypes ---------------------------------------------------*/
-Localization_t Localization_init(float distance_per_pulse, char serial_buffer[LOC_SERIAL_SIZE]);
+Localization_t Localization_init(float distance_per_pulse, uint8_t serial_buffer[sizeof(Loc_safe_data_t)]);
 void Localization_reset(Localization_t *loc_ptr, boolean_t direct_trigger);
 void Localization_recover(Localization_t *loc_ptr, int8_t recovery_state, boolean_t direct_trigger);
 void Localization_set_endpos(Localization_t *loc_ptr);
@@ -66,7 +73,7 @@ void Localization_parse_distance_sensor_value(Localization_t *loc_ptr, uint16_t 
 void Localization_adapt_to_sensor(Localization_t *loc_ptr);
 void Localization_callback_pulse_count(Localization_t *loc_ptr);
 int8_t Localization_update_position(Localization_t *loc_ptr);
-void Localization_serialize(Localization_t loc, char serial_buffer[LOC_SERIAL_SIZE]);
+void Localization_serialize(Localization_t loc, uint8_t *serial_buffer);
 Loc_movement_t Localization_get_next_movement(Localization_t loc, int16_t desired_pos_mm);
 void Localization_set_desired_pos_queued(Localization_t *loc_ptr, int16_t desired_pos_mm, Loc_movement_t new_movement);
 void Localization_progress_queue(Localization_t *loc_ptr);
