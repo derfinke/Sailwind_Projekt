@@ -1,17 +1,1 @@
 \babel@toc {german}{}\relax 
-\contentsline {figure}{\numberline {1}{\ignorespaces Systemübersicht des Tankautomaten\blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{4}{figure.caption.17}%
-\contentsline {figure}{\numberline {2}{\ignorespaces Zusammenhang der Aktuere im \acs {OCPP} Standard \blx@tocontentsinit {0}\cite {Eigene_Darstellung, ocpp_ieee, OCPP-2.0.1-part1-architecture-topology}}}{12}{figure.caption.21}%
-\contentsline {figure}{\numberline {3}{\ignorespaces Erwarteter Aufbau des Tankautomaten Netzwerks\blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{20}{figure.caption.27}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Ablauf Boot Pending mit Nachrichten Namen aus OCPP 1.6 \blx@tocontentsinit {0}\cite {Eigene_Darstellung, OCPP-1.6-edition-2}}}{24}{figure.caption.28}%
-\contentsline {figure}{\numberline {5}{\ignorespaces Ablauf Boot Accepted mit Nachrichten Namen aus OCPP1.6 \blx@tocontentsinit {0}\cite {Eigene_Darstellung, OCPP-1.6-edition-2}}}{26}{figure.caption.29}%
-\contentsline {figure}{\numberline {6}{\ignorespaces Ablauf Boot Rejected mit Nachrichten Namen aus OCPP1.6 \blx@tocontentsinit {0}\cite {Eigene_Darstellung, OCPP-1.6-edition-2}}}{26}{figure.caption.30}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Ablauf Ladevorgang Start mit Nachrichten Namen aus OCPP1.6 \blx@tocontentsinit {0}\cite {Eigene_Darstellung, OCPP-1.6-edition-2}}}{27}{figure.caption.31}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Ablauf Ladevorgang Stopp mit Nachrichten Namen aus OCPP1.6 \blx@tocontentsinit {0}\cite {Eigene_Darstellung, OCPP-1.6-edition-2}}}{28}{figure.caption.32}%
-\contentsline {figure}{\numberline {9}{\ignorespaces Erweiterte Stationen Konfiguration für eine Ladesäule in der Cloud Weboberfläche \blx@tocontentsinit {0}\cite {Kunde_Weboberflaeche}}}{34}{figure.caption.35}%
-\contentsline {figure}{\numberline {10}{\ignorespaces Ablauf mit erweiterter GUI \blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{45}{figure.caption.43}%
-\contentsline {figure}{\numberline {11}{\ignorespaces Ablauf bei nur einer Verbundenen oder freigegebenen Ladesäule \blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{46}{figure.caption.44}%
-\contentsline {figure}{\numberline {12}{\ignorespaces Komponenten Ansicht zum geplanten Softwareaufbau der Schnittstelle\blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{48}{figure.caption.45}%
-\contentsline {figure}{\numberline {13}{\ignorespaces Klassendiagramm Darstellung des Nachrichtenaufbau\blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{50}{figure.caption.46}%
-\contentsline {figure}{\numberline {14}{\ignorespaces Ansicht bei der Auswahl einer Ladestation \blx@tocontentsinit {0}\cite {Konzept}}}{52}{figure.caption.47}%
-\contentsline {figure}{\numberline {15}{\ignorespaces Ansicht der Produktauswahl mit acht klassischen Stationen \blx@tocontentsinit {0}\cite {Konzept}}}{53}{figure.caption.48}%
-\contentsline {figure}{\numberline {16}{\ignorespaces Ausschnitt der manuellen Testspezifikationen \blx@tocontentsinit {0}\cite {Eigene_Darstellung}}}{62}{figure.caption.49}%
