@@ -1,0 +1,34 @@
+\begin{document}
+	\pagestyle{fancy}
+	\addtocontents{toc}{\vspace{0.125 cm}}
+	\fancyhead[L]{\nouppercase{\leftmark}}
+
+    \include{titelblatt}
+    \onehalfspacing
+
+    \frontmatter %-------------------------------------------------
+
+    \include{pages/sperrvermerk}
+    \include{pages/erklärung}
+    \include{pages/abstract}
+    \include{pages/inhaltsverzeichnis}
+    \include{pages/abkürzungsverszeichnis}
+    \include{pages/abbildungsverzeichnis}
+    \include{pages/codelisting}
+    
+    \mainmatter %------------------------------------------------
+
+        \input{chapter/vorbemerkung}
+        \input{chapter/einleitung}
+        \input{chapter/theoretische_grundlagen}
+        \input{chapter/konzeption}
+        \input{chapter/implementierung}
+        \input{chapter/test}
+        \input{chapter/fazit}
+
+
+    \backmatter %-------------------------------------------------
+    \include{pages/literaturverzeichnis}
+    \include{pages/anhang}
+
+\end{document}                                  

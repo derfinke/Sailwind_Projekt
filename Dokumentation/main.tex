@@ -1,0 +1,130 @@
+\documentclass[a4paper,12pt]{article} 
+\usepackage[includehead]{geometry}   
+\usepackage[utf8]{inputenc}  
+
+\usepackage[german]{babel}
+\usepackage{csquotes}
+\usepackage{listings}
+\usepackage{amsmath}
+
+%linespacing
+\usepackage[onehalfspacing]{setspace}
+
+%kopfzeile
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[R]{\thepage}                         % Kopfzeile rechts bzw. außen
+\renewcommand{\headrulewidth}{0.5pt}            % Kopfzeile rechts bzw. außen
+
+%footnote
+\interfootnotelinepenalty=10000
+
+%images
+\usepackage{float}
+\usepackage{subfig}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
+
+%acronym
+\usepackage[nohyperlinks, printonlyused]{acronym}
+
+%todo
+\usepackage[textsize=tiny]{todonotes}
+%diagonalbox
+\usepackage{diagbox}
+
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{rotating}
+\usepackage{graphicx}
+\usepackage{makecell, caption, booktabs}
+\usepackage[inkscapeformat=png]{svg}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{spverbatim}
+% nicer c++
+\newcommand{\cpp}{C\texttt{++} }
+
+%references
+\usepackage[backend=biber,style=numeric,sorting=none]{biblatex}
+\addbibresource{literatur/literatur.bib}
+
+\DeclareCiteCommand{\citep}
+{(vgl. [\usebibmacro{cite}]}{}{}{, \usebibmacro{postnote})}
+\DeclareCiteCommand{\citew}
+{(vgl. [\usebibmacro{cite}]}{}{}{)}
+
+%plotting
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.17}
+
+%table
+\usepackage{tabularx}
+
+%clickable references
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+% makecell
+\usepackage{makecell}
+\usepackage{multirow}
+
+% section
+\newcommand{\nonumsection}[1]{
+  \phantomsection
+  \addcontentsline{toc}{section}{#1}
+  \section*{#1}
+}
+\newcommand{\nonumcontent}[1]{
+  \phantomsection
+  \addcontentsline{toc}{section}{#1}
+}
+\newcommand{\nonumtoc}[1]{
+	\phantomsection
+	\section*{#1}
+}
+
+% math commands
+\newcommand{\floor}[1]{\left\lfloor #1 \right\rfloor}
+
+% page numbering
+\newcounter{savepagenumber}
+\newcommand\frontmatter{
+    \cleardoublepage
+    \pagenumbering{roman}
+    \setcounter{page}{1}
+}
+
+\newcommand\mainmatter{
+    \cleardoublepage
+    \setcounter{savepagenumber}{\value{page}}
+    \pagenumbering{arabic}
+}
+\newcommand\backmatter{
+    \clearpage
+    \pagenumbering{roman}
+    \setcounter{page}{\value{savepagenumber}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\myTopic{Konzeption, Implementierung und Test einer OCPP basierten Schnittstelle zur Erweiterung eines Tankterminals}
+\def\myAutor{Nico Finkbeiner}
+\def\myEndDate{31.12.2023}
+\def\myEndPlace{Konstanz}
+\def\myMatrikelnummer{298837}
+\def\myKurs{TIT20}
+
+\def\myCompany{Konzept Informationssysteme}
+\def\mySupervisor{Benjamin Neldner}
+\def\mySupervisorTwo{Prof. Dr. Boris Böck}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%dokument
+\input{document}

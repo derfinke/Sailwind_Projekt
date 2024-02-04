@@ -1,0 +1,1110 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{OCPP-Chronicles_popularity}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=5fb4d634d970fce616bafc867bed4bc7}{%
+           family={Alliance},
+           familyi={A\bibinitperiod},
+           given={Open\bibnamedelima Charge},
+           giveni={O\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \strng{namehash}{5fb4d634d970fce616bafc867bed4bc7}
+      \strng{fullhash}{5fb4d634d970fce616bafc867bed4bc7}
+      \strng{bibnamehash}{5fb4d634d970fce616bafc867bed4bc7}
+      \strng{authorbibnamehash}{5fb4d634d970fce616bafc867bed4bc7}
+      \strng{authornamehash}{5fb4d634d970fce616bafc867bed4bc7}
+      \strng{authorfullhash}{5fb4d634d970fce616bafc867bed4bc7}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: November 2023]}
+      \field{title}{{OCPP-Chronicles}}
+      \field{pages}{5\bibrangedash 6}
+      \range{pages}{2}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/uploads/files/OCPP-Chronicles-2009-2023.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/uploads/files/OCPP-Chronicles-2009-2023.pdf
+      \endverb
+    \endentry
+    \entry{Lastenheft_Software}{book}{}
+      \name{author}{1}{}{%
+        {{hash=7c56a31c25c8b14aed29fdd0e0db5dcb}{%
+           family={Kunde},
+           familyi={K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Interne Dokumente}%
+      }
+      \strng{namehash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \strng{fullhash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \strng{bibnamehash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \strng{authorbibnamehash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \strng{authornamehash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \strng{authorfullhash}{7c56a31c25c8b14aed29fdd0e0db5dcb}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Lastenheft Software}
+      \field{year}{2021}
+    \endentry
+    \entry{Eigene_Darstellung}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=4a368d7a77f1b341fb5e2c1df4f4b276}{%
+           family={Finkbeiner},
+           familyi={F\bibinitperiod},
+           given={Nico},
+           giveni={N\bibinitperiod}}}%
+      }
+      \strng{namehash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \strng{fullhash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \strng{bibnamehash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \strng{authorbibnamehash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \strng{authornamehash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \strng{authorfullhash}{4a368d7a77f1b341fb5e2c1df4f4b276}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Eigene Darstellung}
+      \field{year}{2023}
+    \endentry
+    \entry{Patent_Zapfsauele}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=36925174d6f49ad7c70a61623215511f}{%
+           family={Felix\bibnamedelima Mueller},
+           familyi={F\bibinitperiod\bibinitdelim M\bibinitperiod},
+           given={Frank\bibnamedelima Kemnitz},
+           giveni={F\bibinitperiod\bibinitdelim K\bibinitperiod},
+           suffix={Rolf\bibnamedelima Hengstler},
+           suffixi={R\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Google Patents}%
+      }
+      \strng{namehash}{36925174d6f49ad7c70a61623215511f}
+      \strng{fullhash}{36925174d6f49ad7c70a61623215511f}
+      \strng{bibnamehash}{36925174d6f49ad7c70a61623215511f}
+      \strng{authorbibnamehash}{36925174d6f49ad7c70a61623215511f}
+      \strng{authornamehash}{36925174d6f49ad7c70a61623215511f}
+      \strng{authorfullhash}{36925174d6f49ad7c70a61623215511f}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{month}{11}
+      \field{title}{Meßmodul für Zapfsäulen mit elektronischem Preisrechner}
+      \field{year}{1986}
+      \verb{urlraw}
+      \verb https://patents.google.com/patent/DE3640576C2/de
+      \endverb
+      \verb{url}
+      \verb https://patents.google.com/patent/DE3640576C2/de
+      \endverb
+    \endentry
+    \entry{Qt-about}{misc}{}
+      \list{publisher}{1}{%
+        {The Qt Company Ltd}%
+      }
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{month}{7}
+      \field{title}{About Qt}
+      \field{year}{2022}
+      \verb{urlraw}
+      \verb https://wiki.qt.io/About_Qt
+      \endverb
+      \verb{url}
+      \verb https://wiki.qt.io/About_Qt
+      \endverb
+    \endentry
+    \entry{Qt-signals-and-slots}{misc}{}
+      \list{publisher}{1}{%
+        {The Qt Company Ltd}%
+      }
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{Signals and Slots}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://doc.qt.io/qt-5/signalsandslots.html
+      \endverb
+      \verb{url}
+      \verb https://doc.qt.io/qt-5/signalsandslots.html
+      \endverb
+    \endentry
+    \entry{QTest}{misc}{}
+      \list{publisher}{1}{%
+        {The Qt Company Ltd}%
+      }
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{Qt Test Overview}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://doc.qt.io/qt-5/qtest-overview.html
+      \endverb
+      \verb{url}
+      \verb https://doc.qt.io/qt-5/qtest-overview.html
+      \endverb
+    \endentry
+    \entry{Quelle_kontinuierliche_Integration}{book}{}
+      \name{author}{1}{}{%
+        {{hash=cf0a6993a4b526850302726c7cca0e7f}{%
+           family={GitLab},
+           familyi={G\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {gitlab.com}%
+      }
+      \strng{namehash}{cf0a6993a4b526850302726c7cca0e7f}
+      \strng{fullhash}{cf0a6993a4b526850302726c7cca0e7f}
+      \strng{bibnamehash}{cf0a6993a4b526850302726c7cca0e7f}
+      \strng{authorbibnamehash}{cf0a6993a4b526850302726c7cca0e7f}
+      \strng{authornamehash}{cf0a6993a4b526850302726c7cca0e7f}
+      \strng{authorfullhash}{cf0a6993a4b526850302726c7cca0e7f}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{CI/CD explained}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://about.gitlab.com/topics/ci-cd/
+      \endverb
+      \verb{url}
+      \verb https://about.gitlab.com/topics/ci-cd/
+      \endverb
+    \endentry
+    \entry{rfc6455}{misc}{}
+      \name{author}{2}{}{%
+        {{hash=8fa97ca9bca09f72482fe5f985ecef60}{%
+           family={Melnikov},
+           familyi={M\bibinitperiod},
+           given={Alexey},
+           giveni={A\bibinitperiod}}}%
+        {{hash=cdf249d29ccc7edcf24f6bfef0893ebd}{%
+           family={Fette},
+           familyi={F\bibinitperiod},
+           given={Ian},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {RFC Editor}%
+      }
+      \strng{namehash}{272c9596076607e12a146ce3d973a0c3}
+      \strng{fullhash}{272c9596076607e12a146ce3d973a0c3}
+      \strng{bibnamehash}{272c9596076607e12a146ce3d973a0c3}
+      \strng{authorbibnamehash}{272c9596076607e12a146ce3d973a0c3}
+      \strng{authornamehash}{272c9596076607e12a146ce3d973a0c3}
+      \strng{authorfullhash}{272c9596076607e12a146ce3d973a0c3}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: November 2023]}
+      \field{howpublished}{RFC 6455}
+      \field{month}{12}
+      \field{number}{6455}
+      \field{series}{Request for Comments}
+      \field{title}{{The WebSocket Protocol}}
+      \field{year}{2011}
+      \verb{doi}
+      \verb 10.17487/RFC6455
+      \endverb
+      \verb{urlraw}
+      \verb https://www.rfc-editor.org/info/rfc6455
+      \endverb
+      \verb{url}
+      \verb https://www.rfc-editor.org/info/rfc6455
+      \endverb
+    \endentry
+    \entry{OCPP-2.0.1-part0-introduction}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{1}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{3}
+      \field{series}{OCPP-2.0.1}
+      \field{title}{{OCPP-2.0.1-part0-introduction}}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{OCPP-2.0.1-part1-architecture-topology}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{2}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{3}
+      \field{series}{OCPP-2.0.1}
+      \field{title}{{OCPP-2.0.1-part1-architecture-topology}}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{OCPP-2.0.1-part4-ocpp-j-specification}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{3}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{3}
+      \field{series}{OCPP-2.0.1}
+      \field{title}{{OCPP-2.0.1-part4-ocpp-j-specification}}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{OCPP-2.0.1-part2-specification-edition2}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{4}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{12}
+      \field{series}{OCPP-2.0.1}
+      \field{title}{{OCPP-2.0.1-part2-specification-edition2}}
+      \field{year}{2022}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{OCPP-j-1.6-specification}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{5}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{series}{OCPP-1.6}
+      \field{title}{{OCPP-j-1.6-specification}}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{OCPP-1.6-edition-2}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{6}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{9}
+      \field{series}{OCPP-1.6}
+      \field{title}{{OCPP-1.6-edition-2}}
+      \field{year}{2017}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{ocpp_ieee}{article}{}
+      \name{author}{5}{}{%
+        {{hash=8d99f19eb6c27306c4efc006062bef43}{%
+           family={Garofalaki},
+           familyi={G\bibinitperiod},
+           given={Zacharenia},
+           giveni={Z\bibinitperiod}}}%
+        {{hash=396f56d415ac99dc3a6234d409d50310}{%
+           family={Kosmanos},
+           familyi={K\bibinitperiod},
+           given={Dimitrios},
+           giveni={D\bibinitperiod}}}%
+        {{hash=5117894bcb32c92c37597ca21aafe3e6}{%
+           family={Moschoyiannis},
+           familyi={M\bibinitperiod},
+           given={Sotiris},
+           giveni={S\bibinitperiod}}}%
+        {{hash=2139b02c1c2780bc48c9ea63bf4199f1}{%
+           family={Kallergis},
+           familyi={K\bibinitperiod},
+           given={Dimitrios},
+           giveni={D\bibinitperiod}}}%
+        {{hash=e15ab530acc037b493410928c148ee0c}{%
+           family={Douligeris},
+           familyi={D\bibinitperiod},
+           given={Christos},
+           giveni={C\bibinitperiod}}}%
+      }
+      \strng{namehash}{8001793aa5b4148d67de1c0caf165d66}
+      \strng{fullhash}{6a7bc5c6395ffd9b87ce5dba03518367}
+      \strng{bibnamehash}{8001793aa5b4148d67de1c0caf165d66}
+      \strng{authorbibnamehash}{8001793aa5b4148d67de1c0caf165d66}
+      \strng{authornamehash}{8001793aa5b4148d67de1c0caf165d66}
+      \strng{authorfullhash}{6a7bc5c6395ffd9b87ce5dba03518367}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Communications Surveys \& Tutorials}
+      \field{number}{3}
+      \field{title}{Electric Vehicle Charging: A Survey on the Security Issues and Challenges of the Open Charge Point Protocol (OCPP)}
+      \field{volume}{24}
+      \field{year}{2022}
+      \field{pages}{1504\bibrangedash 1533}
+      \range{pages}{30}
+      \verb{doi}
+      \verb 10.1109/COMST.2022.3184448
+      \endverb
+    \endentry
+    \entry{OCPP-1.6-security-whitepaper-edition-3}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a352abf64c3fe241b989fd90dd4b5aa5}{%
+           family={Franc\bibnamedelima Buve},
+           familyi={F\bibinitperiod\bibinitdelim B\bibinitperiod},
+           given={Robert\bibnamedelimb de\bibnamedelima Leeuw},
+           giveni={R\bibinitperiod\bibinitdelim d\bibinitperiod\bibinitdelim L\bibinitperiod},
+           suffix={Paul\bibnamedelima Klapwijk},
+           suffixi={P\bibinitperiod\bibinitdelim K\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Open Charge Alliance}%
+      }
+      \strng{namehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{fullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{bibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorbibnamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authornamehash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \strng{authorfullhash}{a352abf64c3fe241b989fd90dd4b5aa5}
+      \field{extraname}{7}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{series}{OCPP-1.6}
+      \field{title}{{OCPP 1.6 security whitepaper edition 3}}
+      \field{year}{2015}
+      \verb{urlraw}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+      \verb{url}
+      \verb https://www.openchargealliance.org/downloads/
+      \endverb
+    \endentry
+    \entry{Swiss_sign}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=b10ffb5196f9f6b3a5f214e87876fa6a}{%
+           family={AG},
+           familyi={A\bibinitperiod},
+           given={SwissSign},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {SwissSign AG}%
+      }
+      \strng{namehash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \strng{fullhash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \strng{bibnamehash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \strng{authorbibnamehash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \strng{authornamehash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \strng{authorfullhash}{b10ffb5196f9f6b3a5f214e87876fa6a}
+      \field{sortinit}{8}
+      \field{sortinithash}{a231b008ebf0ecbe0b4d96dcc159445f}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{DV SSL Silver Single-Domain}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://www.swisssign.com/ssl/ssl-silver.html
+      \endverb
+      \verb{url}
+      \verb https://www.swisssign.com/ssl/ssl-silver.html
+      \endverb
+    \endentry
+    \entry{Kunde_Weboberflaeche}{book}{}
+      \name{author}{1}{}{%
+        {{hash=d0d882dad7aa2de3680cbbba3d1ab55a}{%
+           family={Partnerunternehmen},
+           familyi={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Kunde}%
+      }
+      \strng{namehash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \strng{fullhash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \strng{bibnamehash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \strng{authorbibnamehash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \strng{authornamehash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \strng{authorfullhash}{d0d882dad7aa2de3680cbbba3d1ab55a}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Weboberfläche}
+      \field{year}{2023}
+    \endentry
+    \entry{Python-embedding}{misc}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{Embedding Python in Another Application}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://docs.python.org/3/extending/embedding.html
+      \endverb
+      \verb{url}
+      \verb https://docs.python.org/3/extending/embedding.html
+      \endverb
+    \endentry
+    \entry{Java-embedding}{misc}{}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{The Invocation API}
+      \field{year}{2010}
+      \verb{urlraw}
+      \verb https://docs.oracle.com/javase/1.5.0/docs/guide/jni/spec/invocation.html
+      \endverb
+      \verb{url}
+      \verb https://docs.oracle.com/javase/1.5.0/docs/guide/jni/spec/invocation.html
+      \endverb
+    \endentry
+    \entry{Open-ocpp}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=4b7a1402f9eda2e958ff6ab9f01e4040}{%
+           family={c-jimenez},
+           familyi={c\bibinithyphendelim j\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \strng{fullhash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \strng{bibnamehash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \strng{authorbibnamehash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \strng{authornamehash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \strng{authorfullhash}{4b7a1402f9eda2e958ff6ab9f01e4040}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{Open-ocpp}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/c-jimenez/open-ocpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/c-jimenez/open-ocpp
+      \endverb
+    \endentry
+    \entry{GNU_LGPL2_1}{book}{}
+      \name{author}{1}{}{%
+        {{hash=f9ce3c726d54181a202c590efe2cc2e9}{%
+           family={Free\bibnamedelimb Software\bibnamedelima Foundation},
+           familyi={F\bibinitperiod\bibinitdelim S\bibinitperiod\bibinitdelim F\bibinitperiod},
+           given={Inc},
+           giveni={I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Free Software Foundation, Inc}%
+      }
+      \strng{namehash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \strng{fullhash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \strng{bibnamehash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \strng{authorbibnamehash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \strng{authornamehash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \strng{authorfullhash}{f9ce3c726d54181a202c590efe2cc2e9}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{month}{2}
+      \field{title}{GNU Lesser General Public License}
+      \field{year}{1999}
+      \verb{urlraw}
+      \verb https://www.gnu.org/licenses/old-licenses/lgpl-2.1.de.html
+      \endverb
+      \verb{url}
+      \verb https://www.gnu.org/licenses/old-licenses/lgpl-2.1.de.html
+      \endverb
+    \endentry
+    \entry{Libocpp}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=fe3affb35230050ec17431fb89b88df4}{%
+           family={EVerest},
+           familyi={E\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{fe3affb35230050ec17431fb89b88df4}
+      \strng{fullhash}{fe3affb35230050ec17431fb89b88df4}
+      \strng{bibnamehash}{fe3affb35230050ec17431fb89b88df4}
+      \strng{authorbibnamehash}{fe3affb35230050ec17431fb89b88df4}
+      \strng{authornamehash}{fe3affb35230050ec17431fb89b88df4}
+      \strng{authorfullhash}{fe3affb35230050ec17431fb89b88df4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{Libocpp}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/EVerest/libocpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/EVerest/libocpp
+      \endverb
+    \endentry
+    \entry{MicroOcpp}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=e1bc712f2a9bed407ea28f710dc0757d}{%
+           family={matth-x},
+           familyi={m\bibinithyphendelim x\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{fullhash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{bibnamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authorbibnamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authornamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authorfullhash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{MicroOcpp}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/matth-x/MicroOcpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/matth-x/MicroOcpp
+      \endverb
+    \endentry
+    \entry{MicroOcpp-Simulator}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=e1bc712f2a9bed407ea28f710dc0757d}{%
+           family={matth-x},
+           familyi={m\bibinithyphendelim x\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{fullhash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{bibnamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authorbibnamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authornamehash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \strng{authorfullhash}{e1bc712f2a9bed407ea28f710dc0757d}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{MicroOcppSimulator}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/matth-x/MicroOcpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/matth-x/MicroOcpp
+      \endverb
+    \endentry
+    \entry{Mobilityhouse-ocpp}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a10ec8886173d75a1b07b84aaa873fd4}{%
+           family={House},
+           familyi={H\bibinitperiod},
+           given={The\bibnamedelima Mobility},
+           giveni={T\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \strng{fullhash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \strng{bibnamehash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \strng{authorbibnamehash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \strng{authornamehash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \strng{authorfullhash}{a10ec8886173d75a1b07b84aaa873fd4}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{Mobilityhouse-ocpp}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/mobilityhouse/ocpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/mobilityhouse/ocpp
+      \endverb
+    \endentry
+    \entry{MIT-Lizenz}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=3704e30a9cf10b077abbe48c25d0faa5}{%
+           family={Group},
+           familyi={G\bibinitperiod},
+           given={SPDX\bibnamedelima Working},
+           giveni={S\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {spdx.dev}%
+      }
+      \strng{namehash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \strng{fullhash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \strng{bibnamehash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \strng{authorbibnamehash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \strng{authornamehash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \strng{authorfullhash}{3704e30a9cf10b077abbe48c25d0faa5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{MIT License}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://spdx.org/licenses/MIT.html
+      \endverb
+      \verb{url}
+      \verb https://spdx.org/licenses/MIT.html
+      \endverb
+    \endentry
+    \entry{Java-OCA}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=a994830ed12d782619729b6ee14e24cc}{%
+           family={Time},
+           familyi={T\bibinitperiod},
+           given={Charge},
+           giveni={C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{a994830ed12d782619729b6ee14e24cc}
+      \strng{fullhash}{a994830ed12d782619729b6ee14e24cc}
+      \strng{bibnamehash}{a994830ed12d782619729b6ee14e24cc}
+      \strng{authorbibnamehash}{a994830ed12d782619729b6ee14e24cc}
+      \strng{authornamehash}{a994830ed12d782619729b6ee14e24cc}
+      \strng{authorfullhash}{a994830ed12d782619729b6ee14e24cc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{Java-OCA-OCPP}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/ChargeTimeEU/Java-OCA-OCPP
+      \endverb
+      \verb{url}
+      \verb https://github.com/ChargeTimeEU/Java-OCA-OCPP
+      \endverb
+    \endentry
+    \entry{QWebsocketServer}{misc}{}
+      \list{publisher}{1}{%
+        {The Qt Company Ltd}%
+      }
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{title}{QWebSocketServer Class}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://doc.qt.io/qt-5/qwebsocketserver.html
+      \endverb
+      \verb{url}
+      \verb https://doc.qt.io/qt-5/qwebsocketserver.html
+      \endverb
+    \endentry
+    \entry{Boost-beast}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=c9cca5cae7de358fdddd0418d28531c5}{%
+           family={Boost.org},
+           familyi={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {GitHub.com}%
+      }
+      \strng{namehash}{c9cca5cae7de358fdddd0418d28531c5}
+      \strng{fullhash}{c9cca5cae7de358fdddd0418d28531c5}
+      \strng{bibnamehash}{c9cca5cae7de358fdddd0418d28531c5}
+      \strng{authorbibnamehash}{c9cca5cae7de358fdddd0418d28531c5}
+      \strng{authornamehash}{c9cca5cae7de358fdddd0418d28531c5}
+      \strng{authorfullhash}{c9cca5cae7de358fdddd0418d28531c5}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{beast}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/boostorg/beast
+      \endverb
+      \verb{url}
+      \verb https://github.com/boostorg/beast
+      \endverb
+    \endentry
+    \entry{Websocketpp}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=c6d9fdcba84845a74db4743f9f90edd6}{%
+           family={Thorson},
+           familyi={T\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {https://github.com}%
+      }
+      \strng{namehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{fullhash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{bibnamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authorbibnamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authornamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authorfullhash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{month}{10}
+      \field{title}{websocketpp}
+      \field{year}{2023}
+      \verb{urlraw}
+      \verb https://github.com/zaphoyd/websocketpp
+      \endverb
+      \verb{url}
+      \verb https://github.com/zaphoyd/websocketpp
+      \endverb
+    \endentry
+    \entry{Konzept}{book}{}
+      \name{author}{1}{}{%
+        {{hash=3692b7c827493dfb9d0edc97bbad4b29}{%
+           family={GmbH},
+           familyi={G\bibinitperiod},
+           given={Konzept\bibnamedelima Informationssysteme},
+           giveni={K\bibinitperiod\bibinitdelim I\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Interne Quelle}%
+      }
+      \strng{namehash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \strng{fullhash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \strng{bibnamehash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \strng{authorbibnamehash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \strng{authornamehash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \strng{authorfullhash}{3692b7c827493dfb9d0edc97bbad4b29}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Tankautomat Software}
+      \field{year}{2023}
+    \endentry
+    \entry{websocketpp_faq}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=c6d9fdcba84845a74db4743f9f90edd6}{%
+           family={Thorson},
+           familyi={T\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Peter Thorson}%
+      }
+      \strng{namehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{fullhash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{bibnamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authorbibnamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authornamehash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \strng{authorfullhash}{c6d9fdcba84845a74db4743f9f90edd6}
+      \field{extraname}{2}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Oktober 2023]}
+      \field{title}{Websocketpp Documentation}
+      \verb{urlraw}
+      \verb https://docs.websocketpp.org
+      \endverb
+      \verb{url}
+      \verb https://docs.websocketpp.org
+      \endverb
+    \endentry
+    \entry{Ba_Miriam}{misc}{}
+      \name{author}{1}{}{%
+        {{hash=29d9b90ae6c455712d345311f3ea3c4e}{%
+           family={Astor},
+           familyi={A\bibinitperiod},
+           given={Miriam},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {interne Dokumente}%
+      }
+      \strng{namehash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \strng{fullhash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \strng{bibnamehash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \strng{authorbibnamehash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \strng{authornamehash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \strng{authorfullhash}{29d9b90ae6c455712d345311f3ea3c4e}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{9}
+      \field{title}{Testkonzeption und -integration für die inkrementelle Entwicklung eines Softwaresystems}
+      \field{year}{2023}
+    \endentry
+    \entry{Basis_Tests}{book}{}
+      \name{author}{1}{}{%
+        {{hash=efafe4d2ce5f1300383521c203ae8cc8}{%
+           family={Andreas\bibnamedelima Spillner},
+           familyi={A\bibinitperiod\bibinitdelim S\bibinitperiod},
+           given={Tilo\bibnamedelima Linz},
+           giveni={T\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {dpunkt.verlag}%
+      }
+      \strng{namehash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \strng{fullhash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \strng{bibnamehash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \strng{authorbibnamehash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \strng{authornamehash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \strng{authorfullhash}{efafe4d2ce5f1300383521c203ae8cc8}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{ISBN: 9783960885016, [Online; Stand: Dezember 2023}
+      \field{title}{Basiswissen Softwaretest : Aus- und Weiterbildung zum Certified Tester – Foundation Level nach ISTQB®-Standard}
+      \field{year}{2019}
+      \verb{urlraw}
+      \verb https://ebookcentral.proquest.com/lib/htwg-konstanz/detail.action?docID=5785600#
+      \endverb
+      \verb{url}
+      \verb https://ebookcentral.proquest.com/lib/htwg-konstanz/detail.action?docID=5785600#
+      \endverb
+    \endentry
+    \entry{Wallbe_Steuerung}{book}{}
+      \name{author}{1}{}{%
+        {{hash=5edad1dc8e4e14f3fa2d921783d20e51}{%
+           family={KG},
+           familyi={K\bibinitperiod},
+           given={Phoenix\bibnamedelimb Contact\bibnamedelimb GmbH\bibnamedelimb \&\bibnamedelima Co.},
+           giveni={P\bibinitperiod\bibinitdelim C\bibinitperiod\bibinitdelim G\bibinitperiod\bibinitdelim \\bibinitperiod\bibinitdelim C\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Phoenix Contact GmbH \& Co. KG}%
+      }
+      \strng{namehash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \strng{fullhash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \strng{bibnamehash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \strng{authorbibnamehash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \strng{authornamehash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \strng{authorfullhash}{5edad1dc8e4e14f3fa2d921783d20e51}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{addendum}{[Online; Stand: Dezember 2023]}
+      \field{month}{9}
+      \field{title}{Installation und Inbetriebnahme der Ladesteuerung EV Charge Control}
+      \field{year}{2020}
+      \verb{urlraw}
+      \verb https://www.phoenixcontact.com/de-de/produkte/ac-ladesteuerung-ev-cc-ac1-m3-rcm-eth-xp-1139449
+      \endverb
+      \verb{url}
+      \verb https://www.phoenixcontact.com/de-de/produkte/ac-ladesteuerung-ev-cc-ac1-m3-rcm-eth-xp-1139449
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

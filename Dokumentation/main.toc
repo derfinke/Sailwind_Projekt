@@ -1,0 +1,84 @@
+\babel@toc {german}{}\relax 
+\vspace {0.125 cm}
+\contentsline {section}{Sperrvermerk}{i}{section*.2}%
+\contentsline {section}{Eidesstattliche Erklärung}{ii}{section*.4}%
+\contentsline {section}{Kurzfassung}{iii}{section*.6}%
+\contentsline {section}{Abkürzungsverzeichnis}{ix}{section*.10}%
+\contentsline {section}{Abbildungsverzeichnis}{xi}{section*.11}%
+\contentsline {section}{Quellcodeverzeichnis}{xii}{section*.13}%
+\contentsline {section}{Vorbemerkung}{1}{section*.15}%
+\contentsline {section}{\numberline {1}Einleitung}{2}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Ausgangssituation}{2}{subsection.1.1}%
+\contentsline {subsection}{\numberline {1.2}Ziel}{3}{subsection.1.2}%
+\contentsline {section}{\numberline {2}Grundlagen}{4}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Tankautomat}{4}{subsection.2.1}%
+\contentsline {subsubsection}{\numberline {2.1.1}Tankablauf}{5}{subsubsection.2.1.1}%
+\contentsline {subsubsection}{\numberline {2.1.2}Cloud Schnittstelle}{6}{subsubsection.2.1.2}%
+\contentsline {subsubsection}{\numberline {2.1.3}Lokaler Datenbankspeicher}{6}{subsubsection.2.1.3}%
+\contentsline {subsection}{\numberline {2.2}Software}{7}{subsection.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.1}Qt Framework}{8}{subsubsection.2.2.1}%
+\contentsline {subsubsection}{\numberline {2.2.2}Qt Test}{8}{subsubsection.2.2.2}%
+\contentsline {subsubsection}{\numberline {2.2.3}Kontinuierliche Integration}{8}{subsubsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.3}Das WebSocket Protokoll}{9}{subsection.2.3}%
+\contentsline {subsection}{\numberline {2.4}Open Charge Point Protocol}{11}{subsection.2.4}%
+\contentsline {subsubsection}{\numberline {2.4.1}Akteure im Ladesystem}{11}{subsubsection.2.4.1}%
+\contentsline {subsubsection}{\numberline {2.4.2}Verbindungsaufbau}{13}{subsubsection.2.4.2}%
+\contentsline {subsubsection}{\numberline {2.4.3}Security Profiles}{14}{subsubsection.2.4.3}%
+\contentsline {subsubsection}{\numberline {2.4.4}\ac {RPC} - Framework}{15}{subsubsection.2.4.4}%
+\contentsline {subsubsection}{\numberline {2.4.5}Unterscheidung zwischen OCPP v1.6 und v2.0.1}{17}{subsubsection.2.4.5}%
+\contentsline {section}{\numberline {3}Konzeption}{19}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Aufgabenstellung}{19}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Randbedingungen}{19}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Anforderungen}{21}{subsubsection.3.1.2}%
+\contentsline {subsection}{\numberline {3.2}Benötigte OCPP Funktionalität}{23}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Allgemein}{23}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Boot Phase}{24}{subsubsection.3.2.2}%
+\contentsline {subsubsection}{\numberline {3.2.3}Start des Ladevorgangs}{27}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Stopp des Ladevorgangs}{28}{subsubsection.3.2.4}%
+\contentsline {subsubsection}{\numberline {3.2.5}Sicherheit}{29}{subsubsection.3.2.5}%
+\contentsline {subsubsection}{\numberline {3.2.6}Finale Auswahl der benötigtet OCPP Nachrichten}{31}{subsubsection.3.2.6}%
+\contentsline {subsection}{\numberline {3.3}Erweiterung der Cloud Weboberfläche und Datenbank}{33}{subsection.3.3}%
+\contentsline {subsection}{\numberline {3.4}Lösungsstrategie}{35}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Bibliotheken}{36}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Eigenlösung}{41}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Vergleich}{42}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}WebSocket Bibliothek}{43}{subsubsection.3.4.4}%
+\contentsline {subsection}{\numberline {3.5}Geplantes Vorgehen}{44}{subsection.3.5}%
+\contentsline {subsubsection}{\numberline {3.5.1}Modifikation der bestehenden Systeme}{44}{subsubsection.3.5.1}%
+\contentsline {subsubsection}{\numberline {3.5.2}GUI Planung}{44}{subsubsection.3.5.2}%
+\contentsline {subsubsection}{\numberline {3.5.3}Integration von OCPP}{46}{subsubsection.3.5.3}%
+\contentsline {subsubsection}{\numberline {3.5.4}Cloud Schnittstellen Erweiterung}{47}{subsubsection.3.5.4}%
+\contentsline {subsection}{\numberline {3.6}Architektur der Schnittstelle}{47}{subsection.3.6}%
+\contentsline {subsubsection}{\numberline {3.6.1}Komponenten Aufbau}{47}{subsubsection.3.6.1}%
+\contentsline {subsubsection}{\numberline {3.6.2}Threads}{49}{subsubsection.3.6.2}%
+\contentsline {subsubsection}{\numberline {3.6.3}OCPP Nachrichten Struktur}{49}{subsubsection.3.6.3}%
+\contentsline {subsubsection}{\numberline {3.6.4}OCPP Nachrichten Handler}{50}{subsubsection.3.6.4}%
+\contentsline {section}{\numberline {4}Implementierung}{51}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Anpassungen}{51}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}GUI}{51}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}OCPP Protokoll}{54}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}WebSocketServer}{54}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}RPC Protokoll}{55}{subsubsection.4.3.2}%
+\contentsline {subsubsection}{\numberline {4.3.3}OCPP Handler und Nachrichten}{57}{subsubsection.4.3.3}%
+\contentsline {subsection}{\numberline {4.4}Cloud Schnittstelle}{58}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Test}{59}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Teststrategie}{59}{subsection.5.1}%
+\contentsline {subsubsection}{\numberline {5.1.1}Validierung der Anforderungen}{60}{subsubsection.5.1.1}%
+\contentsline {subsubsection}{\numberline {5.1.2}Testplanung}{60}{subsubsection.5.1.2}%
+\contentsline {subsubsection}{\numberline {5.1.3}Testumgebung}{61}{subsubsection.5.1.3}%
+\contentsline {subsection}{\numberline {5.2}Umsetzung}{61}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Durchführung}{62}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}Ergebnisse}{63}{subsubsection.5.2.2}%
+\contentsline {subsection}{\numberline {5.3}Erörterung weiterer Testmöglichkeiten}{64}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}Nicht-funktionale Tests}{64}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Komponententests}{64}{subsubsection.5.3.2}%
+\contentsline {subsubsection}{\numberline {5.3.3}Integrationstests}{65}{subsubsection.5.3.3}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{66}{section.6}%
+\contentsline {section}{Literaturverzeichnis}{xiii}{section*.50}%
+\contentsline {section}{\numberline {A}OCPP2.0.1 Erwartete Abläufe}{xvii}{appendix.A}%
+\contentsline {subsection}{\numberline {A.1}Boot Pending OCPP2.0.1}{xvii}{subsection.A.1}%
+\contentsline {subsection}{\numberline {A.2}Boot Accepted OCPP2.0.1}{xviii}{subsection.A.2}%
+\contentsline {subsection}{\numberline {A.3}Boot Rejected OCPP2.0.1}{xix}{subsection.A.3}%
+\contentsline {subsection}{\numberline {A.4}Start des Ladevorgangs OCPP2.0.1}{xx}{subsection.A.4}%
+\contentsline {subsection}{\numberline {A.5}Stopp des Ladevorgangs OCPP2.0.1}{xxi}{subsection.A.5}%
+\contentsline {section}{\numberline {B}Manuelle Testspezifikation}{xxii}{appendix.B}%
