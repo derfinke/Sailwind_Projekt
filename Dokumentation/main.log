@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  4 FEB 2024 22:02
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  4 FEB 2024 22:16
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1391,7 +1391,7 @@ LaTeX Info: Redefining \nameref on input line 1.
 \openout2 = `titelblatt.aux'.
 
  (./titelblatt.tex
-<images/Logo/HTWG_Logo.png, id=67, 223.3143pt x 59.7432pt>
+<images/Logo/HTWG_Logo.png, id=79, 223.3143pt x 59.7432pt>
 File: images/Logo/HTWG_Logo.png Graphic file (type png)
 <use images/Logo/HTWG_Logo.png>
 Package pdftex.def Info: images/Logo/HTWG_Logo.png  used on input line 4.
@@ -1668,7 +1668,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 LaTeX Warning: There were undefined references.
 
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8655D747DA701307961C3E6DA75F5519;1799.
+(rerunfilecheck)             Checksum: 0BC6C02B43B27683AE754EF3330EF736;2275.
 
 Package biblatex Warning: Please (re)run Biber on the file:
 (biblatex)                main
@@ -1679,10 +1679,10 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45586 strings out of 480194
- 1014524 string characters out of 5893743
+ 45592 strings out of 480194
+ 1014624 string characters out of 5893743
  1845599 words of memory out of 5000000
- 62690 multiletter control sequences out of 15000+600000
+ 62693 multiletter control sequences out of 15000+600000
  475987 words of font info for 51 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  99i,11n,94p,1166b,1744s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1692,10 +1692,10 @@ pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10.pfb><
 /usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/sh
 are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/te
 xlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (15 pages, 110207 bytes).
+Output written on main.pdf (15 pages, 111106 bytes).
 PDF statistics:
- 303 PDF objects out of 1000 (max. 8388607)
- 270 compressed objects within 3 object streams
- 77 named destinations out of 1000 (max. 500000)
- 138 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 319 PDF objects out of 1000 (max. 8388607)
+ 286 compressed objects within 3 object streams
+ 80 named destinations out of 1000 (max. 500000)
+ 162 words of extra memory for PDF output out of 10000 (max. 10000000)
 
