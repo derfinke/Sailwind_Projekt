@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  5 FEB 2024 14:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  5 FEB 2024 15:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1561,6 +1561,11 @@ Underfull \hbox (badness 10000) in paragraph at lines 21--23
  []
 
 
+Underfull \hbox (badness 10000) in paragraph at lines 24--26
+
+ []
+
+
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
 (fancyhdr)                \setlength{\headheight}{14.49998pt}.
@@ -1597,6 +1602,15 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [5]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[6]
 \openout2 = `pages/literaturverzeichnis.aux'.
 
  (./pages/literaturverzeichnis.tex)
@@ -1719,8 +1733,8 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45602 strings out of 480194
- 1014765 string characters out of 5893743
+ 45603 strings out of 480194
+ 1014771 string characters out of 5893743
  1845599 words of memory out of 5000000
  62698 multiletter control sequences out of 15000+600000
  476324 words of font info for 52 fonts, out of 8000000 for 9000
@@ -1733,10 +1747,10 @@ mbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10
 .pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/sh
 are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (17 pages, 117548 bytes).
+Output written on main.pdf (18 pages, 119014 bytes).
 PDF statistics:
- 343 PDF objects out of 1000 (max. 8388607)
- 306 compressed objects within 4 object streams
- 84 named destinations out of 1000 (max. 500000)
+ 348 PDF objects out of 1000 (max. 8388607)
+ 310 compressed objects within 4 object streams
+ 85 named destinations out of 1000 (max. 500000)
  178 words of extra memory for PDF output out of 10000 (max. 10000000)
 
