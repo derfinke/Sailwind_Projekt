@@ -12,9 +12,11 @@
 \contentsline {section}{\numberline {2}Grundlagen}{3}{section.2}%
 \contentsline {section}{\numberline {3}Hardware}{3}{section.3}%
 \contentsline {subsection}{\numberline {3.1}Planung}{3}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Analyze der bestehenden Hardware Elemente}{3}{subsubsection.3.1.1}%
-\contentsline {subsection}{\numberline {3.2}Probleme}{3}{subsection.3.2}%
-\contentsline {section}{\numberline {4}Software}{3}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{3}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{3}{section.6}%
+\contentsline {subsection}{\numberline {3.2}Analyze der bestehenden Hardware Elemente}{3}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Sensoren}{3}{subsubsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.2}Aktoren}{4}{subsubsection.3.2.2}%
+\contentsline {subsection}{\numberline {3.3}Probleme}{4}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Software}{4}{section.4}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{4}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{4}{section.6}%
 \contentsline {section}{Literaturverzeichnis}{viii}{section*.15}%
