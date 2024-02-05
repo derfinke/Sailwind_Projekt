@@ -9,8 +9,27 @@ Zu den Sensoren zählen die folgenden Komponenten:
 	\item Induktiver Endschalter: IFM IFS204
 	\item Optischer Abstandssensor: IFM OGD580
 	\item Anemometer: MESA WSWD
-	\item Druckkraftsensor: Burster 8532
+	\item Druckkraft-Sensor: Burster 8532
 \end{itemize}
 
+\noindent\textbf{Induktiver Endschalter}\newline
+Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktioneren als PNP-Schließkontakt und geben an einem Ausgang ein 24V high Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
+
+\noindent\textbf{Optischer Abstandssensor}\newline
+Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zrückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über den das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen Digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
+
+\noindent\textbf{Anemometer}\\
+Das WSWD Anemometer wird genutzt um die Windrichtung als auch die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Signal oder als ein 0/2-8/10V Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
+
+\noindent\textbf{Druckkraft-Sensor}\newline
+Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht Bestellt wurde. Dieser wurde aber dennoch mit eingeplant.
 \subsubsection{Aktoren}
+Zu den Aktoren zählen die folgenden Komponenten:
+\begin{itemize}
+	\item Gleichstrommotor: Dunkermotoren BG 45x30 SI
+	\item Externe Relais
+\end{itemize}
+
+\noindent\textbf{Gleichstrommotor}\newline
+\noindent\textbf{Externe Relais}\newline
 \subsection{Probleme}

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  5 FEB 2024 14:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  5 FEB 2024 14:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1537,6 +1537,42 @@ Underfull \hbox (badness 10000) in paragraph at lines 4--5
 
  []
 
+
+Underfull \hbox (badness 10000) in paragraph at lines 15--17
+
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[3]
+Underfull \hbox (badness 10000) in paragraph at lines 18--20
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 21--23
+
+ []
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[4]
+Underfull \hbox (badness 10000) in paragraph at lines 33--35
+
+ []
+
 ) (./chapter/implementierung.tex) (./chapter/test.tex) (./chapter/fazit.tex
 
 ! LaTeX Error: There's no line here to end.
@@ -1560,16 +1596,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[3]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[4]
+[5]
 \openout2 = `pages/literaturverzeichnis.aux'.
 
  (./pages/literaturverzeichnis.tex)
@@ -1692,13 +1719,13 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45601 strings out of 480194
- 1014759 string characters out of 5893743
+ 45602 strings out of 480194
+ 1014765 string characters out of 5893743
  1845599 words of memory out of 5000000
  62698 multiletter control sequences out of 15000+600000
  476324 words of font info for 52 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 99i,11n,94p,1166b,1744s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 99i,12n,94p,1166b,1744s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcti1
 200.600pk> </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec
 /tcrm1200.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
@@ -1706,10 +1733,10 @@ mbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10
 .pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></
 usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/sh
 are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (16 pages, 113244 bytes).
+Output written on main.pdf (17 pages, 117548 bytes).
 PDF statistics:
- 339 PDF objects out of 1000 (max. 8388607)
- 303 compressed objects within 4 object streams
- 83 named destinations out of 1000 (max. 500000)
+ 343 PDF objects out of 1000 (max. 8388607)
+ 306 compressed objects within 4 object streams
+ 84 named destinations out of 1000 (max. 500000)
  178 words of extra memory for PDF output out of 10000 (max. 10000000)
 
