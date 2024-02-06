@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  6 FEB 2024 12:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  6 FEB 2024 21:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -761,6 +761,9 @@ Package: enumitem 2019/06/20 v3.9 Customized lists
 (/usr/share/texlive/texmf-dist/tex/latex/spverbatim/spverbatim.sty
 Package: spverbatim 2009/08/10 v1.0 Verbatim with breakable spaces
 )
+(/usr/share/texlive/texmf-dist/tex/latex/graphics/lscape.sty
+Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
+)
 (/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty
 Package: biblatex 2022/02/02 v3.17 programmable bibliographies (PK/MW)
 
@@ -1236,7 +1239,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip100
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 74.
+Package hyperref Info: Option `colorlinks' set `true' on input line 75.
 
 (/usr/share/texlive/texmf-dist/tex/latex/multirow/multirow.sty
 Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
@@ -1391,7 +1394,7 @@ LaTeX Info: Redefining \nameref on input line 1.
 \openout2 = `titelblatt.aux'.
 
  (./titelblatt.tex
-<images/Logo/HTWG_Logo.png, id=95, 223.3143pt x 59.7432pt>
+<images/Logo/HTWG_Logo.png, id=99, 223.3143pt x 59.7432pt>
 File: images/Logo/HTWG_Logo.png Graphic file (type png)
 <use images/Logo/HTWG_Logo.png>
 Package pdftex.def Info: images/Logo/HTWG_Logo.png  used on input line 4.
@@ -1432,11 +1435,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 [3]
 \openout2 = `pages/inhaltsverzeichnis.aux'.
 
- (./pages/inhaltsverzeichnis.tex (./main.toc)
-\tf@toc=\write6
-\openout6 = `main.toc'.
-
-)
+ (./pages/inhaltsverzeichnis.tex (./main.toc
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1449,7 +1448,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 
 
-]
+])
+\tf@toc=\write6
+\openout6 = `main.toc'.
+
+)
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1542,12 +1545,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [2]) (./chapter/theoretische_grundlagen.tex) (./chapter/konzeption.tex
-Underfull \hbox (badness 10000) in paragraph at lines 4--5
+Underfull \hbox (badness 10000) in paragraph at lines 5--6
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 15--17
+Underfull \hbox (badness 10000) in paragraph at lines 16--18
 
  []
 
@@ -1560,17 +1563,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [3]
-Underfull \hbox (badness 10000) in paragraph at lines 18--20
+Underfull \hbox (badness 10000) in paragraph at lines 19--21
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 21--23
+Underfull \hbox (badness 10000) in paragraph at lines 22--24
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 24--26
+Underfull \hbox (badness 10000) in paragraph at lines 25--27
 
  []
 
@@ -1583,7 +1586,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 33--56
+Underfull \hbox (badness 10000) in paragraph at lines 34--55
 
  []
 
@@ -1596,7 +1599,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 75--77
+Underfull \hbox (badness 10000) in paragraph at lines 56--58
 
  []
 
@@ -1740,31 +1743,30 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (./pages/codelisting.aux) (./pages/literaturverzeichnis.aux)
 (./pages/anhang.aux))
 Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 8DC346B44E2740272BE350E3006DC5B6;2801.
+(rerunfilecheck)             Checksum: 1CC4EBF5DA542BF9CA48F16D93BEBB41;3046.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45618 strings out of 480194
- 1015026 string characters out of 5893743
- 1845752 words of memory out of 5000000
- 62707 multiletter control sequences out of 15000+600000
+ 45649 strings out of 480194
+ 1015749 string characters out of 5893743
+ 1847925 words of memory out of 5000000
+ 62734 multiletter control sequences out of 15000+600000
  476324 words of font info for 52 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 99i,17n,94p,1166b,1744s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 99i,12n,94p,1166b,2143s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcti1
 200.600pk> </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec
 /tcrm1200.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/c
 mbx12.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmcsc10
-.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/share/tex
-live/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (20 pages, 132296 bytes).
+.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmti12.pfb></usr/sh
+are/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on main.pdf (20 pages, 123731 bytes).
 PDF statistics:
  375 PDF objects out of 1000 (max. 8388607)
- 333 compressed objects within 4 object streams
- 91 named destinations out of 1000 (max. 500000)
- 194 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 335 compressed objects within 4 object streams
+ 92 named destinations out of 1000 (max. 500000)
+ 202 words of extra memory for PDF output out of 10000 (max. 10000000)
 

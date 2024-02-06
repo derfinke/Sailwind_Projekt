@@ -1,4 +1,5 @@
 \section{Hardware}
+Hier erwähnen was Platine alles für Aufgaben hat
 \subsection{Planung}
 \subsection{Analyze der bestehenden Hardware Elemente}
 Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyze der anzusteurenden Hardware Komponenten. Diese wurden bereits vorrausgehend festgelegt und wurden übernommen. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, der Stromverbrauch und die Schnittstellen betrachtet. Durch die Spannung und die Stromaufnahme kann später die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
@@ -36,7 +37,6 @@ Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da
 % \usepackage{graphicx}
 \begin{table}[H]
 	\centering
-	\resizebox{\textwidth}{!}{%
 		\begin{tabular}{|c|c|c|}
 			\hline
 			\textbf{Eingang 1 (IN1)} & \textbf{Eingang 0 (IN0)} & \textbf{Funktion}      \\ \hline
@@ -50,33 +50,40 @@ Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da
 			1                        & 0                        & Geschwindigkeit 1      \\ \hline
 			1                        & 1                        & Geschwindigkeit 2      \\ \hline
 		\end{tabular}%
-	}
 	\caption{Eingänge und Funktionen des BG 45x30 SI}
 	\label{tab:digitale_Eingaenge}
-\end{table}
-
-% Please add the following required packages to your document preamble:
-% \usepackage{graphicx}
-\begin{table}[H]
-	\centering
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{|l|l|}
-			\hline
-			\textbf{Name}      & \textbf{Funktion}                                                                                              \\ \hline
-			\textbf{Analog In} & \begin{tabular}[c]{@{}l@{}}Analog 0-10V\\ Drehzahlsollwert 0-4092$\frac{U}{min}$\end{tabular} \\ \hline
-			\textbf{Out 1}     & Pulsausgang 12$\frac{Impulse}{U}$                                                             \\ \hline
-			\textbf{Out 2}     & Fehler: 1 = keine Störung; 0 = Störung                                                                         \\ \hline
-			\textbf{Out 3}     & Drehrichtung: 1 = Linkslauf; 0 = Rechtslauf                                                                    \\ \hline
-		\end{tabular}%
-	}
-	\caption{Funktionen digitaler Ausgänge und analoger Eingang}
-	\label{tab:digitale_Ausgaenge}
 \end{table}
 Hier oder später noch Ein und Ausgänge definieren in Tabelle bzw. in Text erwähnen
 \\
 
 \noindent\textbf{Externe Relais}\newline
 Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der externen relais diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden.
-\subsubsection{Auswahl der Bauteile}
+
+\subsubsection{Zusammenfassung und Übersicht}
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[H]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{|l|lllllllllll|}
+			\hline
+			\textbf{Element} & \multicolumn{11}{l|}{\textbf{Pinout}} \\ \hline
+			\textbf{Endschalter 1} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{OUT} & \multicolumn{8}{l|}{} \\ \hline
+			\textbf{Endschalter 2} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{OUT} & \multicolumn{8}{l|}{} \\ \hline
+			\textbf{Abstandssensor} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{IO-Link} & \multicolumn{8}{l|}{} \\ \hline
+			\textbf{IO-Link Konveter} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{AOUT} & \multicolumn{8}{l|}{} \\ \hline
+			\textbf{Anemometer} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{AOUT} & \multicolumn{1}{l|}{AOUT} & \multicolumn{1}{l|}{AGND} & \multicolumn{1}{l|}{RS485} & \multicolumn{1}{l|}{RS485} & \multicolumn{4}{l|}{} \\ \hline
+			\textbf{Druckkraftsensor} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{AOUT} & \multicolumn{1}{l|}{AGND} & \multicolumn{7}{l|}{} \\ \hline
+			\textbf{Motor Leistung} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{9}{l|}{} \\ \hline
+			\textbf{Motor Logik} & \multicolumn{1}{l|}{24V} & \multicolumn{1}{l|}{GND} & \multicolumn{1}{l|}{IN0} & \multicolumn{1}{l|}{IN1} & \multicolumn{1}{l|}{IN2} & \multicolumn{1}{l|}{IN3} & \multicolumn{1}{l|}{AIN} & \multicolumn{1}{l|}{AGND} & \multicolumn{1}{l|}{OUT1} & \multicolumn{1}{l|}{OUT2} & OUT3 \\ \hline
+			\textbf{Externes Relais 1} & \multicolumn{1}{l|}{OUT} & \multicolumn{1}{l|}{GND} & \multicolumn{9}{l|}{} \\ \hline
+			\textbf{Externes Relais 2} & \multicolumn{1}{l|}{OUT} & \multicolumn{1}{l|}{GND} & \multicolumn{9}{l|}{} \\ \hline
+		\end{tabular}%
+	}
+	\caption{Funktionen digitaler Ausgänge und analoger Eingang}
+	\label{tab:my-table}
+\end{table}
+\subsection{Auswahl der neuen Bauteile}
+Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser nun weiterverfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Hardwarekomponenten zu kommunizieren und diese mit Strom zu versorgen..
 \subsubsection{Platinen Entwurf}
 \subsection{Probleme}
