@@ -2,9 +2,9 @@
 \vspace {0.125 cm}
 \contentsline {section}{Eidesstattliche Erklärung}{i}{section*.2}%
 \contentsline {section}{Kurzfassung}{ii}{section*.4}%
-\contentsline {section}{Abkürzungsverzeichnis}{v}{section*.8}%
-\contentsline {section}{Abbildungsverzeichnis}{vi}{section*.9}%
-\contentsline {section}{Quellcodeverzeichnis}{vii}{section*.11}%
+\contentsline {section}{Abkürzungsverzeichnis}{vi}{section*.8}%
+\contentsline {section}{Abbildungsverzeichnis}{vii}{section*.9}%
+\contentsline {section}{Quellcodeverzeichnis}{viii}{section*.11}%
 \contentsline {section}{Vorbemerkung}{1}{section*.13}%
 \contentsline {section}{\numberline {1}Einleitung}{2}{section.1}%
 \contentsline {subsection}{\numberline {1.1}Ausgangssituation}{2}{subsection.1.1}%
@@ -15,8 +15,10 @@
 \contentsline {subsection}{\numberline {3.2}Analyze der bestehenden Hardware Elemente}{3}{subsection.3.2}%
 \contentsline {subsubsection}{\numberline {3.2.1}Sensoren}{3}{subsubsection.3.2.1}%
 \contentsline {subsubsection}{\numberline {3.2.2}Aktoren}{5}{subsubsection.3.2.2}%
-\contentsline {subsection}{\numberline {3.3}Probleme}{6}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Software}{6}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{6}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{6}{section.6}%
-\contentsline {section}{Literaturverzeichnis}{viii}{section*.15}%
+\contentsline {subsubsection}{\numberline {3.2.3}Auswahl der Bauteile}{7}{subsubsection.3.2.3}%
+\contentsline {subsubsection}{\numberline {3.2.4}Platinen Entwurf}{7}{subsubsection.3.2.4}%
+\contentsline {subsection}{\numberline {3.3}Probleme}{7}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Software}{7}{section.4}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{7}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{7}{section.6}%
+\contentsline {section}{Literaturverzeichnis}{ix}{section*.17}%

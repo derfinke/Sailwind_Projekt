@@ -32,7 +32,51 @@ Zu den Aktoren zählen die folgenden Komponenten:
 
 \noindent\textbf{Gleichstrommotor}\newline
 Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da der Motor eine interne Regelung besitzt hat er eine getrennte Leistungs- und Logikversorgung. Der Motor an sich wird dabei über den Leistungsteil bestromt, während über den Logikteil dieser gesteuert werden kann und Feedback bereitstellt. Die Betriebsspannung der Leistungs- und Logikversorgung sind 24V, wobei der Motor einen maximal zulässigen Dauerstrom von 3,8A ausgesetzt sein darf. Die Logikversorung hat eine Stromaufnahme von 100mA. Die Kommunikation mit dem Motor findet über vier Digitale- und einen Analogen Eingang statt. Der Motor stellt Feedback zum aktuellen Status über drei Ausgänge bereit. Diese geben die Drehrichtung, aktuelle Störungen und die Drehgeschwindigkeit des Motors an.\\
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[H]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{|c|c|c|}
+			\hline
+			\textbf{Eingang 1 (IN1)} & \textbf{Eingang 0 (IN0)} & \textbf{Funktion}      \\ \hline
+			0                        & 0                        & Motor aus              \\ \hline
+			0                        & 1                        & Linkslauf              \\ \hline
+			1                        & 0                        & Rechtslauf             \\ \hline
+			1                        & 1                        & Stopp mit Haltemoment  \\ \hline
+			\textbf{Eingang 3 (IN3)} & \textbf{Eingang 2 (IN2)} &                        \\ \hline
+			0                        & 0                        & Drehzahlvorgabe Analog \\ \hline
+			0                        & 1                        & Stromvorgabe Analog    \\ \hline
+			1                        & 0                        & Geschwindigkeit 1      \\ \hline
+			1                        & 1                        & Geschwindigkeit 2      \\ \hline
+		\end{tabular}%
+	}
+	\caption{Eingänge und Funktionen des BG 45x30 SI}
+	\label{tab:digitale_Eingaenge}
+\end{table}
+
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[H]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{|l|l|}
+			\hline
+			\textbf{Name}      & \textbf{Funktion}                                                                                              \\ \hline
+			\textbf{Analog In} & \begin{tabular}[c]{@{}l@{}}Analog 0-10V\\ Drehzahlsollwert 0-4092$\frac{U}{min}$\end{tabular} \\ \hline
+			\textbf{Out 1}     & Pulsausgang 12$\frac{Impulse}{U}$                                                             \\ \hline
+			\textbf{Out 2}     & Fehler: 1 = keine Störung; 0 = Störung                                                                         \\ \hline
+			\textbf{Out 3}     & Drehrichtung: 1 = Linkslauf; 0 = Rechtslauf                                                                    \\ \hline
+		\end{tabular}%
+	}
+	\caption{Funktionen digitaler Ausgänge und analoger Eingang}
+	\label{tab:digitale_Ausgaenge}
+\end{table}
+Hier oder später noch Ein und Ausgänge definieren in Tabelle bzw. in Text erwähnen
+\\
 
 \noindent\textbf{Externe Relais}\newline
 Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der externen relais diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden.
+\subsubsection{Auswahl der Bauteile}
+\subsubsection{Platinen Entwurf}
 \subsection{Probleme}
