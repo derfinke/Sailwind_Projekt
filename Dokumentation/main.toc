@@ -11,15 +11,23 @@
 \contentsline {subsection}{\numberline {1.2}Ziel}{2}{subsection.1.2}%
 \contentsline {section}{\numberline {2}Grundlagen}{3}{section.2}%
 \contentsline {section}{\numberline {3}Hardware}{3}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Planung}{3}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.1}Vorgehen}{3}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}Analyze der bestehenden Hardware Elemente}{3}{subsection.3.2}%
 \contentsline {subsubsection}{\numberline {3.2.1}Sensoren}{3}{subsubsection.3.2.1}%
 \contentsline {subsubsection}{\numberline {3.2.2}Aktoren}{5}{subsubsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.3}Zusammenfassung und Übersicht}{7}{subsubsection.3.2.3}%
-\contentsline {subsection}{\numberline {3.3}Auswahl der neuen Bauteile}{7}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Platinen Entwurf}{7}{subsubsection.3.3.1}%
-\contentsline {subsection}{\numberline {3.4}Probleme}{7}{subsection.3.4}%
-\contentsline {section}{\numberline {4}Software}{7}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{7}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{7}{section.6}%
+\contentsline {subsubsection}{\numberline {3.2.3}Zusammenfassung und Übersicht}{6}{subsubsection.3.2.3}%
+\contentsline {subsection}{\numberline {3.3}Auswahl der Platinen Bauteile}{7}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Mikrocontroller}{8}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Relais}{8}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Optokoppler}{8}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}RS485 zu UART Konverter}{8}{subsubsection.3.3.4}%
+\contentsline {subsubsection}{\numberline {3.3.5}FRAM}{8}{subsubsection.3.3.5}%
+\contentsline {subsubsection}{\numberline {3.3.6}Operations Verstärker}{8}{subsubsection.3.3.6}%
+\contentsline {subsubsection}{\numberline {3.3.7}Spannungsregler}{8}{subsubsection.3.3.7}%
+\contentsline {subsubsection}{\numberline {3.3.8}Platinen Entwurf}{8}{subsubsection.3.3.8}%
+\contentsline {subsection}{\numberline {3.4}Gehäuse und Anschlüsse}{8}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Probleme}{8}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Software}{8}{section.4}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{8}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{8}{section.6}%
 \contentsline {section}{Literaturverzeichnis}{ix}{section*.17}%
