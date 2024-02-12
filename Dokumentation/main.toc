@@ -18,17 +18,18 @@
 \contentsline {subsubsection}{\numberline {3.2.3}Zusammenfassung und Übersicht}{7}{subsubsection.3.2.3}%
 \contentsline {subsection}{\numberline {3.3}Auswahl der Platinen Bauteile}{7}{subsection.3.3}%
 \contentsline {subsubsection}{\numberline {3.3.1}Mikrocontroller}{8}{subsubsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}Relais}{9}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.2}Relais}{8}{subsubsection.3.3.2}%
 \contentsline {subsubsection}{\numberline {3.3.3}Optokoppler}{9}{subsubsection.3.3.3}%
 \contentsline {subsubsection}{\numberline {3.3.4}RS485 zu UART Konverter}{9}{subsubsection.3.3.4}%
 \contentsline {subsubsection}{\numberline {3.3.5}FRAM}{9}{subsubsection.3.3.5}%
 \contentsline {subsubsection}{\numberline {3.3.6}Operations Verstärker}{9}{subsubsection.3.3.6}%
-\contentsline {subsubsection}{\numberline {3.3.7}Spannungsregler}{9}{subsubsection.3.3.7}%
-\contentsline {subsubsection}{\numberline {3.3.8}Platinen Entwurf}{9}{subsubsection.3.3.8}%
-\contentsline {subsection}{\numberline {3.4}Gehäuse und Anschlüsse}{9}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Bedienung}{9}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Probleme}{9}{subsection.3.6}%
-\contentsline {section}{\numberline {4}Software}{9}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{9}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{9}{section.6}%
+\contentsline {subsubsection}{\numberline {3.3.7}Spannungsregler}{10}{subsubsection.3.3.7}%
+\contentsline {subsubsection}{\numberline {3.3.8}Platinen Entwurf}{10}{subsubsection.3.3.8}%
+\contentsline {subsubsection}{\numberline {3.3.9}Analoge Eingänge}{10}{subsubsection.3.3.9}%
+\contentsline {subsection}{\numberline {3.4}Gehäuse und Anschlüsse}{10}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.5}Bedienung}{10}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Probleme}{10}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Software}{11}{section.4}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{11}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{11}{section.6}%
 \contentsline {section}{Literaturverzeichnis}{ix}{section*.17}%
