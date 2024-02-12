@@ -2,7 +2,12 @@
 Hier erwähnen was Platine alles für Aufgaben hat
 Um die Segel des Windkraftwerkes jederzeit für maximale Effizienz eingestellt zu haben, müssen diese dynamisch Eingestellt werden können. Hierfür überwacht ein Controllino, die über Sensoren seine Umgebung und berechnet daraus die optimale Segel Einstellung. (KP sollte besser schon früher erwähnt werden/bzw wurde eventuell schon erwähnt)
 \subsection{Vorgehen}
-Um eine Hardwareplatform zu entwerfen müssen zuerst die bestehenden Elem´
+Bei dem Entwurf der Hardware sind mehrere Dinge zu beachten. Da das Sailwind 4.0 Projekt noch in den Startschuhen steht, sind einige dieser Faktoren auch noch nicht klar Bestimmbar zum Zeitpunkt dieser Arbeit. Aus diesem Grund wurden an manchen Stellen die Design Kriterien freier oder unnötig Komplex ausgelegt.\\
+
+Um die Steuerung der Segel zu ermöglichen wird ein System benötigt das alle nötigen Akteure und Sensoren, Ansteuret und Überwacht. Hierfür soll eine Steuerelektronik Hardware entworfen werden. Da sich diese im Außeneinsatz befindet sollte diese in einem Wasserdichten Gehäuse eingeschlossen sein. Eine vorrausgehende Gruppe hatte bereits die Steuerelektronik entworfen, diese war allerdings zu groß dimensioniert und hatte einige Fehler, weswegen ebenfalls ein kleinere Formfaktor und die Behebung der Probleme als Ziel gesetzt wurden. Die Steuerelektronik soll Manuell Bedienbar sein, wewegen am Gehäuse ebenfalls eine Bedienmöglichkeit existieren sollte.
+
+
+\label{Analyze_der_Aktoren_und_Sensoren}
 \subsection{Analyze der bestehenden Hardware Elemente}
 Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyze der anzusteurenden Hardware Komponenten. Diese wurden bereits vorrausgehend festgelegt und wurden übernommen. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, der Stromverbrauch und die Schnittstellen betrachtet. Durch die Spannung und die Stromaufnahme kann später die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
 
@@ -92,6 +97,17 @@ Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigt
 \subsection{Auswahl der Platinen Bauteile}
 Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser nun weiterverfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Hardwarekomponenten zu kommunizieren und diese mit Strom zu versorgen.
 \subsubsection{Mikrocontroller}
+Die Auswahl des Mikrocontrollers wurde auf der Basis folgender Kriterien beschlossen:
+\begin{itemize}
+	\item Anzahl Inputs und Outputs
+	\item Architektur
+	\item Softwaresupport
+	\item Entwicklung
+	\item Verfügbarkeit
+\end{itemize}
+Dabei gab es die Option den Chip als einzelnes Element direkt auf die selbst erstellte Platine einzubetten oder ein Entwicklungsboard als Basis zu nutzen und eine Erweiterungsplatine dafür zu nutzen. Es wurde sich dabei für ein Entwicklungsboard entschieden um bereits parallel zum Hardwaredesign eine geeignete Software zu entwickeln und diese bereits mit einem Prototypischen Aufbau zu testen (Vielleicht noch erwähnen, probleme bei vorheriger Gruppe). Dies bietet ebenfalls den Vorteil, das bei fatalen Fehlern ein schneller Ersatz angebracht werden kann und auch bereits ein Formfaktor vorgegeben ist.\\
+
+Durch die große Anzahl an benötigten Inputs und Outputs und den relativ großen Anspruch an Onboard Speicher z.B für den geplanten Webserver, wurde sich für eine 32Bit Architektur entschieden.
 \subsubsection{Relais}
 \subsubsection{Optokoppler}
 \subsubsection{RS485 zu UART Konverter}
@@ -99,5 +115,8 @@ Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehe
 \subsubsection{Operations Verstärker}
 \subsubsection{Spannungsregler}
 \subsubsection{Platinen Entwurf}
+Hier Schaltplan und Gerendertes Bild einfügen
 \subsection{Gehäuse und Anschlüsse}
+Hier Freecad Bild einfügen für mount und Gehäuse
+\subsection{Bedienung}
 \subsection{Probleme}
