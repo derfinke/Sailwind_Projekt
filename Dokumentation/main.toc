@@ -27,8 +27,8 @@
 \contentsline {subsubsection}{\numberline {3.3.8}Platinen Entwurf}{10}{subsubsection.3.3.8}%
 \contentsline {subsubsection}{\numberline {3.3.9}Analoge Eingänge}{10}{subsubsection.3.3.9}%
 \contentsline {subsection}{\numberline {3.4}Gehäuse und Anschlüsse}{10}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}Bedienung}{11}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Probleme}{11}{subsection.3.6}%
-\contentsline {section}{\numberline {4}Software}{11}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{11}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{11}{section.6}%
+\contentsline {subsection}{\numberline {3.5}\ac {HMI}}{11}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Probleme}{12}{subsection.3.6}%
+\contentsline {section}{\numberline {4}Software}{12}{section.4}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{12}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{12}{section.6}%

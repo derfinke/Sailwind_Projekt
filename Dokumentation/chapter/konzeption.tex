@@ -130,7 +130,17 @@ Strom zu Spannung
 Widerstände
 \subsection{Gehäuse und Anschlüsse}
 Hier Freecad Bild einfügen für mount und Gehäuse
-\subsection{Bedienung}
+\subsection{\ac{HMI}}
+Das HMI besteht aus einer Reihe von Kippschaltern, Knöpfen und LEDs. Diese sind sind in \autoref{fig:Bedienung} dargestellt. Dabei soll die gewünschte Neutrale Position der Linearführung durch einen Manuellen Betrieb stattfinden. Dabei kann der Endnutzer über die Trimm und Roll Knöpfe zum gewünschten Mittelpunkt Navigieren und diesen mit dem dritten Knopf speichern. Anschließend kann mittels des Kippschalters in den Automatik Betrieb gewechselt werden in dem das betätigen der Knöpfe ignoriert wird.
+Eine Reihe von LEDs gibt Feedback über den aktuellen Zustand der Linearführung. Dabei wird konstant der aktuelle Betriebsmodus durch zwei LEDs angegeben. Ebenfalls wird die Position relativ zur festgelegten neutral Position durch zwei gelbe LEDs angegeben. Eine Störung in der Steuerung oder im Motor wird durch eine rote LED angegeben.\\
+Die Knöpfe und Kippschalter sind beide am Gehäuse montiert und sind Spritzwasser geschützt. Im Gegensatz dazu sind die LEDs direkt auf der Platine platziert und werden durch flexible Lichtleiter zur Außenseite des Gehäuses geführt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/Hardware/Bedienung.drawio.png}
+	\caption{HMI der Segel Steuerung}
+	\label{fig:Bedienung}
+\end{figure}
+
 \subsection{Probleme}
 Klemmenlöcher
 Operationsverstärker
