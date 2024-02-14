@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  13 FEB 2024 19:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  14 FEB 2024 17:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1547,13 +1547,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[2]) (./chapter/theoretische_grundlagen.tex) (./chapter/konzeption.tex
+[2]) (./chapter/theoretische_grundlagen.tex
+<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=231, 1806.75pt x 812.03375p
+t>
+File: images/Hardware/Linerarfuerhrung_3D_Modell.png Graphic file (type png)
+<use images/Hardware/Linerarfuerhrung_3D_Modell.png>
+Package pdftex.def Info: images/Hardware/Linerarfuerhrung_3D_Modell.png  used o
+n input line 4.
+(pdftex.def)             Requested size: 418.25368pt x 187.9781pt.
+) (./chapter/konzeption.tex
 Underfull \hbox (badness 10000) in paragraph at lines 5--6
-
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 11--12
 
  []
 
@@ -1565,13 +1568,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[3]
-Underfull \hbox (badness 10000) in paragraph at lines 22--24
+[3 <./images/Hardware/Linerarfuerhrung_3D_Modell.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 11--12
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 25--27
+Underfull \hbox (badness 10000) in paragraph at lines 22--24
 
  []
 
@@ -1584,11 +1587,24 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [4]
+Underfull \hbox (badness 10000) in paragraph at lines 25--27
+
+ []
+
+
 Underfull \hbox (badness 10000) in paragraph at lines 28--30
 
  []
 
 
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[5]
 Underfull \hbox (badness 10000) in paragraph at lines 31--33
 
  []
@@ -1606,7 +1622,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[5]
+[6]
 Underfull \hbox (badness 10000) in paragraph at lines 62--64
 
  []
@@ -1617,14 +1633,6 @@ Underfull \hbox (badness 10000) in paragraph at lines 65--67
  []
 
 
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[6]
 Overfull \hbox (10.7469pt too wide) in paragraph at lines 72--97
 \OT1/cmr/m/n/12 Damit sind nun al-le ex-ter-nen an-zu-steu-ren-den Kom-po-nen-t
 en ab-ge-deckt. Die ben[]otigte
@@ -1661,19 +1669,6 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [9]
-Package acronym Info: Label `acro:ADC' newly defined as it shall be overridden
-although it is yet undefined on input line 127.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ac' on input line 133.
-
-<images/Hardware/Bedienung.drawio.png, id=263, 1257.69875pt x 782.925pt>
-File: images/Hardware/Bedienung.drawio.png Graphic file (type png)
-<use images/Hardware/Bedienung.drawio.png>
-Package pdftex.def Info: images/Hardware/Bedienung.drawio.png  used on input li
-ne 139.
-(pdftex.def)             Requested size: 418.25368pt x 260.3611pt.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1683,6 +1678,19 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [10]
+Package acronym Info: Label `acro:ADC' newly defined as it shall be overridden
+although it is yet undefined on input line 127.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\@ac' on input line 134.
+
+<images/Hardware/Bedienung.drawio.png, id=272, 1257.69875pt x 782.925pt>
+File: images/Hardware/Bedienung.drawio.png Graphic file (type png)
+<use images/Hardware/Bedienung.drawio.png>
+Package pdftex.def Info: images/Hardware/Bedienung.drawio.png  used on input li
+ne 140.
+(pdftex.def)             Requested size: 418.25368pt x 260.3611pt.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1722,20 +1730,20 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45327 strings out of 480194
- 1005916 string characters out of 5893743
- 1849203 words of memory out of 5000000
- 62441 multiletter control sequences out of 15000+600000
+ 45336 strings out of 480194
+ 1006288 string characters out of 5893743
+ 1849279 words of memory out of 5000000
+ 62448 multiletter control sequences out of 15000+600000
  475130 words of font info for 48 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
  99i,12n,94p,1166b,2161s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1
 200.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
 pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-Output written on main.pdf (21 pages, 150403 bytes).
+Output written on main.pdf (21 pages, 1414501 bytes).
 PDF statistics:
- 310 PDF objects out of 1000 (max. 8388607)
- 275 compressed objects within 3 object streams
- 65 named destinations out of 1000 (max. 500000)
- 279 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 314 PDF objects out of 1000 (max. 8388607)
+ 277 compressed objects within 3 object streams
+ 66 named destinations out of 1000 (max. 500000)
+ 284 words of extra memory for PDF output out of 10000 (max. 10000000)
 
