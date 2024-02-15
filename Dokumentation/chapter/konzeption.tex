@@ -1,10 +1,25 @@
 \section{Hardware}
-Hier erwähnen was Platine alles für Aufgaben hat
-Um die Segel des Windkraftwerkes jederzeit für maximale Effizienz eingestellt zu haben, müssen diese dynamisch Eingestellt werden können. Hierfür überwacht ein Controllino, die über Sensoren seine Umgebung und berechnet daraus die optimale Segel Einstellung. (KP sollte besser schon früher erwähnt werden/bzw wurde eventuell schon erwähnt)
-\subsection{Vorgehen}
-Bei dem Entwurf der Hardware sind mehrere Dinge zu beachten. Da das Sailwind 4.0 Projekt noch in den Startschuhen steht, sind einige dieser Faktoren auch noch nicht klar Bestimmbar zum Zeitpunkt dieser Arbeit. Aus diesem Grund wurden an manchen Stellen die Design Kriterien freier oder unnötig Komplex ausgelegt.\\
+Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noch kein komplett Zusammengebauter Prototyp in dem alle Teile des Projektes zusammenfinden. Die für diese Arbeit relevante Linearführung ist bereits als eigenstehndes Objekt zusammengebaut und wie in \autoref{fig:Systemaufbau} zusehen aufgebaut. Dabei wird die rotierende Bewegung eines BLDC Motors (Pink) mit der Hilfe eines Getriebes (Orange) und einer Gewindestange in eine Translatorische Bewegung umgewandelt, mit der der Schlitten (Hellblau) zwischen den beiden Stationären Punkten (Rot) hin und her bewegt werden kann. Die beiden Endschalter (Grün) dienen als Kollisionserkennung und können auch genutzt werden um den Bewegungsraum einzuschränken. Dabei können zwei Metallstangen (Braun) verschoben werden und geben damit vor wie viel Platz zwischen dem Schlitten und dem Stationären Elementen bleibt. Zusätzlich kann über einen Abstandssensor (dunkel Blau) die Position des Schlittens in Relation zum Abstandssensor bestimmt werden.\\
 
-Um die Steuerung der Segel zu ermöglichen wird ein System benötigt das alle nötigen Akteure und Sensoren, Ansteuret und Überwacht. Hierfür soll eine Steuerelektronik Hardware entworfen werden. Da sich diese im Außeneinsatz befindet sollte diese in einem Wasserdichten Gehäuse eingeschlossen sein. Eine vorrausgehende Gruppe hatte bereits die Steuerelektronik entworfen, diese war allerdings zu groß dimensioniert und hatte einige Fehler, weswegen ebenfalls ein kleinere Formfaktor und die Behebung der Probleme als Ziel gesetzt wurden. Die Steuerelektronik soll Manuell Bedienbar sein, wewegen am Gehäuse ebenfalls eine Bedienmöglichkeit existieren sollte.
+\noindent Die Linearführung soll später dazu genutzt werden um die Segel des Windkraftwerkes zu Trimmen und zu Rollen (siehe \autoref{???}). Zusätzlich zu dem präsentierten Aufbau soll sich auf dem Schlitten später ein Druckkraftsensor befinden der die Kraft auf die Rotorwelle messen soll. Dieser wurde allerdings zum Zeitpunkt der Arbeit noch nicht geliefert oder auf dem Prototypen angebracht. Getrennt vom Aufbau soll ebenfalls ein Anemometer an der Kuppel angebracht werden, das die Windrichtung und Geschwindigkeit misst.
+
+%Hier erwähnen was Platine alles für Aufgaben hat
+%Um die Segel des Windkraftwerkes jederzeit für maximale Effizienz eingestellt zu haben, müssen diese dynamisch Eingestellt werden können. Hierfür überwacht ein Controllino, die über Sensoren seine Umgebung und berechnet daraus die optimale Segel Einstellung. (KP sollte besser schon früher erwähnt werden/bzw wurde eventuell schon erwähnt)
+\subsection{Vorgehen}
+\subsection{Ziele}
+Die Hardware der Steuerung zu der eben vorgestellten Linearführung soll dabei folgende Aufgaben übernehemen:
+\begin{itemize}
+	\item Ansteuerung aller Sensoren und Aktoren
+	\item Stromversorgung aller Komponenten
+	\item Lokale Bedienung der Steuerung
+	\item Ethernetkommunikation mit dem Controllino
+\end{itemize}
+
+\noindent Neben diesen Aufgaben soll die ganze Steuerung in einem zumindest Staub- und Spritzwassergeschützen Gehäuse untergebracht werden. Eine Vorgänger Gruppe hatte sich dieser Aufgabe bereits gewidmet, allerdings war das Ergebnis dieser Gruppe leider nicht weiter verwendbar und hatte auch einen zu großen Formfaktor. Diese Probleme sollen in dieser Iteration ebenfalls behoben werden.
+
+%Bei dem Entwurf der Hardware sind mehrere Dinge zu beachten. Da das Sailwind 4.0 Projekt noch in den Startschuhen steht, sind einige dieser Faktoren auch noch nicht klar Bestimmbar zum Zeitpunkt dieser Arbeit. Aus diesem Grund wurden an manchen Stellen die Design Kriterien freier oder unnötig Komplex ausgelegt.\\
+%
+%Um die Steuerung der Segel zu ermöglichen wird ein System benötigt das alle nötigen Akteure und Sensoren, Ansteuret und Überwacht. Hierfür soll eine Steuerelektronik Hardware entworfen werden. Da sich diese im Außeneinsatz befindet sollte diese in einem Wasserdichten Gehäuse eingeschlossen sein. Eine vorrausgehende Gruppe hatte bereits die Steuerelektronik entworfen, diese war allerdings zu groß dimensioniert und hatte einige Fehler, weswegen ebenfalls ein kleinere Formfaktor und die Behebung der Probleme als Ziel gesetzt wurden. Die Steuerelektronik soll Manuell Bedienbar sein, wewegen am Gehäuse ebenfalls eine Bedienmöglichkeit existieren sollte.
 
 \label{Analyze_der_Aktoren_und_Sensoren}
 \subsection{Analyze der bestehenden Hardware Elemente}
@@ -102,7 +117,7 @@ Die Auswahl des Mikrocontrollers wurde auf der Basis folgender Kriterien beschlo
 \begin{itemize}
 	\item Anzahl Inputs und Outputs
 	\item Architektur
-	\item Softwaresupport
+	\item Softwaresupport 
 	\item Entwicklung
 	\item Verfügbarkeit
 \end{itemize}

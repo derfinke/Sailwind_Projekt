@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  15 FEB 2024 17:44
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  15 FEB 2024 18:03
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1475,7 +1475,7 @@ Package hyperref Info: Link coloring ON on input line 1.
 \openout2 = `titelblatt.aux'.
 
  (titelblatt.tex
-<images/Logo/HTWG_Logo.png, id=146, 223.3143pt x 59.7432pt>
+<images/Logo/HTWG_Logo.png, id=154, 223.3143pt x 59.7432pt>
 File: images/Logo/HTWG_Logo.png Graphic file (type png)
 <use images/Logo/HTWG_Logo.png>
 Package pdftex.def Info: images/Logo/HTWG_Logo.png  used on input line 4.
@@ -1531,7 +1531,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 Package acronym Info: Label `acro:HMI' newly defined as it shall be overridden
-although it is yet undefined on input line 30.
+although it is yet undefined on input line 31.
 )
 \tf@toc=\write6
 \openout6 = `main.toc'.
@@ -1630,7 +1630,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [2]) (chapter/theoretische_grundlagen.tex
-<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=256, 1806.75pt x 812.03375p
+<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=266, 1806.75pt x 812.03375p
 t>
 File: images/Hardware/Linerarfuerhrung_3D_Modell.png Graphic file (type png)
 <use images/Hardware/Linerarfuerhrung_3D_Modell.png>
@@ -1638,7 +1638,7 @@ Package pdftex.def Info: images/Hardware/Linerarfuerhrung_3D_Modell.png  used o
 n input line 4.
 (pdftex.def)             Requested size: 418.25368pt x 187.9781pt.
 ) (chapter/konzeption.tex
-Underfull \hbox (badness 10000) in paragraph at lines 5--6
+Underfull \hbox (badness 10000) in paragraph at lines 2--3
 
  []
 
@@ -1651,12 +1651,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [3 <./images/Hardware/Linerarfuerhrung_3D_Modell.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 11--12
 
- []
+LaTeX Warning: Reference `???' on page 4 undefined on input line 4.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 22--24
+Underfull \hbox (badness 10000) in paragraph at lines 26--27
 
  []
 
@@ -1669,12 +1668,12 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [4]
-Underfull \hbox (badness 10000) in paragraph at lines 25--27
+Underfull \hbox (badness 10000) in paragraph at lines 37--39
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 28--30
+Underfull \hbox (badness 10000) in paragraph at lines 40--42
 
  []
 
@@ -1687,12 +1686,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [5]
-Underfull \hbox (badness 10000) in paragraph at lines 31--33
+Underfull \hbox (badness 10000) in paragraph at lines 43--45
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 40--61
+Underfull \hbox (badness 10000) in paragraph at lines 46--48
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 55--76
 
  []
 
@@ -1705,17 +1709,25 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [6]
-Underfull \hbox (badness 10000) in paragraph at lines 62--64
+Underfull \hbox (badness 10000) in paragraph at lines 77--79
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 65--67
+Underfull \hbox (badness 10000) in paragraph at lines 80--82
 
  []
 
 
-Overfull \hbox (10.7469pt too wide) in paragraph at lines 72--97
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[7]
+Overfull \hbox (10.7469pt too wide) in paragraph at lines 87--112
 \OT1/cmr/m/n/12 Damit sind nun al-le ex-ter-nen an-zu-steu-ren-den Kom-po-nen-t
 en ab-ge-deckt. Die ben[]otigte
  []
@@ -1728,20 +1740,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[7]
-Underfull \hbox (badness 10000) in paragraph at lines 109--110
+[8]
+Underfull \hbox (badness 10000) in paragraph at lines 124--125
 
  []
 
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[8]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1761,17 +1764,26 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 [10]
 Package acronym Info: Label `acro:ADC' newly defined as it shall be overridden
-although it is yet undefined on input line 127.
+although it is yet undefined on input line 142.
 
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[11]
 
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
-(hyperref)                removing `\@ac' on input line 134.
+(hyperref)                removing `\@ac' on input line 149.
 
-<images/Hardware/Bedienung.drawio.png, id=297, 1257.69875pt x 782.925pt>
+<images/Hardware/Bedienung.drawio.png, id=312, 1257.69875pt x 782.925pt>
 File: images/Hardware/Bedienung.drawio.png Graphic file (type png)
 <use images/Hardware/Bedienung.drawio.png>
 Package pdftex.def Info: images/Hardware/Bedienung.drawio.png  used on input li
-ne 140.
+ne 155.
 (pdftex.def)             Requested size: 418.25368pt x 260.3611pt.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
@@ -1781,7 +1793,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[11]) (chapter/implementierung.tex
+[12]) (chapter/implementierung.tex
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1790,8 +1802,8 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[12 <./images/Hardware/Bedienung.drawio.png>]
-<images/Software/Modulestructure.png, id=307, 895.84688pt x 686.565pt>
+[13 <./images/Hardware/Bedienung.drawio.png>]
+<images/Software/Modulestructure.png, id=322, 895.84688pt x 686.565pt>
 File: images/Software/Modulestructure.png Graphic file (type png)
 <use images/Software/Modulestructure.png>
 Package pdftex.def Info: images/Software/Modulestructure.png  used on input lin
@@ -1806,16 +1818,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[13 <./images/Software/Modulestructure.png>]
-
-Package fancyhdr Warning: \headheight is too small (12.0pt): 
-(fancyhdr)                Make it at least 14.49998pt, for example:
-(fancyhdr)                \setlength{\headheight}{14.49998pt}.
-(fancyhdr)                You might also make \topmargin smaller to compensate:
-
-(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
-
-[14]
+[14 <./images/Software/Modulestructure.png>]
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
 File: lstlang1.sty 2023/02/27 1.9 listings language file
 )
@@ -1827,10 +1830,6 @@ Overfull \hbox (2.18465pt too wide) in paragraph at lines 18--19
 e Struk-tur [][]\OT1/cmtt/m/n/12 IO_digitalPin_t
  []
 
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
-nput line 19.
-LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
-(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 20.
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1840,6 +1839,11 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [15]
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 19.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 20.
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1848,7 +1852,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[16]) (chapter/test.tex) (chapter/fazit.tex
+[16]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1857,7 +1861,16 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[17])
+[17]) (chapter/test.tex) (chapter/fazit.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[18])
 \openout2 = `pages/literaturverzeichnis.aux'.
 
  (pages/literaturverzeichnis.tex)
@@ -1871,22 +1884,19 @@ LaTeX Warning: Empty bibliography on input line 2.
 (pages/abkürzungsverszeichnis.aux) (pages/abbildungsverzeichnis.aux)
 (pages/codelisting.aux) (pages/literaturverzeichnis.aux) (pages/anhang.aux))
 
-Package rerunfilecheck Warning: File `main.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
+LaTeX Warning: There were undefined references.
 
-Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: AC76883D6425349D130324B4CF29938A;4628
-(rerunfilecheck)             After:  A8EB2BA72765C71788AFB8D6EF851ABC;4711.
+Package rerunfilecheck Info: File `main.out' has not changed.
+(rerunfilecheck)             Checksum: 0F10769F2F15C056C0443F52DC7F1D52;4794.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 46153 strings out of 476331
- 1031264 string characters out of 5788237
- 1940277 words of memory out of 5000000
- 65668 multiletter control sequences out of 15000+600000
+ 46158 strings out of 476331
+ 1031322 string characters out of 5788237
+ 1943274 words of memory out of 5000000
+ 65671 multiletter control sequences out of 15000+600000
  518949 words of font info for 56 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
  99i,12n,94p,2490b,2243s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1899,9 +1909,9 @@ ts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Bene/AppData/Local/Programs/MiKT
 eX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Bene/AppData/Local/Program
 s/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Bene/AppData/Local
 /Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (26 pages, 1606294 bytes).
+Output written on main.pdf (27 pages, 1608673 bytes).
 PDF statistics:
- 438 PDF objects out of 1000 (max. 8388607)
- 116 named destinations out of 1000 (max. 500000)
- 313 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 452 PDF objects out of 1000 (max. 8388607)
+ 118 named destinations out of 1000 (max. 500000)
+ 329 words of extra memory for PDF output out of 10000 (max. 10000000)
 

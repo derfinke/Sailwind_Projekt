@@ -11,28 +11,29 @@
 \contentsline {subsection}{\numberline {1.2}Ziel}{2}{subsection.1.2}%
 \contentsline {section}{\numberline {2}Grundlagen}{3}{section.2}%
 \contentsline {section}{\numberline {3}Hardware}{3}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Vorgehen}{3}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Analyze der bestehenden Hardware Elemente}{4}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Sensoren}{4}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}Aktoren}{6}{subsubsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.3}Zusammenfassung und Übersicht}{7}{subsubsection.3.2.3}%
-\contentsline {subsection}{\numberline {3.3}Auswahl der Platinen Bauteile}{8}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Mikrocontroller}{8}{subsubsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}Relais}{9}{subsubsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3}Optokoppler}{9}{subsubsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.4}RS485 zu UART Konverter}{10}{subsubsection.3.3.4}%
-\contentsline {subsubsection}{\numberline {3.3.5}FRAM}{10}{subsubsection.3.3.5}%
-\contentsline {subsubsection}{\numberline {3.3.6}Operations Verstärker}{10}{subsubsection.3.3.6}%
-\contentsline {subsubsection}{\numberline {3.3.7}Spannungsregler}{10}{subsubsection.3.3.7}%
-\contentsline {subsubsection}{\numberline {3.3.8}Platinen Entwurf}{11}{subsubsection.3.3.8}%
-\contentsline {subsubsection}{\numberline {3.3.9}Analoge Eingänge}{11}{subsubsection.3.3.9}%
-\contentsline {subsection}{\numberline {3.4}Gehäuse und Anschlüsse}{11}{subsection.3.4}%
-\contentsline {subsection}{\numberline {3.5}\ac {HMI}}{11}{subsection.3.5}%
-\contentsline {subsection}{\numberline {3.6}Probleme}{12}{subsection.3.6}%
-\contentsline {section}{\numberline {4}Software}{12}{section.4}%
-\contentsline {subsection}{\numberline {4.1}IO}{14}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Digitale Pins}{15}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Analoge Pins}{16}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Motor}{17}{subsection.4.2}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{17}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{17}{section.6}%
+\contentsline {subsection}{\numberline {3.1}Vorgehen}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Ziele}{4}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Analyze der bestehenden Hardware Elemente}{4}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Sensoren}{5}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Aktoren}{6}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Zusammenfassung und Übersicht}{8}{subsubsection.3.3.3}%
+\contentsline {subsection}{\numberline {3.4}Auswahl der Platinen Bauteile}{8}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Mikrocontroller}{9}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Relais}{9}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Optokoppler}{10}{subsubsection.3.4.3}%
+\contentsline {subsubsection}{\numberline {3.4.4}RS485 zu UART Konverter}{10}{subsubsection.3.4.4}%
+\contentsline {subsubsection}{\numberline {3.4.5}FRAM}{10}{subsubsection.3.4.5}%
+\contentsline {subsubsection}{\numberline {3.4.6}Operations Verstärker}{11}{subsubsection.3.4.6}%
+\contentsline {subsubsection}{\numberline {3.4.7}Spannungsregler}{11}{subsubsection.3.4.7}%
+\contentsline {subsubsection}{\numberline {3.4.8}Platinen Entwurf}{11}{subsubsection.3.4.8}%
+\contentsline {subsubsection}{\numberline {3.4.9}Analoge Eingänge}{11}{subsubsection.3.4.9}%
+\contentsline {subsection}{\numberline {3.5}Gehäuse und Anschlüsse}{11}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}\ac {HMI}}{12}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Probleme}{13}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Software}{13}{section.4}%
+\contentsline {subsection}{\numberline {4.1}IO}{15}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Digitale Pins}{16}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Analoge Pins}{17}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Motor}{18}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{18}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{18}{section.6}%
