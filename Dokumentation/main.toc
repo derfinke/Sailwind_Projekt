@@ -30,5 +30,9 @@
 \contentsline {subsection}{\numberline {3.5}\ac {HMI}}{11}{subsection.3.5}%
 \contentsline {subsection}{\numberline {3.6}Probleme}{12}{subsection.3.6}%
 \contentsline {section}{\numberline {4}Software}{12}{section.4}%
-\contentsline {section}{\numberline {5}Inbetriebnahme}{14}{section.5}%
-\contentsline {section}{\numberline {6}Fazit und Ausblick}{14}{section.6}%
+\contentsline {subsection}{\numberline {4.1}IO}{14}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Digitale Pins}{15}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Analoge Pins}{16}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Motor}{17}{subsection.4.2}%
+\contentsline {section}{\numberline {5}Inbetriebnahme}{17}{section.5}%
+\contentsline {section}{\numberline {6}Fazit und Ausblick}{17}{section.6}%

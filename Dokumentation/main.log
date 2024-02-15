@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  15 FEB 2024 12:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.4) (preloaded format=pdflatex 2023.7.30)  15 FEB 2024 17:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -110,31 +110,6 @@ Package csquotes Info: ... configuration file loaded successfully.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/csquotes\csquotes.cfg
 File: csquotes.cfg 
 ))
-(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
-\lst@mode=\count271
-\lst@gtempboxa=\box51
-\lst@token=\toks21
-\lst@length=\count272
-\lst@currlwidth=\dimen150
-\lst@column=\count273
-\lst@pos=\count274
-\lst@lostspace=\dimen151
-\lst@width=\dimen152
-\lst@newlines=\count275
-\lst@lineno=\count276
-\lst@maxwidth=\dimen153
-
-(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
-File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
-\c@lstnumber=\count277
-\lst@skipnumbers=\count278
-\lst@framebox=\box52
-)
-(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
-File: listings.cfg 2023/02/27 1.9 listings configuration
-))
-Package: listings 2023/02/27 1.9 (Carsten Heinz)
-
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsmath.sty
 Package: amsmath 2022/04/08 v2.17n AMS math features
 \@mathmargin=\skip50
@@ -145,61 +120,61 @@ Package: amstext 2021/08/26 v2.01 AMS text
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks22
-\ex@=\dimen154
+\@emptytoks=\toks21
+\ex@=\dimen150
 ))
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen155
+\pmbraise@=\dimen151
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/amsmath\amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
 )
-\inf@bad=\count279
+\inf@bad=\count271
 LaTeX Info: Redefining \frac on input line 234.
-\uproot@=\count280
-\leftroot@=\count281
+\uproot@=\count272
+\leftroot@=\count273
 LaTeX Info: Redefining \overline on input line 399.
 LaTeX Info: Redefining \colon on input line 410.
-\classnum@=\count282
-\DOTSCASE@=\count283
+\classnum@=\count274
+\DOTSCASE@=\count275
 LaTeX Info: Redefining \ldots on input line 496.
 LaTeX Info: Redefining \dots on input line 499.
 LaTeX Info: Redefining \cdots on input line 620.
-\Mathstrutbox@=\box53
-\strutbox@=\box54
+\Mathstrutbox@=\box51
+\strutbox@=\box52
 LaTeX Info: Redefining \big on input line 722.
 LaTeX Info: Redefining \Big on input line 723.
 LaTeX Info: Redefining \bigg on input line 724.
 LaTeX Info: Redefining \Bigg on input line 725.
-\big@size=\dimen156
+\big@size=\dimen152
 LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
-\macc@depth=\count284
+\macc@depth=\count276
 LaTeX Info: Redefining \bmod on input line 905.
 LaTeX Info: Redefining \pmod on input line 910.
 LaTeX Info: Redefining \smash on input line 940.
 LaTeX Info: Redefining \relbar on input line 970.
 LaTeX Info: Redefining \Relbar on input line 971.
-\c@MaxMatrixCols=\count285
+\c@MaxMatrixCols=\count277
 \dotsspace@=\muskip16
-\c@parentequation=\count286
-\dspbrk@lvl=\count287
-\tag@help=\toks23
-\row@=\count288
-\column@=\count289
-\maxfields@=\count290
-\andhelp@=\toks24
-\eqnshift@=\dimen157
-\alignsep@=\dimen158
-\tagshift@=\dimen159
-\tagwidth@=\dimen160
-\totwidth@=\dimen161
-\lineht@=\dimen162
-\@envbody=\toks25
+\c@parentequation=\count278
+\dspbrk@lvl=\count279
+\tag@help=\toks22
+\row@=\count280
+\column@=\count281
+\maxfields@=\count282
+\andhelp@=\toks23
+\eqnshift@=\dimen153
+\alignsep@=\dimen154
+\tagshift@=\dimen155
+\tagwidth@=\dimen156
+\totwidth@=\dimen157
+\lineht@=\dimen158
+\@envbody=\toks24
 \multlinegap=\skip51
 \multlinetaggap=\skip52
-\mathdisplay@stack=\toks26
+\mathdisplay@stack=\toks25
 LaTeX Info: Redefining \[ on input line 2953.
 LaTeX Info: Redefining \] on input line 2954.
 )
@@ -221,11 +196,11 @@ Package: fancyhdr 2022/11/09 v4.1 Extensive control of page headers and footers
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/float\float.sty
 Package: float 2001/11/08 v1.3d Float enhancements (AL)
-\c@float@type=\count291
-\float@exts=\toks27
-\float@box=\box55
-\@float@everytoks=\toks28
-\@floatcapt=\box56
+\c@float@type=\count283
+\float@exts=\toks26
+\float@box=\box53
+\@float@everytoks=\toks27
+\@floatcapt=\box54
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/subfig\subfig.sty
 Package: subfig 2005/06/28 ver: 1.3 subfig package
@@ -235,32 +210,31 @@ Package: caption 2023/03/12 v3.6j Customizing captions (AR)
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/caption\caption3.sty
 Package: caption3 2023/03/12 v2.4 caption3 kernel (AR)
-\caption@tempdima=\dimen163
-\captionmargin=\dimen164
-\caption@leftmargin=\dimen165
-\caption@rightmargin=\dimen166
-\caption@width=\dimen167
-\caption@indent=\dimen168
-\caption@parindent=\dimen169
-\caption@hangindent=\dimen170
+\caption@tempdima=\dimen159
+\captionmargin=\dimen160
+\caption@leftmargin=\dimen161
+\caption@rightmargin=\dimen162
+\caption@width=\dimen163
+\caption@indent=\dimen164
+\caption@parindent=\dimen165
+\caption@hangindent=\dimen166
 Package caption Info: Standard document class detected.
 )
-\c@caption@flags=\count292
-\c@continuedfloat=\count293
+\c@caption@flags=\count284
+\c@continuedfloat=\count285
 Package caption Info: float package is loaded.
-Package caption Info: listings package is loaded.
 )
-\c@KVtest=\count294
+\c@KVtest=\count286
 \sf@farskip=\skip62
-\sf@captopadj=\dimen171
+\sf@captopadj=\dimen167
 \sf@capskip=\skip63
 \sf@nearskip=\skip64
-\c@subfigure=\count295
-\c@subfigure@save=\count296
-\c@lofdepth=\count297
-\c@subtable=\count298
-\c@subtable@save=\count299
-\c@lotdepth=\count300
+\c@subfigure=\count287
+\c@subfigure@save=\count288
+\c@lofdepth=\count289
+\c@subtable=\count290
+\c@subtable@save=\count291
+\c@lotdepth=\count292
 \sf@top=\skip65
 \sf@bottom=\skip66
 )
@@ -282,8 +256,8 @@ Package graphics Info: Driver file: pdftex.def on input line 107.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/graphics-def\pdftex.def
 File: pdftex.def 2022/09/22 v1.2b Graphics/color driver for pdftex
 ))
-\Gin@req@height=\dimen172
-\Gin@req@width=\dimen173
+\Gin@req@height=\dimen168
+\Gin@req@width=\dimen169
 ) (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/acronym\acronym.sty
 Package: acronym 2020/04/17 v1.47 Support for acronyms (Tobias Oetiker)
 
@@ -292,12 +266,12 @@ Package: suffix 2006/07/15 1.5a Variant command support
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/xstring\xstring.sty
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/xstring\xstring.tex
-\xs_counta=\count301
-\xs_countb=\count302
+\xs_counta=\count293
+\xs_countb=\count294
 )
 Package: xstring 2023/08/22 v1.86 String manipulations (CT)
 )
-\AC@clearlist=\toks29
+\AC@clearlist=\toks28
 ) (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/todonotes\todonotes.st
 y
 Package: todonotes 2024/01/05 v1.1.7 Todonotes source and documentation.
@@ -310,10 +284,10 @@ Package: xkeyval 2022/06/16 v2.9 package option processing (HA)
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkeyval.tex
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/xkeyval\xkvutils.tex
-\XKV@toks=\toks30
-\XKV@tempa@toks=\toks31
+\XKV@toks=\toks29
+\XKV@tempa@toks=\toks30
 )
-\XKV@depth=\count303
+\XKV@depth=\count295
 File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
 )) (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/xcolor\xcolor.sty
 Package: xcolor 2022/06/12 v2.14 LaTeX color extensions (UK)
@@ -341,13 +315,13 @@ ty
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-
 common.tex
-\pgfutil@everybye=\toks32
-\pgfutil@tempdima=\dimen174
-\pgfutil@tempdimb=\dimen175
+\pgfutil@everybye=\toks31
+\pgfutil@tempdima=\dimen170
+\pgfutil@tempdimb=\dimen171
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfutil-
 latex.def
-\pgfutil@abb=\box57
+\pgfutil@abb=\box55
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfrcs.c
 ode.tex
@@ -366,33 +340,33 @@ Package: pgfsys 2023-01-15 v3.1.10 (3.1.10)
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeys.
 code.tex
-\pgfkeys@pathtoks=\toks33
-\pgfkeys@temptoks=\toks34
+\pgfkeys@pathtoks=\toks32
+\pgfkeys@temptoks=\toks33
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgfkeysl
 ibraryfiltered.code.tex
-\pgfkeys@tmptoks=\toks35
+\pgfkeys@tmptoks=\toks34
 ))
-\pgf@x=\dimen176
-\pgf@y=\dimen177
-\pgf@xa=\dimen178
-\pgf@ya=\dimen179
-\pgf@xb=\dimen180
-\pgf@yb=\dimen181
-\pgf@xc=\dimen182
-\pgf@yc=\dimen183
-\pgf@xd=\dimen184
-\pgf@yd=\dimen185
+\pgf@x=\dimen172
+\pgf@y=\dimen173
+\pgf@xa=\dimen174
+\pgf@ya=\dimen175
+\pgf@xb=\dimen176
+\pgf@yb=\dimen177
+\pgf@xc=\dimen178
+\pgf@yc=\dimen179
+\pgf@xd=\dimen180
+\pgf@yd=\dimen181
 \w@pgf@writea=\write3
 \r@pgf@reada=\read3
-\c@pgf@counta=\count304
-\c@pgf@countb=\count305
-\c@pgf@countc=\count306
-\c@pgf@countd=\count307
-\t@pgf@toka=\toks36
-\t@pgf@tokb=\toks37
-\t@pgf@tokc=\toks38
-\pgf@sys@id@count=\count308
+\c@pgf@counta=\count296
+\c@pgf@countb=\count297
+\c@pgf@countc=\count298
+\c@pgf@countd=\count299
+\t@pgf@toka=\toks35
+\t@pgf@tokb=\toks36
+\t@pgf@tokc=\toks37
+\pgf@sys@id@count=\count300
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgf.cf
 g
@@ -411,8 +385,8 @@ File: pgfsys-common-pdf.def 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
 softpath.code.tex
 File: pgfsyssoftpath.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfsyssoftpath@smallbuffer@items=\count309
-\pgfsyssoftpath@bigbuffer@items=\count310
+\pgfsyssoftpath@smallbuffer@items=\count301
+\pgfsyssoftpath@bigbuffer@items=\count302
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/systemlayer\pgfsys
 protocol.code.tex
@@ -428,12 +402,12 @@ tex
 ode.tex)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathparser
 .code.tex
-\pgfmath@dimen=\dimen186
-\pgfmath@count=\count311
-\pgfmath@box=\box58
-\pgfmath@toks=\toks39
-\pgfmath@stack@operand=\toks40
-\pgfmath@stack@operation=\toks41
+\pgfmath@dimen=\dimen182
+\pgfmath@count=\count303
+\pgfmath@box=\box56
+\pgfmath@toks=\toks38
+\pgfmath@stack@operand=\toks39
+\pgfmath@stack@operation=\toks40
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfuncti
 ons.code.tex)
@@ -457,59 +431,59 @@ ons.integerarithmetics.code.tex)
 ode.tex)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfmathfloat.
 code.tex
-\c@pgfmathroundto@lastzeros=\count312
+\c@pgfmathroundto@lastzeros=\count304
 ))
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/math\pgfint.code.t
 ex)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 points.code.tex
 File: pgfcorepoints.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@picminx=\dimen187
-\pgf@picmaxx=\dimen188
-\pgf@picminy=\dimen189
-\pgf@picmaxy=\dimen190
-\pgf@pathminx=\dimen191
-\pgf@pathmaxx=\dimen192
-\pgf@pathminy=\dimen193
-\pgf@pathmaxy=\dimen194
-\pgf@xx=\dimen195
-\pgf@xy=\dimen196
-\pgf@yx=\dimen197
-\pgf@yy=\dimen198
-\pgf@zx=\dimen199
-\pgf@zy=\dimen256
+\pgf@picminx=\dimen183
+\pgf@picmaxx=\dimen184
+\pgf@picminy=\dimen185
+\pgf@picmaxy=\dimen186
+\pgf@pathminx=\dimen187
+\pgf@pathmaxx=\dimen188
+\pgf@pathminy=\dimen189
+\pgf@pathmaxy=\dimen190
+\pgf@xx=\dimen191
+\pgf@xy=\dimen192
+\pgf@yx=\dimen193
+\pgf@yy=\dimen194
+\pgf@zx=\dimen195
+\pgf@zy=\dimen196
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 pathconstruct.code.tex
 File: pgfcorepathconstruct.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@path@lastx=\dimen257
-\pgf@path@lasty=\dimen258
+\pgf@path@lastx=\dimen197
+\pgf@path@lasty=\dimen198
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 pathusage.code.tex
 File: pgfcorepathusage.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@shorten@end@additional=\dimen259
-\pgf@shorten@start@additional=\dimen260
+\pgf@shorten@end@additional=\dimen199
+\pgf@shorten@start@additional=\dimen256
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 scopes.code.tex
 File: pgfcorescopes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfpic=\box59
-\pgf@hbox=\box60
-\pgf@layerbox@main=\box61
-\pgf@picture@serial@count=\count313
+\pgfpic=\box57
+\pgf@hbox=\box58
+\pgf@layerbox@main=\box59
+\pgf@picture@serial@count=\count305
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 graphicstate.code.tex
 File: pgfcoregraphicstate.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgflinewidth=\dimen261
+\pgflinewidth=\dimen257
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 transformations.code.tex
 File: pgfcoretransformations.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@pt@x=\dimen262
-\pgf@pt@y=\dimen263
-\pgf@pt@temp=\dimen264
+\pgf@pt@x=\dimen258
+\pgf@pt@y=\dimen259
+\pgf@pt@temp=\dimen260
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 quick.code.tex
@@ -526,14 +500,14 @@ File: pgfcorepathprocessing.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 arrows.code.tex
 File: pgfcorearrows.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfarrowsep=\dimen265
+\pgfarrowsep=\dimen261
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 shade.code.tex
 File: pgfcoreshade.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@max=\dimen266
-\pgf@sys@shading@range@num=\count314
-\pgf@shadingcount=\count315
+\pgf@max=\dimen262
+\pgf@sys@shading@range@num=\count306
+\pgf@shadingcount=\count307
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 image.code.tex
@@ -542,7 +516,7 @@ File: pgfcoreimage.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 external.code.tex
 File: pgfcoreexternal.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfexternal@startupbox=\box62
+\pgfexternal@startupbox=\box60
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/basiclayer\pgfcore
 layers.code.tex
@@ -563,7 +537,7 @@ File: pgfcorerdf.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodules
 hapes.code.tex
 File: pgfmoduleshapes.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfnodeparttextbox=\box63
+\pgfnodeparttextbox=\box61
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulep
 lot.code.tex
@@ -572,8 +546,8 @@ File: pgfmoduleplot.code.tex 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcom
 p-version-0-65.sty
 Package: pgfcomp-version-0-65 2023-01-15 v3.1.10 (3.1.10)
-\pgf@nodesepstart=\dimen267
-\pgf@nodesepend=\dimen268
+\pgf@nodesepstart=\dimen263
+\pgf@nodesepend=\dimen264
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/pgf/compatibility\pgfcom
 p-version-1-18.sty
@@ -591,10 +565,10 @@ tex))
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/utilities\pgffor.c
 ode.tex
 Package: pgffor 2023-01-15 v3.1.10 (3.1.10)
-\pgffor@iter=\dimen269
-\pgffor@skip=\dimen270
-\pgffor@stack=\toks42
-\pgffor@toks=\toks43
+\pgffor@iter=\dimen265
+\pgffor@skip=\dimen266
+\pgffor@stack=\toks41
+\pgffor@toks=\toks42
 ))
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz
 \tikz.code.tex
@@ -603,34 +577,34 @@ Package: tikz 2023-01-15 v3.1.10 (3.1.10)
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/libraries\pgflibra
 ryplothandlers.code.tex
 File: pgflibraryplothandlers.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgf@plot@mark@count=\count316
-\pgfplotmarksize=\dimen271
+\pgf@plot@mark@count=\count308
+\pgfplotmarksize=\dimen267
 )
-\tikz@lastx=\dimen272
-\tikz@lasty=\dimen273
-\tikz@lastxsaved=\dimen274
-\tikz@lastysaved=\dimen275
-\tikz@lastmovetox=\dimen276
-\tikz@lastmovetoy=\dimen277
-\tikzleveldistance=\dimen278
-\tikzsiblingdistance=\dimen279
-\tikz@figbox=\box64
-\tikz@figbox@bg=\box65
-\tikz@tempbox=\box66
-\tikz@tempbox@bg=\box67
-\tikztreelevel=\count317
-\tikznumberofchildren=\count318
-\tikznumberofcurrentchild=\count319
-\tikz@fig@count=\count320
+\tikz@lastx=\dimen268
+\tikz@lasty=\dimen269
+\tikz@lastxsaved=\dimen270
+\tikz@lastysaved=\dimen271
+\tikz@lastmovetox=\dimen272
+\tikz@lastmovetoy=\dimen273
+\tikzleveldistance=\dimen274
+\tikzsiblingdistance=\dimen275
+\tikz@figbox=\box62
+\tikz@figbox@bg=\box63
+\tikz@tempbox=\box64
+\tikz@tempbox@bg=\box65
+\tikztreelevel=\count309
+\tikznumberofchildren=\count310
+\tikznumberofcurrentchild=\count311
+\tikz@fig@count=\count312
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/modules\pgfmodulem
 atrix.code.tex
 File: pgfmodulematrix.code.tex 2023-01-15 v3.1.10 (3.1.10)
-\pgfmatrixcurrentrow=\count321
-\pgfmatrixcurrentcolumn=\count322
-\pgf@matrix@numberofcolumns=\count323
+\pgfmatrixcurrentrow=\count313
+\pgfmatrixcurrentcolumn=\count314
+\pgf@matrix@numberofcolumns=\count315
 )
-\tikz@expandcount=\count324
+\tikz@expandcount=\count316
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/generic/pgf/frontendlayer/tikz
 /libraries\tikzlibrarytopaths.code.tex
@@ -642,18 +616,18 @@ File: tikzlibrarypositioning.code.tex 2023-01-15 v3.1.10 (3.1.10)
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/tools\calc.sty
 Package: calc 2017/05/25 v4.3 Infix arithmetic (KKT,FJ)
-\calc@Acount=\count325
-\calc@Bcount=\count326
-\calc@Adimen=\dimen280
-\calc@Bdimen=\dimen281
+\calc@Acount=\count317
+\calc@Bcount=\count318
+\calc@Adimen=\dimen276
+\calc@Bdimen=\dimen277
 \calc@Askip=\skip67
 \calc@Bskip=\skip68
 LaTeX Info: Redefining \setlength on input line 80.
 LaTeX Info: Redefining \addtolength on input line 81.
-\calc@Ccount=\count327
+\calc@Ccount=\count319
 \calc@Cskip=\skip69
 )
-\c@@todonotes@numberoftodonotes=\count328
+\c@@todonotes@numberoftodonotes=\count320
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/diagbox\diagbox.sty
 Package: diagbox 2020/02/09 v2.3 Making table heads with diagonal lines
@@ -670,35 +644,35 @@ Package pict2e Info: Driver file for pict2e: p2e-pdftex.def on input line 114.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/pict2e\p2e-pdftex.def
 File: p2e-pdftex.def 2016/02/05 v0.1u Driver-dependant file (RN,HjG,JT)
 )
-\pIIe@GRAPH=\toks44
-\@arclen=\dimen282
-\@arcrad=\dimen283
-\pIIe@tempdima=\dimen284
-\pIIe@tempdimb=\dimen285
-\pIIe@tempdimc=\dimen286
-\pIIe@tempdimd=\dimen287
-\pIIe@tempdime=\dimen288
-\pIIe@tempdimf=\dimen289
+\pIIe@GRAPH=\toks43
+\@arclen=\dimen278
+\@arcrad=\dimen279
+\pIIe@tempdima=\dimen280
+\pIIe@tempdimb=\dimen281
+\pIIe@tempdimc=\dimen282
+\pIIe@tempdimd=\dimen283
+\pIIe@tempdime=\dimen284
+\pIIe@tempdimf=\dimen285
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/tools\array.sty
 Package: array 2022/09/04 v2.5g Tabular extension package (FMi)
-\col@sep=\dimen290
-\ar@mcellbox=\box68
-\extrarowheight=\dimen291
-\NC@list=\toks45
+\col@sep=\dimen286
+\ar@mcellbox=\box66
+\extrarowheight=\dimen287
+\NC@list=\toks44
 \extratabsurround=\skip70
 \backup@length=\skip71
-\ar@cellbox=\box69
+\ar@cellbox=\box67
 )
-\diagbox@boxa=\box70
-\diagbox@boxb=\box71
-\diagbox@boxm=\box72
-\diagbox@wd=\dimen292
-\diagbox@ht=\dimen293
-\diagbox@insepl=\dimen294
-\diagbox@insepr=\dimen295
-\diagbox@outsepl=\dimen296
-\diagbox@outsepr=\dimen297
+\diagbox@boxa=\box68
+\diagbox@boxb=\box69
+\diagbox@boxm=\box70
+\diagbox@wd=\dimen288
+\diagbox@ht=\dimen289
+\diagbox@insepl=\dimen290
+\diagbox@insepr=\dimen291
+\diagbox@outsepl=\dimen292
+\diagbox@outsepr=\dimen293
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/tools\longtable.sty
 Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
@@ -706,52 +680,52 @@ Package: longtable 2021-09-01 v4.17 Multi-page Table package (DPC)
 \LTright=\skip73
 \LTpre=\skip74
 \LTpost=\skip75
-\LTchunksize=\count329
-\LTcapwidth=\dimen298
-\LT@head=\box73
-\LT@firsthead=\box74
-\LT@foot=\box75
-\LT@lastfoot=\box76
-\LT@gbox=\box77
-\LT@cols=\count330
-\LT@rows=\count331
-\c@LT@tables=\count332
-\c@LT@chunks=\count333
-\LT@p@ftn=\toks46
+\LTchunksize=\count321
+\LTcapwidth=\dimen294
+\LT@head=\box71
+\LT@firsthead=\box72
+\LT@foot=\box73
+\LT@lastfoot=\box74
+\LT@gbox=\box75
+\LT@cols=\count322
+\LT@rows=\count323
+\c@LT@tables=\count324
+\c@LT@chunks=\count325
+\LT@p@ftn=\toks45
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/graphics\rotating.sty
 Package: rotating 2016/08/11 v2.16d rotated objects in LaTeX
-\c@r@tfl@t=\count334
+\c@r@tfl@t=\count326
 \rotFPtop=\skip76
 \rotFPbot=\skip77
-\rot@float@box=\box78
-\rot@mess@toks=\toks47
+\rot@float@box=\box76
+\rot@mess@toks=\toks46
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/makecell\makecell.sty
 Package: makecell 2009/08/03 V0.1e Managing of Tab Column Heads and Cells
-\rotheadsize=\dimen299
-\c@nlinenum=\count335
-\TeXr@lab=\toks48
+\rotheadsize=\dimen295
+\c@nlinenum=\count327
+\TeXr@lab=\toks47
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/booktabs\booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen300
-\lightrulewidth=\dimen301
-\cmidrulewidth=\dimen302
-\belowrulesep=\dimen303
-\belowbottomsep=\dimen304
-\aboverulesep=\dimen305
-\abovetopsep=\dimen306
-\cmidrulesep=\dimen307
-\cmidrulekern=\dimen308
-\defaultaddspace=\dimen309
-\@cmidla=\count336
-\@cmidlb=\count337
-\@aboverulesep=\dimen310
-\@belowrulesep=\dimen311
-\@thisruleclass=\count338
-\@lastruleclass=\count339
-\@thisrulewidth=\dimen312
+\heavyrulewidth=\dimen296
+\lightrulewidth=\dimen297
+\cmidrulewidth=\dimen298
+\belowrulesep=\dimen299
+\belowbottomsep=\dimen300
+\aboverulesep=\dimen301
+\abovetopsep=\dimen302
+\cmidrulesep=\dimen303
+\cmidrulekern=\dimen304
+\defaultaddspace=\dimen305
+\@cmidla=\count328
+\@cmidlb=\count329
+\@aboverulesep=\dimen306
+\@belowrulesep=\dimen307
+\@thisruleclass=\count330
+\@lastruleclass=\count331
+\@thisrulewidth=\dimen308
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/svg\svg.sty
 Package: svg 2020/11/26 v2.02k (include SVG pictures)
@@ -797,9 +771,9 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 Package: shellesc 2019/11/08 v1.0c unified shell escape interface for LaTeX
 Package shellesc Info: Restricted shell escape enabled on input line 77.
 )
-\c@svg@param@lastpage=\count340
-\svg@box=\box79
-\c@svg@param@currpage=\count341
+\c@svg@param@lastpage=\count332
+\svg@box=\box77
+\c@svg@param@currpage=\count333
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/transparent\transparent.
 sty
@@ -813,6 +787,31 @@ Package: transparent-nometadata 2022-10-27 v1.5 Transparency via pdfTeX's color
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/auxhook\auxhook.sty
 Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 )))
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.sty
+\lst@mode=\count334
+\lst@gtempboxa=\box78
+\lst@token=\toks48
+\lst@length=\count335
+\lst@currlwidth=\dimen309
+\lst@column=\count336
+\lst@pos=\count337
+\lst@lostspace=\dimen310
+\lst@width=\dimen311
+\lst@newlines=\count338
+\lst@lineno=\count339
+\lst@maxwidth=\dimen312
+
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
+\c@lstnumber=\count340
+\lst@skipnumbers=\count341
+\lst@framebox=\box79
+)
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\listings.cfg
+File: listings.cfg 2023/02/27 1.9 listings configuration
+))
+Package: listings 2023/02/27 1.9 (Carsten Heinz)
+
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/enumitem\enumitem.sty
 Package: enumitem 2019/06/20 v3.9 Customized lists
 \labelindent=\skip78
@@ -1331,7 +1330,7 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 )
 \Hy@SectionHShift=\skip101
 )
-Package hyperref Info: Option `colorlinks' set `true' on input line 75.
+Package hyperref Info: Option `colorlinks' set `true' on input line 74.
 
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/multirow\multirow.sty
 Package: multirow 2021/03/15 v2.8 Span multiple rows of a table
@@ -1406,10 +1405,10 @@ LaTeX Font Info:    ... okay on input line 1.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-\c@lstlisting=\count492
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
 Package caption Info: longtable package is loaded.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/caption\ltcaption.sty
 Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
@@ -1420,16 +1419,16 @@ Package caption Info: End \AtBeginDocument code.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mki
 i
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count493
+\scratchcounter=\count492
 \scratchdimen=\dimen338
 \scratchbox=\box83
-\nofMPsegments=\count494
-\nofMParguments=\count495
+\nofMPsegments=\count493
+\nofMParguments=\count494
 \everyMPshowfont=\toks58
-\MPscratchCnt=\count496
+\MPscratchCnt=\count495
 \MPscratchDim=\dimen339
-\MPnumerator=\count497
-\makeMPintoPDFobject=\count498
+\MPnumerator=\count496
+\makeMPintoPDFobject=\count497
 \everyMPtoPDFconversion=\toks59
 )
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/epstopdf-pkg\epstopdf-ba
@@ -1448,6 +1447,7 @@ most likely cause issues with the appearance of inserted todonotes. The issue c
 an be solved by adding a line like \setlength {\marginparwidth }{2cm} prior to 
 loading the todonotes package. on input line 1.
 
+\c@lstlisting=\count498
 Package biblatex Info: Trying to load language 'german'...
 Package biblatex Info: ... file 'german.lbx' found.
 (C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/biblatex/lbx\german.lbx
@@ -1475,7 +1475,7 @@ Package hyperref Info: Link coloring ON on input line 1.
 \openout2 = `titelblatt.aux'.
 
  (titelblatt.tex
-<images/Logo/HTWG_Logo.png, id=134, 223.3143pt x 59.7432pt>
+<images/Logo/HTWG_Logo.png, id=146, 223.3143pt x 59.7432pt>
 File: images/Logo/HTWG_Logo.png Graphic file (type png)
 <use images/Logo/HTWG_Logo.png>
 Package pdftex.def Info: images/Logo/HTWG_Logo.png  used on input line 4.
@@ -1630,7 +1630,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [2]) (chapter/theoretische_grundlagen.tex
-<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=231, 1806.75pt x 812.03375p
+<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=256, 1806.75pt x 812.03375p
 t>
 File: images/Hardware/Linerarfuerhrung_3D_Modell.png Graphic file (type png)
 <use images/Hardware/Linerarfuerhrung_3D_Modell.png>
@@ -1767,7 +1767,7 @@ although it is yet undefined on input line 127.
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\@ac' on input line 134.
 
-<images/Hardware/Bedienung.drawio.png, id=272, 1257.69875pt x 782.925pt>
+<images/Hardware/Bedienung.drawio.png, id=297, 1257.69875pt x 782.925pt>
 File: images/Hardware/Bedienung.drawio.png Graphic file (type png)
 <use images/Hardware/Bedienung.drawio.png>
 Package pdftex.def Info: images/Hardware/Bedienung.drawio.png  used on input li
@@ -1791,13 +1791,13 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [12 <./images/Hardware/Bedienung.drawio.png>]
-<images/Software/Modulestructure.png, id=282, 895.84688pt x 686.565pt>
+<images/Software/Modulestructure.png, id=307, 895.84688pt x 686.565pt>
 File: images/Software/Modulestructure.png Graphic file (type png)
 <use images/Software/Modulestructure.png>
 Package pdftex.def Info: images/Software/Modulestructure.png  used on input lin
 e 8.
 (pdftex.def)             Requested size: 250.95476pt x 192.3207pt.
-) (chapter/test.tex
+
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1806,7 +1806,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[13 <./images/Software/Modulestructure.png>]) (chapter/fazit.tex
+[13 <./images/Software/Modulestructure.png>]
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1815,7 +1815,49 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[14])
+[14]
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstlang1.sty
+File: lstlang1.sty 2023/02/27 1.9 listings language file
+)
+(C:\Users\Bene\AppData\Local\Programs\MiKTeX\tex/latex/listings\lstmisc.sty
+File: lstmisc.sty 2023/02/27 1.9 (Carsten Heinz)
+)
+Overfull \hbox (2.18465pt too wide) in paragraph at lines 18--19
+\OT1/cmr/m/n/12 F[]ur di-gi-ta-le Ein- und Ausg[]ange wur-de ei-ne ge-mein-sa-m
+e Struk-tur [][]\OT1/cmtt/m/n/12 IO_digitalPin_t
+ []
+
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on i
+nput line 19.
+LaTeX Font Info:    Font shape `OT1/cmtt/bx/n' in size <10> not available
+(Font)              Font shape `OT1/cmtt/m/n' tried instead on input line 20.
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[15]
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[16]) (chapter/test.tex) (chapter/fazit.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[17])
 \openout2 = `pages/literaturverzeichnis.aux'.
 
  (pages/literaturverzeichnis.tex)
@@ -1828,28 +1870,38 @@ LaTeX Warning: Empty bibliography on input line 2.
 (pages/abstract.aux) (pages/inhaltsverzeichnis.aux)
 (pages/abkürzungsverszeichnis.aux) (pages/abbildungsverzeichnis.aux)
 (pages/codelisting.aux) (pages/literaturverzeichnis.aux) (pages/anhang.aux))
-Package rerunfilecheck Info: File `main.out' has not changed.
-(rerunfilecheck)             Checksum: 4E4D702F8777D0BA334EFC9ECAA7155C;4293.
+
+Package rerunfilecheck Warning: File `main.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `main.out':
+(rerunfilecheck)             Before: AC76883D6425349D130324B4CF29938A;4628
+(rerunfilecheck)             After:  A8EB2BA72765C71788AFB8D6EF851ABC;4711.
 Package logreq Info: Writing requests to 'main.run.xml'.
 \openout1 = `main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45668 strings out of 476331
- 1025944 string characters out of 5788237
- 1930935 words of memory out of 5000000
- 65237 multiletter control sequences out of 15000+600000
- 518327 words of font info for 53 fonts, out of 8000000 for 9000
+ 46153 strings out of 476331
+ 1031264 string characters out of 5788237
+ 1940277 words of memory out of 5000000
+ 65668 multiletter control sequences out of 15000+600000
+ 518949 words of font info for 56 fonts, out of 8000000 for 9000
  1143 hyphenation exceptions out of 8191
- 99i,12n,94p,2005b,2243s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 99i,12n,94p,2490b,2243s stack positions out of 10000i,1000n,20000p,200000b,200000s
  <C:\Users\Bene\AppData\Local\MiKTeX\fonts/pk/ljfour/jknappen/ec/dpi600\tcr
 m1200.pk><C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfon
 ts/cm/cmbx12.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/type1/publi
-c/amsfonts/cm/cmr12.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/type
-1/public/amsfonts/cm/cmtt12.pfb>
-Output written on main.pdf (23 pages, 1534465 bytes).
+c/amsfonts/cm/cmr10.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTeX/fonts/type
+1/public/amsfonts/cm/cmr12.pfb><C:/Users/Bene/AppData/Local/Programs/MiKTeX/fon
+ts/type1/public/amsfonts/cm/cmr7.pfb><C:/Users/Bene/AppData/Local/Programs/MiKT
+eX/fonts/type1/public/amsfonts/cm/cmr8.pfb><C:/Users/Bene/AppData/Local/Program
+s/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt10.pfb><C:/Users/Bene/AppData/Local
+/Programs/MiKTeX/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on main.pdf (26 pages, 1606294 bytes).
 PDF statistics:
- 329 PDF objects out of 1000 (max. 8388607)
- 69 named destinations out of 1000 (max. 500000)
- 289 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 438 PDF objects out of 1000 (max. 8388607)
+ 116 named destinations out of 1000 (max. 500000)
+ 313 words of extra memory for PDF output out of 10000 (max. 10000000)
 
