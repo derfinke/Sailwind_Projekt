@@ -5,7 +5,6 @@ Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noc
 
 %Hier erwähnen was Platine alles für Aufgaben hat
 %Um die Segel des Windkraftwerkes jederzeit für maximale Effizienz eingestellt zu haben, müssen diese dynamisch Eingestellt werden können. Hierfür überwacht ein Controllino, die über Sensoren seine Umgebung und berechnet daraus die optimale Segel Einstellung. (KP sollte besser schon früher erwähnt werden/bzw wurde eventuell schon erwähnt)
-\subsection{Vorgehen}
 \subsection{Ziele}
 Die Hardware der Steuerung zu der eben vorgestellten Linearführung soll dabei folgende Aufgaben übernehemen:
 \begin{itemize}
@@ -15,15 +14,15 @@ Die Hardware der Steuerung zu der eben vorgestellten Linearführung soll dabei f
 	\item Ethernetkommunikation mit dem Controllino
 \end{itemize}
 
-\noindent Neben diesen Aufgaben soll die ganze Steuerung in einem zumindest Staub- und Spritzwassergeschützen Gehäuse untergebracht werden. Eine Vorgänger Gruppe hatte sich dieser Aufgabe bereits gewidmet, allerdings war das Ergebnis dieser Gruppe leider nicht weiter verwendbar und hatte auch einen zu großen Formfaktor. Diese Probleme sollen in dieser Iteration ebenfalls behoben werden.
+\noindent Neben diesen Aufgaben soll die ganze Steuerung in einem zumindest Staub- und Spritzwassergeschützen Gehäuse untergebracht werden. Eine Vorgänger Gruppe hatte sich dieser Aufgabe bereits gewidmet, allerdings war der resultierende Prototyp leider nicht weiter verwendbar und hatte auch einen zu großen Formfaktor. Diese Probleme sollen in dieser Iteration ebenfalls behoben werden.
 
 %Bei dem Entwurf der Hardware sind mehrere Dinge zu beachten. Da das Sailwind 4.0 Projekt noch in den Startschuhen steht, sind einige dieser Faktoren auch noch nicht klar Bestimmbar zum Zeitpunkt dieser Arbeit. Aus diesem Grund wurden an manchen Stellen die Design Kriterien freier oder unnötig Komplex ausgelegt.\\
 %
 %Um die Steuerung der Segel zu ermöglichen wird ein System benötigt das alle nötigen Akteure und Sensoren, Ansteuret und Überwacht. Hierfür soll eine Steuerelektronik Hardware entworfen werden. Da sich diese im Außeneinsatz befindet sollte diese in einem Wasserdichten Gehäuse eingeschlossen sein. Eine vorrausgehende Gruppe hatte bereits die Steuerelektronik entworfen, diese war allerdings zu groß dimensioniert und hatte einige Fehler, weswegen ebenfalls ein kleinere Formfaktor und die Behebung der Probleme als Ziel gesetzt wurden. Die Steuerelektronik soll Manuell Bedienbar sein, wewegen am Gehäuse ebenfalls eine Bedienmöglichkeit existieren sollte.
 
 \label{Analyze_der_Aktoren_und_Sensoren}
-\subsection{Analyze der bestehenden Hardware Elemente}
-Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyze der anzusteurenden Hardware Komponenten. Diese wurden bereits vorrausgehend festgelegt und wurden übernommen. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, der Stromverbrauch und die Schnittstellen betrachtet. Durch die Spannung und die Stromaufnahme kann später die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
+\subsection{Analyse der bestehenden Hardware Elemente}
+Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyse der anzusteurenden Hardware Komponenten. Diese wurden bereits von vorrausgehend Gruppen festgelegt. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, die Stromstärke und die Schnittstellen betrachtet. Durch die Spannung und die Stromaufnahme kann später die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
 
 \subsubsection{Sensoren}
 Zu den Sensoren zählen die folgenden Komponenten:
@@ -35,13 +34,13 @@ Zu den Sensoren zählen die folgenden Komponenten:
 \end{itemize}
 
 \noindent\textbf{Induktiver Endschalter}\newline
-Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktioneren als PNP-Schließkontakt und geben an einem Ausgang ein 24V high Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
+Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktioneren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
 
 \noindent\textbf{Optischer Abstandssensor}\newline
-Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zrückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über den das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen Digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
+Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über den das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
 
 \noindent\textbf{Anemometer}\\
-Das WSWD Anemometer wird genutzt um die Windrichtung als auch die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Signal oder als ein 0/2-8/10V Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
+Das WSWD Anemometer wird genutzt um die Windrichtung als auch die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von bis zu 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen Ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Strom Signal oder als ein 0/2-8/10V Spannungs Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
 
 \noindent\textbf{Druckkraft-Sensor}\newline
 Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht Bestellt wurde. Dieser wurde aber dennoch mit eingeplant. Der Druckkraft Sensor kann ebenfalls mit den typischen 24V betrieben werden und hat dabei eine Stromaufnahme von ca. 12,5mA. Die Messwerte werden hier über eine Analoge 0-10V Schnittstelle übertragen.\\
@@ -115,17 +114,16 @@ Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehe
 \subsubsection{Mikrocontroller}
 Die Auswahl des Mikrocontrollers wurde auf der Basis folgender Kriterien beschlossen:
 \begin{itemize}
-	\item Anzahl Inputs und Outputs
-	\item Architektur
+	\item Benötigte Inputs und Outputs
 	\item Softwaresupport 
 	\item Entwicklung
 	\item Verfügbarkeit
 \end{itemize}
-Dabei gab es die Option den Chip als einzelnes Element direkt auf die selbst erstellte Platine einzubetten oder ein Entwicklungsboard als Basis zu nutzen und eine Erweiterungsplatine dafür zu nutzen. Es wurde sich dabei für ein Entwicklungsboard entschieden um bereits parallel zum Hardwaredesign eine geeignete Software zu entwickeln und diese bereits mit einem Prototypischen Aufbau zu testen (Vielleicht noch erwähnen, probleme bei vorheriger Gruppe). Dies bietet ebenfalls den Vorteil, das bei fatalen Fehlern ein schneller Ersatz angebracht werden kann und auch bereits ein Formfaktor vorgegeben ist.\\
+Dabei gab es die Option den Chip als einzelnes Element direkt auf die selbst erstellte Platine einzubetten oder ein Entwicklungsboard als Basis zu nutzen und eine Erweiterungsplatine dafür zu nutzen. Es wurde sich dabei für ein Entwicklungsboard entschieden um bereits parallel zum Hardwaredesign eine geeignete Software zu entwickeln und diese bereits mit einem Prototypischen Aufbau zu testen (Vielleicht noch erwähnen, probleme bei vorheriger Gruppe). Dies bietet ebenfalls den Vorteil, das beim zerstören des Chips ein schneller Ersatz angebracht werden kann und auch bereits ein Formfaktor vorgegeben ist. Auch kann durch den bereits angebrachten Debugger, schneller neue Software getestet und aufgespielt werden. Ebenfalls besitzen viele Entwicklungsboards bereits einen Ethernetport der sowieso benötigt wird.\\
 
-Durch die große Anzahl an benötigten Inputs und Outputs und den relativ großen Anspruch an Onboard Speicher z.B für den geplanten Webserver, wurde sich für eine 32Bit Architektur entschieden.
+\noindent Durch die oben genannten Kriterien und die Entscheidung ein Entwicklerboard zu benutzen viel die Wahl auf das STM32 NUCLEO F439zi Board. Diese waren bereits an der HTWG Konstanz Verfügbar, sind durch den Softwaresupport von ST und ihrer eigenen Entwicklungsumgebung einfach zu Programmieren und Aufzusetzen. Außerdem bieten ihre Entwicklungsboards einen abbrechbaren Debugger und das Board kann damit auch außerhalb der Entwicklungsphase eingesetzt werden.
 \subsubsection{Relais}
-Um das Endschalter Ausgangssignal an den Mikrocontroller weiterzugeben, werden zwei 24V Relais genutzt die bei der Aktivierung der Spule ein 3,3V Signal an den Eingang des Mikrocontrollers weitergeben. Gleichzeitig wird durch das Umschalten des Relais der Eingang 1 oder 2 auf Null gesetzt, so das dieser direkt Ausgeschaltet wird um eine Kollision mit den Enden der Linearführung vorzubeugen.
+Um das auslösen eines Endschalters an den Mikrocontroller weiterzugeben, werden zwei 24V Relais genutzt die bei der Aktivierung der Spule ein 3,3V Signal an den Eingang des Mikrocontrollers weitergeben. Gleichzeitig wird durch das Umschalten des Relais der Eingang 1 oder 2 des Motors auf Null gesetzt. Diese geben die Drehrichtung an und stoppen den Motor sobald beide auf Null gesetzt sind. Da dieses System unabhängig von der Software des Mikrocontrollers agiert, dienen diese gleichzeitig als Ausfallsichere Aktoren.
 \subsubsection{Optokoppler}
 Um die restlichen 24V Aus- und Eingänge zu steueren oder auszulesen kommen Optokoppler zum Einsatz. Diese isolieren ähnlich zu Relais den 24V und 3,3V Schaltkreis und ermöglichen es durch einen kleinere Spannung eine größere Last zu schalten. Dabei werden insgesamt 9 benötigt um die digitalen Ein und Ausgänge des Motors und die beiden externen Relais zu schalten. Da es sich beim Ausgang 3? des Motors um ein Pulsierendes Signal zur Ermittelung der Drehgeschw. des Motors handelt wurde auf eine schnelle Schaltzeit der Optokoppler geachtet (hier Berechnung einfügen).
 \subsubsection{RS485 zu UART Konverter}
