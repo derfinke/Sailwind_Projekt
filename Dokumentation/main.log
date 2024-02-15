@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  15 FEB 2024 14:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.22 (TeX Live 2022/dev/Debian) (preloaded format=pdflatex 2024.2.4)  15 FEB 2024 14:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1257,6 +1257,21 @@ Package csquotes Info: Redefining alias 'default' -> 'german'.
 (./main.aux (./titelblatt.aux) (./pages/erklärung.aux) (./pages/abstract.aux)
 (./pages/inhaltsverzeichnis.aux) (./pages/abkürzungsverszeichnis.aux)
 (./pages/abbildungsverzeichnis.aux) (./pages/codelisting.aux)
+
+! LaTeX Error: Missing \begin{document}.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.66 <
+      <<<<<< HEAD
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Label `fig:Bedienung' multiply defined.
+
 (./pages/literaturverzeichnis.aux) (./pages/anhang.aux))
 \openout1 = `main.aux'.
 
@@ -1325,6 +1340,16 @@ Package caption Info: rotating package is loaded.
 Package caption Info: End \AtBeginDocument code.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+Overfull \hbox (31.1563pt too wide) in paragraph at lines 66--13
+[]\OT1/cmr/m/n/12 <<<<<<< HEAD        =======          >>>>>>> f4fefd0014ec69d2
+fa702f3e7ca7566a10cf35d0
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 66--13
+
+ []
+
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count491
 \scratchdimen=\dimen335
@@ -1391,10 +1416,22 @@ LaTeX Info: Redefining \nameref on input line 1.
 \@outlinefile=\write5
 \openout5 = `main.out'.
 
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[1{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}
+
+]
 \openout2 = `titelblatt.aux'.
 
  (./titelblatt.tex
-<images/Logo/HTWG_Logo.png, id=139, 223.3143pt x 59.7432pt>
+<images/Logo/HTWG_Logo.png, id=145, 223.3143pt x 59.7432pt>
 File: images/Logo/HTWG_Logo.png Graphic file (type png)
 <use images/Logo/HTWG_Logo.png>
 Package pdftex.def Info: images/Logo/HTWG_Logo.png  used on input line 4.
@@ -1404,11 +1441,14 @@ Overfull \hbox (97.81253pt too wide) in paragraph at lines 4--5
 [] [][] 
  []
 
-[1
+pdfTeX warning (ext4): destination with the same identifier (name{page.1}) has 
+been already used, duplicate ignored
+<to be read again> 
+                   \relax 
+l.31 \end{titlepage}
+                     [1
 
-
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map} <./images/Logo/HTWG_Logo.pn
-g>])
+ <./images/Logo/HTWG_Logo.png>])
 \openout2 = `pages/erklärung.aux'.
 
  (./pages/erklärung.tex) [1
@@ -1450,8 +1490,17 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 ]
 Package acronym Info: Label `acro:HMI' newly defined as it shall be overridden
-although it is yet undefined on input line 31.
-)
+although it is yet undefined on input line 32.
+
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[5])
 \tf@toc=\write6
 \openout6 = `main.toc'.
 
@@ -1464,7 +1513,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[5]
+[6]
 \openout2 = `pages/abkürzungsverszeichnis.aux'.
 
  (./pages/abkürzungsverszeichnis.tex)
@@ -1476,7 +1525,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[6
+[7
 
 
 
@@ -1496,7 +1545,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[7
+[8
 
 
 
@@ -1516,7 +1565,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[8
+[9
 
 
 
@@ -1548,7 +1597,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
 [2]) (./chapter/theoretische_grundlagen.tex
-<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=236, 1806.75pt x 812.03375p
+<images/Hardware/Linerarfuerhrung_3D_Modell.png, id=277, 1806.75pt x 812.03375p
 t>
 File: images/Hardware/Linerarfuerhrung_3D_Modell.png Graphic file (type png)
 <use images/Hardware/Linerarfuerhrung_3D_Modell.png>
@@ -1697,7 +1746,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 Package hyperref Warning: Token not allowed in a PDF string (Unicode):
 (hyperref)                removing `\@ac' on input line 149.
 
-<images/Hardware/Bedienung.drawio.png, id=283, 1257.69875pt x 782.925pt>
+<images/Hardware/Bedienung.drawio.png, id=323, 1257.69875pt x 782.925pt>
 File: images/Hardware/Bedienung.drawio.png Graphic file (type png)
 <use images/Hardware/Bedienung.drawio.png>
 Package pdftex.def Info: images/Hardware/Bedienung.drawio.png  used on input li
@@ -1711,7 +1760,7 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[12]) (./chapter/implementierung.tex) (./chapter/test.tex) (./chapter/fazit.tex
+[12]) (./chapter/implementierung.tex
 
 Package fancyhdr Warning: \headheight is too small (12.0pt): 
 (fancyhdr)                Make it at least 14.49998pt, for example:
@@ -1720,11 +1769,35 @@ Package fancyhdr Warning: \headheight is too small (12.0pt):
 
 (fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
 
-[13 <./images/Hardware/Bedienung.drawio.png>])
+[13 <./images/Hardware/Bedienung.drawio.png>]
+<images/Software/Modulestructure.png, id=333, 895.84688pt x 686.565pt>
+File: images/Software/Modulestructure.png Graphic file (type png)
+<use images/Software/Modulestructure.png>
+Package pdftex.def Info: images/Software/Modulestructure.png  used on input lin
+e 8.
+(pdftex.def)             Requested size: 250.95476pt x 192.3207pt.
+) (./chapter/test.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[14 <./images/Software/Modulestructure.png>]) (./chapter/fazit.tex
+
+Package fancyhdr Warning: \headheight is too small (12.0pt): 
+(fancyhdr)                Make it at least 14.49998pt, for example:
+(fancyhdr)                \setlength{\headheight}{14.49998pt}.
+(fancyhdr)                You might also make \topmargin smaller to compensate:
+
+(fancyhdr)                \addtolength{\topmargin}{-2.49998pt}.
+
+[15])
 \openout2 = `pages/literaturverzeichnis.aux'.
 
-
-(./pages/literaturverzeichnis.tex)
+ (./pages/literaturverzeichnis.tex)
 
 LaTeX Warning: Empty bibliography on input line 2.
 
@@ -1738,6 +1811,9 @@ LaTeX Warning: Empty bibliography on input line 2.
 
 LaTeX Warning: There were undefined references.
 
+
+LaTeX Warning: There were multiply-defined labels.
+
 Package rerunfilecheck Info: File `main.out' has not changed.
 (rerunfilecheck)             Checksum: 72192F52C264B486FE035C4A8342BDC2;4376.
 Package logreq Info: Writing requests to 'main.run.xml'.
@@ -1745,20 +1821,48 @@ Package logreq Info: Writing requests to 'main.run.xml'.
 
  ) ) 
 Here is how much of TeX's memory you used:
- 45340 strings out of 480194
- 1006330 string characters out of 5893743
- 1849276 words of memory out of 5000000
- 62450 multiletter control sequences out of 15000+600000
- 475130 words of font info for 48 fonts, out of 8000000 for 9000
+ 45365 strings out of 480194
+ 1006875 string characters out of 5893743
+ 1849009 words of memory out of 5000000
+ 62459 multiletter control sequences out of 15000+600000
+ 475299 words of font info for 49 fonts, out of 8000000 for 9000
  16 hyphenation exceptions out of 8191
- 99i,12n,94p,1166b,2161s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1
-200.600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.
-pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb>
-Output written on main.pdf (22 pages, 1415574 bytes).
+ 99i,12n,94p,2003b,2165s stack positions out of 5000i,500n,10000p,200000b,80000s
+pdfTeX warning (dest): name{subsubsection.3.3.9} has been referenced but do
+es not exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.3.8} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.3.7} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.3.6} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.3.5} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.3.4} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.2.3} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.2.2} has been referenced but does n
+ot exist, replaced by a fixed one
+
+pdfTeX warning (dest): name{subsubsection.3.2.1} has been referenced but does n
+ot exist, replaced by a fixed one
+
+ </home/finkbeiner/.texlive2021/texmf-var/fonts/pk/ljfour/jknappen/ec/tcrm1200.
+600pk></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb>
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/s
+hare/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb>
+Output written on main.pdf (26 pages, 1507732 bytes).
 PDF statistics:
- 325 PDF objects out of 1000 (max. 8388607)
- 287 compressed objects within 3 object streams
- 68 named destinations out of 1000 (max. 500000)
- 292 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 386 PDF objects out of 1000 (max. 8388607)
+ 339 compressed objects within 4 object streams
+ 81 named destinations out of 1000 (max. 500000)
+ 297 words of extra memory for PDF output out of 10000 (max. 10000000)
 
