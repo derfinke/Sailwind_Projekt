@@ -1,5 +1,4 @@
 Dokumentation/main.log
-Dokumentation/main.aux
 Dokumentation/main.bbl
 Dokumentation/main.lol
 Dokumentation/main.lof
@@ -10,3 +9,7 @@ Dokumentation/main.toc
 Dokumentation/main.run.xml
 Dokumentation/main.pdf
 Dokumentation/main.synctex.gz
+Dokumentation/document.log
+Dokumentation/document.pdf
+Dokumentation/document.synctex.gz
+Dokumentation/**/*.aux
