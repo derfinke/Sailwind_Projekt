@@ -224,8 +224,38 @@ die beiden Bias Widerstände für das RS-485 Netzwerk berechnen. Dabei kam für 
 \end{equation}
 Der nächst kleinere Widerstand der Verfügbaren E24 Reihe wurde dann auf 470$\Omega$ gewählt. Damit konnte daraufhin erfolgreich über RS485 kommuniziert werden.
 \subsubsection{FRAM Anschlüsse}
-Die SPI Anschlüsse des FRAM Speicher wurden falsch verbunden dabei wurden die MOSI und MISO Leitung vertauscht was 
-\subsubsection{Präzision der Analogen Signale}
+Die SPI Anschlüsse des FRAM Speicher wurden falsch verbunden dabei wurden die \ac{MOSI} und \ac{MISO} Leitung vertauscht und der \ac{WP} Pin auf das Ground Potenzial gelegt. Dies führte dazu, dass der Speicher nicht addressiert werden konnte und er nicht auf gesendete Befehle reagiert hat. Zuerst wurde der \ac{WP} von dem Ground Potenzial entfernt und schwebend gehalten. Durch das Beobachten der Pegel von MISO, MOSI und Clock Leitung konnte daraufhin erkannt werden das diese vertauscht wurden. Die PCB Spur wurde dafür getrennt und die Pins mit Kabeln direkt verbunden.
+\subsubsection{Abstandssensor Präzision}
+Der Abstandssensor war eine weitere große Problem Quelle. Der Abstandsensor hat eine sehr hohe Präzision erreicht diese allerdings erst nach einer Aufwärmzeit. Diese ist laut Datenblatt erst bei einer Umgebungstemperatur von -10°C notwendig (vgl. \cite{OGD580_Datasheet} S.2). Allerdings wurde im Betrieb festgestellt das bei stillstand das Display des Sensors immer sinkende Werte anzeigt. Um die Ursache dafür zu finden wurden einige Messreihen durchgeführt. Hierbei wurde der Abstand zum Sensor konstant gehalten und in einem Interval von 30s der Spannungswert an einem Messpunkt der Platine mit einem Oszilloskop gemessen. Dies wurde für inkrementierende Außerbetriebszeiten wiederholt. Die Messreihe ist in \autoref{OGD580} dargestellt. Hier ist klar erkennbar das erst nach ca. 1400s oder ca 20-25min. ein gleichbleibender Spannungswert auslesbar ist. Ebenfalls geht hier hervor, dass die Präzision mit der Temperatur des Sensors zusammenhängt, da nach kürzeren Außerbetriebszeiten die Differenz sinkt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/Hardware/Abstandssensor_plot_highres.PNG}
+	\caption{Messreihen des ausgelesen Spannungswert bei gleichbleibendem Abstand und steigenden Außerbetriebszeiten}
+	\label{fig:Messreihe_Temperatur}
+\end{figure}
+
+Das Problem blieb allerdings selbst nach einer Aufwärmzeit von 20min. bestehen. Die Abweichung der ausgelesen Werte über die Messpunkte und den abgelesen Wert am Display lagen teilweise bis zu 25mm auseinander. Um die Ursache des Problems zu finden wurde hier ebenfalls mehrere Messreihen aufgenommen. Hier wurde der Schlitten der Linearführung in 20mm Abständen verschoben. An jedem dieser Punkte wurden folgende Daten notiert:
+\begin{itemize}
+	\item Abstand zum Sensor gemessen mit einem Meterstab in mm
+	\item Angezeigter Abstand auf dem Display des Sensors in mm
+	\item Ausgegebener Strom des IO-Link Konverters gemessen mit einem Multimeter in mA
+	\item Spannung am Testpunkt der Platine mit einem Oszilloskop in V
+\end{itemize}
+Dies wurde in 5 Messreihen wiederholt um die Reproduzierbarkeit zu verifizieren. Die aufgezeichneten Daten wurden alle in mm umgerechnet:
+\begin{equation}
+	L_{Strom} = \frac{L_{max}-L_{min}}{I_{max}-I_{min}}\times(\frac{I_{Position}}{1000}-I_{min}) + L_{min}
+\end{equation}
+\begin{equation}
+	L_{Spannung} = \frac{L_{max}-L_{min}}{I_{max}-I_{min}}\times(\frac{U_{Position}}{153,5\Omega}-I_{min}) + L_{min}
+\end{equation}
+ und überhalb der mit dem Meterstab gemessen Werte geplotet. Eine dieser Messreihen ist in \autoref{fig:Messreihe_Abstand} dargestellt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/Hardware/Messreihe_Präzision.png}
+	\caption{Präzision des Abstandssensor anhand verschiedener Messwerte}
+	\label{fig:Messreihe_Abstand}
+\end{figure}
+\noindent Hier ist zu erkennen das der auf dem Display abgelesen Abstand mit dem gemessenen Abstand übereinstimmt. Allerdings weichen sowohl der Strom als auch der Spannungswert ab, da die Steigung beider Messreihen nicht gleich zu der des Abstandssensor ist. An diesem ist es möglich eine Skalierung festzulgen. Dabei kann z.B festgelegt werden ab welchem Messwert das Ausgangssignal 4mA/20mA beantragen soll (vgl. \cite{EIO104_Manual}, S.6). Da das Display den korrekten Wert anzeigt, aber ein falscher Strom Wert ausgegeben wird kann davon ausgegangen werden das der Konverter falsch eingestellt ist. Dies konnte im Zuge dieser Arbeit nicht behoben werden, da ein entsprechendes IO-Link Master Gerät nicht verfügbar war.
 Klemmenlöcher
 Operationsverstärker
 Widerstände RS485
