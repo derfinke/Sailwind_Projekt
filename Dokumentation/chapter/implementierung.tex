@@ -1,8 +1,9 @@
 \section{Software}
 Die Steuerung der Segel soll durch zwei verteilte Systeme erfolgen, die über eine Ethernet-Verbindung miteinander kommunizieren. Die Idee dahinter ist, die Berechnungen für die Ausrichtung der Segel in Abhängigkeit der Windstärke und -Richtung (Controllino) von der hardwarenahen Verarbeitung der Sensoren und Aktuatoren (stm32) logisch zu trennen. \\
+
+\noindent
 Die vorliegende Arbeit konzentriert sich dabei lediglich auf das System der Sensoren und Aktuatoren, welches mit dem stm32 realisiert wurde. Die Aufgabe dieses Systems ist, zunächst die Linearführung zu kalibrieren, damit die aktuelle Position korrekt ermittelt werden kann. Außerdem soll über die Buttons am Gehäuse und zusätzlich über einen Webserver eine manuelle Steuerung ermöglicht werden. Während des Automatikbetriebs geschieht ein regelmäßiger Austausch aller relevanter Daten über eine REST basierte Schnittstelle. Dies beinhaltet u.A. die Information über aktuelle Windbedingung, Position der Segel, eventuelle Fehlerzustände (z.B. Motorfehler oder Überstrom) und daraus resultierende Befehle zur Anpassung der Segelstellung.
 Für die Implementierung wurde die Software in komponentenorientierte Module eingeteilt:
-
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=0.6\linewidth]{images/Software/Modulestructure.png}
@@ -10,7 +11,16 @@ Für die Implementierung wurde die Software in komponentenorientierte Module ein
 	\label{fig:modulestructure}
 \end{figure}
 \noindent
-Abbildung \ref{fig:modulestructure} zeigt abwärtsgerichtet, wie die einzelnen Module aufeinander zugreifen. Auf unterster Abstraktionsebene laufen jegliche Operationen über die Standardbibliothek des Mikrocontrollers \verb|stm32f4xx\_hal|. Darüber liefert das \verb|IO|-Modul ein Set aus Hilfsfunktionen und -Strukturen für den allgemeinen Zugriff auf die GPIO-Pins und zum Auslesen analoger Messwerte der einzelnen Sensoren. Ebene drei umfasst hauptsächlich Module, welche alle relevanten Funktionalitäten der physischen Teilkomponenten des Systems implementieren, wie z.B. das Anemometer \verb|WSWD| oder der \verb|Motor|. Einige davon greifen dabei auf das \verb|IO|-Modul zu, wobei der allgemeine GPIO-Zugriff von einer spezifischen Funktion eingekapselt wird, wie z.B. das Einschalten einer LED im Falle des \verb|LED|-Moduls. Eine Ausnahme ist das \verb|Localization|-Modul, welches keine physische Komponente darstellt, sondern einige Hilfsfunktionen zur Kalibrierung und Positionsberechnung bereitstellt. Während die Module bis Ebene drei überwiegend allgemeingültig entworfen sind, enthält das \verb|Linear Guide|-Modul anwendungsspezifische Funktionen. Als zentrales Element bildet dieses ein High-Level Interface zur Verwendung der Teilkomponenten \verb|FRAM|, \verb|Motor|, \verb|Endswitch|, \verb|LED|, \verb|Localization| und \verb|IO|. Die Module der obersten Abstraktionsebene bilden die direkten Schnittstellen zur Außenwelt. Das \verb|Manual Control|-Modul ermöglicht die manuelle Steuerung der Linearführung über die User-Buttons am Gehäuse und insbesondere die Umsetzung des Kalibrierungsprozesses. Auf der anderen Seite kann das System auch durch einen HTTP Webserver überwacht und gesteuert werden. Außerdem werden im \verb|REST|-Modul die Anfragen des Controllinos über die \verb|TCP Server|-Verbindung verarbeitet, wie bereits oben erwähnt. Zuletzt wurde ein \verb|Test|-Modul implementiert, dass die Funktionalitäten der Module auf Ebene drei verifiziert. Dazu wurde ein einfaches Batch-Skript geschrieben, das die einzelnen Testcases auflistet und die Auswahl über UART an den  Mikrocontroller sendet, sodass im \verb|Test|-Modul eine entsprechende Funktion ausgeführt wird.\\In den nachfolgenden Abschnitten wird genauer auf einige Module eingegangen, beginnend mit dem untersten Abstraktionslevel.
+Abbildung \ref{fig:modulestructure} zeigt abwärtsgerichtet, wie die einzelnen Module aufeinander zugreifen. Auf unterster Abstraktionsebene laufen jegliche Operationen über die Standardbibliothek des Mikrocontrollers \verb|stm32f4xx\_hal|. Darüber liefert das \verb|IO|-Modul ein Set aus Hilfsfunktionen und -Strukturen für den allgemeinen Zugriff auf die GPIO-Pins und zum Auslesen analoger Messwerte der einzelnen Sensoren.\\
+
+\noindent
+Ebene drei umfasst hauptsächlich Module, welche alle relevanten Funktionalitäten der physischen Teilkomponenten des Systems implementieren, wie z.B. das Anemometer \verb|WSWD| oder der \verb|Motor|. Einige davon greifen dabei auf das \verb|IO|-Modul zu, wobei der allgemeine GPIO-Zugriff von einer spezifischen Funktion eingekapselt wird, wie z.B. das Einschalten einer LED im Falle des \verb|LED|-Moduls. Eine Ausnahme ist das \verb|Localization|-Modul, welches keine physische Komponente darstellt, sondern einige Hilfsfunktionen zur Kalibrierung und Positionsberechnung bereitstellt.\\
+
+\noindent
+Während die Module bis Ebene drei überwiegend allgemeingültig entworfen sind, enthält das \verb|Linear Guide|-Modul anwendungsspezifische Funktionen. Als zentrales Element bildet dieses ein High-Level Interface zur Verwendung der Teilkomponenten \verb|FRAM|, \verb|Motor|, \verb|Endswitch|, \verb|LED|, \verb|Localization| und \verb|IO|. \\
+
+\noindent
+Die Module der obersten Abstraktionsebene bilden die direkten Schnittstellen zur Außenwelt. Das \verb|Manual Control|-Modul ermöglicht die manuelle Steuerung der Linearführung über die User-Buttons am Gehäuse und insbesondere die Umsetzung des Kalibrierungsprozesses. Auf der anderen Seite kann das System auch durch einen HTTP Webserver überwacht und gesteuert werden. Außerdem werden im \verb|REST|-Modul die Anfragen des Controllinos über die \verb|TCP Server|-Verbindung verarbeitet, wie bereits oben erwähnt. Zuletzt wurde ein \verb|Test|-Modul implementiert, dass die Funktionalitäten der Module auf Ebene drei verifiziert. Dazu wurde ein einfaches Batch-Skript geschrieben, das die einzelnen Testcases auflistet und die Auswahl über UART an den  Mikrocontroller sendet, sodass im \verb|Test|-Modul eine entsprechende Funktion ausgeführt wird. In den nachfolgenden Abschnitten wird genauer auf einige Module eingegangen, beginnend mit dem untersten Abstraktionslevel.
 
 \subsection{IO-Modul}
 Dieses Modul soll den lesenden und schreibenden Zugriff auf jegliche GPIO-Pins erleichtern, die zur Kontrolle jeglicher Steuerelemente angeschlossen wurden. Allgemein besteht das System aus analogen und digitalen Sensoren bzw. Aktuatoren. Für jede Form wurde eine repräsentative Struktur definiert, in der alle relevanten Daten zusammengefasst werden.
@@ -67,10 +77,16 @@ void IO_Convert_from_ADC(IO_analogSensor_t *s) {
 }
 \end{lstlisting}
 In umgekehrter Weise funktioniert die Umwandlung eines gewünschten Wertes in einen quantisierten Spannungswert für einen analogen Aktuator mithilfe einer entsprechenden Struktur \verb|IO_analogActuator_t|. \\
+
+\noindent
 Die Module \verb|LED|, \verb|Button| und \verb|Endswitch|, repräsentieren physische Komponenten, die jeweils durch einen einfachen digitalen Pin angesteuert werden und enthalten daher lediglich Wiederverwendungen der Funktionen \verb|IO_digitalWrite()|, um eine LED ein und auszuschalten, \verb|IO_digitalRead_state_changed()|, um einen Knopfdruck zu erfassen oder \verb|IO_digitalRead()|, um den Zustand eines Endschalters zu lesen. Dagegen wird der BG 45x30 SI Gleichstrommotor aufgrund seiner internen Regelung durch mehrere verschiedene Ein- und Ausgänge angesteuert.
 \subsection{Motor-Modul}
 Die Aufgabe des Motors ist, die Segelstellung entlang der Linearführung anzupassen. Dazu ermöglichen dessen digitale Eingänge gemäß Tabelle \ref{tab:digitale_Eingaenge} eine flexible Einstellung der Drehzahl und -Richtung. Alternativ zu den konfigurierbaren fixen Geschwindigkeiten 1 und 2 kann mit dem analogen Eingang auch eine beliebige Drehzahl dynamisch vorgeben werden. Damit konnte eine Drehzahlrampe realisiert werden, die einen sanfteren Brems- und Beschleunigungsvorgang gewährleistet.\\
+
+\noindent
 Über die digitalen Ausgänge kann der Ist-Zustand überwacht werden, darunter die aktuelle Drehrichtung und ob ein Fehler vorliegt. Zusätzlich kann durch ein Puls-Signal mit 12 Pulsen pro Umdrehung auf die Drehzahl geschlossen werden. Da der Motor in diesem Fall jedoch unter Drehzahlregelung betrieben wird, kann, sofern kein Fehlersignal vorliegt, von einer ausreichend präzisen Einhaltung der eingestellten Drehzahl ausgegangen werden. Dennoch ist das Puls-Signal von zentraler Bedeutung, da aufgrund der Gewindesteigung der Linearführung und der Anzahl der Pulse ausgehend von einem Endpunkt die aktuelle Position und somit die Segelstellung ermittelt werden kann. Das Zählen der Pulse geschieht jedoch der Thematik entsprechend in einer Funktion des \verb|Localization|-Moduls, die durch einen externen Interrupt am zuständigen GPIO-Pin von steigenden Flanken getriggert wird.\\
+
+\noindent
 Orientiert an der Architektur des \verb|IO|-Moduls dient auch hier eine Struktur als gemeinsamer Zugriffspunkt aller relevanter Daten des Motors:
 \begin{lstlisting}[language=C, caption={Struktur des Motors}, label={lst:motor}]
 typedef struct {
@@ -101,7 +117,7 @@ void Motor_set_function(Motor_t *motor, Motor_function_t func) {
 	}
 }
 \end{lstlisting}
-Im ersten Schritt wird überprüft, ob die Eingänge 0 \& 1 oder 2 \& 3 für die Funktion zuständig ist. Letzteres ist der Fall, wenn der Funktionsindex in der oberen Hälfte (\verb|>=4|) liegt. Das Beschreiben der beiden Eingänge erfolgt iterativ über eine For-Schleife, wobei die Pins durch die Zählvariable \verb|i| indiziert werden. Falls die Eingänge 2 \& 3 zuständig sind, muss folglich ein \verb|pin_offset| von zwei auf den Index addiert werden. Ebenfalls wird dann die Funktionsnummer mit vier subtrahiert, damit aus dem resultierenden Wert in \verb|function_bits| der zweistellige Binärwert errechnet werden kann. \\
+Im ersten Schritt wird überprüft, ob die Eingänge 0 \& 1 oder 2 \& 3 für die Funktion zuständig ist. Letzteres ist der Fall, wenn der Funktionsindex in der oberen Hälfte (\verb|>=4|) liegt. Das Beschreiben der beiden Eingänge erfolgt iterativ über eine For-Schleife, wobei die Pins durch die Zählvariable \verb|i| indiziert werden. Falls die Eingänge 2 \& 3 zuständig sind, muss folglich ein \verb|pin_offset| von zwei auf den Index addiert werden. Ebenfalls wird dann die Funktionsnummer mit vier subtrahiert, damit aus dem resultierenden Wert in \verb|function_bits| der zweistellige Binärwert errechnet werden kann.
 Durch die bitweise und-Verknüpfung mit zwei und einer anschließenden einfachen links-shift Operation (\acs{MSB}-first) werden die einzelnen Binärstellen der Reihe nach berechnet und mit \verb|IO_digitalWrite()| als neuen Zustand \verb|state| am passenden Pin geschaltet.
 \subsubsection{Drehzahlrampe}
 Darauf basierend wurden konkrete Funktionen zur Steuerung des Motors implementiert. Das Kernelement ist dabei die Realisierung der Drehzahlrampe innerhalb der Funktion \verb|Motor_speed_ramp()|, welche in der Hauptschleife des Programms durchgehend ausgeführt wird. Die Rampe kann dabei durch eine Funktion \verb|Motor_start_moving()| aktiviert werden, die mit \verb|Motor_set_function()| Links- oder Rechtslauf einstellt und anschließend das Flag \verb|ramp_activated| aus Listing \ref{lst:motor} setzt. Darauf hin wird der Drehzahlwert \verb|rpm_setpoint| in regelmäßigen Zeitschritten um einen konstanten Wert erhöht. Nach Konfiguration auf \textit{Drehzahlvorgabe} (Tabelle \ref{tab:digitale_Eingaenge}) kann die neue Soll-Drehzahl an dem analogen Eingang \verb|AIN_set_rpm| mit \verb|IO_analogWrite()| umgesetzt werden. Dies geschieht solange, bis die Zieldrehzahl \verb|ramp_final_rpm=normal_rpm| erreicht ist und die Rampe wieder deaktiviert wird. Ebenso kann die Rampe mit \verb|Motor_stop_moving()| für den Bremsvorgang aktiviert werden, wobei \verb|ramp_final_rpm=0| gesetzt wird und die Drehzahl in gleicher Weise schrittweise reduziert wird. Aufgrund einiger Tests wurde für die Rampe eine Schrittdauer von 13 ms und eine Schrittweite von 10 rpm mit einer Normaldrehzahl von 1600 rpm festgelegt, sodass sich folgender zeitlicher Verlauf ergibt:
@@ -125,8 +141,49 @@ Damit später eine bestimmte Stellung angefahren werden kann, muss die aktuelle 
 \end{figure}
 \noindent
 Die Eintrittsbedingung der Kalibrierung ist das Einschalten des manuellen Betriebsmodus durch den Kippschalter am Gehäuse oder alternativ über den Webserver. Aus dem Ausgangszustand heraus muss der Knopf \textit{Speichern/Bestätigen} aus Abbildung \ref{fig:Bedienung} gedrückt werden, um die automatische Kalibrierung einzuleiten. Dies ist mit dem starten des Motors in Vorwärtsrichtung und dem Übergang in Zustand 1 verbunden. Anschließend wird der vordere Endschalter abgefragt, bis dieser aktiviert wird und die Endposition erreicht ist. Von dieser Position aus beginnt die Pulszählung, damit nach Ankunft am anderen Ende die zurückgelegte Distanz berechnet werden kann. Aus dieser Distanz wird daraufhin die Mitte bestimmt und angefahren. Ist diese erreicht, kann zuletzt die tatsächliche Grenze manuell über die Knöpfe \textit{Trimmen} und \textit{Rollen} angefahren und mit dem erneuten Druck des einleitenden Knopfes bestätigt werden. Als Feedback blinkt dabei die LED \textit{Position gespeichert}. Ebenso aktivieren bzw. deaktivieren sich nun nach der Einteilung der Bereiche je nach Positionierung die entsprechenden LEDs (\textit{Im Trimmungsbereich} / \textit{Im Rollbereich}).\\
-Da die Grenze in Zustand 4 mit dem entsprechenden Knopf beliebig oft angepasst werden kann, ist es durch das selbe Signal nicht möglich, den kompletten Prozess von vorne zu starten, ohne das System neu zu booten. Daher wurde ein Timer mit einem periodischen Callback konfiguriert, der die Dauer des Knopfdrucks ermittelt und ab einer Druckdauer von 3s die Zustandsmaschine zurücksetzt, anstatt lediglich die Grenze zu überschreiben.
+
+\noindent
+Da die Grenze in Zustand 4 mit dem entsprechenden Knopf beliebig oft angepasst werden kann, ist es durch das selbe Signal nicht möglich, den kompletten Prozess von vorne zu starten, ohne das System neu zu booten. Daher wurde ein Timer mit einem periodischen Callback konfiguriert, der die Dauer des Knopfdrucks ermittelt und ab einer Druckdauer von 3s die Zustandsmaschine zurücksetzt, anstatt lediglich die Grenze zu überschreiben. Nach Abschluss der Kalibrierung kann in den Automatikbetrieb gewechselt werden, indem der Controllino aufgrund der bereitgestellten Daten regelmäßig die optimale Segelstellung neu berechnet und an den stm32 zurückgibt. Der nächste Abschnitt beschäftigt sich damit, wie genau die gewünschte Segelstellung in eine Position auf der Linearführung umgerechnet wird. 
 \subsubsection{Umsetzung einer Rollung/Trimmung}
+Der Befehl einer Segelanpassung wird vom Controllino durch einen Modus (Rollen oder Trimmen) und eine Prozentzahl definiert. Abbildung \ref{fig:linearGuide} zeigt graphisch die Bedeutung dieser Angabe bezüglich der Positionierung an der Linearführung.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{images/Software/LinearGuide.png}
+	\caption{Rollung und Trimmung an der Linearführung}
+	\label{fig:linearGuide}
+\end{figure}
+\noindent
+In diesem Beispiel weicht die Grenze zwischen den beiden Bereichen stark von der tatsächlichen Mitte ab, um die Möglichkeit deren manuellen Anpassung, wie zuvor erwähnt zu verdeutlichen. Zur besseren Lesbarkeit der aktuellen Position wird diese in einem Zwischenschritt in mm umgerechnet und die Mitte der Gesamtdistanz auf null zentriert. In dieser Einheit werden jegliche Positionsberechnungen durchgeführt. \\
+
+\noindent
+Für die Umwandlungen zwischen Prozent, mm und Pulsen werden alle relevanten Daten in einer gleichnamigen Struktur des \verb|Localization|-Moduls festgehalten. Listing \ref{lst:sailAdjustment} zeigt die Ermittlung der gewünschten Position in mm mithilfe dieser Struktur aufgrund eines Segelanpassungsbefehls:
+\begin{lstlisting}[language=C, caption={Berechnung der Zielposition}, label={lst:sailAdjustment}]
+void Linear_Guide_set_desired_roll_trim_percentage(
+	Localization_t *loc, uint8_t percentage, 
+	adjustment_mode_t mode
+)
+{
+	int8_t sign = mode == adjustment_mode_roll ? 1 : -1;
+	int32_t roll_trim_distance = loc->end_pos_mm
+	                           + sign * loc->center_pos_mm;
+	loc->desired_pos_mm = (int32_t) 
+	(- sign * (roll_trim_distance * (percentage / 100.0F)
+	           - sign * loc->center_pos_mm));
+}
+\end{lstlisting}
+Zunächst wird ein Vorzeichen \verb|sign| festgelegt, da der Rollbereich im negativen und der Trimmbereich im positiven mm Bereich liegt. Je nachdem welche Modus gewünscht ist, berechnet sich dessen Streckenanteil an der Linearführung aus der Distanz \verb|end_pos_mm| von der Mitte bis zu einem Endpunkt und dem Abstand \verb|center_pos_mm * sign| von der Mitte bis zur gewählten Grenze \verb|center_pos_mm|. Von dieser Strecke wird der gewünschte Anteil \verb|percentage| durch das Vorzeichen auf die richtige Seite orientiert. Zuletzt muss das addieren des Abstandes \verb|center_pos_mm * sign| wieder rückgängig gemacht werden.\\
+
+\noindent
+Nachdem die gewünschte Position in mm vorliegt, muss diese angesteuert werden. Dazu muss diese mit der aktuellen Position der Linearführung verglichen werden, welche sich nach der Kalibrierung aus der Pulszahl des Motors ergibt. Die Pulszahl wird wie bereits erwähnt durch den externen Interrupt am zuständigen GPIO-Pin regelmäßig aktualisiert und in der Struktur \verb|Localization_t| aus Listing \ref{lst:sailAdjustment} festgehalten. Die Positionsumrechnung ist in einer Funktion des \verb|Localization|-Moduls implementiert, wie nachfolgend gezeigt:
+\begin{lstlisting}[language=C, caption={Positionsberechnung aus dem Pulssignal des Motors}, label={lst:pulseToPos}]
+void Localization_update_position(Localization_t *loc)
+{
+	uint16_t abs_pos = loc->pulse_count
+	                 * loc->distance_per_pulse;
+	loc->current_pos_mm = abs_pos - loc->end_pos_mm;
+}
+\end{lstlisting}
+Dabei berechnet sich die zurückgelegte Strecke pro Puls \verb|distance_per_pulse| aus dem Quotienten der Gewindesteigung von 1.12 mm pro Umdrehung und der Pulsfrequenz des Motors von 12 Pulsen pro Umdrehung zu 0.093 mm pro Puls.
 \subsubsection{Optimierung der Bewegungsübergänge}
 - Berechnung des Bremsweges zum vorzeitigen Bremsen vor Erreichen der Endschalter
 - Einführung der gewünschten Position: entspricht bei automatischer Steuerung der Vorgabe und bei manueller Steuerung der Position zum Zeitpunkt des Loslassens der Steuerknöpfe
