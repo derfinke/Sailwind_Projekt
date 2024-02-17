@@ -208,6 +208,24 @@ Die Knöpfe und Kippschalter sind beide am Gehäuse montiert und sind Spritzwass
 \end{figure}
 
 \subsection{Probleme}
+Während der Nutzung und Bestückung des \ac{PCB}s sind einige Probleme aufgetreten. Diese waren auf das Design oder falsche Berechnungen zurückzuführen. Diese sollen im folgenden erklärt und korrigiert werden.
+\subsubsection{Schraubklemmen Löcher}
+Der erste Fehler der zu Beginn auffiel, war der Durchmesser der Löcher für die Schraubklemmen. Diese waren zwar groß genug dimensioniert um die Pins Schraubklemmen durchzuführen, aber waren nicht darauf angepasst Nieten einzufügen um die Pins elektrisch mit der Platine zu verbinden. Die Löcher waren ebenfalls zu klein um mit Drähten eine elektrische Verbindung zwischen dem Pin und dem Board herzustellen. Dies führte zu vielen elektrischen Kontakt Problemen und minderte die horizontale Stabilität der Schraubklemmen. Die Kontakt Probleme führten auch zur mangelnden Präzision der Analog Eingänge (siehe \autoref{Mangelnde_Präzision}).
+\subsubsection{Operationsverstärker}
+Der Operationsverstärker war zwar als Verstärkerschaltung richtig konfiguriert, allerdings musste die Verstärkerspannung von 3,3V auf 24V angehoben werden, um die 10V zu erreichen. Zusätzlich wurde der Spannungsteiler am Ausgang des OPVs entfernt und der erste Widerstand gegen einen 0Ohm Widerstand getauscht.
+\subsubsection{RS485 Bias Widerstände}
+Die RS485 Widerstände wurden anfänglich die empfohlenen Widerstände in der WSWD Dokumentation genutzt. Hier wurde bei einer Versorgungsspannung von 5V ein Busabschlusswiderstand $R_t$ von 120$\Omega$ und zwei Biaswiderstände $R_b$ von 750$\Omega$ empfohlen (vgl.\cite{WSWD} S.21). Dies sorgte allerdings für eine zu große Differenz der beiden Spannungen und der MAX3485 konnte nicht zwischen high und low unterscheiden. Deshalb wurde stattdessen nach der Anleitung des MAX3485 die Differenz zwischen beiden Potenzialen auf 0,2V begrenzt. Hierfür wurde auf die Berechnung in dem von Texas Instruments veröffentlichten Bericht: \glqq{}RS-485 failsafe for an idle bus\grqq{} zurückgegriffen. Hier lässt sich anhand der Formel: 
+\begin{equation}
+	R_b = (\frac{V_s}{V_{diff }}+1)\times27,8\Omega
+\end{equation}
+die beiden Bias Widerstände für das RS-485 Netzwerk berechnen. Dabei kam für die Eingesetzten Werte:
+\begin{equation}
+	R_b = (\frac{3,3V}{0,2V}+1)\times27,8\Omega = 486,5\Omega
+\end{equation}
+Der nächst kleinere Widerstand der Verfügbaren E24 Reihe wurde dann auf 470$\Omega$ gewählt. Damit konnte daraufhin erfolgreich über RS485 kommuniziert werden.
+\subsubsection{FRAM Anschlüsse}
+Die SPI Anschlüsse des FRAM Speicher wurden falsch verbunden dabei wurden die MOSI und MISO Leitung vertauscht was 
+\subsubsection{Präzision der Analogen Signale}
 Klemmenlöcher
 Operationsverstärker
 Widerstände RS485
