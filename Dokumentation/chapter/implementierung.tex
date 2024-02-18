@@ -264,14 +264,29 @@ static int8_t Localization_deserialize(
 \end{lstlisting}
 Im ersten Schritt wird ein Pointer \verb|data| im Speicherformat \verb|Loc_safe_data_t| entsprechend allokiert, damit diesem anschließend mit der c-Standard-Funktion \verb|memcpy()| die Daten aus dem Puffer übertragen werden können. Danach werden die einzelnen Werte der Reihe nach der Hauptstruktur des \verb|Localization|-Moduls übergeben. Zuletzt wird mit der \verb|state|-Variable überprüft, ob die Kalibrierung beim letzten Betrieb abgeschlossen wurde. Falls nicht, muss diese wiederholt werden, was das Rückgabe-Flag \verb|LOC_RECOVERY_RESET| signalisiert. War die Wiederherstellung der Lokalisierung erfolgreich, kann die aktuelle Position wie gehabt entsprechend \autoref{lst:pulseToPos} mit den Werten \verb|pulse_count| und \verb|end_pos_mm| ermittelt werden. Durch das Speichern der Grenze \verb|center_pos_mm| bleiben außerdem auch die zuvor eingestellten Trimm- und Rollbereiche erhalten.
 \subsubsection{Fehlerbehandlung}\label{subsubsec:Fehlerbehandlung}
-- Windfehler (von Controllino kommuniziert)
-	Konsequenz: 100 \% Rollen
-- Distanzfehler: Toleranz zwischen Distanzsensor und Puls-Berechnung überschritten?
-	Konsequenz: Anpassung der Puls-Zahl anhand Distanzmessung
-- Stromfehler: Überstrom an Stromsensor gemessen (Motorstrom)
-	Konsequenz: Notabschaltung: abrupter Motorstopp und jeden Steuerbefehl blockieren
-- Motorfehler: Fehlerausgang an Motor aktiv
-	Konsequenz: Notabschaltung
+Mithilfe der Sensoren und dem Fehlersignal des Motors können verschiedene Fehlerzustände identifiziert werden. \autoref{tab:Fehlerbehandlung} listet diese auf, stellt deren Bedingung dar und wie damit umgegangen wird.
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|c|}
+		                                                                                    \hline
+		\textbf{ID} & \textbf{Bezeichnung} & \textbf{Bedingung}  & \textbf{Behandlung}   \\ \hline
+		0           & Normal               & kein Fehler         & keine                 \\
+		            &                      & identifiziert       &                       \\ \hline
+		1           & Distanzfehler        & Toleranz von 1 cm   & Anpassung an Messwert \\
+		            &                      & zwischen Messwert   &                       \\
+		            &                      & und Pulsberechnung  &                       \\
+		            &                      & überschritten       &                       \\ \hline
+		2           & Windfehler           & max. Geschwindigkeit& Segel 100 \% einrollen\\
+		            &                      & überschritten       &                       \\ \hline
+		3           & Motorfehler          & Fehlersignal aktiv  & Notabschaltung        \\ \hline
+		4           & Stromfehler          & Stromsensorwert von & Notabschaltung        \\
+		            &                      & 4 A überschritten   &                       \\ \hline
+	\end{tabular}%
+	\caption{Fehlerzustände}
+	\label{tab:Fehlerbehandlung}
+\end{table}
+\noindent
+Bei jedem Fehler leuchtet als Feedback die LED \textit{Störung} aus \autoref{fig:Bedienung} auf. Während Fehler 1 vom System automatisch korrigiert werden kann, wird bei den anderen im Gegensatz dazu der weitere Betrieb solange blockiert, bis diese behoben sind. Die Toleranz zur maximalen Windgeschwindigkeit soll dabei vom Controllino festgelegt werden, da dort auch die Berechnungen zur optimalen Segelstellung durchgeführt werden. Daher wird der Windfehler auch nicht vom STM32 selbst gesetzt, sondern vom Controllino über das REST-Protokoll kommuniziert.
 \subsection{Windmessung mit dem Anemometer}
 \subsection{REST Interface}
 \subsection{Webserver}
