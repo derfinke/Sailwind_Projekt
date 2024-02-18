@@ -185,9 +185,21 @@ void Localization_update_position(Localization_t *loc)
 \end{lstlisting}
 Dabei berechnet sich die zurückgelegte Strecke pro Puls \verb|distance_per_pulse| aus dem Quotienten der Gewindesteigung von 1.12 mm pro Umdrehung und der Pulsfrequenz des Motors von 12 Pulsen pro Umdrehung zu 0.093 mm pro Puls.
 \subsubsection{Optimierung der Bewegungsübergänge}
-- Berechnung des Bremsweges zum vorzeitigen Bremsen vor Erreichen der Endschalter
-- Einführung der gewünschten Position: entspricht bei automatischer Steuerung der Vorgabe und bei manueller Steuerung der Position zum Zeitpunkt des Loslassens der Steuerknöpfe
- - Bremsvorgang mit aktueller Position abgleichen und ggfs. korrigieren
+Die Steuerung der Linearführung wird durch das Aktivieren von Drehzahlrampen gelöst, um sanfte Beschleunigungs- und Bremsvorgänge zu ermöglichen. Allerdings gibt es unter dem bisherigen Stand der Implementierung mehrere Situationen, in denen es trotzdem noch zu abrupten Bewegungsänderungen kommt. Eine davon stellt das Erreichen eines Endpunktes dar, denn die Aktivierung des Endschalters ist direkt mit einem hardware-geregelten Stopp des Motors verbunden. Ebenfalls kann die Rampenfunktion nicht zwischen Beschleunigung in Vorwärts- und Rückwärtsrichtung unterscheiden, weshalb bei ein Befehl in die umgekehrte Richtung sofort umgesetzt wird. Ein anderes vielleicht noch wichtigeres Problem ist, dass eine gewünschte Position nicht korrekt angefahren werden kann, da der Motor nach dem Stopp-Befehl aufgrund der Rampe noch ein kleines Stück weiterfährt.\\
+
+\noindent
+Die Lösung dieser Probleme liegt in der Ermittlung des Bremsweges sowie der Einführung einer Warteschlange für Zielpositionen. Darauf basierend wurde ein Algorithmus zur optimierten Koordination der Steuerbefehle implementiert, wie nachfolgend in Form eines Programmablaufplans dargestellt:
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{images/Software/ControlOptimization.png}
+	\caption{Optimierung der Steuerbefehle}
+	\label{fig:controlOptimization}
+\end{figure}
+\noindent
+Eine Soll-Position kann entweder durch die manuelle Steuerung oder durch eine gewünschte Segelstellung vom Controllino während des Automatikbetriebs vorgegeben werden. Hat sich diese geändert, kann es sein, dass sich die Linearführung wegen eines vorhergegangenen Befehls bereits in Bewegung befindet. In diesem Fall muss überprüft werden, ob sich die Soll-Position in Bewegungsrichtung vor der aktuellen Position befindet und ggfs. ob der Abstand aufgrund des Bremsweges noch erreichbar ist. Wenn diese Bedingungen nicht erfüllt sind, wird die Soll-Position nicht direkt als neues Ziel gesetzt sondern in einer Warteschlange gespeichert, wobei diese eigentlich nur eine einzelne Variable der \verb|Localization_t| Struktur ist. Damit die neue Soll-Position trotzdem so schnell wie möglich erreicht wird, bildet der in Fahrtrichtung nächste noch erreichbare Punkt die neue Zielposition. Danach kann der Steuerbefehl aktualisiert werden (Vorwärts, Rückwärts oder anhalten). Nach Vorantreiben der Rampe muss der Bremsweg aufgrund der aktuellen Drehzahl ebenfalls neu berechnet werden. Ist der Motor zum Stillstand gekommen, kann sofern vorliegend die Position aus der Warteschlange als neues Ziel vorgerückt werden. Zuletzt muss natürlich auch die aktuelle Position der Linearführung aktualisiert werden bevor der Kreislauf von neuem beginnt. \\
+
+\noindent
+Sollte eine Soll-Position auch nach einem Richtungswechsel aufgrund einer Fehlberechnung des Bremsweges verfehlt werden, wird diese einfach erneut in die Warteschlange gesetzt, sodass sich die exakte Position garantiert einpendelt. Zusammenfassend werden nun mithilfe der Ziel-Warteschlange abrupte Richtungswechsel vermieden und durch die Berechnung des Bremsweges kann das System rechtzeitig anhalten, um die Soll-Position präzise anzufahren oder den Aufprall am Endschalter zu verhindern.
 \subsubsection{Wiederherstellung der Position}
 1. Teil: FRAM Modul beschreiben...
 2. Teil: partielle und vollständige Herstellung der Lokalisierung erklären
@@ -200,6 +212,7 @@ Dabei berechnet sich die zurückgelegte Strecke pro Puls \verb|distance_per_puls
 	Konsequenz: Notabschaltung: abrupter Motorstopp und jeden Steuerbefehl blockieren
 - Motorfehler: Fehlerausgang an Motor aktiv
 	Konsequenz: Notabschaltung
+\subsection{Windmessung mit dem Anemometer}
 \subsection{REST Interface}
 \subsection{Webserver}
 
