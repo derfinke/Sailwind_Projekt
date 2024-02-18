@@ -1,5 +1,5 @@
 \section{Hardware}
-Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noch kein komplett Zusammengebauter Prototyp in dem alle Teile des Projektes zusammenfinden. Die für diese Arbeit relevante Linearführung ist bereits als eigenstehndes Objekt zusammengebaut und wie in \autoref{fig:Systemaufbau} zusehen aufgebaut. Dabei wird die rotierende Bewegung eines BLDC Motors (Pink) mit der Hilfe eines Getriebes (Orange) und einer Gewindestange in eine Translatorische Bewegung umgewandelt, mit der der Schlitten (Hellblau) zwischen den beiden Stationären Punkten (Rot) hin und her bewegt werden kann. Die beiden Endschalter (Grün) dienen als Kollisionserkennung und können auch genutzt werden um den Bewegungsraum einzuschränken. Dabei können zwei Metallstangen (Braun) verschoben werden und geben damit vor wie viel Platz zwischen dem Schlitten und dem Stationären Elementen bleibt. Zusätzlich kann über einen Abstandssensor (dunkel Blau) die Position des Schlittens in Relation zum Abstandssensor bestimmt werden.\\
+Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noch kein komplett Zusammengebauter Prototyp in dem alle Teile des Projektes zusammenfinden. Die für diese Arbeit relevante Linearführung ist bereits als eigenstehendes Objekt zusammengebaut und wie in \autoref{fig:Systemaufbau} zusehen, aufgebaut. Dabei wird die rotierende Bewegung eines BLDC Motors (Pink) mit der Hilfe eines Getriebes (Orange) und einer Gewindestange in eine Translatorische Bewegung umgewandelt, mit der der Schlitten (Hellblau) zwischen den beiden Stationären Punkten (Rot) hin und her bewegt werden kann. Die beiden Endschalter (Grün) dienen als Kollisionserkennung und können auch genutzt werden um den Bewegungsraum einzuschränken. Dabei können zwei Metallstangen (Braun) verschoben werden und geben damit vor wie viel Platz zwischen dem Schlitten und dem Stationären Elementen bleibt. Zusätzlich kann über einen Abstandssensor (dunkel Blau) die Position des Schlittens in Relation zum Abstandssensor bestimmt werden.\\
 
 \noindent Die Linearführung soll später dazu genutzt werden um die Segel des Windkraftwerkes zu Trimmen und zu Rollen (siehe \autoref{???}). Zusätzlich zu dem präsentierten Aufbau soll sich auf dem Schlitten später ein Druckkraftsensor befinden der die Kraft auf die Rotorwelle messen soll. Dieser wurde allerdings zum Zeitpunkt der Arbeit noch nicht geliefert oder auf dem Prototypen angebracht. Getrennt vom Aufbau soll ebenfalls ein Anemometer an der Kuppel angebracht werden, das die Windrichtung und Geschwindigkeit misst.
 
@@ -37,10 +37,10 @@ Zu den Sensoren zählen die folgenden Komponenten:
 Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktioneren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
 
 \noindent\textbf{Optischer Abstandssensor}\newline
-Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über den das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
+Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
 
 \noindent\textbf{Anemometer}\\
-Das WSWD Anemometer wird genutzt um die Windrichtung als auch die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von bis zu 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen Ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Strom Signal oder als ein 0/2-8/10V Spannungs Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
+Das WSWD Anemometer wird genutzt um die Windrichtung und die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von bis zu 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen Ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Strom Signal oder als ein 0/2-8/10V Spannungs Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
 
 \noindent\textbf{Druckkraft-Sensor}\newline
 Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht Bestellt wurde. Dieser wurde aber dennoch mit eingeplant. Der Druckkraft Sensor kann ebenfalls mit den typischen 24V betrieben werden und hat dabei eine Stromaufnahme von ca. 12,5mA. Die Messwerte werden hier über eine Analoge 0-10V Schnittstelle übertragen.\\
@@ -52,7 +52,7 @@ Zu den Aktoren zählen die folgenden Komponenten:
 \end{itemize}
 
 \noindent\textbf{Gleichstrommotor}\newline
-Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da der Motor eine interne Regelung besitzt hat er eine getrennte Leistungs- und Logikversorgung. Der Motor an sich wird dabei über den Leistungsteil bestromt, während über den Logikteil dieser gesteuert werden kann und Feedback bereitstellt. Die Betriebsspannung der Leistungs- und Logikversorgung sind 24V, wobei der Motor einen maximal zulässigen Dauerstrom von 3,8A ausgesetzt sein darf. Die Logikversorung hat eine Stromaufnahme von 100mA. Die Kommunikation mit dem Motor findet über vier Digitale- und einen Analogen Eingang statt. Der Motor stellt Feedback zum aktuellen Status über drei Ausgänge bereit. Diese geben die Drehrichtung, aktuelle Störungen und die Drehgeschwindigkeit des Motors an.\\
+Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da der Motor eine interne Regelung besitzt, hat er eine getrennte Leistungs- und Logikversorgung. Der Motor an sich wird dabei über den Leistungsteil bestromt, während über den Logikteil dieser gesteuert werden kann und Feedback bereitstellt. Die Betriebsspannung der Leistungs- und Logikversorgung sind 24V, wobei der Motor einen maximal zulässigen Dauerstrom von 3,8A ausgesetzt sein darf. Die Logikversorung hat eine Stromaufnahme von 100mA. Die Kommunikation mit dem Motor findet über vier Digitale- und einen Analogen Eingang statt. Der Motor stellt Feedback zum aktuellen Status über drei Ausgänge bereit. Diese geben die Drehrichtung, aktuelle Störungen und die Drehgeschwindigkeit des Motors in Impulsen an. Die Bezeichnung und Funktionen dieser Eingänge sind in \autoref{tab:digitale_Eingaenge} und \autoref{tab:andere_Ausgaenge} dargestellt.\\
 % Please add the following required packages to your document preamble:
 % \usepackage{graphicx}
 \begin{table}[H]
@@ -73,17 +73,33 @@ Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da
 	\caption{Eingänge und Funktionen des BG 45x30 SI}
 	\label{tab:digitale_Eingaenge}
 \end{table}
-Hier oder später noch Ein und Ausgänge definieren in Tabelle bzw. in Text erwähnen
-\\
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{Name} & \textbf{Wertebereich} & \textbf{Funktion}      \\ \hline
+		Analog In                & 0-4092$\frac{U}{min}$                        & Drehzahlvorgabe/            \\ & 0-10V & Analogwert \\ \hline		Out 1                & 12$\frac{Impulse}{U}$                        & Aktuelle Drehzahl             \\ \hline
+		Out 2                & 1 = Störung; 0 = keine Störung                        &  Fehlerangabe            \\ \hline
+		Out 3              & 1 = Linkslauf; 0 = Rechtslauf                       &  Drehrichtung           \\ \hline
+	\end{tabular}%
+	\caption{Analoger Eingang und Digitale Ausgänge des BG 45x30 SI}
+	\label{tab:andere_Ausgaenge}
+\end{table}
 
 \noindent\textbf{Externe Relais}\newline
-Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der externen relais diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden.\\
+Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der zwei externen Relais, diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden. Sie könnten z.B zum auslösen einer Motorbremse genutzt werden.\\
 
 \noindent\textbf{Controllino}\newline
-Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Über diesen soll das hier zu entwerfende System, seine Befehle zur Segelausrichtung bekommen. Der Datenaustausch soll hier über eine Ethernet Schnittstelle stattfinden, um die Große Distanz zwischen Kuppel und Basis zu überbrücken.
+Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Über diesen soll das hier zu entwerfende System, seine Befehle zur Segelausrichtung bekommen. Der Datenaustausch soll hier über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis zu überbrücken.
 
 \subsubsection{Zusammenfassung und Übersicht}
 Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigte Stromversorgung sowie alle Schnittstellen sind dabei in \autoref{tab:uebersicht-externe-elemente} dargestellt. Dabei kann bereits entnommen werden, das es sehr sinnvoll ist die Platine auf ein 24V System auszulegen und diese auch mit dieser Spannung zu versorgen.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/System/Systemaufbau.drawio.png}
+	\caption{Blockschaltbild der benötigten Ein- und Ausgänge der Platine}
+	\label{fig:System_Aufbau}
+\end{figure}
 % Please add the following required packages to your document preamble:
 % \usepackage{graphicx}
 \begin{table}[H]
@@ -140,8 +156,16 @@ Zur Überwachung des Motor Stroms kommt ein Hallstromsensor zum Einsatz. Dieser 
 Die externen Komponenten sollen über Schraubklemmen direkt an die Platine angeschlossen werden. Je nach Querschnitt der Kabel wurde ein größeres oder kleineres Rastermaß gewählt um Platz auf der Platine einzusparen.
 \subsubsection{Analoge Eingänge}
 Um die Analogen Ausgänge des Abstandsensors und des Anemometers auszulesen wird das 4-20mA Stromsignal über einen Widerstand zu einem 0-3V Spannungssignal gewandelt das mit dem \ac{ADC} des Microcontrollers gelesen werden kann.
-\subsection{Gehäuse und Befestigung}
-Um die Platine die sich später in der Kuppel befinden soll, vor z.B Staub und Wasser zu schützen soll diese in einem Gehäuse untegebracht werden. Das Gehäuse sollte vorallem im Innenraum genug Platz bieten um Kabel an der Platine zu befestigen, eine Möglichkeit bieten die Platine darin zu befestigen und genug Platz auf der Oberfläche bieten um die Bedienoberfläche und die unterschiedlichen Kabel Durchführungen zu positionieren.
+\subsubsection{Gehäuse und Befestigung}
+Um die Platine die sich später in der Kuppel befinden soll, vor z.B Staub und Wasser zu schützen soll diese in einem Gehäuse untegebracht werden. Das Gehäuse sollte vorallem im Innenraum genug Platz bieten um Kabel an der Platine zu befestigen, eine Möglichkeit bieten die Platine darin zu befestigen und genug Platz auf der Oberfläche bieten um die Bedienoberfläche und die unterschiedlichen Kabel Durchführungen zu positionieren. Dabei wurde das Hammond Manufacturing RP1465 gewählt. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/Hardware/Platine_in_gehause.PNG}
+	\caption{3D Modell der Platine innerhalb des Gehäuses}
+	\label{fig:Gehaues_und_Platine}
+\end{figure}
+\noindent Dieses bietet genug Platz für die Platine und alle Kabeldurchführungen wie gut in \autoref{fig:Gehaues_und_Platine} zusehen ist. Es bietet ebenfalls die Möglichkeit einen zweiten Boden einzusetzen auf dem der Mikrocontroller und die Platine mit einer 3D gedruckten Befestigung angeschraubt werden können.
+Der komplette 
 \subsection{Platinen Schaltplan}
 \begin{figure}[H]
 	\centering
@@ -256,3 +280,6 @@ Dies wurde in 5 Messreihen wiederholt um die Reproduzierbarkeit zu verifizieren.
 	\label{fig:Messreihe_Abstand}
 \end{figure}
 \noindent Hier ist zu erkennen das der auf dem Display abgelese Abstand mit dem gemessenen Abstand übereinstimmt. Allerdings weichen sowohl der Strom als auch der Spannungswert ab, da die Steigung beider Messreihen nicht gleich zu der des Abstandssensor ist. An diesem ist es möglich eine Skalierung festzulgen. Dabei kann z.B festgelegt werden ab welchem Messwert das Ausgangssignal 4mA/20mA beantragen soll (vgl. \cite{EIO104_Manual}, S.6). Da das Display den korrekten Wert anzeigt, aber ein falscher Strom Wert ausgegeben wird kann davon ausgegangen werden das der Konverter falsch eingestellt ist. Dies konnte im Zuge dieser Arbeit nicht behoben werden, da ein entsprechendes IO-Link Master Gerät nicht verfügbar war.
+\subsubsection{Präzision der Analogen Signale}
+Neben den Problemen mit den Abstandssensor wurden ebenfalls leicht abweichende Werte in den anderen Analog Signalen festgestellt. Beginnend mit den Strom Signalen, kann der ausgelesene Wert mit der Präzision des Widerstandes zusammenhängen, da diese mit 1\% Genauigkeit immer noch große Temperaturabweichungen aufweisen können. Die schlechten Kontakte tragen ebenfalls zur Ungenauigkeit bei. Speziell bei dem Stromsensor kann es sich ebenfalls um ein positionierungs Problem handeln, da die Verbunden Spuren für optimale Präzision im 45° Winkel zu den Sensor Pins stehen sollten. Um Präzision zu verbessern sollten zusätzlich zu den Präzisieren Widerstände ebenfalls Ferrite eingesetzt werden. Diese verhalten sich ähnlich wie Spulen und filtern hoch Frequente Signale. In Kombination mit den bereits genutzen Kondensatoren sollten diese als LC-Filter funktionieren und einen Bandpass erzeugen.\\
+Bilder
