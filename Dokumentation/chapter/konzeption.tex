@@ -89,11 +89,14 @@ Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da
 \noindent\textbf{Externe Relais}\newline
 Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der zwei externen Relais, diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden. Sie könnten z.B zum auslösen einer Motorbremse genutzt werden.\\
 
+\noindent\textbf{Temperatursensor}\newline
+Ähnlich zu den Relais gibt es noch keine genaueren Informationen zu einem eventuell zum Einsatz kommenden Temperatursensor. Es wurde aber dennoch ein Analoger Eingang für eine 4-20mA Schnittstelle mit eingeplant für diesen.\\
+
 \noindent\textbf{Controllino}\newline
-Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Über diesen soll das hier zu entwerfende System, seine Befehle zur Segelausrichtung bekommen. Der Datenaustausch soll hier über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis zu überbrücken.
+Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Über diesen soll das hier zu entwerfende System, seine Befehle zur Segelausrichtung bekommen. Der Datenaustausch soll hier über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis zu überbrücken. Zusätzlich soll die Platine von diesem ebenfalls mit Strom versogt werden.
 
 \subsubsection{Zusammenfassung und Übersicht}
-Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigte Stromversorgung sowie alle Schnittstellen sind dabei in \autoref{tab:uebersicht-externe-elemente} dargestellt. Dabei kann bereits entnommen werden, das es sehr sinnvoll ist die Platine auf ein 24V System auszulegen und diese auch mit dieser Spannung zu versorgen.
+Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigte Stromversorgung sowie alle Schnittstellen sind dabei in \autoref{tab:uebersicht-externe-elemente} dargestellt. Die Verbindungen wurden ebenfalls in einem Blockschaltbild in \autoref{fig:System_Aufbau} zusammengefasst. Wobei alle blauen Pfeile die digitalen 24V Ein- und Ausgänge beschreiben.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/System/Systemaufbau.drawio.png}
@@ -119,6 +122,7 @@ Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigt
 			\textbf{Externes Relais 1} & \multicolumn{1}{l|}{OUT} & \multicolumn{1}{l|}{GND} & \multicolumn{9}{l|}{} \\ \hline
 			\textbf{Externes Relais 2} & \multicolumn{1}{l|}{OUT} & \multicolumn{1}{l|}{GND} & \multicolumn{9}{l|}{} \\
 			\hline
+			\textbf{Temperatur Sensor} & \multicolumn{1}{l|}{AOUT} & \multicolumn{10}{l|}{} \\ \hline
 			\textbf{Controllino} & \multicolumn{1}{l|}{Ethernet} & \multicolumn{10}{l|}{} \\ \hline
 		\end{tabular}%
 	}
@@ -126,7 +130,7 @@ Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigt
 	\label{tab:uebersicht-externe-elemente}
 \end{table}
 \subsection{Auswahl der Platinen Bauteile}
-Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser nun weiterverfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Hardwarekomponenten zu kommunizieren und diese mit Strom zu versorgen.
+Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser nun weiterverfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Sensoren und Aktoren zu kommunizieren und diese mit Strom zu versorgen.
 \subsubsection{Mikrocontroller}
 Die Auswahl des Mikrocontrollers wurde auf der Basis folgender Kriterien beschlossen:
 \begin{itemize}
@@ -139,24 +143,24 @@ Dabei gab es die Option den Chip als einzelnes Element direkt auf die selbst ers
 
 \noindent Durch die oben genannten Kriterien und die Entscheidung ein Entwicklerboard zu benutzen viel die Wahl auf das STM32 NUCLEO F439zi Board. Diese waren bereits an der HTWG Konstanz Verfügbar, sind durch den Softwaresupport von ST und ihrer eigenen Entwicklungsumgebung einfach zu Programmieren und Aufzusetzen. Außerdem bieten ihre Entwicklungsboards einen abbrechbaren Debugger und das Board kann damit auch außerhalb der Entwicklungsphase eingesetzt werden.
 \subsubsection{Relais}
-Um das auslösen eines Endschalters an den Mikrocontroller weiterzugeben, werden zwei 24V Relais genutzt die bei der Aktivierung der Spule ein 3,3V Signal an den Eingang des Mikrocontrollers weitergeben. Gleichzeitig wird durch das Umschalten des Relais der Eingang 1 oder 2 des Motors auf Null gesetzt. Diese geben die Drehrichtung an und stoppen den Motor sobald beide auf Null gesetzt sind. Da dieses System unabhängig von der Software des Mikrocontrollers agiert, dienen diese gleichzeitig als Ausfallsichere Aktoren.
+Um das auslösen eines Endschalters an den Mikrocontroller weiterzugeben, werden zwei 24V Relais benötigt die bei der Aktivierung der Spule ein 3,3V Signal an den Eingang des Mikrocontrollers weitergeben. Gleichzeitig soll durch die Relais der Eingang 1 oder 2 des Motors auf Null gesetzt. Diese geben die Drehrichtung an und stoppen den Motor sobald beide auf Null gesetzt sind. Da dieses System unabhängig von der Software des Mikrocontrollers agiert, sollen diese gleichzeitig als Ausfallsichere Aktoren dienen. Hierfür wurden die Omron G6S-2F 24DC Relais ausgesucht. Diese besitzen zwei Schaltbare Ausgänge und haben gleichzeitig einen kompakten Formfaktor.
 \subsubsection{Optokoppler}
-Um die restlichen 24V Aus- und Eingänge zu steueren oder auszulesen kommen Optokoppler zum Einsatz. Diese isolieren ähnlich zu Relais den 24V und 3,3V Schaltkreis und ermöglichen es durch einen kleinere Spannung eine größere Last zu schalten. Dabei werden insgesamt 9 benötigt um die digitalen Ein und Ausgänge des Motors und die beiden externen Relais zu schalten. Da es sich beim Ausgang 3? des Motors um ein Pulsierendes Signal zur Ermittelung der Drehgeschw. des Motors handelt wurde auf eine schnelle Schaltzeit der Optokoppler geachtet (hier Berechnung einfügen).
+Um die restlichen 24V Aus- und Eingänge zu steueren oder auszulesen, kommen Optokoppler zum Einsatz. Diese isolieren ähnlich zu Relais den 24V und 3,3V Schaltkreis. Dabei werden insgesamt 9 benötigt um die digitalen Ein und Ausgänge des Motors und die beiden externen Relais zu schalten. Da es sich beim Ausgang 3? des Motors um ein Pulsierendes Signal zur Ermittelung der Drehgeschwindigkeit des Motors handelt wurde auf eine schnelle Schaltzeit der Optokoppler geachtet. Zusätzlich sollte wie bei den Relais wieder ein kleiner Formfaktor vorliegen. Hierfür wurden die LTV-817S ausgesucht. Diese haben mit einer Typischen Schaltzeit von 3-18$\mu$s eine ausreichend Schelle Schaltzeit und ihr kleiner Formfaktor lässt sie gut auf der Platine unterbringen.
 \subsubsection{RS485 zu UART Konverter}
-Um das Anemometer über die RS485 Schnittstelle zu konfigurieren und Daten abzufragen wird ein zusätzlicher Baustein benötigt. Dieser Konvertiert das differenzielle RS485 Signal zu einem nicht differenziellen \ac{UART} Signal, das der Mikrocontroller untertsützt.
+Um das Anemometer über die RS485 Schnittstelle zu konfigurieren und Daten abzufragen wird ein zusätzlicher Baustein benötigt. Dieser Konvertiert das differenzielle RS485 Signal zu einem nicht differenziellen \ac{UART} Signal, das der Mikrocontroller untertsützt. Hier wurde der MAX3485CSA+CT-ND ausgesucht da dieser mit einer 3,3V Versorgungsspannung betrieben werden kann und mit bis zu 10$\frac{MB}{s}$ Datenübertragen kann.
 \subsubsection{FRAM}
-Da die neutrale Position des Segels dauerhaft gespeichert werden soll, wird ein nicht flüchtiger Speicherstein benötigt. Dabei ist der \ac{FRAM} einer der billigsten Speichermöglichkeiten für diesen Zweck. Es wurde die geringste Speichergröße gewählt, da die gespeicherten Daten jederzeit überschrieben werden kann. Der FRAM wird über \ac{SPI} angesteuert.
+Da die neutrale Position des Segels dauerhaft gespeichert werden soll, wird ein nicht flüchtiger Speicherstein benötigt. Dabei ist der \ac{FRAM} einer der billigsten Speichermöglichkeiten für diesen Zweck. Es wurde die geringste Speichergröße gewählt, da die gespeicherten Daten jederzeit, wie bei einem EEPROM Speicher, überschrieben werden könnem. Hier wurde der FM25L16B-GTR gewählt, dieser hat eine Speicher von 16Kbit und ist damit zum Speichern der Positionsdaten mehr als genügend. Da er über eine \ac{SPI} Schnittstelle angesteuert wird, sind die Schreib- und Lesegeschwindigkeiten sehr schnell. Ebenfalls ist die Lebenserwartung von 85Jahren des Speichers bei 20Mhz Taktfrquenz mehr als ausreichend.
 \subsubsection{Operations Verstärker}
-Um die Drehzahl des Motors vorgeben zu können, wird ein Analoges Signal im Bereich von 0-10V benötigt. Da der Mikrocontroller bei einer Versorgungsspannung von 5V maximal ein Analoges Signal von 3,3V Ausgeben kann, wird ein Operationsverstärker benötigt. Dieser soll mit der 24V Versorgungsspannung das Ausgangssignal auf bis zu 10V skalieren.
+Um die Drehzahl des Motors vorgeben zu können, wird ein Analoges Signal im Bereich von 0-10V benötigt. Da der \ac{DAC} des Mikrocontroller bei einer Versorgungsspannung von 5V maximal ein Analoges Signal von 3,3V Ausgeben kann \cite{STM32}, wird ein Operationsverstärker benötigt. Dieser soll mit einem 24V Offset Spannung das Ausgangssignal auf bis zu 10V skalieren. Hier gab es bis auf die maximal Spannung keine großen Anforderungen an den Operationsverstärker und es wurde der weitvebreitet LM2904QS ausgewählt.
 \subsubsection{DC/DC-Wandler}
-Um alle Komponenten zu versorgen Bedarf es insgesamt 3 verschieden Spannungspotenzialen: 24V, 5V und 3,3V. Um dies zu erreichen sollen alle externen Komponenten direkt mit den 24V versorgt werden. Der Mikrocontroller soll mit den 5V versorgt werden, da er somit auch ohne Debugger Erweiterung genutzt werden kann. Hierfür wird ein Step Down konverter genutzt der die 24V Versorgungsspannung auf 5V herunterbricht. Die 5V sollen daraufhin auf weitere 3,3V heruntergebrochen werden, um die sonstigen Bauteile mit dieser zu Versorgen.
+Um alle Komponenten zu versorgen Bedarf es insgesamt 3 verschieden Spannungspotenzialen: 24V, 5V und 3,3V. Um dies zu erreichen sollen alle externen Komponenten direkt mit den 24V versorgt werden. Der Mikrocontroller soll mit den 5V versorgt werden, da er somit auch ohne Debugger Erweiterung genutzt werden kann \cite{STM32}. Hierfür wird ein Step Down Konverter genutzt der die 24V Versorgungsspannung auf 5V herunterbricht. Die 5V sollen daraufhin auf weitere 3,3V mit einem Festspannungsregler heruntergebrochen werden, um die sonstigen Bauteile mit dieser zu Versorgen. Bei der Auswahl wurde darauf geachtet, dass der Konverter einen ausreichenden Strom zu Verfügung stellt ohne dabei dauerhaft unter Vollast zu laufen. Da der Mikrocontroller bis zu 250mA verbraucht musste darauf geachtet werden das der Konverter mehr als diesen Strom zu Verfügung stellt. Es wurde davon Ausgegangen das die restlichen Bauteile nicht mehr als zusätzliche 250mA verbrauchen. Aus diesem Grund wurde der R-78E5.0-0.5 Ausgewählt. Dieser stell bis zu 0,5A an Strom zu Verfügung und kann bei Bedarf mit der 1A Version ausgetauscht werden. Als Festspannungsregler wurde der LM3940IMP-3.3 gewählt. Dieser kann Eingangsspannung von bis zu 7.5V in eine Ausgangsspannung von 3,3V umwandeln und hat dabei einen durchsatz Strom von bis zu 1A. Damit genügt er den Anforderungen.
 \subsubsection{Strom Sensor}
-Zur Überwachung des Motor Stroms kommt ein Hallstromsensor zum Einsatz. Dieser wird kontiniuerlich abgefragt und kann bei einem zu großem Stromfluss z.B größer als 3,8A den Motor stoppen oder Warnungen Ausgeben.
+Zur Überwachung des Motor Stroms kommt ein Hallstromsensor zum Einsatz. Dieser ist im Gegensatz zu einem Resistiven Sensor genauer und isoliert den 24V und 3,3V Schaltkreis. Er sollte in der Lage sein den maximal zulässigen Motorstrom messen zu können. Da die meisten Hall Sensoren deutlich mehr als diesen messen können wurde sich für den TMCS1101A3BQDRQ1 entschieden. Dieser kann einen maximalen Strom von $\pm$11,25A messen. Der gemessen Strom wird als analoges 0-3,3V Signal ausgegeben.
 \subsubsection{Konnektoren}
-Die externen Komponenten sollen über Schraubklemmen direkt an die Platine angeschlossen werden. Je nach Querschnitt der Kabel wurde ein größeres oder kleineres Rastermaß gewählt um Platz auf der Platine einzusparen.
+Die externen Komponenten sollen über Schraubklemmen direkt an die Platine angeschlossen werden. Je nach Querschnitt der Kabel wurde ein größeres oder kleineres Rastermaß gewählt um Platz auf der Platine einzusparen. Dabei wurde als Standard Rastermaß 2,54mm gewählt und für die Kabel mit größerem Durchschnitt ein 3,5mm Rastermaß.
 \subsubsection{Analoge Eingänge}
 Um die Analogen Ausgänge des Abstandsensors und des Anemometers auszulesen wird das 4-20mA Stromsignal über einen Widerstand zu einem 0-3V Spannungssignal gewandelt das mit dem \ac{ADC} des Microcontrollers gelesen werden kann.
-\subsubsection{Gehäuse und Befestigung}
+\subsection{Gehäusebauteile}
 Um die Platine die sich später in der Kuppel befinden soll, vor z.B Staub und Wasser zu schützen soll diese in einem Gehäuse untegebracht werden. Das Gehäuse sollte vorallem im Innenraum genug Platz bieten um Kabel an der Platine zu befestigen, eine Möglichkeit bieten die Platine darin zu befestigen und genug Platz auf der Oberfläche bieten um die Bedienoberfläche und die unterschiedlichen Kabel Durchführungen zu positionieren. Dabei wurde das Hammond Manufacturing RP1465 gewählt. 
 \begin{figure}[H]
 	\centering
@@ -164,8 +168,20 @@ Um die Platine die sich später in der Kuppel befinden soll, vor z.B Staub und W
 	\caption{3D Modell der Platine innerhalb des Gehäuses}
 	\label{fig:Gehaues_und_Platine}
 \end{figure}
-\noindent Dieses bietet genug Platz für die Platine und alle Kabeldurchführungen wie gut in \autoref{fig:Gehaues_und_Platine} zusehen ist. Es bietet ebenfalls die Möglichkeit einen zweiten Boden einzusetzen auf dem der Mikrocontroller und die Platine mit einer 3D gedruckten Befestigung angeschraubt werden können.
-Der komplette 
+\noindent Dieses bietet genug Platz für die Platine und alle Kabeldurchführungen wie gut in \autoref{fig:Gehaues_und_Platine} zusehen ist. Es bietet ebenfalls die Möglichkeit einen zweiten Boden einzusetzen auf dem der Mikrocontroller und die Platine mit einer 3D gedruckten Befestigung angeschraubt werden können.\\
+
+\subsubsection{Bedienoberfläche}
+\noindent Die Bedienoberfläche besteht aus einer Reihe von Kippschaltern, Knöpfen und LEDs. Diese sind sind in \autoref{fig:Bedienung} dargestellt. Dabei soll die gewünschte Neutrale Position der Linearführung durch einen Kalibrierungsfahrt stattfinden. Dabei kann der Endnutzer über die Trimm und Roll Knöpfe zum gewünschten Mittelpunkt Navigieren und diesen mit dem dritten Knopf speichern. Anschließend kann mittels des Kippschalters in den Automatik Betrieb gewechselt werden in dem das betätigen der Knöpfe ignoriert wird.
+Eine Reihe von LEDs gibt Feedback über den aktuellen Zustand der Linearführung. Dabei wird konstant der aktuelle Betriebsmodus durch zwei LEDs angegeben. Ebenfalls wird die Position relativ zur festgelegten neutral Position durch zwei gelbe LEDs angegeben. Eine Störung in der Steuerung oder im Motor wird durch eine rote LED angegeben.\\
+Die Knöpfe und Kippschalter sind beide am Gehäuse montiert und sind durch Dichtungsringe Spritzwasser geschützt. Die Kabel werden über Dupont Stecker auf der Platine verbunden. Im Gegensatz dazu sind die LEDs direkt auf der Platine platziert und werden durch flexible Lichtleiter zur Außenseite des Gehäuses geführt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=1.0\textwidth]{images/Hardware/Bedienung.drawio.png}
+	\caption{HMI der Segel Steuerung}
+	\label{fig:Bedienung}
+\end{figure}
+\subsubsection{Kabelverschaubungen}
+Um die benötigten Kabel zu Platine zu führen wurden Kabelverschraubungen in die Seiten des Gehäuses eingelassen. In diese können die Isolierten Kabel eingeführt werden und die Adernkabel an die richtige Position innerhalb des Gehäuses verlegt werden. Die Kabelverschraubungen sorgen ebenfalls für eine Zugentlastung der Kabel an sich.
 \subsection{Platinen Schaltplan}
 \begin{figure}[H]
 	\centering
@@ -173,10 +189,11 @@ Der komplette
 	\caption{Gesamtschaltplan der Platine}
 	\label{fig:Schaltplan_gesamt}
 \end{figure}
-Der komplette Schaltplan ist in \autoref{fig:Schaltplan_gesamt} dargestellt und ist ebenfalls im Anhang \autoref{Anhang_Schaltplan} zu finden. Der Schaltplan ist in unterschiedliche Bereiche eingeteilt die die Gruppierung der Komponenten wiedergibt. Dabei ist das STM32F439zi Entwicklerboard zentral Positioniert und alle Bauteile und Komponeten um dieses verteilt. Bauteile die nur einfach Verbaut sind wie z.B der FL25L16B \acs{FRAM} (Unten Links) wurden nicht in Gruppen eingeteilt sondern direkt in der Gesamt Ansicht Positioniert. Dasselbe gilt auch für die Puffer Kondensatoren an den Analogen Aus- und Eingängen. Oben Links befindet sich die Spannungsversorgung der Platine und die \acs{DC}/DC Wandler. Überhalb des STM32 befinden sich die beiden Relais die an die Endschalter verbunden sind. Links außen befindet sich der \ac{BLDC} Motor der mit dem Operationsverstärker und den Optokoppler verbunden ist. Rechts befinden sich alle Analogen Sensoren, bis auf den Stromsensor. Dort ist ebenfalls der MAX3485 \acs{UART} Konvertierer zu sehen. Unterhalb des Mikrocontrollers befinden sich die Knöpfe und LEDS die das \acs{HMI} bilden. Im folgenden sollen exemplarisch die Motor, Oktokoppler und 
+Der komplette Schaltplan ist in \autoref{fig:Schaltplan_gesamt} dargestellt und ist ebenfalls im Anhang \autoref{Anhang_Schaltplan} zu finden. Der Schaltplan ist in unterschiedliche Bereiche eingeteilt die die Gruppierung der Komponenten wiedergibt. Dabei ist die STM32 Gruppe zentral Positioniert und alle Bauteile und Komponeten um diese verteilt. Bauteile die nur einfach Verbaut sind wie z.B der FL25L16B \ac{FRAM} (Unten Links) wurden nicht in Gruppen eingeteilt sondern direkt in der Gesamtansicht Positioniert. Oben Links befindet sich die Spannungsversorgung der Platine und die \ac{DC}/DC Wandler. Überhalb des STM32 befinden sich die beiden Relais die an die Endschalter verbunden sind. Links außen befindet sich der \ac{BLDC} Motor der mit dem Operationsverstärker und den Optokoppler verbunden ist. Rechts befinden sich alle Analogen Sensoren, bis auf den Stromsensor. Dort ist ebenfalls der MAX3485 \ac{UART} Konvertierer zu sehen. Unterhalb des Mikrocontrollers befinden sich die Knöpfe und LEDS die das \ac{HMI} bilden. Im folgenden sollen exemplarisch die Schaltungen für diese Gruppen genauer betrachtet werden. Der komplette Schaltplan ist ebenfalls im Anhang hinterlegt.
 \subsubsection{STM32F439zi Gruppe}
-Die STM32F
+Die STM32F439zi enthält alle Pins auf denen später die Erweiterungplatine aufsitzt. Hier wurden alle benötigten Pins nach außen geführt.
 \subsubsection{Motor Gruppe}
+In der Motorgruppe ist neben den Ein- und Ausgängen des BG 45x30 SI auch der Hall Stromsensor abgebildet. Alle digitalen Ein- und Ausgänge auch außerhalb der Motorgruppe sind durch 24V Zener Dioden geschützt die als Überspannungsschutz agieren. Die Spannungsversorgung der Platine und des Motors sind zusätzlich durch Sicherungen vor einem Überstrom geschützt, wie anhand des Stromsensors in \autoref{fig:Motor_gruppe }zu sehen ist.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/Hardware/Motor_Schaltplan.PNG}
@@ -191,15 +208,17 @@ Die STM32F
 	\caption{Schaltplan der Optokopplergruppe}
 	\label{fig:Optokoppler_gruppe}
 \end{figure}
-Die Optokoppler sind alle gleich Aufgebaut. Der Eingangswiderstand (links) begrenzt den Strom der im inneren verbauten LED auf eine laut Datenblatt spezifizierten Strom begrenzt. Ein Pulldown Widerstand auf der Ausgangsseite begrenzt den maximal erlaubten Strom zum Mikrocontroller.
-\subsubsection{Endschalter Gruppe}
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.0\textwidth]{images/Hardware/Endschalter_Schaltplan.PNG}
-	\caption{Schaltplan der Endschaltergruppe}
-	\label{fig:Endschalter_gruppe}
-\end{figure}
+Alle Optokopplerschaltungen der Gruppe sind gleich Aufgebaut. Der Eingangswiderstand (links) begrenzt den Strom der in der verbauten Infrarot LED des Optokopplers den Stromfluss auf der Ausgangsseite bestimmt. Ein Pulldown Widerstand auf der Ausgangsseite begrenzt den maximal erlaubten Strom zum Mikrocontroller und setzt den Eingang auf ein festgelegtes Potenzial.
 \subsubsection{Sensoren Gruppe}
+In der Sensoren Gruppe sind die Analogen Sensoren abgebildet. Hier ist gut zu erkennen wie die Strom Singale in Spannungs Signale von einem Widerstand umgewandelt werden. Für die 4-20mA Signale wurde dabei ein 150$\Omega$ Widerstand gewählt da damit bei einem maximalen Strom von 20mA fast die 3,3V erreicht werden:
+\begin{equation}
+	U = 20mA\times150\Omega = 3V
+\end{equation}
+Das Spannungssignal von dem Druckkraftsensor wird durch einen Spannungsteiler ebenfalls auf 0-3V skaliert:
+\begin{equation}
+	U_{Ausgang} = \frac{10V}{2300\Omega + 1000\Omega}\times1000\Omega = 3,03V
+\end{equation}
+Um die Analogen Signale stabiler zu halten und niedrige Frequenzen zu entfernen wurden für jedes Analoges Signal ebenfalls Keramik Puffer Kondensatoren mit einer Kapazität 22nF hinzugefügt.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/Hardware/Sensoren_Eingänge_Schaltplan.PNG}
@@ -207,6 +226,7 @@ Die Optokoppler sind alle gleich Aufgebaut. Der Eingangswiderstand (links) begre
 	\label{fig:Sensoren_Gruppe}
 \end{figure}
 \subsubsection{Buttons und LEDs Gruppe}
+Für die Buttons wurde eine Debounce Schaltung integriert, damit das Debouncing nicht über die Software geregelt werden muss. Hierbei wurde ein RC Filter genutzt. Beim drücken des Knopfes wird der Kondensator dabei zuerst entladen was zu einer langsam abfallend Spannung führt. Wird der Knopf losgelassen lädt sich dieser wieder auf. Somit kommt nie ein Sprung innerhalb der Spannung vor. Da die Debounce Zeit der Knöpfe typisch bei 0,1ms liegt wurde von einer Zeitkonstante $\tau$ = 10ms für den RC Filter ausgegangen. Die \ac{LED}s wurden je nach zulässigen Strom mit einem entsprechenden Widerstand versehen.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/Hardware/LEDS_und_buttons_schaltplan.PNG}
@@ -214,22 +234,14 @@ Die Optokoppler sind alle gleich Aufgebaut. Der Eingangswiderstand (links) begre
 	\label{fig:HMI_Gruppe}
 \end{figure}
 \subsection{\ac{PCB}}
+Das fertige PCB ist als 3D Modell in \autoref{fig:PCB_3D} dargestellt. Beim Positionieren der Komponenten wurde daraufgeachtet die 24V Komponenten von den 3,3V Komponenten zu trennen. Aus diesem Grund befinden sich die 24V Komponenten am Rand der Platine während die 3,3V Bauteile mehr im inneren der Platine Positioniert sind. Die Platine sitzt mit vier unterschiedlichen Pin Reihen auf dem Entwicklungsboard auf und führt die Pins auf die Oberseite der Platine. Die dicke der Spuren auf der Platine wurde durch den Strom, die Spannung und Länge bestimmt. Da der Hersteller der Platine vorgegeben hat, das die kleinste Spurbreite 0,2mm sein kann, reichte diese für die meisten Spuren aus. Die Spur über die der Motorstrom fließt ist dabei die einzige breitere, da diese bis zu ca. 4A standhalten muss.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/Hardware/Platine_Fertig_3D_ansicht(1).PNG}
 	\caption{3D Ansicht des fertigen PCBs}
 	\label{fig:PCB_3D}
 \end{figure}
-\subsection{\ac{HMI}}
-Das HMI besteht aus einer Reihe von Kippschaltern, Knöpfen und LEDs. Diese sind sind in \autoref{fig:Bedienung} dargestellt. Dabei soll die gewünschte Neutrale Position der Linearführung durch einen Manuellen Betrieb stattfinden. Dabei kann der Endnutzer über die Trimm und Roll Knöpfe zum gewünschten Mittelpunkt Navigieren und diesen mit dem dritten Knopf speichern. Anschließend kann mittels des Kippschalters in den Automatik Betrieb gewechselt werden in dem das betätigen der Knöpfe ignoriert wird.
-Eine Reihe von LEDs gibt Feedback über den aktuellen Zustand der Linearführung. Dabei wird konstant der aktuelle Betriebsmodus durch zwei LEDs angegeben. Ebenfalls wird die Position relativ zur festgelegten neutral Position durch zwei gelbe LEDs angegeben. Eine Störung in der Steuerung oder im Motor wird durch eine rote LED angegeben.\\
-Die Knöpfe und Kippschalter sind beide am Gehäuse montiert und sind Spritzwasser geschützt. Im Gegensatz dazu sind die LEDs direkt auf der Platine platziert und werden durch flexible Lichtleiter zur Außenseite des Gehäuses geführt.
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=1.0\textwidth]{images/Hardware/Bedienung.drawio.png}
-	\caption{HMI der Segel Steuerung}
-	\label{fig:Bedienung}
-\end{figure}
+
 
 \subsection{Probleme}
 Während der Nutzung und Bestückung des \ac{PCB}s sind einige Probleme aufgetreten. Diese waren auf das Design oder falsche Berechnungen zurückzuführen. Diese sollen im folgenden erklärt und korrigiert werden.
