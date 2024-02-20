@@ -1,5 +1,5 @@
 \newpage
-\section{Zusammenfassung}
+\section{Fazit und Ausblick}
 Für die Steuerung der Segel des Sailwind 4 Projekts konnte eine Platine entwickelt werden, welche die Hauptsteuerelemente über geeignete Schnittstellen mit dem STM32 Mikrocontroller als zentrale Recheneinheit verbindet. Mit dem passgenauen Einbau in ein staub- und spritzwassergeschütztes Gehäuse sollte das System den Anforderungen äußerer Bedingungen während des Betriebs an echten Segelwindmühlen genügen.\\
 
 \noindent
@@ -15,4 +15,8 @@ Zur Optimierung der Bewegungsabläufe während der Umsetzung neuer Steuerbefehle
 Durch die Auswertung der Distanz- und Stromsensoren, sowie dem Anemometer und den digitalen Ausgängen des Motors ist das System in der Lage, selbst Störungen zu identifizieren und entsprechende Gegenmaßnahmen einzuleiten. Allerdings konnte mit dem Stromsensor keine besonders präziser Messung erreicht werden. Bei dem Distanzsensor ergab sich eine Einschaltzeit von ca. 15 min, bis sich ein stabiler Wert einpendelt, was jedoch im Rahmen der Anforderungen liegt.\\
 
 \noindent
-Zuletzt wurde mit dem \texttt{REST}-Modul eine geeignete Schnittstelle implementiert, welche die Kommunikation zwischen der Steuereinheit und dem Controllino über eine Ethernet Verbindung ermöglicht. Dieser kann dadurch mit Statusinformationen der Linearführung sowie Daten zur Windgeschwindigkeit und -richtung versorgt werden, um darauf basierend mit einem Befehl zum Rollen oder Trimmen der Segel zu reagieren.
+Zuletzt wurde mit dem \texttt{REST}-Modul eine geeignete Schnittstelle implementiert, welche die Kommunikation zwischen der Steuereinheit und dem Controllino über eine Ethernet Verbindung ermöglicht. Dieser kann dadurch mit Statusinformationen der Linearführung sowie Daten zur Windgeschwindigkeit und -richtung versorgt werden, um darauf basierend mit einem Befehl zum Rollen oder Trimmen der Segel zu reagieren. \\
+
+\noindent
+Das Endprodukt dieser Arbeit kann für die Entwicklung des Sailwind 4 Projekts wiederverwendet werden. Dabei sollten weitere Tests an der Implementierung der Firmware durchgeführt werden, um die korrekte Funktion zu garantieren.
+
