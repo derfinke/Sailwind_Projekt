@@ -1,3 +1,4 @@
+\newpage
 \section{Software}
 Die Steuerung der Segel soll durch zwei verteilte Systeme erfolgen, die über eine Ethernet-Verbindung miteinander kommunizieren. Die Idee dahinter ist, die Berechnungen für die Ausrichtung der Segel in Abhängigkeit der Windstärke und -Richtung (Controllino) von der hardwarenahen Verarbeitung der Sensoren und Aktuatoren (STM32) logisch zu trennen. \\
 
@@ -289,7 +290,70 @@ Mithilfe der Sensoren und dem Fehlersignal des Motors können verschiedene Fehle
 Bei jedem Fehler leuchtet als Feedback die LED \textit{Störung} aus \autoref{fig:Bedienung} auf. Während Fehler 1 vom System automatisch korrigiert werden kann, wird bei den anderen im Gegensatz dazu der weitere Betrieb solange blockiert, bis diese behoben sind. Die Toleranz zur maximalen Windgeschwindigkeit soll dabei vom Controllino festgelegt werden, da dort auch die Berechnungen zur optimalen Segelstellung durchgeführt werden. Daher wird der Windfehler auch nicht vom STM32 selbst gesetzt, sondern vom Controllino über das REST-Protokoll kommuniziert.
 \subsection{Windmessung mit dem Anemometer}
 \subsection{REST Interface}
-\subsection{Webserver}
+Für die Kommunikation zwischen Controllino und STM32 wurde eine REST - Architektur gewählt. Dabei stellt die in der Arbeit entworfene Steuerplatine den Server dar, der dem Klienten, dem Controllino regelmäßig alle relevanten Daten zur Steuerung der Segelstellung mithile des GET Befehls liefert. Umgekehrt kann der Controllino mit PUT eine neu berechnete Roll- oder Trimmweite vorgeben. Die Daten werden dabei im JSON-Format übermittelt. Nachfolgend sind die Nutzlasten der Datenpakete aller möglichen GET und PUT Anfragen aufgelistet.
+ 
+\subsubsection{GET-Anfragen}
+\textbf{GET /data/status}
+\begin{lstlisting}[language=XML, caption={GET-Request 1}]
+{
+	"error": <(int) error_code>,
+	"operating_mode": <(int) 0/1 [manual/automatic]>,
+	"localized": <(boolean)>,
+}
+\end{lstlisting}
+\textbf{GET /data/adjustment}
+\begin{lstlisting}[language=XML, caption={GET-Request 2}]
+{
+	"sail_pos": <(int) pitch/roll [+/- 0...100 %]>
+}
+\end{lstlisting}
+\textbf{GET /data/sensors}
+\begin{lstlisting}[language=XML, caption={GET-Request 3}]
+{
+	"wind": {
+		"speed": <(int) speed[m/s]>,
+		"direction": <(int) direction[degree]>
+	},
+	"current": <(int) current[mA]>
+}
+\end{lstlisting}
+\textbf{GET /data/settings}
+\begin{lstlisting}[language=XML, caption={GET-Request 4}]
+{
+	"max_rpm": <(int) 400 - 2000>,
+	"max_distance_error": <(int) 5 - 50>
+}
+\end{lstlisting}
+
+\subsubsection{PUT-Anfragen}
+\textbf{PUT /data/status/error}
+\begin{lstlisting}[language=XML, caption={PUT-Request 1}]
+	{
+		"error": <(int) error_code>,
+	}
+\end{lstlisting}
+\textbf{PUT /data/adjustment}
+\begin{lstlisting}[language=XML, caption={PUT-Request 2}]
+{
+	"sail_pos": <(int) pitch/roll [+/- 0...100 %]>
+}
+\end{lstlisting}
+\textbf{PUT /data/status/operating\_mode}
+\begin{lstlisting}[language=XML, caption={PUT-Request 3}]
+{
+	"operating_mode": <(int) 0/1 [manual/automatic]>
+}
+\end{lstlisting}
+\textbf{PUT /data/settings}
+\begin{lstlisting}[language=XML, caption={PUT-Request 4}]
+{
+	"max_rpm": <(int) 400 - 2000>,
+	"max_distance_error": <(int) 5 - 50>
+}
+\end{lstlisting}
+
+
+
 
 
 
