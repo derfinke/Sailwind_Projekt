@@ -1,4 +1,3 @@
-\newpage
 \section{Software}
 Die Steuerung der Segel soll durch zwei verteilte Systeme erfolgen, die über eine Ethernet-Verbindung miteinander kommunizieren. Die Idee dahinter ist, die Berechnungen für die Ausrichtung der Segel in Abhängigkeit der Windstärke und -Richtung (Controllino) von der hardwarenahen Verarbeitung der Sensoren und Aktuatoren (STM32) logisch zu trennen. \\
 
@@ -205,7 +204,7 @@ Sollte eine Soll-Position auch nach einem Richtungswechsel aufgrund einer Fehlbe
 Die in Kapitel \ref{subsubsec:Kalibrierung} beschriebene Kalibrierung ist ein zeitintensiver Prozess. Damit diese nicht bei jedem Programmneustart erneut durchgeführt werden muss, wurde ein FRAM Speicher in der Hardware verbaut, um dort alle relevanten Informationen zur Wiederherstellung der aktuellen Position hineinzuschreiben und bei Bedarf wieder auszulesen. Für diese beiden Funktionen wurde ein Benutzerinterface im \verb|FRAM|-Modul implementiert.\\
 
 \noindent
-hier evtl noch Modul behandeln...\\
+Das \ac{FRAM} Modul steuert den \ac{FRAM} über \ac{SPI} an. Der FRAM kann dabei 
 
 \noindent
 Damit die Daten beim Auslesen zur Initialisierung des Systems aktuell sind, werden diese bei jeder Positionsänderung an der entsprechenden Speicheraddresse überschrieben. Die für die Lokalisierung nötigen Informationen werden zur Serialisierung innerhalb einer separaten Struktur organisiert, wie nachfolgend gezeigt:
@@ -289,72 +288,80 @@ Mithilfe der Sensoren und dem Fehlersignal des Motors können verschiedene Fehle
 \noindent
 Bei jedem Fehler leuchtet als Feedback die LED \textit{Störung} aus \autoref{fig:Bedienung} auf. Während Fehler 1 vom System automatisch korrigiert werden kann, wird bei den anderen im Gegensatz dazu der weitere Betrieb solange blockiert, bis diese behoben sind. Die Toleranz zur maximalen Windgeschwindigkeit soll dabei vom Controllino festgelegt werden, da dort auch die Berechnungen zur optimalen Segelstellung durchgeführt werden. Daher wird der Windfehler auch nicht vom STM32 selbst gesetzt, sondern vom Controllino über das REST-Protokoll kommuniziert.
 \subsection{Windmessung mit dem Anemometer}
-\subsection{REST Interface}
-Für die Kommunikation zwischen Controllino und STM32 wurde eine REST - Architektur gewählt. Dabei stellt die in der Arbeit entworfene Steuerplatine den Server dar, der dem Klienten, dem Controllino regelmäßig alle relevanten Daten zur Steuerung der Segelstellung mithile des GET Befehls liefert. Umgekehrt kann der Controllino mit PUT eine neu berechnete Roll- oder Trimmweite vorgeben. Die Daten werden dabei im JSON-Format übermittelt. Nachfolgend sind die Nutzlasten der Datenpakete aller möglichen GET und PUT Anfragen aufgelistet.
- 
-\subsubsection{GET-Anfragen}
-\textbf{GET /data/status}
-\begin{lstlisting}[language=XML, caption={GET-Request 1}]
-{
-	"error": <(int) error_code>,
-	"operating_mode": <(int) 0/1 [manual/automatic]>,
-	"localized": <(boolean)>,
-}
-\end{lstlisting}
-\textbf{GET /data/adjustment}
-\begin{lstlisting}[language=XML, caption={GET-Request 2}]
-{
-	"sail_pos": <(int) pitch/roll [+/- 0...100 %]>
-}
-\end{lstlisting}
-\textbf{GET /data/sensors}
-\begin{lstlisting}[language=XML, caption={GET-Request 3}]
-{
-	"wind": {
-		"speed": <(int) speed[m/s]>,
-		"direction": <(int) direction[degree]>
-	},
-	"current": <(int) current[mA]>
-}
-\end{lstlisting}
-\textbf{GET /data/settings}
-\begin{lstlisting}[language=XML, caption={GET-Request 4}]
-{
-	"max_rpm": <(int) 400 - 2000>,
-	"max_distance_error": <(int) 5 - 50>
-}
-\end{lstlisting}
-
-\subsubsection{PUT-Anfragen}
-\textbf{PUT /data/status/error}
-\begin{lstlisting}[language=XML, caption={PUT-Request 1}]
-	{
-		"error": <(int) error_code>,
+Wie bereits in \autoref{Präzision_Analoge_Signale} aufgezeigt war die Präzision der Analogen Signale zwar ausreichend aber teilweise sehr ungenau. Aus diesem Grund wurde stattdessen die digitale RS485 Schnittstelle zur Übertragung der Windgeschwindigkeit und Windrichtung genutzt. Der WSWD bietet dabei mehrere Protokolle an, um diese Daten Formattiert zu übertragen. Dabei wurde das \ac{NMEA} Telegramm ausgewählt:
+% Please add the following required packages to your document preamble:
+% \usepackage{graphicx}
+\begin{table}[]
+	\centering
+	\resizebox{\textwidth}{!}{%
+		\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
+			\hline
+			\textbf{\$} & \textbf{<MSGTYPE>} & \textbf{,} & \textbf{<WR>} & \textbf{,} & \textbf{R} & \textbf{,} & \textbf{<WG>} & \textbf{,} & \textbf{<U>} & \textbf{,} & \textbf{<V>} & \textbf{*} & \textbf{<CRC>} & \textbf{<CR><LF>} \\ \hline
+			& Nachrichtentyp &  & Windrichtung &  &  &  & WIndgeschwindigkeit &  & Einheit &  & Status &  & CRC Prüfsumme & Telegramm Ende \\ \hline
+		\end{tabular}%
 	}
+	\caption{}
+	\label{tab:my-table}
+\end{table}
+
+Hier wird neben den Daten (<WR> und <WG>) ebenfalls die Gültigkeit der Messung (<V>) und die Einheit der Geschwindigkeit (<U>) übertragen. Das versenden von Befehlen geschieht dabei aber in einem von MESA selbsterstellten Format:
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|l|l|l|}
+		\hline
+		\textbf{\textless{}ID\textgreater{}} & \textbf{\textless{}CM\textgreater{}} & \textbf{\textless{}PARAM\textgreater{}} & \textbf{\textless{}CR\textgreater{}\textless{}LF\textgreater{}} \\ \hline
+		Geräte ID                            & Kommando                             & Parameter                               & Befehlsabschluss                                                \\ \hline
+	\end{tabular}
+	\caption{}
+	\label{tab:my-table}
+\end{table}
+Dieses wird im Normal Betrieb nicht benötigt, aber kann zur einmaligen Konfiguration des Sensors genutzt werden. Zur Konfiguration des Anemometers wurde z.b dabei der Befehl 42 angwewandt um die bereits Erklärten \ac{NMEA} Telegramme in einem regelmäßigen Abstand gesendet zu bekommen.
+
+\noindent Die Befehle an das Anemometer werden über \ac{UART} Gesendet und Empfangen. Das Signal wird dann vom MAX3485 zu RS485 konvertiert. Da RS485 nur eine Halbduplex Kommunikation zulässt muss vorher über das Setzen eines Pins immer zwischen Senden und Empfangen gewechselt werden. Dies wurde in zwei Funktionen: \verb|WSWD_enable_receive| und \verb|WSWD_enable_send| realisiert. Diese prüfen zuerst den Status des Pins und ändern diesen falls nötig. Diese werden in den Sende und Empfangs Funktionen genutzt. Diese Serialisieren/Deserialisieren eine Zeichenkette mit einem Cast zu \verb|uint8_t*| und Versenden/Empfangen diese über die \verb|HAL_UART_Transmit|/\verb|HAL_UART_Receive| Funktionen:
+\begin{lstlisting}[language=C, caption={Empfangen einer Nachricht vom WSWD}, label={lst:WSWDreceive}]
+uint8_t WSWD_receive
+(char* receive_buffer, uint8_t size_of_receive_buffer)
+{
+	WSWD_enable_receive();
+	if(HAL_UART_Receive(&huart2, (uint8_t*)receive_buffer, 
+	size_of_receive_buffer, WSWD_UART_TIMEOUT) != HAL_OK)
+	{
+		printf("error sending to WSWD\r\n");
+	}
+	return HAL_OK;
+}
 \end{lstlisting}
-\textbf{PUT /data/adjustment}
-\begin{lstlisting}[language=XML, caption={PUT-Request 2}]
+Beim Empfangen der Daten wird das komplette Telegramm als ein String gespeichert. Die Telegramm Struktur wird danach durch String Manipulation geprüft und die gesendeten Daten über die \verb|atof| Funktion zu einem nutzbaren \verb|float| Datentyp Konvertiert. Dasselbe Prinzip wird auch beim Versenden eines Befehles angewandt, nur das hier der String mit \verb|snprintf| zusammengesetzt wird.\\
+\subsection{\ac{REST} Interface}
+Das \ac{REST} Interface wird genutzt um mit dem Controllion zu kommunizieren. Zuerst wurden die hierfür benötigten \ac{HTTP} Befehle festgelegt. Da der Controllino als Client agieren soll und somit immer der Initiator der Kommunikation ist wurden die Befehle: \verb|GET| und \verb|PUT| als ausreichend angesehen. Die dabei mit versendeten Daten sollen im \ac{JSON} Format versendet werden. Die \verb|URL| auf die der Controllino über die \ac{API} zugreift wurden ebenfalls festgelegt. Diese wurden nach den unterschiedlichen Daten organisiert. Um z.B alle Daten abzufragen sendet der Controllino den Befehl: \verb|GET /data|. Sollte er speziellere Infos abfragen wollen, wie z.B die Segelposition, sendet er den Befehl: \verb|GET /data/adjustment|. Eine Übersicht aller validen \ac{URL}s und JSON Formatierungen ist im Anhang zu finden. Ein Beispiel für ein Antwort Paket für den \verb|GET /data/adjustment| ist in \autoref{} zu sehen.
+\begin{lstlisting}[language=C, caption={GET /data/adjustment Antwort Paket}, label={lst:JSONantwort}]
 {
 	"sail_pos": <(int) pitch/roll [+/- 0...100 %]>
 }
 \end{lstlisting}
-\textbf{PUT /data/status/operating\_mode}
-\begin{lstlisting}[language=XML, caption={PUT-Request 3}]
-{
-	"operating_mode": <(int) 0/1 [manual/automatic]>
-}
-\end{lstlisting}
-\textbf{PUT /data/settings}
-\begin{lstlisting}[language=XML, caption={PUT-Request 4}]
-{
-	"max_rpm": <(int) 400 - 2000>,
-	"max_distance_error": <(int) 5 - 50>
-}
-\end{lstlisting}
+Über den \verb|PUT| Befehl kann der Controllino einen Fehler setzen, eine gewünschte Position anfahren oder den Betriebsmodus der Steurung ändern. Zusätzlich kann auch der maximale Distanz Fehler und die maximale Drehzahl des Motors festgelegt werden.\\
 
+\noindent Zur Netzwerkkommunikation wurde der \ac{LWIP} Stack genutzt. Dieser beinhaltet allerdings keine bereits integrierte \ac{REST} \ac{API}. Aus diesem Grund wurde diese selbst implementiert. Dabei wurde ein \ac{TCP} Server erstellt. Dieser wird auf dem Mikrocntroller gehostet. Dieser nimmt die Rohdaten aus den Empfangen Paketen und speichert diese in einem Buffer. Der Buffer wird daraufhin an die \ac{REST} \ac{API} weitergegeben. Diese unterscheidet dabei zwischen den zwei möglich Befehlen und den akzeptierten \ac{URL}s. Falls diese nicht stimmen wird mit dem \ac{HTTP} Error code \verb|404 Not Found| geantwortet. Falls es sich um einen \verb|PUT| Befehl handelt, wird der mitgesendete JSON Payload auf eine Korrekte Formattierung geprüft. Hierfür wurde die cJson Bibliothek genutzt. Je nachdem ob die Formattierung stimmt wird mit \verb|200 OK| oder mit \verb|501 Not Implemented| bzw. \verb|400 Bad Request| geantwortet.\\
 
-
-
+\noindent Beim versenden einer Antwort auf eine \verb|GET| Request wird ebenfalls mit Hilfe der cJson Bibliothek ein Payload zusammengebaut, der die aktuellen angeforderten Werte beinhaltet. Der festgelegte Port 
+\subsection{Weboberfläche}
+Der Webserver stellt eine alternative zu der physikalischen Bedienungsoberfläche dar. Damit für Einstellungen, Wartung und Überwachung nicht jedes mal auf die Kuppel gestiegen werden muss, wurde ein Weboberfläche hinzugefügt.
+\subsubsection{Funktionalität}
+Die Weboberfläche, soll es einer Arbeitskraft erlauben den aktuellen Status, sowie Einstellungen des Gerätes abzufragen oder festzulegen. Dabei sollen dieselben Informationen, die der Controllino über die \ac{REST} \ac{API} abfragen kann auch auf diesem dargestellt werden. Zusätzlich dazu soll es hier auch möglich sein, dieselbe Funktionalität wie die Benutzeroberfläche zu bieten. Also sollte es möglich sein manuell über die Weboberfläche die Segel zu Rollen und zu Trimmen. Dazu gehört auch die Auslösung einer Kalibrierungsfahrt.
+Die Netzwerkeinstellungen sollten ebenfalls über die Weboberfläche gesetzt werden können. Dazu zählen die Aktivierung von DHCP, das festlegen einer IP-Adresse und das zurücksetzen dieser.
+\subsubsection{Webseiten}
+Die Webseiten wurden dabei nach ihrem Inhalt sortiert. Es wurden insgesamt sechs Seiten implementiert:
+\begin{itemize}
+	\item Index Seite
+	\item Positionsdaten Seite
+	\item Sensordaten Seite
+	\item Einstellungs Seite
+	\item Error Seite
+	\item Login Seite
+\end{itemize}
+Als Beispiel ist die Index Seite in \autoref{} dargestellt. Hier befindet sich die manuelle Steuerung zur Positionierung der Segel. Auf allen Seiten wird dabei am oberen Rand eine Navigations Bar angezeigt mit der zu den anderen Seiten Navigiert wird. Auf der Positionsdaten Seite ist der aktuelle Betriebsmodus und die Trimmung/Rollung der Segel zu finden. Die Sensordaten Seite zeigt alle aktuellen Werte der Sensoren an und wird regelmäßig aktualisiert. Die Einstellungsseite zeigt die aktuellen Einstellungen und macht es möglich den Betriebsmodus zu ändern, das Gerät neuzustarten und eine neue IP Adresse festzulegen oder \ac{DHCP} zu aktivieren. Die Login Seite hat aktuell keine Funktion und dient nur als Platzhalter. Hier könnten später je nach Nutzer die aufrufbaren Webseiten eingeschränkt werden. So kann z.B ein Service Mitarbeiter auf alle Einstellungen zugreifen, während ein normaler Nutzer nur z.B die Sensordaten abfragen kann. Die Error Seite wird nur bei einer Zeitüberschreitung der Anfrage angzeigt und hat keinen weiteren Nutzen.
+\subsubsection{Umsetzung}
+Die Webserver erhält dieselbe \ac{IP} Adresse wie die \ac{REST} \ac{API} ist aber auf dem Port 80 erreichbar. Im Gegensatz zum \ac{REST} interface bietet \ac{LWIP} hier bereits schon eine fertige Webserver implementierung. Dabei können Daten über die \ac{SSI} und \ac{CGI} Handler Übertragen werden. Beim Aufrufen einer Webseite werden die im \ac{HTML} Code festgelegten \ac{SSI} Tags mit den entsprechenden Sensor Daten oder Text mit einer Rückmeldung für den User ersetzt. Hierfür wurde ein zentrales \verb|switch-case| festgelegt, das nach der Nummer des \ac{SSI} Tags unterscheidet und den dementsprechend String einfügt. Der \ac{CGI} Handler wird für Textboxen oder für Buttons genutzt. Für Buttons wurden dafür \ac{HTML} Forms genutzt. Diese haben als \verb|Action| einen \ac{URI} wie in \autoref{label} zusehen ist. Wird jetzt z.B auf der Index Seite der Button \glqq{}Confirm\grqq{} angeklickt wird der String: \verb|/form_control.cgi?move=confirm| zum Mikrocontroller gesendet. Auf Basis dieses String kann daraufhin eine Aktion gewählt werden und z.B die Anzeige auf dem Webserver verändert werden. Textinputs funktionieren ähnlich nur das sie den Inhalt der Textbox nach der \ac{URI} beinhalten.
 
 
 
