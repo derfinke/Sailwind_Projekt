@@ -1,3 +1,4 @@
+\newpage
 \section{Hardware}
 \begin{figure}[H]
 	\centering
@@ -5,9 +6,9 @@
 	\caption{Simplifiziertes 3D Modell der Lineraführung}
 	\label{fig:Systemaufbau}
 \end{figure}
-Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noch kein komplett Zusammengebauter Prototyp in dem alle Teile des Projektes zusammenfinden. Die für diese Arbeit relevante Linearführung ist bereits als eigenstehendes Objekt zusammengebaut und wie in \autoref{fig:Systemaufbau} zusehen, aufgebaut. Dabei wird die rotierende Bewegung eines BLDC Motors (Pink) mit der Hilfe eines Getriebes (Orange) und einer Gewindestange in eine Translatorische Bewegung umgewandelt, mit der der Schlitten (Hellblau) zwischen den beiden Stationären Punkten (Rot) hin und her bewegt werden kann. Die beiden Endschalter (Grün) dienen als Kollisionserkennung und können auch genutzt werden um den Bewegungsraum einzuschränken. Dabei können zwei Metallstangen (Braun) verschoben werden und geben damit vor wie viel Platz zwischen dem Schlitten und dem Stationären Elementen bleibt. Zusätzlich kann über einen Abstandssensor (dunkel Blau) die Position des Schlittens in Relation zum Abstandssensor bestimmt werden.\\
+Da sich das Sailwind 4.0 Projekt noch in der Entwicklung befindet, existiert noch kein komplett zusammengebauter Prototyp in dem alle Teile des Projektes zusammenfinden. Die für diese Arbeit relevante Linearführung ist bereits als eigenständiges Objekt zusammengebaut und wie in \autoref{fig:Systemaufbau} zusehen, aufgebaut. Dabei wird die rotierende Bewegung eines BLDC Motors (Pink) mit der Hilfe eines Getriebes (Orange) und einer Gewindestange in eine translatorische Bewegung umgewandelt, mit welcher der Schlitten (Hellblau) zwischen den beiden stationären Punkten (Rot) hin und her bewegt werden kann. Die beiden Endschalter (Grün) dienen der Kollisionserkennung und können auch dazu genutzt werden, den Bewegungsraum einzuschränken. Dies gelingt durch das Verschieben der beiden Metallstangen (Braun), welche den Platz zwischen dem Schlitten und den stationären Elementen vorgeben. Zusätzlich kann über einen Abstandssensor (dunkel Blau) die Position des Schlittens in Relation zum Abstandssensor bestimmt werden.\\
 
-\noindent Die Linearführung soll später dazu genutzt werden um die Segel des Windkraftwerkes zu Trimmen und zu Rollen (siehe \autoref{???}). Zusätzlich zu dem präsentierten Aufbau soll sich auf dem Schlitten später ein Druckkraftsensor befinden der die Kraft auf die Rotorwelle messen soll. Dieser wurde allerdings zum Zeitpunkt der Arbeit noch nicht geliefert oder auf dem Prototypen angebracht. Getrennt vom Aufbau soll ebenfalls ein Anemometer an der Kuppel angebracht werden, das die Windrichtung und Geschwindigkeit misst.
+\noindent Die Linearführung soll später dazu genutzt werden um die Segel des Windkraftwerkes zu trimmen und zu rollen (siehe Kapitel \ref{sec:principles}). Zusätzlich zu dem präsentierten Aufbau soll sich auf dem Schlitten zukünftig ein Druckkraftsensor befinden, der die auf die Rotorwelle einwirkende Kraft messen soll. Dieser wurde allerdings zum Zeitpunkt der Arbeit noch nicht geliefert oder auf dem Prototypen angebracht. Getrennt vom Aufbau soll ebenfalls ein Anemometer an der Kuppel angebracht werden, das die Windrichtung und Geschwindigkeit misst.
 
 %Hier erwähnen was Platine alles für Aufgaben hat
 %Um die Segel des Windkraftwerkes jederzeit für maximale Effizienz eingestellt zu haben, müssen diese dynamisch Eingestellt werden können. Hierfür überwacht ein Controllino, die über Sensoren seine Umgebung und berechnet daraus die optimale Segel Einstellung. (KP sollte besser schon früher erwähnt werden/bzw wurde eventuell schon erwähnt)
@@ -20,7 +21,7 @@ Die Hardware der Steuerung zu der eben vorgestellten Linearführung soll dabei f
 	\item Ethernetkommunikation mit dem Controllino
 \end{itemize}
 
-\noindent Neben diesen Aufgaben soll die ganze Steuerung in einem zumindest Staub- und Spritzwassergeschützen Gehäuse untergebracht werden. Eine Vorgänger Gruppe hatte sich dieser Aufgabe bereits gewidmet, allerdings war der resultierende Prototyp leider nicht weiter verwendbar und hatte auch einen zu großen Formfaktor. Diese Probleme sollen in dieser Iteration ebenfalls behoben werden.
+\noindent Neben diesen Aufgaben soll die ganze Steuerung in einem zumindest staub- und spritzwassergeschützten Gehäuse untergebracht werden. Die Vorgängergruppe hatte sich dieser Aufgabe bereits gewidmet, allerdings wurde der resultierende Prototyp aufgrund der aufgetretenen Fehler und des zu großen Formfaktors nicht weiter verwendet. Diese Probleme sollen in dieser Iteration ebenfalls behoben werden.
 
 %Bei dem Entwurf der Hardware sind mehrere Dinge zu beachten. Da das Sailwind 4.0 Projekt noch in den Startschuhen steht, sind einige dieser Faktoren auch noch nicht klar Bestimmbar zum Zeitpunkt dieser Arbeit. Aus diesem Grund wurden an manchen Stellen die Design Kriterien freier oder unnötig Komplex ausgelegt.\\
 %
@@ -28,7 +29,7 @@ Die Hardware der Steuerung zu der eben vorgestellten Linearführung soll dabei f
 
 \label{Analyze_der_Aktoren_und_Sensoren}
 \subsection{Analyse der bestehenden Hardware Elemente}
-Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyse der anzusteurenden Hardware Komponenten. Diese wurden bereits von vorrausgehend Gruppen festgelegt. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, die Stromstärke und die Schnittstellen betrachtet. Durch die Spannung und die Stromaufnahme kann später die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
+Um eine geeignete Steuerplatine zu entwerfen, bedarf es einer Analyse der Steuerelemente, welche bereits von der vorhergegangenen Gruppe festgelegt wurden. Diese können in die Kategorien Sensoren und Aktoren gruppiert werden. Dabei wurden die benötigte Spannung, Stromstärke und die Schnittstellen betrachtet. Aufgrund der Spannung und Stromaufnahme kann die benötigte Spurenbreite auf der Platine bestimmt werden. Die Schnittstellen geben an, wie mit dem jeweiligen Gerät kommuniziert werden kann und welche davon benötigt werden.\\
 
 \subsubsection{Sensoren}
 Zu den Sensoren zählen die folgenden Komponenten:
@@ -40,16 +41,16 @@ Zu den Sensoren zählen die folgenden Komponenten:
 \end{itemize}
 
 \noindent\textbf{Induktiver Endschalter}\newline
-Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktioneren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
+Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktionieren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine typische Stromaufnahme von <10mA und eine Betriebsspannung von 9-30V.\\
 
 \noindent\textbf{Optischer Abstandssensor}\newline
-Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflektive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessen Abstand anzeigt und über das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer Analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
+Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine reflexive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessenen Abstand anzeigt und über das Gerät konfigurierbar ist. Er hat eine typische Stromaufnahme von ???mA und ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da dieser typischerweise nur in der Automobilbranche zum Einsatz kommt, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link zu einer analogen 4-20mA Schnittstelle mit der einfacher umgegangen werden kann. Dabei kommt ein zusätzlicher Stromverbrauch von ???mA hinzu.\\
 
 \noindent\textbf{Anemometer}\\
-Das WSWD Anemometer wird genutzt um die Windrichtung und die Windgeschwindigkeit zu messen. Dieser basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von bis zu 120mA. Er besitzt ebenfalls ein Heizelement um ihn bei sehr niedrigen Temperaturen nutzen zu können. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen Ausführung. In der zum Einsatzkommenden Ausführung, dem WSWD1, kann neben einer Analogen Schnittstelle die Daten auch über eine Digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können Analog entweder als ein 0/4-20/24mA Strom Signal oder als ein 0/2-8/10V Spannungs Signal ausgegeben werden. Die Digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
+Das WSWD Anemometer wird genutzt, um die Windrichtung und -geschwindigkeit zu messen. Dieses basiert ebenfalls auf einer 24V Versorgungsspannung und hat je nach Konfiguration und Ausführung eine Stromaufnahme von bis zu 120mA. Es besitzt ebenfalls ein Heizelement, das die Verwendung bei sehr niedrigen Temperaturen ermöglicht. Dieses wird allerdings im Einsatzszenario und im Prototyp nicht benötigt. Die Schnittstellen des Anenometers sind abhängig von dessen Ausführung. In der verwendeten Ausführung, dem WSWD1, können die Daten neben einer analogen auch über eine digitale RS485/RS422 Schnittstelle abgefragt werden. Die Werte können analog entweder als 0/4-20/24mA Strom- oder als 0/2-8/10V Spannungssignal ausgegeben werden. Die digitale Schnittstelle kann neben der Datenausgabe auch zur Konfiguration des Gerätes genutzt werden und bietet eine Vielzahl an Protokollen zur Kommunikation an.\\
 
 \noindent\textbf{Druckkraft-Sensor}\newline
-Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht Bestellt wurde. Dieser wurde aber dennoch mit eingeplant. Der Druckkraft Sensor kann ebenfalls mit den typischen 24V betrieben werden und hat dabei eine Stromaufnahme von ca. 12,5mA. Die Messwerte werden hier über eine Analoge 0-10V Schnittstelle übertragen.\\
+Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht bestellt wurde. Dieser wurde aber dennoch mit eingeplant. Der Druckkraft Sensor kann ebenfalls mit den typischen 24V betrieben werden und hat dabei eine Stromaufnahme von ca. 12,5mA. Die Messwerte werden hier über eine Analoge 0-10V Schnittstelle übertragen.\\
 \subsubsection{Aktoren}
 Zu den Aktoren zählen die folgenden Komponenten:
 \begin{itemize}
@@ -58,7 +59,7 @@ Zu den Aktoren zählen die folgenden Komponenten:
 \end{itemize}
 
 \noindent\textbf{Gleichstrommotor}\newline
-Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da der Motor eine interne Regelung besitzt, hat er eine getrennte Leistungs- und Logikversorgung. Der Motor an sich wird dabei über den Leistungsteil bestromt, während über den Logikteil dieser gesteuert werden kann und Feedback bereitstellt. Die Betriebsspannung der Leistungs- und Logikversorgung sind 24V, wobei der Motor einen maximal zulässigen Dauerstrom von 3,8A ausgesetzt sein darf. Die Logikversorung hat eine Stromaufnahme von 100mA. Die Kommunikation mit dem Motor findet über vier Digitale- und einen Analogen Eingang statt. Der Motor stellt Feedback zum aktuellen Status über drei Ausgänge bereit. Diese geben die Drehrichtung, aktuelle Störungen und die Drehgeschwindigkeit des Motors in Impulsen an. Die Bezeichnung und Funktionen dieser Eingänge sind in \autoref{tab:digitale_Eingaenge} und \autoref{tab:andere_Ausgaenge} dargestellt.\\
+Der Dunker BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da der Motor eine interne Regelung besitzt, sind Leistungs- und Logikversorgung getrennt. Der Motor an sich wird dabei über den Leistungsteil bestromt, während der Logikteil für die Steuerung und die Bereitstellung von Feedback-Daten zuständig ist. Die Betriebsspannung der Leistungs- und Logikversorgung liegt bei 24V, wobei der Motor einem maximal zulässigen Dauerstrom von 3,8A ausgesetzt sein darf. Die Logikversorung hat eine Stromaufnahme von 100mA. Die Ansteuerung des Motors findet über vier digitale- und einen analogen Eingang statt. Der Motor stellt Feedback zum aktuellen Status über drei Ausgänge bereit. Diese geben die Drehrichtung, aktuelle Störungen und die Drehgeschwindigkeit des Motors in Impulsen an. Die Bezeichnung und Funktionen dieser Eingänge sind in \autoref{tab:digitale_Eingaenge} und \autoref{tab:andere_Ausgaenge} dargestellt.\\
 % Please add the following required packages to your document preamble:
 % \usepackage{graphicx}
 \begin{table}[H]
@@ -93,16 +94,16 @@ Der Dunkermotor BG 45x30 SI Gleichstrommotor ist das Kernelement des Aufbaus. Da
 \end{table}
 
 \noindent\textbf{Externe Relais}\newline
-Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der zwei externen Relais, diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschalten werden. Sie könnten z.B zum auslösen einer Motorbremse genutzt werden.\\
+Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der zwei externen Relais, diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschaltet werden. Sie könnten z.B zum Auslösen einer Motorbremse genutzt werden.\\
 
 \noindent\textbf{Temperatursensor}\newline
-Ähnlich zu den Relais gibt es noch keine genaueren Informationen zu einem eventuell zum Einsatz kommenden Temperatursensor. Es wurde aber dennoch ein Analoger Eingang für eine 4-20mA Schnittstelle mit eingeplant für diesen.\\
+Ähnlich zu den Relais gibt es noch keine genaueren Informationen zu einem eventuell zum Einsatz kommenden Temperatursensor. Es wurde dennoch ein zusätzlicher analoger Eingang für eine entsprechende 4-20mA Schnittstelle eingeplant.\\
 
 \noindent\textbf{Controllino}\newline
-Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Über diesen soll das hier zu entwerfende System, seine Befehle zur Segelausrichtung bekommen. Der Datenaustausch soll hier über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis zu überbrücken. Zusätzlich soll die Platine von diesem ebenfalls mit Strom versogt werden.
+Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im System. Von diesem soll das in der Arbeit zu entwerfende System seine Befehle zur Segelausrichtung empfangen. Der Datenaustausch soll dabei über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis zu überbrücken. Zusätzlich soll die Platine vom Controllino mit Strom versorgt werden.
 
 \subsubsection{Zusammenfassung und Übersicht}
-Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigte Stromversorgung sowie alle Schnittstellen sind dabei in \autoref{tab:uebersicht-externe-elemente} dargestellt. Die Verbindungen wurden ebenfalls in einem Blockschaltbild in \autoref{fig:System_Aufbau} zusammengefasst. Wobei alle blauen Pfeile die digitalen 24V Ein- und Ausgänge beschreiben.
+Damit sind nun alle externen Steuerelemente abgedeckt. Die benötigte Stromversorgung sowie alle Schnittstellen sind in \autoref{tab:uebersicht-externe-elemente} dargestellt. Zusätzlich wurden die Verbindungen in einem Blockschaltbild in \autoref{fig:System_Aufbau} zusammengefasst, wobei alle blauen Pfeile die digitalen 24V Ein- und Ausgänge beschreiben.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/System/Systemaufbau.drawio.png}
@@ -136,7 +137,7 @@ Damit sind nun alle externen anzusteurenden Komponenten abgedeckt. Die benötigt
 	\label{tab:uebersicht-externe-elemente}
 \end{table}
 \subsection{Auswahl der Platinen Bauteile}
-Da nun klar ist welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser nun weiterverfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Sensoren und Aktoren zu kommunizieren und diese mit Strom zu versorgen.
+Da nun klar ist, welche Anforderungen durch die anzuschließenden Geräte bestehen, kann auf Basis dieser weiter verfahren werden. Dabei soll im folgenden ein geeigneter Mikrocontroller, sowie die nötigen Platinenkomponenten ausgewählt werden, um mit den Sensoren und Aktoren zu kommunizieren und diese mit Strom zu versorgen.
 \subsubsection{Mikrocontroller}
 Die Auswahl des Mikrocontrollers wurde auf der Basis folgender Kriterien beschlossen:
 \begin{itemize}
