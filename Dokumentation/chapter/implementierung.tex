@@ -204,7 +204,7 @@ Sollte eine Soll-Position auch nach einem Richtungswechsel aufgrund einer Fehlbe
 Die in Kapitel \ref{subsubsec:Kalibrierung} beschriebene Kalibrierung ist ein zeitintensiver Prozess. Damit diese nicht bei jedem Programmneustart erneut durchgeführt werden muss, wurde ein FRAM Speicher in der Hardware verbaut, um dort alle relevanten Informationen zur Wiederherstellung der aktuellen Position hineinzuschreiben und bei Bedarf wieder auszulesen. Für diese beiden Funktionen wurde ein Benutzerinterface im \verb|FRAM|-Modul implementiert.\\
 
 \noindent
-Das \ac{FRAM} Modul steuert den \ac{FRAM} über \ac{SPI} an. Der FRAM kann dabei 
+Das \ac{FRAM} Modul steuert den \ac{FRAM} über \ac{SPI} an. Der FRAM kann dabei über sechs Befehle gesteuert werden. Dabei wurden die Befehle: WREN(0000 0110b), RDSR(0000 0101b), READ(0000 0011b) und WRITE(0000 0010b) genutzt. Um auf den Speicher zu schreiben wird das \ac{WREN} Bit gesetzt. Hierfür wird der gleichnamige Befehl genutzt. Um zu überprüfen ob das Bit gesetzt wurde, wird mit dem Befehl RDSR das Status Register ausgelesen und das Bit 7 überprüft. Um auf den Speicher zu schreiben wird mit dem WRITE Befehl gefolgt von einer 12Bit Addresse der Speicherbereich ausgewählt. Die Darauffolgenden Bits werden in den Speicher geschrieben. Beim auslesen mit dem Befehl READ ist das vorgehen gleich, nur werden hier keine zusätzlichen Bits übertragen. In der Software wurden dabei die zwei Funktionen \verb|FRAM_write| und \verb|FRAM_read| erstellt die für einen high level access sorgen. Über diese kann ein Puffer in den \ac{FRAM} geschrieben werden oder die Daten ausgelesen werden. Die Serialisierung und Deserialisierung, sowie das setzen des \ac{WREN} Bits wird beim Aufruf übernommen.\\
 
 \noindent
 Damit die Daten beim Auslesen zur Initialisierung des Systems aktuell sind, werden diese bei jeder Positionsänderung an der entsprechenden Speicheraddresse überschrieben. Die für die Lokalisierung nötigen Informationen werden zur Serialisierung innerhalb einer separaten Struktur organisiert, wie nachfolgend gezeigt:
@@ -288,23 +288,14 @@ Mithilfe der Sensoren und dem Fehlersignal des Motors können verschiedene Fehle
 \noindent
 Bei jedem Fehler leuchtet als Feedback die LED \textit{Störung} aus \autoref{fig:Bedienung} auf. Während Fehler 1 vom System automatisch korrigiert werden kann, wird bei den anderen im Gegensatz dazu der weitere Betrieb solange blockiert, bis diese behoben sind. Die Toleranz zur maximalen Windgeschwindigkeit soll dabei vom Controllino festgelegt werden, da dort auch die Berechnungen zur optimalen Segelstellung durchgeführt werden. Daher wird der Windfehler auch nicht vom STM32 selbst gesetzt, sondern vom Controllino über das REST-Protokoll kommuniziert.
 \subsection{Windmessung mit dem Anemometer}
-Wie bereits in \autoref{Präzision_Analoge_Signale} aufgezeigt war die Präzision der Analogen Signale zwar ausreichend aber teilweise sehr ungenau. Aus diesem Grund wurde stattdessen die digitale RS485 Schnittstelle zur Übertragung der Windgeschwindigkeit und Windrichtung genutzt. Der WSWD bietet dabei mehrere Protokolle an, um diese Daten Formattiert zu übertragen. Dabei wurde das \ac{NMEA} Telegramm ausgewählt:
-% Please add the following required packages to your document preamble:
-% \usepackage{graphicx}
-\begin{table}[]
+Wie bereits in \autoref{Mangelnde_Präzision} aufgezeigt war die Präzision der Analogen Signale zwar ausreichend aber teilweise sehr ungenau. Aus diesem Grund wurde stattdessen die digitale RS485 Schnittstelle zur Übertragung der Windgeschwindigkeit und Windrichtung genutzt. Der WSWD bietet dabei mehrere Protokolle an, um diese Daten Formattiert zu übertragen. Dabei wurde das \ac{NMEA} Telegramm ausgewählt. Die Formatierung ist in \autoref{fig:NMEA_Protokoll} dargestellt.
+\begin{figure}[H]
 	\centering
-	\resizebox{\textwidth}{!}{%
-		\begin{tabular}{|l|l|l|l|l|l|l|l|l|l|l|l|l|l|l|}
-			\hline
-			\textbf{\$} & \textbf{<MSGTYPE>} & \textbf{,} & \textbf{<WR>} & \textbf{,} & \textbf{R} & \textbf{,} & \textbf{<WG>} & \textbf{,} & \textbf{<U>} & \textbf{,} & \textbf{<V>} & \textbf{*} & \textbf{<CRC>} & \textbf{<CR><LF>} \\ \hline
-			& Nachrichtentyp &  & Windrichtung &  &  &  & WIndgeschwindigkeit &  & Einheit &  & Status &  & CRC Prüfsumme & Telegramm Ende \\ \hline
-		\end{tabular}%
-	}
-	\caption{}
-	\label{tab:my-table}
-\end{table}
-
-Hier wird neben den Daten (<WR> und <WG>) ebenfalls die Gültigkeit der Messung (<V>) und die Einheit der Geschwindigkeit (<U>) übertragen. Das versenden von Befehlen geschieht dabei aber in einem von MESA selbsterstellten Format:
+	\includegraphics[width=\linewidth]{images/Software/NMEA_Telegramm_Aufbau.png}
+	\caption{Aufbau eines NMEA Telegramm aus \cite{WSWD}, S.61}
+	\label{fig:NMEA_Protokoll}
+\end{figure}
+\noindent Hier wird neben den Daten ($<WR>$ und $<WG>$) ebenfalls die Gültigkeit der Messung ($<V>$) und die Einheit der Geschwindigkeit ($<U>$) übertragen. Das versenden von Befehlen geschieht dabei aber in einem von MESA selbsterstellten Format:
 \begin{table}[H]
 	\centering
 	\begin{tabular}{|l|l|l|l|}
@@ -315,7 +306,7 @@ Hier wird neben den Daten (<WR> und <WG>) ebenfalls die Gültigkeit der Messung 
 	\caption{}
 	\label{tab:my-table}
 \end{table}
-Dieses wird im Normal Betrieb nicht benötigt, aber kann zur einmaligen Konfiguration des Sensors genutzt werden. Zur Konfiguration des Anemometers wurde z.b dabei der Befehl 42 angwewandt um die bereits Erklärten \ac{NMEA} Telegramme in einem regelmäßigen Abstand gesendet zu bekommen.
+\noindent Dieses wird im Normal Betrieb nicht benötigt, aber kann zur einmaligen Konfiguration des Sensors genutzt werden. Zur Konfiguration des Anemometers wurde z.b dabei der Befehl 42 angwewandt um die bereits Erklärten \ac{NMEA} Telegramme in einem regelmäßigen Abstand gesendet zu bekommen.
 
 \noindent Die Befehle an das Anemometer werden über \ac{UART} Gesendet und Empfangen. Das Signal wird dann vom MAX3485 zu RS485 konvertiert. Da RS485 nur eine Halbduplex Kommunikation zulässt muss vorher über das Setzen eines Pins immer zwischen Senden und Empfangen gewechselt werden. Dies wurde in zwei Funktionen: \verb|WSWD_enable_receive| und \verb|WSWD_enable_send| realisiert. Diese prüfen zuerst den Status des Pins und ändern diesen falls nötig. Diese werden in den Sende und Empfangs Funktionen genutzt. Diese Serialisieren/Deserialisieren eine Zeichenkette mit einem Cast zu \verb|uint8_t*| und Versenden/Empfangen diese über die \verb|HAL_UART_Transmit|/\verb|HAL_UART_Receive| Funktionen:
 \begin{lstlisting}[language=C, caption={Empfangen einer Nachricht vom WSWD}, label={lst:WSWDreceive}]
@@ -333,7 +324,7 @@ uint8_t WSWD_receive
 \end{lstlisting}
 Beim Empfangen der Daten wird das komplette Telegramm als ein String gespeichert. Die Telegramm Struktur wird danach durch String Manipulation geprüft und die gesendeten Daten über die \verb|atof| Funktion zu einem nutzbaren \verb|float| Datentyp Konvertiert. Dasselbe Prinzip wird auch beim Versenden eines Befehles angewandt, nur das hier der String mit \verb|snprintf| zusammengesetzt wird.\\
 \subsection{\ac{REST} Interface}
-Das \ac{REST} Interface wird genutzt um mit dem Controllion zu kommunizieren. Zuerst wurden die hierfür benötigten \ac{HTTP} Befehle festgelegt. Da der Controllino als Client agieren soll und somit immer der Initiator der Kommunikation ist wurden die Befehle: \verb|GET| und \verb|PUT| als ausreichend angesehen. Die dabei mit versendeten Daten sollen im \ac{JSON} Format versendet werden. Die \verb|URL| auf die der Controllino über die \ac{API} zugreift wurden ebenfalls festgelegt. Diese wurden nach den unterschiedlichen Daten organisiert. Um z.B alle Daten abzufragen sendet der Controllino den Befehl: \verb|GET /data|. Sollte er speziellere Infos abfragen wollen, wie z.B die Segelposition, sendet er den Befehl: \verb|GET /data/adjustment|. Eine Übersicht aller validen \ac{URL}s und JSON Formatierungen ist im Anhang zu finden. Ein Beispiel für ein Antwort Paket für den \verb|GET /data/adjustment| ist in \autoref{} zu sehen.
+Das \ac{REST} Interface wird genutzt um mit dem Controllion zu kommunizieren. Zuerst wurden die hierfür benötigten \ac{HTTP} Befehle festgelegt. Da der Controllino als Client agieren soll und somit immer der Initiator der Kommunikation ist wurden die Befehle: \verb|GET| und \verb|PUT| als ausreichend angesehen. Die dabei mit versendeten Daten sollen im \ac{JSON} Format versendet werden. Die \verb|URL| auf die der Controllino über die \ac{API} zugreift wurden ebenfalls festgelegt. Diese wurden nach den unterschiedlichen Daten organisiert. Um z.B alle Daten abzufragen sendet der Controllino den Befehl: \verb|GET /data|. Sollte er speziellere Infos abfragen wollen, wie z.B die Segelposition, sendet er den Befehl: \verb|GET /data/adjustment|. Eine Übersicht aller validen \ac{URL}s und JSON Formatierungen ist in \autoref{sec:REST} zu finden. Ein Beispiel für ein Antwort Paket für den \verb|GET /data/adjustment| ist in \autoref{lst:JSONantwort} zu sehen.
 \begin{lstlisting}[language=C, caption={GET /data/adjustment Antwort Paket}, label={lst:JSONantwort}]
 {
 	"sail_pos": <(int) pitch/roll [+/- 0...100 %]>
@@ -359,9 +350,28 @@ Die Webseiten wurden dabei nach ihrem Inhalt sortiert. Es wurden insgesamt sechs
 	\item Error Seite
 	\item Login Seite
 \end{itemize}
-Als Beispiel ist die Index Seite in \autoref{} dargestellt. Hier befindet sich die manuelle Steuerung zur Positionierung der Segel. Auf allen Seiten wird dabei am oberen Rand eine Navigations Bar angezeigt mit der zu den anderen Seiten Navigiert wird. Auf der Positionsdaten Seite ist der aktuelle Betriebsmodus und die Trimmung/Rollung der Segel zu finden. Die Sensordaten Seite zeigt alle aktuellen Werte der Sensoren an und wird regelmäßig aktualisiert. Die Einstellungsseite zeigt die aktuellen Einstellungen und macht es möglich den Betriebsmodus zu ändern, das Gerät neuzustarten und eine neue IP Adresse festzulegen oder \ac{DHCP} zu aktivieren. Die Login Seite hat aktuell keine Funktion und dient nur als Platzhalter. Hier könnten später je nach Nutzer die aufrufbaren Webseiten eingeschränkt werden. So kann z.B ein Service Mitarbeiter auf alle Einstellungen zugreifen, während ein normaler Nutzer nur z.B die Sensordaten abfragen kann. Die Error Seite wird nur bei einer Zeitüberschreitung der Anfrage angzeigt und hat keinen weiteren Nutzen.
+Als Beispiel ist die Index Seite in \autoref{fig:HTMLindex} dargestellt.
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=\linewidth]{images/Software/Html_index_seite.png}
+	\caption{Index Seite des Webservers}
+	\label{fig:HTMLindex}
+\end{figure}
+\noindent Hier befindet sich die manuelle Steuerung zur Positionierung der Segel. Auf allen Seiten wird dabei am oberen Rand eine Navigations Bar angezeigt mit der zu den anderen Seiten Navigiert wird. Auf der Positionsdaten Seite ist der aktuelle Betriebsmodus und die Trimmung/Rollung der Segel zu finden. Die Sensordaten Seite zeigt alle aktuellen Werte der Sensoren an und wird regelmäßig aktualisiert. Die Einstellungsseite zeigt die aktuellen Einstellungen und macht es möglich den Betriebsmodus zu ändern, das Gerät neuzustarten und eine neue IP Adresse festzulegen oder \ac{DHCP} zu aktivieren. Die Login Seite hat aktuell keine Funktion und dient nur als Platzhalter. Hier könnten später je nach Nutzer die aufrufbaren Webseiten eingeschränkt werden. So kann z.B ein Service Mitarbeiter auf alle Einstellungen zugreifen, während ein normaler Nutzer nur z.B die Sensordaten abfragen kann. Die Error Seite wird nur bei einer Zeitüberschreitung der Anfrage angzeigt und hat keinen weiteren Nutzen.
 \subsubsection{Umsetzung}
-Die Webserver erhält dieselbe \ac{IP} Adresse wie die \ac{REST} \ac{API} ist aber auf dem Port 80 erreichbar. Im Gegensatz zum \ac{REST} interface bietet \ac{LWIP} hier bereits schon eine fertige Webserver implementierung. Dabei können Daten über die \ac{SSI} und \ac{CGI} Handler Übertragen werden. Beim Aufrufen einer Webseite werden die im \ac{HTML} Code festgelegten \ac{SSI} Tags mit den entsprechenden Sensor Daten oder Text mit einer Rückmeldung für den User ersetzt. Hierfür wurde ein zentrales \verb|switch-case| festgelegt, das nach der Nummer des \ac{SSI} Tags unterscheidet und den dementsprechend String einfügt. Der \ac{CGI} Handler wird für Textboxen oder für Buttons genutzt. Für Buttons wurden dafür \ac{HTML} Forms genutzt. Diese haben als \verb|Action| einen \ac{URI} wie in \autoref{label} zusehen ist. Wird jetzt z.B auf der Index Seite der Button \glqq{}Confirm\grqq{} angeklickt wird der String: \verb|/form_control.cgi?move=confirm| zum Mikrocontroller gesendet. Auf Basis dieses String kann daraufhin eine Aktion gewählt werden und z.B die Anzeige auf dem Webserver verändert werden. Textinputs funktionieren ähnlich nur das sie den Inhalt der Textbox nach der \ac{URI} beinhalten.
+Die Webserver erhält dieselbe \ac{IP} Adresse wie die \ac{REST} \ac{API} ist aber auf dem Port 80 erreichbar. Im Gegensatz zum \ac{REST} interface bietet \ac{LWIP} hier bereits schon eine fertige Webserver implementierung. Dabei können Daten über die \ac{SSI} und \ac{CGI} Handler Übertragen werden. Beim Aufrufen einer Webseite werden die im \ac{HTML} Code festgelegten \ac{SSI} Tags mit den entsprechenden Sensor Daten oder Text mit einer Rückmeldung für den User ersetzt. Hierfür wurde ein zentrales \verb|switch-case| festgelegt, das nach der Nummer des \ac{SSI} Tags unterscheidet und den dementsprechend String einfügt. Der \ac{CGI} Handler wird für Textboxen oder für Buttons genutzt. Für Buttons wurden dafür \ac{HTML} Forms genutzt. Diese haben als \verb|Action| einen \ac{URI} wie in \autoref{lst:URI} zusehen ist. 
+\begin{lstlisting}[language=C, caption={GET /data/adjustment Antwort Paket}, label={lst:URI}]
+	<form action="/form_control.cgi">
+	<p>
+	<input type="submit" 
+	id="move" 
+	value="confirm" 
+	name="move" 
+	style="width:100px;height:40px;font-size:20px;">
+	</p>
+	</form>
+\end{lstlisting}
+Wird jetzt z.B auf der Index Seite der Button \glqq{}Confirm\grqq{} angeklickt wird der String: \verb|/form_control.cgi?move=confirm| zum Mikrocontroller gesendet. Auf Basis dieses String kann daraufhin eine Aktion gewählt werden und z.B die Anzeige auf dem Webserver verändert werden. Textinputs funktionieren ähnlich nur das sie den Inhalt der Textbox nach der \ac{URI} beinhalten.
 
 
 
