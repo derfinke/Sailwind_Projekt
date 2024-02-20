@@ -1,2 +1,22 @@
 \newpage
 \section{Fazit und Ausblick}
+Für die Steuerung der Segel des Sailwind 4 Projekts konnte eine Platine entwickelt werden, welche die Hauptsteuerelemente über geeignete Schnittstellen mit dem STM32 Mikrocontroller als zentrale Recheneinheit verbindet. Mit dem passgenauen Einbau in ein staub- und spritzwassergeschütztes Gehäuse sollte das System den Anforderungen äußerer Bedingungen während des Betriebs an echten Segelwindmühlen genügen.\\
+
+\noindent
+Die in den STM32 implementierte Firmware ermöglicht die manuelle Bedienung des Systems über die Schalter und Taster, die an der Oberfläche des Gehäuses angebracht sind, oder alternativ über einen Webserver, auf den über das Ethernet zugegriffen werden kann. Für visuelles Feedback sorgen mehrere LEDs, ebenfalls am Gehäuse, die z.B. über eine mögliche Störung, den Betriebsmodus oder den aktuell angefahrenen Bereich der Segelsteuerung (rollen oder trimmen) Auskunft geben. \\
+
+\noindent
+Um die Segel über die Linearführung präzise einstellen zu können, kann über die Bedienelemente ein automatischer Kalibrierungsprozess eingeleitet werden. Dieser ermittelt zunächst aufgrund des Puls-Signals des Motors und der Gewindesteigung der Linearführung durch anfahren der beiden Endschalter die aktuelle Position des Schlittens relativ zum Gesamtsteuerbereich und ermöglicht anschließend das Anpassen der Grenze zwischen rollen und trimmen. Damit dieser Prozess nicht bei jedem Neustart durchgeführt werden muss, wird die aktuelle Position und alle weiteren Daten der Kalibrierung bei jeder Bewegung in den FRAM-Speicher geschrieben. Bei Systemneustart signalisiert dann eine der LEDs, ob die Wiederherstellung der Position erfolgreich war und somit direkt in den Automatikbetrieb übergegangen werden kann. \\
+
+\noindent
+Zur Optimierung der Bewegungsabläufe während der Umsetzung neuer Steuerbefehle wurde eine beidseitige Drehzahlrampe für sanftere Beschleunigungs- und Bremsvorgänge des Motors implementiert. Die Verwendung der Rampe erforderte einen zusätzlichen Algorithmus, der abrupte Richtungsänderungen verhindert und gleichzeitig das exakte Anfahren einer Zielposition garantiert. Dies konnte mit der Berechnung von Bremswegen und der Koordination der Steuerbefehle mithilfe einer Zielwarteschlange gelöst werden.
+
+\noindent
+Durch die Auswertung der Distanz- und Stromsensoren, sowie dem Anemometer und den digitalen Ausgängen des Motors ist das System in der Lage, selbst Störungen zu identifizieren und entsprechende Gegenmaßnahmen einzuleiten. Allerdings konnte mit dem Stromsensor keine besonders präziser Messung erreicht werden. Bei dem Distanzsensor ergab sich eine Einschaltzeit von ca. 15 min, bis sich ein stabiler Wert einpendelt, was jedoch im Rahmen der Anforderungen liegt.\\
+
+\noindent
+Zuletzt wurde mit dem \texttt{REST}-Modul eine geeignete Schnittstelle implementiert, welche die Kommunikation zwischen der Steuereinheit und dem Controllino über eine Ethernet Verbindung ermöglicht. Dieser kann dadurch mit Statusinformationen der Linearführung sowie Daten zur Windgeschwindigkeit und -richtung versorgt werden, um darauf basierend mit einem Befehl zum Rollen oder Trimmen der Segel zu reagieren. \\
+
+\noindent
+Das Endprodukt dieser Arbeit kann für die Entwicklung des Sailwind 4 Projekts wiederverwendet werden. Dabei sollten weitere Tests an der Implementierung der Firmware durchgeführt werden, um die korrekte Funktion zu garantieren.
+
