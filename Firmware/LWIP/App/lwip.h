@@ -59,6 +59,8 @@ void MX_LWIP_Init(void);
  */
 void MX_LWIP_Process(void);
 
+void MX_LWIP_enable_dhcp(void);
+void MX_LWIP_enable_static_ip(void);
 /* USER CODE END 1 */
 #endif /* WITH_RTOS */
 

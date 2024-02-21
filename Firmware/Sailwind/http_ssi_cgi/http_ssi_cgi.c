@@ -14,19 +14,23 @@
 #include "WSWD.h"
 #include "Linear_Guide.h"
 #include "FRAM.h"
+#include "lwip.h"
+#include "tcp_server.h"
+#include "FRAM_memory_mapping.h"
 
-#define NUM_SSI_TAGS 10
-#define UINT_TAGS 4
+#define NUM_SSI_TAGS 12
+#define UINT_TAGS 3
 
-static IO_analogSensor_t *ssi_current_sensor = {0};
-static IO_analogSensor_t *ssi_distance_sensor = {0};
-static Linear_Guide_t *ssi_linear_guide = {0};
+static IO_analogSensor_t *ssi_current_sensor = { 0 };
+static IO_analogSensor_t *ssi_distance_sensor = { 0 };
+static Linear_Guide_t *ssi_linear_guide = { 0 };
 static uint8_t error_flag = 1;
-
-char const *TAGCHAR[] = { "current", "dism", "diss", "pitch", "roll", "windspd",
-    "winddir", "mode", "opmod", "error" };
+static uint8_t dhcp = 0;
+char const *TAGCHAR[] = { "current", "dism", "diss", "pos", "windspd",
+    "winddir", "mode", "opmod", "error", "maxrpm", "maxdel", "dhcp" };
 char const **TAGS = TAGCHAR;
 
+static void http_ssi_cgi_read_dhcp_state(void);
 /**
  * @brief Handles the CGI IP form
  * @param iIndex: Index which cgi handler was called
@@ -36,7 +40,7 @@ char const **TAGS = TAGCHAR;
  * @retval form: pointer to form
  */
 static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
-                          char *pcValue[]);
+                                 char *pcValue[]);
 
 /**
  * @brief Handles the CGI restart form
@@ -46,8 +50,8 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
  * @param pcValue: Value of Parameter
  * @retval form: pointer to form
  */
-static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
-                               char *pcValue[]);
+static const char* CGIRestart_Handler(int iIndex, int iNumParams,
+                                      char *pcParam[], char *pcValue[]);
 
 /**
  * @brief Handles the CGI mode switch form
@@ -58,7 +62,7 @@ static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[
  * @retval form: pointer to form
  */
 static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
-                            char *pcValue[]);
+                                   char *pcValue[]);
 
 /**
  * @brief Handles the CGI control form
@@ -68,23 +72,36 @@ static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
  * @param pcValue: Value of Parameter
  * @retval form: pointer to form
  */
-static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
-                               char *pcValue[]);
+static const char* CGIControl_Handler(int iIndex, int iNumParams,
+                                      char *pcParam[], char *pcValue[]);
+
+static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                  char *pcValue[]);
+
+static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                    char *pcValue[]);
+
+static const char* CGIdhcp_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                   char *pcValue[]);
 char name[30];
-tCGI CGI_FORMS[4];
-const tCGI FORM_IP_CGI = {"/form_IP.cgi", CGIIP_Handler};
-const tCGI RESTART_CGI = {"/form_restart.cgi", CGIRestart_Handler};
-const tCGI MODE_CGI = {"/form_operating_mode.cgi", CGIMode_Handler};
-const tCGI CONTROL_CGI = {"/form_control.cgi", CGIControl_Handler};
+static char NMEA_telegram[30];
+tCGI CGI_FORMS[7];
+const tCGI FORM_IP_CGI = { "/form_IP.cgi", CGIIP_Handler };
+const tCGI RESTART_CGI = { "/form_restart.cgi", CGIRestart_Handler };
+const tCGI MODE_CGI = { "/form_operating_mode.cgi", CGIMode_Handler };
+const tCGI CONTROL_CGI = { "/form_control.cgi", CGIControl_Handler };
+const tCGI RPM_CGI = { "/form_rpm.cgi", CGIrpm_Handler };
+const tCGI DELTA_CGI = { "/form_delta.cgi", CGIdelta_Handler };
+const tCGI DHCP_CGI = { "/form_dhcp.cgi", CGIdhcp_Handler };
 
 uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 
-  char NMEA_telegram[30];
   float Wind_speed;
   float Wind_dir;
   int32_t motor_pos;
-  uint8_t op_mode;
-  uint8_t sail_pos;
+  LG_operating_mode_t op_mode;
+  LG_sail_adjustment_mode_t sail_pos;
+  int8_t percentage;
 
   switch (iIndex) {
     case 0:
@@ -99,28 +116,15 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       break;
     case 2:
       IO_Get_Measured_Value(ssi_distance_sensor);
-      uint16_t distance = ssi_distance_sensor->measured_value;
+      Localization_parse_distance_sensor_value(
+          &ssi_linear_guide->localization, ssi_distance_sensor->measured_value);
+      uint16_t distance = ssi_linear_guide->localization.current_measured_pos_mm;
       (void) snprintf(pcInsert, iInsertLen, "%u", distance);
       break;
     case 3:
-      if(ssi_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_trim)
-      {
-        uint8_t roll_percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide);
-        (void) snprintf(pcInsert, iInsertLen, "%u", roll_percentage);
-      }
-      else{
-        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
-      }
-      break;
-    case 4:
-      if(ssi_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
-      {
-        uint8_t pitch_percentage = Linear_Guide_get_current_roll_trim_percentage(*ssi_linear_guide);
-        (void) snprintf(pcInsert, iInsertLen, "%u", pitch_percentage);
-      }
-      else{
-        (void) snprintf(pcInsert, iInsertLen, "%u", 0);
-      }
+      percentage = Linear_Guide_get_current_roll_pitch_percentage(
+          *ssi_linear_guide) * ssi_linear_guide->sail_adjustment_mode;
+      (void) snprintf(pcInsert, iInsertLen, "%i", percentage);
       break;
     case (UINT_TAGS + 1):
       WSWD_receive_NMEA(NMEA_telegram);
@@ -132,12 +136,12 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
       (void) snprintf(pcInsert, iInsertLen, "%.1f", Wind_dir);
       break;
     case (UINT_TAGS + 3):
-      sail_pos = ssi_linear_guide->operating_mode;
+      sail_pos = ssi_linear_guide->sail_adjustment_mode;
       switch (sail_pos) {
-        case 0:
+        case LG_sail_adjustment_mode_roll:
           (void) snprintf(pcInsert, iInsertLen, "%s", "roll");
           break;
-        case 1:
+        case LG_sail_adjustment_mode_pitch:
           (void) snprintf(pcInsert, iInsertLen, "%s", "pitch");
           break;
         default:
@@ -148,10 +152,10 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
     case (UINT_TAGS + 4):
       op_mode = ssi_linear_guide->operating_mode;
       switch (op_mode) {
-        case 0:
+        case LG_operating_mode_manual:
           (void) snprintf(pcInsert, iInsertLen, "%s", "manual");
           break;
-        case 1:
+        case LG_operating_mode_automatic:
           (void) snprintf(pcInsert, iInsertLen, "%s", "automatic");
           break;
         default:
@@ -159,7 +163,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
           break;
       }
       break;
-    case 9:
+    case 8:
       if (error_flag == 1) {
         (void) snprintf(pcInsert, iInsertLen, "%s", "<label hidden></label>");
       } else if (error_flag == 2) {
@@ -174,6 +178,29 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
             "<label><h3>Please enter a valid IP address in the specified format.</h3></label>");
       }
       break;
+    case 9:
+      (void) snprintf(pcInsert, iInsertLen, "%u",
+                      ssi_linear_guide->motor.normal_rpm);
+      break;
+    case 10:
+      (void) snprintf(pcInsert, iInsertLen, "%u",
+                      ssi_linear_guide->max_distance_fault);
+      break;
+    case 11:
+      if (dhcp == 1) {
+        (void) snprintf(
+            pcInsert,
+            iInsertLen,
+            "%s",
+            "<input type=\"checkbox\" checked=\"true\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+      } else {
+        (void) snprintf(
+            pcInsert,
+            iInsertLen,
+            "%s",
+            "<input type=\"checkbox\" name=\"dhcp\" value=\"true\" style=\"height:35px;width:30px;font-size:15px;\"><br><br>");
+      }
+      break;
     default:
       (void) snprintf(pcInsert, iInsertLen, "Error: Unknown SSI Tag!");
       break;
@@ -184,7 +211,7 @@ uint16_t ssi_handler(int iIndex, char *pcInsert, int iInsertLen) {
 /************************ CGI HANDLER ***************************/
 
 static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
-                          char *pcValue[]) {
+                                 char *pcValue[]) {
   char first_octet[3];
   char second_octet[3];
   char third_octet[3];
@@ -206,19 +233,16 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
         error_flag = 0;
         return "/Settings.shtml";
       } else {
-        int IP_address[4];
+        int IP_address[5];
         strncpy(first_octet, name, 3);
         strncpy(second_octet, name + 4, 3);
         strncpy(third_octet, name + 8, 3);
         strncpy(fourth_octet, name + 12, 3);
-        IP_address[0] = atoi(first_octet);
-        IP_address[1] = atoi(second_octet);
-        IP_address[2] = atoi(third_octet);
-        IP_address[3] = atoi(fourth_octet);
-        if (IP_address[0] > 255) {
-          error_flag = 0;
-          return "/Settings.shtml";
-        } else if (IP_address[1] > 255) {
+        IP_address[1] = atoi(first_octet);
+        IP_address[2] = atoi(second_octet);
+        IP_address[3] = atoi(third_octet);
+        IP_address[4] = atoi(fourth_octet);
+        if (IP_address[1] > 255) {
           error_flag = 0;
           return "/Settings.shtml";
         } else if (IP_address[2] > 255) {
@@ -227,11 +251,17 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
         } else if (IP_address[3] > 255) {
           error_flag = 0;
           return "/Settings.shtml";
+        } else if (IP_address[4] > 255) {
+          error_flag = 0;
+          return "/Settings.shtml";
         }
-        //Define FRAM segments first
-#if 0
-        FRAM_write(IP_address, 0x0100, sizeof(IP_address));
-#endif
+
+        FRAM_write((uint8_t*) IP_address, FRAM_IP_ADDRESS, sizeof(IP_address));
+        boolean_t set_default = False;
+        FRAM_write((uint8_t*) &set_default, FRAM_IP_SET_DEFAULT_FLAG,
+                   sizeof(set_default));
+        LED_blink(&ssi_linear_guide->leds.power, LED_ON,
+                  ssi_linear_guide->leds.htim_blink_ptr);
         error_flag = 2;
       }
     }
@@ -239,8 +269,8 @@ static const char* CGIIP_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/Settings.shtml";
 }
 
-static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[],
-                               char *pcValue[]) {
+static const char* CGIRestart_Handler(int iIndex, int iNumParams,
+                                      char *pcParam[], char *pcValue[]) {
   if (iIndex == 1) {
     __HAL_TIM_CLEAR_FLAG(&htim2, TIM_IT_UPDATE);
     HAL_TIM_Base_Start_IT(&htim2);
@@ -252,15 +282,17 @@ static const char* CGIRestart_Handler(int iIndex, int iNumParams, char *pcParam[
 }
 
 static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
-                            char *pcValue[]) {
+                                   char *pcValue[]) {
   if (iIndex == 2) {
     if (strcmp(pcParam[0], "operating_mode") == 0) {
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
       if (strcmp(name, "automatic") == 0) {
-        Linear_Guide_set_operating_mode(ssi_linear_guide, LG_operating_mode_automatic);
+        Linear_Guide_set_operating_mode(ssi_linear_guide,
+                                        LG_operating_mode_automatic);
       } else if (strcmp(name, "manual") == 0) {
-        Linear_Guide_set_operating_mode(ssi_linear_guide, LG_operating_mode_manual);
+        Linear_Guide_set_operating_mode(ssi_linear_guide,
+                                        LG_operating_mode_manual);
       }
     }
   }
@@ -268,38 +300,38 @@ static const char* CGIMode_Handler(int iIndex, int iNumParams, char *pcParam[],
   return "/Settings.shtml";
 }
 
-static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[],
-                               char *pcValue[]) {
+static const char* CGIControl_Handler(int iIndex, int iNumParams,
+                                      char *pcParam[], char *pcValue[]) {
   if (iIndex == 3) {
     if (strcmp(pcParam[0], "move") == 0) {
       memset(name, '\0', 30);
       strcpy(name, pcValue[0]);
-      if (strcmp(name, "left") == 0) {
-        if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
-        {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop, True);
-        }
-        else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_backwards, True);
-        }
-      } else if (strcmp(name, "right") == 0) {
-        if((ssi_linear_guide->localization.movement == Loc_movement_forward) || (ssi_linear_guide->localization.movement == Loc_movement_backwards))
-        {
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_stop, True);
-        }
-        else{
-          Linear_Guide_move(ssi_linear_guide, Loc_movement_forward, True);
-        }
-      } else if (strcmp(name, "confirm") == 0) {
-        if((ssi_linear_guide->localization.movement != Loc_movement_backwards) || (ssi_linear_guide->localization.movement != Loc_movement_forward))
-        {
-          Localization_set_center(&ssi_linear_guide->localization);
-          /*TODO: add LED blinking*/
-        }
-        else
-        {
-          /* should respond with error feedback*/
-          printf("linear guide is still moving\r\n");
+      if (ssi_linear_guide->operating_mode == LG_operating_mode_manual) {
+        if (strcmp(name, "left") == 0) {
+          if ((ssi_linear_guide->localization.movement == Loc_movement_forward)
+              || (ssi_linear_guide->localization.movement
+                  == Loc_movement_backwards)) {
+            Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_stop);
+          } else {
+            Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_backwards);
+          }
+        } else if (strcmp(name, "right") == 0) {
+          if ((ssi_linear_guide->localization.movement == Loc_movement_forward)
+              || (ssi_linear_guide->localization.movement
+                  == Loc_movement_backwards)) {
+            Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_stop);
+          } else {
+            Linear_Guide_manual_move(ssi_linear_guide, Loc_movement_forward);
+          }
+        } else if (strcmp(name, "confirm") == 0) {
+          if ((ssi_linear_guide->localization.movement != Loc_movement_backwards)
+              || (ssi_linear_guide->localization.movement
+                  != Loc_movement_forward)) {
+            Linear_Guide_set_center(ssi_linear_guide);
+          } else {
+            /* should respond with error feedback*/
+            printf("linear guide is still moving\r\n");
+          }
         }
       }
     }
@@ -308,16 +340,112 @@ static const char* CGIControl_Handler(int iIndex, int iNumParams, char *pcParam[
   return "/index.html";
 }
 
-void http_server_init(void) {
+static const char* CGIrpm_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                  char *pcValue[]) {
+  unsigned long rpm_to_be_set = 0;
+  uint16_t rpm_to_be_saved = 0;
+  if (iIndex == 4) {
+    if (strcmp(pcParam[0], "max_rpm") == 0) {
+      memset(name, '\0', 30);
+      strcpy(name, pcValue[0]);
+      if (strlen(name) > 4) {
+        return "/Settings.shtml";
+      }
+      for (uint8_t i = 0; i < strlen(name); i++) {
+        if (!isdigit((int )name[i])) {
+          return "/Settings.shtml";
+        }
+      }
+
+      rpm_to_be_set = strtoul(name, NULL, 0);
+
+      if ((rpm_to_be_set < 400) || (rpm_to_be_set > 2000)) {
+        return "/Settings.shtml";
+      }
+    }
+    rpm_to_be_saved = (uint16_t) rpm_to_be_set;
+    ssi_linear_guide->motor.normal_rpm = rpm_to_be_saved;
+    FRAM_write((uint8_t*) &rpm_to_be_saved, FRAM_MAX_RPM,
+               sizeof(rpm_to_be_saved));
+  }
+  return "/Settings.shtml";
+}
+
+static const char* CGIdelta_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                    char *pcValue[]) {
+  unsigned long delta_to_be_set = 0;
+  uint8_t delta_to_be_saved = 0;
+  if (iIndex == 5) {
+    if (strcmp(pcParam[0], "max_delta") == 0) {
+      memset(name, '\0', 30);
+      strcpy(name, pcValue[0]);
+      if (strlen(name) > 3) {
+        return "/Settings.shtml";
+      }
+      for (uint8_t i = 0; i < strlen(name); i++) {
+        if (!isdigit((int )name[i])) {
+          return "/Settings.shtml";
+        }
+      }
+
+      delta_to_be_set = strtoul(name, NULL, 0);
+
+      if ((delta_to_be_set < 5) || (delta_to_be_set > 50)) {
+        return "/Settings.shtml";
+      }
+    }
+    delta_to_be_saved = (uint8_t) delta_to_be_set;
+    ssi_linear_guide->max_distance_fault = delta_to_be_saved;
+    FRAM_write(&delta_to_be_saved, FRAM_MAX_DELTA, 1U);
+  }
+  return "/Settings.shtml";
+}
+
+static const char* CGIdhcp_Handler(int iIndex, int iNumParams, char *pcParam[],
+                                   char *pcValue[]) {
+
+  if (iIndex == 6) {
+    if (strcmp(pcParam[0], "dhcp") == 0) {
+      MX_LWIP_enable_dhcp();
+      tcp_server_init();
+      dhcp = 1;
+      FRAM_write(&dhcp, FRAM_DHCP_ENABLED, sizeof(dhcp));
+    }
+    else
+    {
+      MX_LWIP_enable_static_ip();
+      tcp_server_init();
+      dhcp = 0;
+      FRAM_write(&dhcp, FRAM_DHCP_ENABLED, sizeof(dhcp));
+    }
+  }
+  return "/Settings.shtml";
+}
+
+void http_server_init() {
   httpd_init();
   http_set_ssi_handler(ssi_handler, (char const**) TAGS, NUM_SSI_TAGS);
   CGI_FORMS[0] = FORM_IP_CGI;
   CGI_FORMS[1] = RESTART_CGI;
   CGI_FORMS[2] = MODE_CGI;
   CGI_FORMS[3] = CONTROL_CGI;
-  http_set_cgi_handlers(CGI_FORMS, 4);
+  CGI_FORMS[4] = RPM_CGI;
+  CGI_FORMS[5] = DELTA_CGI;
+  CGI_FORMS[6] = DHCP_CGI;
+  http_set_cgi_handlers(CGI_FORMS, 7);
   ssi_current_sensor = IO_get_current_sensor();
   ssi_distance_sensor = IO_get_distance_sensor();
   ssi_linear_guide = LG_get_Linear_Guide();
+  http_ssi_cgi_read_dhcp_state();
+}
+
+static void http_ssi_cgi_read_dhcp_state(void) {
+  if (FRAM_read(FRAM_DHCP_ENABLED, &dhcp, sizeof(dhcp)) != HAL_OK) {
+    printf("DHCP state could not be determined\r\n");
+  }
+  if (dhcp != 0 || dhcp != 1) {
+    dhcp = 0;
+    printf("DHCP state is invalid. Setting to disabled\r\n");
+  }
 }
 

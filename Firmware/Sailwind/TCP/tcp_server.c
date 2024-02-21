@@ -10,10 +10,12 @@
 #include "cJSON.h"
 #include "REST.h"
 #include "stdint.h"
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
+#include "boolean.h"
 
 #define REST_API_PORT 2375
 
-static const uint32_t tcp_server_ip[4] = { 192, 168, 0, 123 };
 enum tcp_server_states {
   ES_NONE = 0,
   ES_ACCEPTED,
@@ -110,8 +112,37 @@ void tcp_server_init(void) {
 
   /* 2. bind _pcb to port 7 ( protocol) */
   ip_addr_t myIPADDR;
-  IP_ADDR4(&myIPADDR, tcp_server_ip[0], tcp_server_ip[1], tcp_server_ip[2],
-           tcp_server_ip[3]);
+  boolean_t set_default = True;
+  FRAM_read(FRAM_IP_SET_DEFAULT_FLAG, (uint8_t *) &set_default, sizeof(set_default));
+  uint8_t tcp_new_server_ip[4];
+  if (set_default == False && FRAM_read(FRAM_IP_ADDRESS, tcp_new_server_ip, sizeof(tcp_new_server_ip)) == FRAM_OK)
+  {
+    if((tcp_new_server_ip[0] == 0xFF) || (tcp_new_server_ip[0] == 0x00))
+    {
+      IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((tcp_new_server_ip[1] == 0xFF) || (tcp_new_server_ip[1] != 0x00))
+    {
+      IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((tcp_new_server_ip[2] != 0xFF) || (tcp_new_server_ip[2] == 0x00))
+    {
+      IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else if((tcp_new_server_ip[3] == 0xFF) || (tcp_new_server_ip[3] == 0x00))
+    {
+      IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+    }
+    else
+    {
+      IP_ADDR4(&myIPADDR, tcp_new_server_ip[0], tcp_new_server_ip[1], tcp_new_server_ip[2], tcp_new_server_ip[3]);
+    }
+  }
+  else
+  {
+    IP_ADDR4(&myIPADDR, STANDARD_IP_FIRST_OCTET, STANDARD_IP_SECOND_OCTET, STANDARD_IP_THIRD_OCTET, STANDARD_IP_FOURTH_OCTET);
+  }
+
   err = tcp_bind(tpcb, &myIPADDR, 2375);
 
   if (err == ERR_OK) {

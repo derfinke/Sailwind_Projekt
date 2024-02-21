@@ -99,6 +99,14 @@
             <th><h3>Operating Mode</h3></th>
             <td><h3><!--#opmod--></h3></td>
           </tr>
+		  <tr>
+            <th><h3>Max RPM</h3></th>
+            <td><h3><!--#maxrpm-->U/min</h3></td>
+          </tr>
+		  <tr>
+            <th><h3>Max accepted delta</h3></th>
+            <td><h3><!--#maxdel-->mm</h3></td>
+          </tr>
         </table>
     </body>
 </html>

@@ -20,6 +20,8 @@
 #define LG_ADJUSTMENT_MODE_UPDATED 0
 #define LG_UPDATE_NORMAL 0
 #define LG_UPDATE_EMERGENCY_SHUTDOWN -1
+#define LG_SWITCH_OPERATING_MODE_DENIED -1
+#define LG_SWITCH_OPERATING_MODE_OK 0
 
 
 /* typedefs -----------------------------------------------------------*/
@@ -36,17 +38,19 @@ typedef enum {
 } LG_operating_mode_t;
 
 typedef enum {
-	LG_sail_adjustment_mode_roll,
-	LG_sail_adjustment_mode_trim
+	LG_sail_adjustment_mode_roll=-1,
+	LG_sail_adjustment_mode_pitch=1
 } LG_sail_adjustment_mode_t;
 
 typedef struct {
+	LED_t power;
 	LED_t error;
 	LED_t manual;
 	LED_t automatic;
 	LED_t roll;
-	LED_t trim;
+	LED_t pitch;
 	LED_t center_pos_set;
+	TIM_HandleTypeDef *htim_blink_ptr;
 } LG_LEDs_t;
 
 typedef struct {
@@ -62,6 +66,7 @@ typedef struct {
 	Localization_t localization;
 	LG_Endswitches_t endswitches;
 	LG_LEDs_t leds;
+	uint8_t max_distance_fault;
 } Linear_Guide_t;
 
 
@@ -71,13 +76,7 @@ typedef struct {
  * @param hdac_ptr: dac handle object passed to motor member, that uses an analog signal for speed control
  * @retval none
  */
-void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr);
-/**
- * @brief initialise all status LEDs
- * @param op_mode: depending on the value, either the manual or automatic LED is switched on
- * @retval lg_leds: struct of all LEDs as members
- */
-LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode);
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_blink_ptr);
 /**
  * @brief update status variables of the linear guide (movement, position, sail adjustment mode, errors)
  * @param lg_ptr: linear_guide reference
@@ -88,9 +87,9 @@ int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr);
  * @brief switch operating mode to manual or automatic
  * @param lg_ptr: linear_guide reference
  * @param operating_mode
- * @retval none
+ * @retval operating_mode_switch_status
  */
-void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
+int8_t Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode);
 /**
  * @brief count up or down pulse count depending on the movement direction (to be called in external interrupt callback from motor pulse signal)
  * @param lg_ptr: linear_guide reference
@@ -117,19 +116,18 @@ void Linear_Guide_manual_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement);
  */
 boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg);
 /**
- * @brief converts the desired roll / trim percentage to a target position in mm and safes it to the linear_guide reference
+ * @brief converts the desired roll / pitch percentage to a target position in mm and safes it to the linear_guide reference
  * @param lg_ptr: linear_guide reference
- * @param percentage: relative position in given area (roll or trim)
- * @param adjustment_mode: specifies area -> left or right side of the center depending on value (roll/trim)
+ * @param percentage: relative position in given area (roll/pitch -> -/+ percentage)
  * @retval none
  */
-void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode);
+void Linear_Guide_set_desired_roll_pitch_percentage(Linear_Guide_t *lg_ptr, int8_t percentage);
 /**
- * @brief returns the roll / trim percentage converted from the current position
+ * @brief returns the roll / pitch percentage converted from the current position
  * @param lg: linear_guide
- * @retval roll_or_trim_percentage
+ * @retval roll_or_pitch_percentage
  */
-uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg);
+int8_t Linear_Guide_get_current_roll_pitch_percentage(Linear_Guide_t lg);
 /**
  * @brief returns True, if the linear_guide has reached the given endswitch
  * @param endswitch_ptr: enswitch reference (front / back)
@@ -155,6 +153,14 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc);
  * @retval localization struct
  */
 Localization_t Linear_Guide_read_Localization();
+
+int8_t Linear_Guide_set_center(Linear_Guide_t *lg_ptr);
+/**
+ * @brief measure and set minimum absolute distance value from sensor
+ * @param lg_ptr: linear_guide reference
+ * @retval none
+ */
+void Linear_Guide_set_startpos(Linear_Guide_t *lg_ptr);
 
 Linear_Guide_t *LG_get_Linear_Guide(void);
 

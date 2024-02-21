@@ -13,12 +13,14 @@
 /* defines ------------------------------------------------------------*/
 #define LG_DISTANCE_MM_PER_ROTATION 1.12F
 #define LG_DISTANCE_MM_PER_PULSE LG_DISTANCE_MM_PER_ROTATION/MOTOR_PULSE_PER_ROTATION
-#define LG_DISTANCE_FAULT_TOLERANCE_MM 10
+#define LG_STANDARD_MAX_DISTANCE_DELTA_MM 10
 #define LG_CURRENT_FAULT_TOLERANCE_MA 4000
 #define LG_FAULT_CHECK_POSITIVE -1
 #define LG_FAULT_CHECK_NEGATIVE 0
 #define LG_FAULT_CHECK_SKIPPED 1
 #define LG_BRAKE_PATH_OFFSET_REL 1.25F
+#define LG_SET_CENTER_OK 0
+#define LG_SET_CENTER_NOT_TRIGGERED 1
 
 
 static IO_analogSensor_t *LG_distance_sensor_ptr = {0};
@@ -32,6 +34,12 @@ static Linear_Guide_t LG_linear_guide = {0};
  * @retval lg_endswitches: struct object with the endswitches as members
  */
 static LG_Endswitches_t Linear_Guide_Endswitches_init();
+/**
+ * @brief initialise all status LEDs
+ * @param op_mode: depending on the value, either the manual or automatic LED is switched on
+ * @retval lg_leds: struct of all LEDs as members
+ */
+static LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode, TIM_HandleTypeDef *htim_blink_ptr);
 /**
  * @brief update the operating mode LEDs when mode has changed
  * @param lg_ptr: linear_guide reference
@@ -56,12 +64,15 @@ static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr);
  * @retval update_status
  */
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr);
+static int8_t Linear_Guide_get_adjustment_mode(LG_sail_adjustment_mode_t last_mode, int16_t distance_to_center);
+static uint16_t Linear_Guide_get_adjustment_range_mm(Linear_Guide_t lg, LG_sail_adjustment_mode_t adjustment_mode);
 /**
  * @brief update speed ramp and movement depending on desired position
  * @param lg_ptr: linear_guide reference
+ * @param update_status: immediate stop, if emergency shutdown is set
  * @retval none
  */
-static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr);
+static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr, int8_t update_status);
 /**
  * @brief handle all detectable errors
  * @param lg_ptr: linear_guide reference
@@ -99,9 +110,15 @@ static int8_t Linear_Guide_check_wind_fault(Linear_Guide_t *lg_ptr);
  */
 static void Linear_Guide_calculate_break_path(Linear_Guide_t *lg_ptr);
 
+/**
+ * @brief readout saved max distance delta
+ * @param none
+ * @retval max distance delta in mm
+ */
+static uint8_t Linear_Guide_read_max_distance_delta(void);
 
 /* API function definitions --------------------------------------------------*/
-void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
+void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr, TIM_HandleTypeDef *htim_blink_ptr)
 {
 	LG_linear_guide.error_state = LG_error_state_0_normal;
 	LG_linear_guide.operating_mode = LG_operating_mode_manual;
@@ -110,18 +127,23 @@ void Linear_Guide_init(DAC_HandleTypeDef *hdac_ptr)
 	LG_linear_guide.endswitches = Linear_Guide_Endswitches_init();
 	LG_distance_sensor_ptr = IO_get_distance_sensor();
 	LG_current_sensor_ptr = IO_get_current_sensor();
+	LG_linear_guide.max_distance_fault = Linear_Guide_read_max_distance_delta();
 	Linear_Guide_calculate_break_path(&LG_linear_guide);
+	Linear_Guide_set_operating_mode(&LG_linear_guide, LG_operating_mode_automatic);
+	LG_linear_guide.leds = Linear_Guide_LEDs_init(LG_linear_guide.operating_mode, htim_blink_ptr);
 }
 
-LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
+LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode, TIM_HandleTypeDef *htim_blink_ptr)
 {
 	LG_LEDs_t lg_leds = {
+			.power = LED_init(LED_PWR_GPIO_Port, LED_PWR_Pin, LED_ON),
 			.error = LED_init(LED_Stoerung_GPIO_Port, LED_Stoerung_Pin, LED_OFF),
 			.manual = LED_init(LED_Manuell_GPIO_Port, LED_Manuell_Pin, op_mode == LG_operating_mode_manual),
 			.automatic = LED_init(LED_Automatik_GPIO_Port, LED_Automatik_Pin, op_mode == LG_operating_mode_automatic),
 			.roll = LED_init(LED_Roll_GPIO_Port, LED_Roll_Pin, LED_OFF),
-      .trim = LED_init(LED_Trim_GPIO_Port, LED_Trim_Pin, LED_OFF),
-      .center_pos_set = LED_init(LED_set_center_GPIO_Port, LED_set_center_Pin, LED_OFF)
+			.pitch = LED_init(LED_Pitch_GPIO_Port, LED_Pitch_Pin, LED_OFF),
+			.center_pos_set = LED_init(LED_set_center_GPIO_Port, LED_set_center_Pin, LED_OFF),
+			.htim_blink_ptr = htim_blink_ptr
 	};
 	return lg_leds;
 }
@@ -129,34 +151,24 @@ LG_LEDs_t Linear_Guide_LEDs_init(LG_operating_mode_t op_mode)
 int8_t Linear_Guide_update(Linear_Guide_t *lg_ptr)
 {
 	int8_t update_status = Linear_Guide_error_handler(lg_ptr);
-	if (update_status == LG_UPDATE_EMERGENCY_SHUTDOWN)
-	{
-		return update_status;
-	}
-	Linear_Guide_update_movement(lg_ptr);
+	Linear_Guide_update_movement(lg_ptr, update_status);
 	if (Localization_update_position(&lg_ptr->localization) == LOC_POSITION_UPDATED)
 	{
-		Linear_Guide_update_sail_adjustment_mode(lg_ptr);
+		Linear_Guide_safe_Localization(lg_ptr->localization);
 	}
+	Linear_Guide_update_sail_adjustment_mode(lg_ptr);
 	return update_status;
 }
 
-/* void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
- *  Description:
- *   - set operating mode depending on current state of the system
- *   - operating mode can always be switched to manual
- *   - operating mode can only be switched to automatic, if the linear guide is localized
- */
-void Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
+int8_t Linear_Guide_set_operating_mode(Linear_Guide_t *lg_ptr, LG_operating_mode_t operating_mode)
 {
-	boolean_t set_automatic = operating_mode == LG_operating_mode_automatic;
-	boolean_t set_manual = operating_mode == LG_operating_mode_manual;
-	boolean_t is_localized = lg_ptr->localization.is_localized;
-	if ((set_automatic && is_localized) || set_manual)
+	if (!lg_ptr->localization.is_localized)
 	{
-		lg_ptr->operating_mode = operating_mode;
-		Linear_Guide_LED_set_operating_mode(lg_ptr);
+		return LG_SWITCH_OPERATING_MODE_DENIED;
 	}
+	lg_ptr->operating_mode = operating_mode;
+	Linear_Guide_LED_set_operating_mode(lg_ptr);
+	return LG_SWITCH_OPERATING_MODE_OK;
 }
 
 void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
@@ -166,7 +178,7 @@ void Linear_Guide_callback_motor_pulse_capture(Linear_Guide_t *lg_ptr)
 
 int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolean_t immediate)
 {
-	if (movement == lg_ptr->localization.movement)
+	if (movement == lg_ptr->localization.movement && (movement == Loc_movement_stop || !Motor_is_currently_braking(lg_ptr->motor)))
 	{
 		return LG_MOVEMENT_RETAINED;
 	}
@@ -183,7 +195,6 @@ int8_t Linear_Guide_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement, boolea
 	{
 		lg_ptr->localization.movement = movement;
 	}
-	Linear_Guide_safe_Localization(lg_ptr->localization);
 	return LG_MOVEMENT_CHANGED;
 }
 
@@ -198,13 +209,17 @@ void Linear_Guide_manual_move(Linear_Guide_t *lg_ptr, Loc_movement_t movement)
 	{
 		int8_t sign = loc_ptr->movement == Loc_movement_backwards ? 1 : -1;
 		loc_ptr->desired_pos_mm = loc_ptr->current_pos_mm + sign * loc_ptr->brake_path_mm;
+		if (abs(loc_ptr->current_pos_mm) != loc_ptr->end_pos_mm)
+		{
+			loc_ptr->desired_pos_queue = loc_ptr->current_pos_mm;
+		}
 	}
 	else
 	{
 		int8_t sign = movement == Loc_movement_backwards ? 1 : -1;
-		loc_ptr->desired_pos_mm = sign * loc_ptr->end_pos_mm;
+		int16_t desired_pos_mm = sign * loc_ptr->end_pos_mm;
+		Localization_set_desired_pos_queued(loc_ptr, desired_pos_mm, movement);
 	}
-	Linear_Guide_move(lg_ptr, movement, False);
 }
 
 boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg)
@@ -214,23 +229,24 @@ boolean_t Linear_Guide_get_moving_permission(Linear_Guide_t lg)
 			&&
 			(
 				lg.localization.state >= Loc_state_4_set_center_pos
-				||
-				lg.localization.state == Loc_state_0_init
 			);
 }
 
-void Linear_Guide_set_desired_roll_trim_percentage(Linear_Guide_t *lg_ptr, uint8_t percentage, LG_sail_adjustment_mode_t adjustment_mode)
+void Linear_Guide_set_desired_roll_pitch_percentage(Linear_Guide_t *lg_ptr, int8_t percentage)
 {
 	Localization_t *loc_ptr = &lg_ptr->localization;
-	int8_t sign = adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
-	loc_ptr->desired_pos_mm = (int32_t) (- sign * ((loc_ptr->end_pos_mm + sign * loc_ptr->center_pos_mm) * (percentage / 100.0F) - sign * loc_ptr->center_pos_mm));
+	LG_sail_adjustment_mode_t mode = Linear_Guide_get_adjustment_mode(lg_ptr->sail_adjustment_mode, percentage);
+	uint16_t range_mm = Linear_Guide_get_adjustment_range_mm(*lg_ptr, mode);
+	int16_t desired_pos_mm = (int16_t) (loc_ptr->center_pos_mm + range_mm * (percentage / 100.0F));
+	Localization_set_desired_pos_queued(loc_ptr, desired_pos_mm, Localization_get_next_movement(*loc_ptr, desired_pos_mm));
 }
 
-uint8_t Linear_Guide_get_current_roll_trim_percentage(Linear_Guide_t lg)
+int8_t Linear_Guide_get_current_roll_pitch_percentage(Linear_Guide_t lg)
 {
 	Localization_t loc = lg.localization;
-	int8_t sign = lg.sail_adjustment_mode == LG_sail_adjustment_mode_roll ? 1 : -1;
-	return (uint8_t) ((sign * (loc.center_pos_mm - loc.current_pos_mm)) / (float) (loc.end_pos_mm + sign * loc.center_pos_mm) * 100);
+	LG_sail_adjustment_mode_t mode = lg.sail_adjustment_mode;
+	uint16_t range_mm = Linear_Guide_get_adjustment_range_mm(lg, mode);
+	return (int8_t) ((loc.current_pos_mm - loc.center_pos_mm) / (float) range_mm * 100);
 }
 
 void Linear_Guide_change_speed_rpm(Linear_Guide_t *lg_ptr, uint16_t speed_rpm)
@@ -255,9 +271,9 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 	{
 		return LG_NOT_LOCALIZED;
 	}
-	char FRAM_buffer[LOC_SERIAL_SIZE];
+	uint8_t FRAM_buffer[sizeof(Loc_safe_data_t)];
 	Localization_serialize(loc, FRAM_buffer);
-	if(FRAM_write((uint8_t *)FRAM_buffer, LINEAR_GUIDE_INFOS, LOC_SERIAL_SIZE) != HAL_OK)
+	if(FRAM_write(FRAM_buffer, LINEAR_GUIDE_INFOS, sizeof(Loc_safe_data_t)) != HAL_OK)
 	{
 		printf("Saving Position failed!\r\n");
 		return LG_LOCALIZATION_FAILED;
@@ -267,10 +283,32 @@ int8_t Linear_Guide_safe_Localization(Localization_t loc)
 
 Localization_t Linear_Guide_read_Localization()
 {
-	char FRAM_buffer[LOC_SERIAL_SIZE];
+	uint8_t FRAM_buffer[sizeof(Loc_safe_data_t)];
 	FRAM_init();
-	FRAM_read(LINEAR_GUIDE_INFOS, (uint8_t *) FRAM_buffer, LOC_SERIAL_SIZE);
+	FRAM_read(LINEAR_GUIDE_INFOS, FRAM_buffer, sizeof(Loc_safe_data_t));
 	return Localization_init(LG_DISTANCE_MM_PER_PULSE, FRAM_buffer);
+}
+
+int8_t Linear_Guide_set_center(Linear_Guide_t *lg_ptr)
+{
+	Localization_t *loc_ptr = &lg_ptr->localization;
+	if (!loc_ptr->is_triggered)
+	{
+		return LG_SET_CENTER_NOT_TRIGGERED;
+	}
+	printf("pulses:%d\r\n", loc_ptr->pulse_count);
+	printf("center set at: %d mm!\r\n", loc_ptr->current_pos_mm);
+	Localization_set_center(loc_ptr);
+	Linear_Guide_safe_Localization(*loc_ptr);
+	LED_blink(&lg_ptr->leds.center_pos_set, LED_OFF, lg_ptr->leds.htim_blink_ptr);
+	lg_ptr->localization.is_triggered = False;
+	return LG_SET_CENTER_OK;
+}
+
+void Linear_Guide_set_startpos(Linear_Guide_t *lg_ptr)
+{
+	IO_Get_Measured_Value(LG_distance_sensor_ptr);
+	Localization_set_startpos_abs(&lg_ptr->localization, LG_distance_sensor_ptr->measured_value);
 }
 
 /* private function definitions -----------------------------------------------*/
@@ -284,6 +322,21 @@ static LG_Endswitches_t Linear_Guide_Endswitches_init()
 	return lg_endswitches;
 }
 
+static int8_t Linear_Guide_get_adjustment_mode(LG_sail_adjustment_mode_t last_mode, int16_t distance_to_center)
+{
+	if (distance_to_center == 0)
+	{
+		return last_mode;
+	}
+	return distance_to_center/abs(distance_to_center);
+}
+
+static uint16_t Linear_Guide_get_adjustment_range_mm(Linear_Guide_t lg, LG_sail_adjustment_mode_t adjustment_mode)
+{
+	Localization_t loc = lg.localization;
+	return loc.end_pos_mm - adjustment_mode * loc.center_pos_mm;
+}
+
 static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
 	if (!lg_ptr->localization.is_localized)
@@ -292,38 +345,38 @@ static int8_t Linear_Guide_update_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 	}
 	int32_t current_pos = lg_ptr->localization.current_pos_mm;
 	int32_t center_pos = lg_ptr->localization.center_pos_mm;
-	lg_ptr->sail_adjustment_mode = current_pos < center_pos ? LG_sail_adjustment_mode_roll : LG_sail_adjustment_mode_trim;
+	lg_ptr->sail_adjustment_mode = Linear_Guide_get_adjustment_mode(lg_ptr->sail_adjustment_mode, current_pos - center_pos);
 	Linear_Guide_LED_set_sail_adjustment_mode(lg_ptr);
 	return LG_ADJUSTMENT_MODE_UPDATED;
 }
 
-static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
+static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr, int8_t update_status)
 {
+	if (update_status == LG_UPDATE_EMERGENCY_SHUTDOWN)
+	{
+		Linear_Guide_move(lg_ptr, Loc_movement_stop, True);
+		return;
+	}
 	Localization_t *loc_ptr = &lg_ptr->localization;
 	if (loc_ptr->state >= Loc_state_3_approach_center)
 	{
 		boolean_t immediate = False;
-		Loc_movement_t movement = Loc_movement_stop;
-		if (loc_ptr->desired_pos_mm > (loc_ptr->current_pos_mm + loc_ptr->brake_path_mm))
-		{
-			movement = Loc_movement_backwards;
-		}
-		else if (loc_ptr->desired_pos_mm < (loc_ptr->current_pos_mm - loc_ptr->brake_path_mm))
-		{
-			movement = Loc_movement_forward;
-		}
+		Loc_movement_t movement = Localization_get_next_movement(*loc_ptr, loc_ptr->desired_pos_mm);
 		if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.front))
 		{
 			IO_Get_Measured_Value(LG_distance_sensor_ptr);
 			Localization_set_startpos_abs(loc_ptr, LG_distance_sensor_ptr->measured_value);
 			immediate = True;
-			movement = Loc_movement_stop;
 		}
 		else if (Linear_Guide_Endswitch_detected(&lg_ptr->endswitches.back))
 		{
 			Localization_set_endpos(loc_ptr);
 			immediate = True;
+		}
+		if (immediate)
+		{
 			movement = Loc_movement_stop;
+			loc_ptr->desired_pos_queue = LOC_DESIRED_POS_QUEUE_EMPTY;
 		}
 		Linear_Guide_move(lg_ptr, movement, immediate);
 	}
@@ -334,7 +387,7 @@ static void Linear_Guide_update_movement(Linear_Guide_t *lg_ptr)
 		if (speed_ramp_status == MOTOR_RAMP_STOPPED)
 		{
 			loc_ptr->movement = Loc_movement_stop;
-			Linear_Guide_safe_Localization(*loc_ptr);
+			Localization_progress_queue(loc_ptr);
 		}
 	}
 }
@@ -355,12 +408,10 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (Linear_Guide_check_distance_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_1_distance_fault;
-		Localization_adapt_to_sensor(&lg_ptr->localization);
 	}
 	if (Linear_Guide_check_wind_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
 		new_error_state = LG_error_state_2_wind_speed_fault;
-		Linear_Guide_set_desired_roll_trim_percentage(lg_ptr, 100, LG_sail_adjustment_mode_roll);
 	}
 	if (Linear_Guide_check_motor_fault(lg_ptr) == LG_FAULT_CHECK_POSITIVE)
 	{
@@ -374,7 +425,10 @@ static int8_t Linear_Guide_error_handler(Linear_Guide_t *lg_ptr)
 	if (new_error_state >= LG_error_state_3_motor_fault)
 	{
 		update_status = LG_UPDATE_EMERGENCY_SHUTDOWN;
-		Linear_Guide_move(lg_ptr, Loc_movement_stop, True);
+	}
+	else if(new_error_state == LG_error_state_2_wind_speed_fault)
+	{
+		Linear_Guide_set_desired_roll_pitch_percentage(lg_ptr, 100 * LG_sail_adjustment_mode_roll);
 	}
 	lg_ptr->error_state = new_error_state;
 	Linear_Guide_LED_set_error(lg_ptr);
@@ -392,7 +446,7 @@ static int8_t Linear_Guide_check_distance_fault(Linear_Guide_t *lg_ptr)
 	uint16_t measured_value = LG_distance_sensor_ptr->measured_value;
 	Localization_parse_distance_sensor_value(&lg_ptr->localization, measured_value);
 	Localization_update_position(&lg_ptr->localization);
-	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > LG_DISTANCE_FAULT_TOLERANCE_MM)
+	if (abs(lg_ptr->localization.current_measured_pos_mm - lg_ptr->localization.current_pos_mm) > (int)LG_linear_guide.max_distance_fault)
 	{
 		return LG_FAULT_CHECK_POSITIVE;
 	}
@@ -449,23 +503,23 @@ static void Linear_Guide_LED_set_operating_mode(Linear_Guide_t *lg_ptr)
 
 /* static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
  * 	Description:
- * 	 - when sail adjustment mode changes (rollung / trimmung)
+ * 	 - when sail adjustment mode changes (rollung / pitchmung)
  * 	   the corresponding LEDs are switched on and off
  */
 static void Linear_Guide_LED_set_sail_adjustment_mode(Linear_Guide_t *lg_ptr)
 {
-	LED_State_t roll, trim;
+	LED_State_t roll, pitch;
 	switch(lg_ptr->sail_adjustment_mode)
 	{
 		case LG_sail_adjustment_mode_roll:
-			roll = LED_ON, trim = LED_OFF;
+			roll = LED_ON, pitch = LED_OFF;
 			break;
-		case LG_sail_adjustment_mode_trim:
-			roll = LED_OFF, trim = LED_ON;
+		case LG_sail_adjustment_mode_pitch:
+			roll = LED_OFF, pitch = LED_ON;
 			break;
 	}
 	LED_switch(&lg_ptr->leds.roll, roll);
-	LED_switch(&lg_ptr->leds.trim, trim);
+	LED_switch(&lg_ptr->leds.pitch, pitch);
 }
 
 static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr)
@@ -482,21 +536,6 @@ static void Linear_Guide_LED_set_error(Linear_Guide_t *lg_ptr)
 	LED_switch(&lg_ptr->leds.error, new_state);
 }
 
-/* Timer Callback implementation for rpm measurement --------------------------*/
-
-/* void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
- *  Description:
- *   - must be redefined in main.c
- *   - triggered, when a rising edge of the motor pulse signal (OUT1) is detected
- *   - calls function to measure the frequency between two pulses and converts it to an rpm value
- */
-/*
-void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim_ptr)
-{
-	Linear_Guide_callback_motor_pulse_capture(&linear_guide);
-}
-*/
-
 Linear_Guide_t *LG_get_Linear_Guide(void)
 {
   return &LG_linear_guide;
@@ -510,4 +549,16 @@ void Linear_Guide_set_error(LG_error_state_t error)
 LG_error_state_t Linear_Guide_get_error(void)
 {
   return LG_linear_guide.error_state;
+}
+
+static uint8_t Linear_Guide_read_max_distance_delta(void)
+{
+  uint8_t max_delta = 0;
+  FRAM_read(FRAM_MAX_DELTA, (uint8_t*)&max_delta, 1U);
+  if((max_delta < 5) || (max_delta > 50))
+  {
+    return LG_STANDARD_MAX_DISTANCE_DELTA_MM;
+  }
+
+  return max_delta;
 }

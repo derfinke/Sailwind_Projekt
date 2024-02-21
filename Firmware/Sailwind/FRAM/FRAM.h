@@ -10,6 +10,9 @@
 
 #include <stdint.h>
 
+#define FRAM_OK 0U
+#define FRAM_ERROR 1U
+
 /**
  * @brief initialize FRAM
  * Configures FRAM to be ready to write

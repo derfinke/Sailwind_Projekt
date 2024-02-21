@@ -18,8 +18,6 @@
 #define RDSR 5
 #define WREN 6
 #define SPI_HAL_TIMEOUT 5U
-#define FRAM_OK 0U
-#define FRAM_ERROR 1U
 #define WEL_SET 2U
 #define STATUS_REGISTER_BUFFER_SIZE 2U
 

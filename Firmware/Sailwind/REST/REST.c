@@ -9,6 +9,8 @@
 #include "string.h"
 #include "cJSON.h"
 #include "Linear_Guide.h"
+#include "FRAM.h"
+#include "FRAM_memory_mapping.h"
 #include "WSWD.h"
 #include "IO.h"
 
@@ -21,6 +23,7 @@
 #define PATH_SENSORS          "/data/sensors "
 #define PATH_CURRENT_SENSOR   "/data/sensors/current "
 #define PATH_WIND_SENSOR      "/data/sensors/wind "
+#define PATH_SETTINGS         "/data/settings "
 
 #define PATH_ERROR            "/data/status/error "
 #define PATH_MODE             "/data/status/operating_mode "
@@ -41,13 +44,13 @@
 #define KEY_MODE              "operating_mode"
 #define KEY_SAIL_POS          "sail_pos"
 #define KEY_SAIL_STATE        "sail_state"
-#define KEY_ROLL              "roll"
-#define KEY_PITCH             "pitch"
 #define KEY_WIND              "wind"
 #define KEY_SPEED             "speed"
 #define KEY_DIR               "direction"
 #define KEY_CURRENT           "current"
 #define KEY_LOCALIZED         "localized"
+#define KEY_MAX_RPM           "max_rpm"
+#define KEY_MAX_DISTANCE      "max_distance_error"
 
 typedef enum {
   HTTP_OK,
@@ -113,13 +116,6 @@ static void REST_create_sensors_json(cJSON *response);
 static void REST_create_wind_json(cJSON *response);
 
 /**
- * @brief  Build the sail_pos part of the status json
- * @param  response: pointer to HTTP response JSON
- * @retval none
- */
-static void REST_create_sail_pos_json(cJSON *response);
-
-/**
  * @brief  Build the /data/adjustment json
  * @param  response: pointer to HTTP response JSON
  * @retval none
@@ -145,6 +141,10 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json);
  * @retval none
  */
 static uint8_t REST_check_mode_json(cJSON *mode_json);
+
+static uint8_t REST_check_settings_json(cJSON *settings_json);
+
+static void REST_create_settings_json(cJSON *response);
 
 void REST_init(void)
 {
@@ -213,7 +213,8 @@ static void REST_get_request(char *payload, char *buffer) {
   } else if (strncmp(payload + URL_OFFSET, PATH_CURRENT_SENSOR,
                      strlen(PATH_CURRENT_SENSOR)) == 0) {
 
-    cJSON_AddNumberToObject(response, KEY_CURRENT, 0);
+    IO_Get_Measured_Value(REST_current_sensor);
+    cJSON_AddNumberToObject(response, KEY_CURRENT, REST_current_sensor->measured_value);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
@@ -226,11 +227,26 @@ static void REST_get_request(char *payload, char *buffer) {
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
 
     /* check for path /data/status/operating_mode */
-  } else if (strncmp(payload + URL_OFFSET, PATH_MODE, strlen(PATH_MODE)) == 0) {
+  } else if (strncmp(payload + URL_OFFSET, PATH_WIND_SENSOR,
+                    strlen(PATH_WIND_SENSOR)) == 0) {
 
-    cJSON_AddNumberToObject(response, KEY_MODE, 0);
+   REST_create_wind_json(response);
+   cJSON_PrintPreallocated(response, JSON_response, 200, 1);
+   REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+
+   /* check for path /data/status/operating_mode */
+ } else if (strncmp(payload + URL_OFFSET, PATH_SETTINGS, strlen(PATH_SETTINGS)) == 0) {
+
+    REST_create_settings_json(response);
     cJSON_PrintPreallocated(response, JSON_response, 200, 1);
     REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+  } else if (strncmp(payload + URL_OFFSET, PATH_MODE,
+                     strlen(PATH_MODE)) == 0) {
+
+    cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
+    cJSON_PrintPreallocated(response, JSON_response, 200, 1);
+    REST_create_HTTP_header(buffer, HTTP_OK, strlen(JSON_response));
+
   } else {
     REST_create_HTTP_header(buffer, HTTP_Not_Found, 0);
   }
@@ -279,6 +295,16 @@ static void REST_put_request(char *payload, char *buffer) {
     } else if (strncmp(payload + URL_OFFSET, PATH_MODE, strlen(PATH_MODE))
         == 0) {
       if (REST_check_mode_json(request) != 1) {
+
+        REST_create_HTTP_header(buffer, HTTP_OK, 0);
+      } else {
+
+        REST_create_HTTP_header(buffer, HTTP_Bad_Request, 0);
+      }
+
+    } else if (strncmp(payload + URL_OFFSET, PATH_SETTINGS, strlen(PATH_SETTINGS))
+        == 0) {
+      if (REST_check_settings_json(request) != 1) {
 
         REST_create_HTTP_header(buffer, HTTP_OK, 0);
       } else {
@@ -335,7 +361,7 @@ static void REST_create_data_json(cJSON *response) {
   cJSON_AddNumberToObject(response, KEY_MODE, REST_linear_guide->operating_mode);
   cJSON_AddNumberToObject(response, KEY_LOCALIZED, REST_linear_guide->localization.is_localized);
 
-  REST_create_sail_pos_json(response);
+  REST_create_adjustment(response);
 
   REST_create_wind_json(response);
 
@@ -367,41 +393,16 @@ static void REST_create_wind_json(cJSON *response) {
   cJSON_AddItemToArray(wind, wind_members);
 }
 
-static void REST_create_sail_pos_json(cJSON *response) {
-  cJSON *sail_state;
-  cJSON *sail_members;
-
-  sail_state = cJSON_AddArrayToObject(response, KEY_SAIL_STATE);
-  sail_members = cJSON_CreateObject();
-
-  cJSON_AddNumberToObject(sail_members, KEY_SAIL_POS, REST_linear_guide->sail_adjustment_mode);
-  if(REST_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
-  {
-    cJSON_AddNumberToObject(sail_members, KEY_PITCH, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
-    cJSON_AddNumberToObject(sail_members, KEY_ROLL, 0);
-  }
-  else
-  {
-    cJSON_AddNumberToObject(sail_members, KEY_ROLL, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
-    cJSON_AddNumberToObject(sail_members, KEY_PITCH, 0);
-  }
-
-  cJSON_AddItemToArray(sail_state, sail_members);
-}
-
 static void REST_create_adjustment(cJSON *response)
 {
-  cJSON_AddNumberToObject(response, KEY_SAIL_POS, REST_linear_guide->sail_adjustment_mode);
-  if(REST_linear_guide->sail_adjustment_mode != LG_sail_adjustment_mode_roll)
-  {
-    cJSON_AddNumberToObject(response, KEY_PITCH, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
-    cJSON_AddNumberToObject(response, KEY_ROLL, 0);
-  }
-  else
-  {
-    cJSON_AddNumberToObject(response, KEY_ROLL, Linear_Guide_get_current_roll_trim_percentage(*REST_linear_guide));
-    cJSON_AddNumberToObject(response, KEY_PITCH, 0);
-  }
+	int8_t roll_pitch_percentage = Linear_Guide_get_current_roll_pitch_percentage(*REST_linear_guide);
+	cJSON_AddNumberToObject(response, KEY_SAIL_POS, roll_pitch_percentage);
+}
+
+static void REST_create_settings_json(cJSON *response)
+{
+  cJSON_AddNumberToObject(response, KEY_MAX_RPM, REST_linear_guide->motor.normal_rpm);
+  cJSON_AddNumberToObject(response, KEY_MAX_DISTANCE, REST_linear_guide->max_distance_fault);
 }
 
 static uint8_t REST_check_error_json(cJSON *error_json) {
@@ -415,38 +416,23 @@ static uint8_t REST_check_error_json(cJSON *error_json) {
     return 1;
   }
   /* Check for error value */
-  if (!((error->valueint >= 5) || (error->valueint == 0))) {
+  if ((error->valueint != 2) || (error->valueint != 0)) {
     return 1;
   }
-  switch(error->valueint)
+  if(error->valueint == 2)
   {
-    case 0:
-      Linear_Guide_set_error(LG_error_state_0_normal);
-      break;
-    case 1:
-      Linear_Guide_set_error(LG_error_state_1_distance_fault);
-      break;
-    case 2:
-      Linear_Guide_set_error(LG_error_state_2_wind_speed_fault);
-      break;
-    case 3:
-      Linear_Guide_set_error(LG_error_state_3_motor_fault);
-      break;
-    case 4:
-      Linear_Guide_set_error(LG_error_state_4_current_fault);
-      break;
-    default:
-      return 1;
+    Linear_Guide_set_error(LG_error_state_2_wind_speed_fault);
+  }
+  else
+  {
+    Linear_Guide_set_error(LG_error_state_0_normal);
   }
   /* Format is valid */
   return 0;
 }
 
 static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
-  cJSON *sail_pos = cJSON_GetObjectItemCaseSensitive(sailstate_json,
-  KEY_SAIL_POS);
-  cJSON *pitch = cJSON_GetObjectItemCaseSensitive(sailstate_json, KEY_PITCH);
-  cJSON *roll = cJSON_GetObjectItemCaseSensitive(sailstate_json, KEY_ROLL);
+  cJSON *sail_pos = cJSON_GetObjectItemCaseSensitive(sailstate_json, KEY_SAIL_POS);
 
   /* Check for number of keys */
   if (!(cJSON_GetArraySize(sail_pos) < 3)) {
@@ -456,29 +442,13 @@ static uint8_t REST_check_sailstate_json(cJSON *sailstate_json) {
   if (!(cJSON_IsNumber(sail_pos))) {
     return 1;
   }
-  /* Check for value of sail_pos key and for roll key */
-  if ((sail_pos->valueint == 0) && cJSON_IsNumber(roll)) {
-    /* Check for roll value range */
-    if (roll->valueint >= 0 && roll->valueint <= 100) {
-      /* Format is valid */
-      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, roll->valueint, LG_sail_adjustment_mode_roll);
-      return 0;
+    /* Check for value range */
+    if (-100 <= sail_pos->valueint && sail_pos->valueint <= 100) {
+    	/* Format is valid */
+    	Linear_Guide_set_desired_roll_pitch_percentage(REST_linear_guide, sail_pos->valueint);
+    	return 0;
     }
     return 1;
-  }
-  /* Check for value of sail_pos key and for pitch key */
-  if ((sail_pos->valueint == 1) && cJSON_IsNumber(pitch)) {
-    /* Check for pitch value range */
-    if (pitch->valueint >= 0 && pitch->valueint <= 100) {
-      /* Format is valid */
-      Linear_Guide_set_desired_roll_trim_percentage(REST_linear_guide, pitch->valueint, LG_sail_adjustment_mode_trim);
-      return 0;
-    }
-
-    return 1;
-  }
-
-  return 1;
 }
 
 static uint8_t REST_check_mode_json(cJSON *mode_json) {
@@ -493,10 +463,43 @@ static uint8_t REST_check_mode_json(cJSON *mode_json) {
     return 1;
   }
   /* Check for operating_mode value */
-  if (!((operating_mode->valueint == 0) || (operating_mode->valueint == 1))) {
+  if (!((operating_mode->valueint == LG_operating_mode_manual) || (operating_mode->valueint == LG_operating_mode_automatic))) {
     return 1;
   }
   /* Format is valid */
   Linear_Guide_set_operating_mode(REST_linear_guide, operating_mode->valueint);
+  return 0;
+}
+
+static uint8_t REST_check_settings_json(cJSON *settings_json)
+{
+
+  cJSON *max_rpm = cJSON_GetObjectItemCaseSensitive(settings_json,
+  KEY_MAX_RPM);
+  cJSON *max_distance_error = cJSON_GetObjectItemCaseSensitive(settings_json,
+  KEY_MAX_DISTANCE);
+  /* Check for number of keys */
+  if (!(cJSON_GetArraySize(settings_json) < 3)) {
+    return 1;
+  }
+  /* Check for operating_mode key */
+  if (!cJSON_IsNumber(max_rpm)) {
+    return 1;
+  }
+  if (!cJSON_IsNumber(max_distance_error)) {
+    return 1;
+  }
+  /* Check for operating_mode value */
+  if (((max_rpm->valueint > 2000) || (max_rpm->valueint < 400))) {
+    return 1;
+  }
+  if (((max_distance_error->valueint > 50) || (max_distance_error->valueint < 5))) {
+    return 1;
+  }
+  /* Format is valid */
+  REST_linear_guide->max_distance_fault = (uint8_t)max_distance_error->valueint;
+  REST_linear_guide->motor.normal_rpm = (uint16_t)max_rpm->valueint;
+  FRAM_write(&REST_linear_guide->max_distance_fault, FRAM_MAX_DELTA, 1U);
+  FRAM_write((uint8_t*)&REST_linear_guide->motor.normal_rpm, FRAM_MAX_RPM, sizeof(REST_linear_guide->motor.normal_rpm));
   return 0;
 }
