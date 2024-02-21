@@ -292,7 +292,7 @@ Wie bereits in \autoref{Mangelnde_Präzision} aufgezeigt war die Präzision der 
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=\linewidth]{images/Software/NMEA_Telegramm_Aufbau.png}
-	\caption{Aufbau eines NMEA Telegramm aus \cite{WSWD}, S.61}
+	\caption{Aufbau eines NMEA Telegramm (vgl.\cite{WSWD}, S.61)}
 	\label{fig:NMEA_Protokoll}
 \end{figure}
 \noindent Hier wird neben den Daten ($<WR>$ und $<WG>$) ebenfalls die Gültigkeit der Messung ($<V>$) und die Einheit der Geschwindigkeit ($<U>$) übertragen. Das versenden von Befehlen geschieht dabei aber in einem von MESA selbsterstellten Format:
@@ -303,7 +303,7 @@ Wie bereits in \autoref{Mangelnde_Präzision} aufgezeigt war die Präzision der 
 		\textbf{\textless{}ID\textgreater{}} & \textbf{\textless{}CM\textgreater{}} & \textbf{\textless{}PARAM\textgreater{}} & \textbf{\textless{}CR\textgreater{}\textless{}LF\textgreater{}} \\ \hline
 		Geräte ID                            & Kommando                             & Parameter                               & Befehlsabschluss                                                \\ \hline
 	\end{tabular}
-	\caption{}
+	\caption{Aufbau eines Kommandos zur Einstellung des WSWD (vgl. \cite{WSWD}, S.26f.)}
 	\label{tab:my-table}
 \end{table}
 \noindent Dieses wird im Normal Betrieb nicht benötigt, aber kann zur einmaligen Konfiguration des Sensors genutzt werden. Zur Konfiguration des Anemometers wurde z.b dabei der Befehl 42 angwewandt um die bereits Erklärten \ac{NMEA} Telegramme in einem regelmäßigen Abstand gesendet zu bekommen.
