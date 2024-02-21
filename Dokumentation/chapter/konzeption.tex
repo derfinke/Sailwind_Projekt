@@ -38,10 +38,11 @@ Zu den Sensoren zählen die folgenden Komponenten:
 	\item Optischer Abstandssensor: IFM OGD580
 	\item Anemometer: MESA WSWD
 	\item Druckkraft-Sensor: Burster 8532
+	\item Temperatursensor
 \end{itemize}
 
 \noindent\textbf{Induktiver Endschalter}\newline
-Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktionieren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden. Dabei hat jeder Endschalter eine Betriebsspannung von 9-30V.\\
+Zwei der IFM IFS204 Endschalter sind im Design mit eingebaut. Sie funktionieren als PNP-Schließkontakt und geben an einem Ausgang ein digitales 24V Signal aus, sobald sie ausgelöst werden (vgl. \cite{IFS_204}, S.6). Dabei hat jeder Endschalter eine Betriebsspannung von 9-30V.\\
 
 \noindent\textbf{Optischer Abstandssensor}\newline
 Der Abstandssensor OGD580 funktioniert über einen Laser der vom Gerät ausgehend über eine Reflektive Fläche zu diesem zurückgeworfen wird. Der Abstandsensor verfügt über ein Display das den gemessenen Abstand anzeigt und über das Gerät konfigurierbar ist. Er hat ebenfalls eine Betriebspannung von 9-30V. Der Abstand wird über einen digitalen Ausgang, dem sog. IO-Link ausgegeben. Da mit diesem nur sehr umständlich Umgegange werden kann, wurde ein zusätzlicher IO-Link Konverter hinzugefügt. Der EIO104 konvertiert die digitale IO-Link Schnittstelle zu einer analogen 4-20mA Schnittstelle mit der einfacher Umgegangen werden kann.\\
@@ -53,7 +54,7 @@ Das WSWD Anemometer wird genutzt, um die Windrichtung und -geschwindigkeit zu me
 Der Burster Druckkraft-Sensor war der einzige Sensor der zum Zeitpunkt der Arbeit noch nicht im Prototyp mit eingebaut wurde. Dieser wurde aber dennoch mit eingeplant. Der Druckkraft Sensor kann ebenfalls mit den typischen 24V betrieben werden. Die Messwerte werden hier über eine Analoges 0-10V Spannungssignal übertragen.\\
 
 \noindent\textbf{Temperatursensor}\newline
-Ähnlich zu den Relais gibt es noch keine genaueren Informationen zu einem eventuell zum Einsatz kommenden Temperatursensor. Es wurde dennoch ein zusätzlicher analoger Eingang für eine entsprechende 4-20mA Schnittstelle eingeplant.\\
+Es gibt noch keine genaueren Informationen zu einem eventuell zum Einsatz kommenden Temperatursensor. Es wurde dennoch ein zusätzlicher analoger Eingang für eine entsprechende 4-20mA Schnittstelle eingeplant.\\
 \subsubsection{Aktoren}
 Zu den Aktoren zählen die folgenden Komponenten:
 \begin{itemize}
@@ -67,20 +68,20 @@ Der Dunker BG 45x30 SI Gleichstrommotor ist die antreibende Kraft im Aufbau. Da 
 % \usepackage{graphicx}
 \begin{table}[H]
 	\centering
-		\begin{tabular}{|c|c|c|}
-			\hline
-			\textbf{Eingang 1 (IN1)} & \textbf{Eingang 0 (IN0)} & \textbf{Funktion}      \\ \hline
-			0                        & 0                        & Motor aus              \\ \hline
-			0                        & 1                        & Linkslauf              \\ \hline
-			1                        & 0                        & Rechtslauf             \\ \hline
-			1                        & 1                        & Stopp mit Haltemoment  \\ \hline
-			\textbf{Eingang 3 (IN3)} & \textbf{Eingang 2 (IN2)} &                        \\ \hline
-			0                        & 0                        & Drehzahlvorgabe Analog \\ \hline
-			0                        & 1                        & Stromvorgabe Analog    \\ \hline
-			1                        & 0                        & Geschwindigkeit 1      \\ \hline
-			1                        & 1                        & Geschwindigkeit 2      \\ \hline
-		\end{tabular}%
-	\caption{Eingänge und Funktionen des BG 45x30 SI}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		\textbf{Eingang 1 (IN1)} & \textbf{Eingang 0 (IN0)} & \textbf{Funktion}      \\ \hline
+		0                        & 0                        & Motor aus              \\ \hline
+		0                        & 1                        & Linkslauf              \\ \hline
+		1                        & 0                        & Rechtslauf             \\ \hline
+		1                        & 1                        & Stopp mit Haltemoment  \\ \hline
+		\textbf{Eingang 3 (IN3)} & \textbf{Eingang 2 (IN2)} &                        \\ \hline
+		0                        & 0                        & Drehzahlvorgabe Analog \\ \hline
+		0                        & 1                        & Stromvorgabe Analog    \\ \hline
+		1                        & 0                        & Geschwindigkeit 1      \\ \hline
+		1                        & 1                        & Geschwindigkeit 2      \\ \hline
+	\end{tabular}%
+	\caption{Eingänge und Funktionen des BG 45x30 SI (vgl. \cite{BG_45}, S.22)}
 	\label{tab:digitale_Eingaenge}
 \end{table}
 \begin{table}[H]
@@ -92,7 +93,7 @@ Der Dunker BG 45x30 SI Gleichstrommotor ist die antreibende Kraft im Aufbau. Da 
 		Out 2                & 1 = Störung; 0 = keine Störung                        &  Fehlerangabe            \\ \hline
 		Out 3              & 1 = Linkslauf; 0 = Rechtslauf                       &  Drehrichtung           \\ \hline
 	\end{tabular}%
-	\caption{Analoger Eingang und Digitale Ausgänge des BG 45x30 SI}
+	\caption{Analoger Eingang und Digitale Ausgänge des BG 45x30 SI (vgl. \cite{BG_45}, S.23)}
 	\label{tab:andere_Ausgaenge}
 \end{table}
 
@@ -100,7 +101,7 @@ Der Dunker BG 45x30 SI Gleichstrommotor ist die antreibende Kraft im Aufbau. Da 
 Zum Zeitpunkt der Arbeit gab es noch keinen konkreten Verwendungszweck der zwei externen Relais, diese wurden für zusätzliche Funktionalitäten dennoch mit eingeplant und sollten über ein 24V Signal geschaltet werden. Sie könnten z.B zum Auslösen einer Motorbremse genutzt werden.\\
 
 \noindent\textbf{Controllino}\newline
-Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im fertigen Sailwind 4.0 Prototyp. Von diesem soll das in der Arbeit zu entwerfende System seine Befehle zur Segelausrichtung empfangen. Der Datenaustausch soll dabei über Ethernet stattfinden, um die große Distanz zwischen Kuppel und Basis des Kraftwerkes zu überbrücken. Zusätzlich ist geplant die Platine vom Controllino mit Strom zu versorgen.
+Der Controllino ist der zentrale Microcontroller und verwaltet alle Aktoren im fertigen Sailwind 4.0 Prototyp. Dieser kann nicht zu einen der beiden Kategorien gezählt werden, sollte hier aber dennoch kurz erwähnt werden. Von diesem soll das in der Arbeit zu entwerfende System seine Befehle zur Segelausrichtung empfangen. Der Datenaustausch soll dabei über Ethernet stattfinden, um die Distanz zwischen der Kuppel, in dem sich die Linearführung befindet und Basis in der sich der Controllino befindet, zu überbrücken. Zusätzlich dazu ist es geplant die Platine vom Controllino mit Strom zu versorgen.
 \subsubsection{Zusammenfassung und Übersicht}
 Damit sind nun alle externen Komponente im System abgedeckt. Die benötigte Spannungsversorgung sowie alle Schnittstellen sind in \autoref{tab:uebersicht-externe-elemente} dargestellt. Zusätzlich wurden die Verbindungen in einem Blockschaltbild in \autoref{fig:System_Aufbau} zusammengefasst, wobei alle blauen Pfeile die digitalen 24V Ein- und Ausgänge beschreiben.
 \begin{figure}[H]
@@ -160,8 +161,15 @@ Da die neutrale Position des Segels dauerhaft gespeichert werden soll, wird ein 
 Um die Drehzahl des Motors vorgeben zu können, wird ein analoges Signal im Bereich von 0-10V benötigt. Da der \ac{DAC} des Mikrocontrollers bei einer Versorgungsspannung von 5V maximal ein analoges Signal von 3,3V ausgeben kann \cite{STM32}, wird ein Operationsverstärker benötigt. Dieser soll mit einer 24V Offsetspannung das Ausgangssignal auf 10V skalieren. Hier gab es bis auf die Maximalspannung keine besonderen Anforderungen an den Operationsverstärker und somit wurde der weitverbreitete LM2904QS ausgewählt.
 \subsubsection{DC/DC-Wandler}
 Um alle Komponenten zu versorgen, bedarf es insgesamt drei verschiedenen Spannungspotenzialen: 24V, 5V und 3,3V. Dabei werden alle externen Steuerelemente direkt mit 24V versorgt. Der Mikrocontroller benötigt eine 5V Spannung, damit dieser auch ohne Stromversorgung des Debuggers betrieben werden kann. Hierfür wird ein Step-Down Konverter genutzt, der die 24V Versorgungsspannung auf 5V herunterbricht. Die 5V müssen zusätzlich mit einem Festspannungsregler auf 3,3V-Level konvertiert werden, um die übrigen Bauteile zu versorgen. Bei der Auswahl wurde darauf geachtet, dass der Konverter einen ausreichenden Strom zu Verfügung stellt, ohne dabei dauerhaft unter Vollast zu laufen. Insbesondere muss hier der Verbrauch des Mikrocontrollers von bis zu 120mA (vgl. \cite{STM32_Electrical} S.103) eingerechnet werden. Unter der Annahme, dass die restlichen Bauteile nicht mehr als zusätzliche 380mA verbrauchen, wurde der R-78E5.0-0.5 ausgewählt. Dieser stellt bis zu 0,5A zur Verfügung und kann bei Bedarf durch eine 1A Version ausgetauscht werden. Als Festspannungsregler wurde der LM3940IMP-3.3 gewählt. Dieser kann Eingangsspannung von bis zu 7.5V in eine Ausgangsspannung von 3,3V umwandeln und hat dabei einen Durchsatz Strom von bis zu 1A. Damit genügt er den Anforderungen.
-\subsubsection{Strom Sensor}
-Zur Überwachung des Motorstroms kommt ein Hall-Stromsensor zum Einsatz. Dieser ist im Gegensatz zu einem resistiven Sensor genauer und isoliert den 24V und 3,3V Schaltkreis. Er sollte in der Lage sein den maximal zulässigen Motorstrom messen zu können. Da die meisten Hall Sensoren einen deutlich größeren Messbereich unterstützen, wurde der TMCS1101A3BQDRQ1 gewählt. Dieser kann einen maximalen Strom von $\pm$11,25A messen. Der gemessene Strom wird dabei als analoges 0-3,3V Signal ausgegeben und ist damit für diese Anwendung geeignet.
+\subsubsection{Stromsensor}
+Zur Überwachung des Motor Stroms kommt ein Hall-Stromsensor zum Einsatz. Dieser ist im Gegensatz zu einem resistiven Sensor genauer und isoliert den 24V und 3,3V Schaltkreis wie z.B im Schaltplan in \autoref{fig:Stromsensor} zusehen ist. 
+\begin{figure}[H]
+	\centering
+	\includegraphics[width=0.8\textwidth]{images/Hardware/Stromsensor_Schaltplan.png}
+	\caption{Schaltplan des Texas Instruments TMCS1101 Hall Stromsensor (vgl. \cite{Stromsensor_texas}, S.24)}
+	\label{fig:Stromsensor}
+\end{figure}
+Er sollte in der Lage sein, den maximal zulässigen Motorstrom messen zu können. Da die meisten Hall Sensoren einen deutlich größeren Messbereich unterstützen, wurde der TMCS1101A3BQDRQ1 gewählt. Dieser kann einen maximalen Strom von $\pm$11,25A messen. Der gemessene Strom wird dabei als analoges 0-3,3V Signal ausgegeben und ist damit für diese Anwendung geeignet.
 \subsubsection{Konnektoren}
 Die externen Komponenten sollen über Schraubklemmen direkt an die Platine angeschlossen werden. Je nach Querschnitt der Kabel wurde ein größeres oder kleineres Rastermaß gewählt, um Platz auf der Platine einzusparen. Dabei wurde ein Standard Rastermaß von 2,54mm festgelegt und für die Kabel mit größerem Durchschnitt ein Rastermaß von 3,5mm.
 
@@ -176,13 +184,13 @@ Um die Platine, welche sich später in der Kuppel befinden soll, vor z.B Staub u
 \noindent Wie in \autoref{fig:Gehaues_und_Platine} zusehen ist, bietet dieses genügend Platz für die Platine und alle Kabeldurchführungen. Es ermöglicht ebenfalls den Einsatz eines zweiten Bodens auf dem die Platine mit einer 3D gedruckten Befestigung angeschraubt werden können.\\
 
 \subsubsection{Bedienoberfläche}
-\noindent Die Bedienoberfläche besteht aus einer Reihe von Kippschaltern, Knöpfen und LEDs. Diese sind in \autoref{fig:Bedienung} dargestellt. Mit dem rechten Knopf soll zur Initialisierung des Systems eine automatische Kalibrierungsfahrt eingeleitet werden. Zusätzlich kann der Benutzer anschließend über die Trimm- und Rollknöpfe die Grenze zwischen diesen Bereichen (siehe \autoref{fig:powerCurve}) selbst anfahren und mit erneuter Betätigung des rechten Knopfes festlegen bzw. speichern. Danach kann mittels des Kippschalters in den Automatikbetrieb gewechselt werden, in dem die Steuerung vom Controllino übernommen und das Betätigen der Knöpfe folglich ignoriert wird.
+\noindent Die Bedienoberfläche besteht aus einer Reihe von Kippschaltern, Knöpfen und \ac{LED}s. Diese sind in \autoref{fig:Bedienung} dargestellt. Mit dem rechten Knopf soll zur Initialisierung des Systems eine automatische Kalibrierungsfahrt eingeleitet werden. Zusätzlich kann der Benutzer anschließend über die Trimm- und Rollknöpfe die Grenze zwischen diesen Bereichen (siehe \autoref{fig:powerCurve}) selbst anfahren und mit erneuter Betätigung des rechten Knopfes festlegen bzw. speichern. Danach kann mittels des Kippschalters in den Automatikbetrieb gewechselt werden, in dem die Steuerung vom Controllino übernommen und das Betätigen der Knöpfe folglich ignoriert wird.
 Eine Reihe von LEDs gibt Feedback über den aktuellen Zustand der Linearführung. Dabei wird konstant der aktuelle Betriebsmodus durch zwei LEDs angegeben. Ebenfalls wird die Position relativ zur festgelegten neutralen Position durch zwei gelbe LEDs angegeben. Vom System selbst identifizierte Störungen werden durch eine rote LED signalisiert.\\
 Die Knöpfe und Kippschalter sind jeweils mit Dichtungsringen spritzwassergeschützt am Gehäuse montiert. Die Kabel werden über Dupont-Stecker an der Platine angeschlossen. Im Gegensatz dazu sind die LEDs direkt auf der Platine platziert, wobei deren Strahlung durch flexible Lichtleiter zur Außenseite des Gehäuses geführt werden.
 \begin{figure}[H]
 	\centering
 	\includegraphics[width=1.0\textwidth]{images/Hardware/Bedienung.drawio.png}
-	\caption{HMI der Segel Steuerung}
+	\caption{Bedienoberfläche der Segel Steuerung}
 	\label{fig:Bedienung}
 \end{figure}
 \subsubsection{Kabelverschaubungen}
@@ -194,7 +202,7 @@ Um die benötigten Kabel zur Platine zuführen, wurden Kabelverschraubungen in d
 	\caption{Gesamtschaltplan der Platine}
 	\label{fig:Schaltplan_gesamt}
 \end{figure}
-Eine Übersicht des Schaltplans ist in \autoref{fig:Schaltplan_gesamt} zusehen. Der komplette Schaltplan ist als KiCad Datei in der ZIP-Datei enthalten und ebenfalls in \autoref{sec:Schaltplan} hinterlegt. Der Schaltplan ist in unterschiedliche Bereiche eingeteilt welche die Gruppierung der Komponenten wiedergeben. Dabei ist die STM32-Gruppe zentral positioniert und alle Bauteile und Komponenten um diese herum verteilt. Bauteile, die nur einfach verbaut sind wie z.B der FL25L16B \ac{FRAM} (Unten Links) wurden nicht in Gruppen eingeteilt, sondern direkt in der Gesamtansicht positioniert. Oben links befindet sich die Spannungsversorgung der Platine und die \ac{DC}/DC Wandler. Oberhalb des STM32 befinden sich die beiden Relais, welche mit den Endschaltern verbunden sind. Links außen befindet sich der \ac{BLDC} Motor, welcher mit dem Operationsverstärker und den Optokopplern verbunden ist. Rechts befinden sich mit Ausnahme des Stromsensors alle analogen Sensoren. Dort ist ebenfalls der MAX3485 \ac{UART} Konvertierer abgebildet. Unterhalb des Mikrocontrollers befinden sich die Knöpfe und LEDS, die das \ac{HMI} bilden. Im folgenden werden exemplarisch die Schaltungen für diese Gruppen genauer betrachtet.
+Eine Übersicht des Schaltplans ist in \autoref{fig:Schaltplan_gesamt} zusehen. Der komplette Schaltplan ist als KiCad Datei in der ZIP-Datei enthalten und ebenfalls in \autoref{sec:Schaltplan} hinterlegt. Der Schaltplan ist in unterschiedliche Bereiche eingeteilt, welche die Gruppierung der Komponenten wiedergeben. Dabei ist die STM32-Gruppe zentral positioniert und alle Bauteile und Komponenten um diese herum verteilt. Bauteile, die nur einfach verbaut sind wie z.B der FL25L16B \ac{FRAM} (Unten Links) wurden nicht in Gruppen eingeteilt, sondern direkt in der Gesamtansicht positioniert. Oben links befindet sich die Spannungsversorgung der Platine und die \ac{DC}/DC Wandler. Oberhalb des STM32 befinden sich die beiden Relais, welche mit den Endschaltern verbunden sind. Links außen befindet sich der \ac{BLDC} Motor, welcher mit dem Operationsverstärker und den Optokopplern verbunden ist. Rechts befinden sich mit Ausnahme des Stromsensors alle analogen Sensoren. Dort ist ebenfalls der MAX3485 \ac{UART} Konvertierer abgebildet. Unterhalb des Mikrocontrollers befinden sich die Knöpfe und LEDS, die das \ac{HMI} bilden. Im folgenden werden exemplarisch die Schaltungen für diese Gruppen genauer betrachtet.
 \subsubsection{STM32F439zi Gruppe}
 Der STM32F439zi enthält alle Pins, auf denen später die Erweiterungsplatine aufsitzt. Hier wurden alle benötigten Pins nach außen zur Schaltplanübersicht geführt.
 \subsubsection{Motor Gruppe}
@@ -299,4 +307,4 @@ Dies wurde in 5 Messreihen wiederholt, um die Reproduzierbarkeit zu verifizieren
 \noindent Hier ist zu erkennen, dass der auf dem Display abgelesene mit dem gemessenen Abstand übereinstimmt. Allerdings weichen sowohl der Strom- als auch der Spannungswert ab, da die Steigung beider Messreihen nicht gleich zu der des Abstandssensors ist. Dieser ermöglicht die Anpassung der Skalierung. Dabei kann z.B festgelegt werden, ab welchem Messwert das Ausgangssignal 4mA/20mA betragen soll (vgl. \cite{EIO104_Manual}, S.6). Da das Display den korrekten Wert anzeigt, aber ein falscher Strom Wert ausgegeben wird, kann davon ausgegangen werden, dass der Konverter falsch eingestellt ist. Dies konnte im Zuge dieser Arbeit nicht behoben werden, da ein entsprechendes IO-Link Master Gerät nicht verfügbar war.
 \subsubsection{Präzision der Analogen Signale}
 \label{Mangelnde_Präzision}
-Neben den Problemen mit dem Abstandssensor wurden ebenfalls leicht abweichende Werte in den anderen Analogsignalen festgestellt. Beginnend mit den Stromsignalen, kann der ausgelesene Wert mit der Präzision des Widerstandes zusammenhängen, da diese mit 1\% Genauigkeit immer noch große Temperaturabweichungen aufweisen können. Die schlechten Kontakte tragen ebenfalls zur Ungenauigkeit bei. Speziell beim Stromsensor kann auch hier die Positionierung eine Fehlerquelle sein, da die verbundenen Spuren für optimale Präzision im 45° Winkel zu den Sensorpins stehen sollten. Um die Präzision zu verbessern, können zusätzlich zu den Widerständen Ferrite eingesetzt werden. Diese verhalten sich ähnlich wie Spulen und filtern hochfrequente Signale. In Kombination mit den bereits verwendeten Kondensatoren würden diese einen LC-Filter darstellen und einen Bandpass erzeugen, der zusätzlich die Signalqualität verbessert.\\
+Neben den Problemen mit dem Abstandssensor wurden ebenfalls leicht abweichende Werte in den anderen Analogsignalen festgestellt. Beginnend mit den Stromsignalen, kann der ausgelesene Wert mit der Präzision des Widerstandes zusammenhängen, da diese mit 1\% Genauigkeit immer noch große Temperaturabweichungen aufweisen können. Die schlechten Kontakte tragen ebenfalls zur Ungenauigkeit bei. Speziell beim Stromsensor kann auch hier die Positionierung eine Fehlerquelle sein, da die verbundenen Spuren für optimale Präzision im 45° Winkel zu den Sensorpins stehen sollten (vgl. \cite{Stromsensor_texas}, S.37). Um die Präzision zu verbessern, können zusätzlich zu den Widerständen Ferrite eingesetzt werden. Diese verhalten sich ähnlich wie Spulen und filtern hochfrequente Signale. In Kombination mit den bereits verwendeten Kondensatoren würden diese einen LC-Filter darstellen und einen Bandpass erzeugen, der zusätzlich die Signalqualität verbessert.\\
